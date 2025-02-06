@@ -1,0 +1,24 @@
+# backend requirements
+
+fastapi 	#or flask Backend framework (choose one)
+uvicorn	 #ASGI server for FastAPI
+gunicorn	 #Production-ready WSGI server for Flask
+requests	 #Handle API requests
+pydantic	 #Define API request/response models
+
+# Data Preparation and RAG pipeline
+pandas	 #Handle structured text data
+numpy	 #Numerical operations
+faiss-cpu	 #Vector search for document retrieval
+chromadb	 #Alternative vector database
+sentence-transformers	 #Convert text into embeddings
+langchain	 #Orchestrate RAG pipeline
+
+# Knowledge Graph and Visualization
+networkx	#Create knowledge graphs
+matplotlib	 #Generates static graph visualizations
+neo4j	 #Stores and retrieves graph data (optional)
+
+
+# to install all the requirements
+# pip install -r requirements.txt
