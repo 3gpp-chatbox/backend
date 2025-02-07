@@ -1,23 +1,25 @@
 from neo4j import GraphDatabase
 
-# Connect to Neo4j
-uri = "bolt://localhost:7687"
-username = "neo4j"
-password = "your_password"
+URI = "bolt://localhost:7687"  # Adjust if needed
+USERNAME = "neo4j"  # Default user
+PASSWORD = "testtest"  # Replace with the correct password
 
-driver = GraphDatabase.driver(uri, auth=(username, password))
+driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
 
-def create_entity(tx, entity_name):
-    tx.run("MERGE (e:Entity {name: $name})", name=entity_name)
+def create_entity(tx, name, entity_type):
+    query = "CREATE (n:Entity {name: $name, type: $entity_type})"
+    tx.run(query, name=name, entity_type=entity_type)
 
-def create_relationship(tx, entity1, entity2, relation):
-    tx.run("MATCH (e1:Entity {name: $e1}), (e2:Entity {name: $e2}) "
-           "MERGE (e1)-[:RELATION {type: $rel}]->(e2)", e1=entity1, e2=entity2, rel=relation)
-
-# Store some relationships
 with driver.session() as session:
-    session.write_transaction(create_entity, "3GPP")
-    session.write_transaction(create_entity, "NAS Protocol")
-    session.write_transaction(create_relationship, "3GPP", "NAS Protocol", "Defines")
+    session.execute_write(create_entity, "3GPP", "Standard Organization")
 
-print("Stored knowledge graph in Neo4j!")
+print("Node added successfully!")
+
+def check_data(tx):
+    result = tx.run("MATCH (n) RETURN n LIMIT 10")
+    return [record["n"] for record in result]
+
+with driver.session() as session:
+    nodes = session.execute_read(check_data)
+
+print("Nodes in database:", nodes)
