@@ -12,13 +12,17 @@ numpy	 #Numerical operations
 faiss-cpu	 #Vector search for document retrieval
 chromadb	 #Alternative vector database
 sentence-transformers	 #Convert text into embeddings
-langchain	 #Orchestrate RAG pipeline
+langchain_google_genai
+pypdf
+python-dotenv
 
 # Knowledge Graph and Visualization
 networkx	#Create knowledge graphs
 matplotlib	 #Generates static graph visualizations
 neo4j	 #Stores and retrieves graph data (optional)
 
+# Replace OpenAI with Google Gemini
+google-generativeai
 
 # to install all the requirements
 # pip install -r requirements.txt

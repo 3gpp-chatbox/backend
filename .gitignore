@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env.template
+
+ckeckapi.py
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# ChromaDB files
+chroma_db/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Processed data
+processed_chunks.pkl
+
+# IDE
+.vscode/
+.idea/
