@@ -27,7 +27,7 @@ def save_text_chunks(text, chunk_size=500):
     return chunks
 
 # Test the function
-pdf_file = os.path.join(os.path.dirname(__file__), "..", "data_store", "TS 24.234.pdf")
+pdf_file = os.path.join(os.path.dirname(__file__), ".", "data_store", "TS 24.234.pdf")
 if os.path.exists(pdf_file):
     print(f"Processing file: {pdf_file}")
     raw_text = extract_text_from_pdf(pdf_file)
