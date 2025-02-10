@@ -19,4 +19,6 @@ networkx	#Create knowledge graphs
 matplotlib	 #Generates static graph visualizations
 neo4j	 #Stores and retrieves graph data (optional)
 
+google.generativeai>=0.3.0
+
 
