@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import google.generativeai as genai
 from langchain.vectorstores import Chroma
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from typing import List, Dict
 
 # Load environment variables
@@ -9,22 +10,25 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 CHROMA_DB_DIR = "chroma_db"
 
+# Ensure that the GOOGLE_API_KEY is available
+if not GOOGLE_API_KEY:
+    raise ValueError("❌ Google API key not found. Please check your .env file.")
+
+# Set the API key for the Google Gemini API
+genai.configure(api_key=GOOGLE_API_KEY)
+
 def query_documents(query: str, n_results: int = 5, collection_name: str = "pdf_documents") -> List[Dict]:
     """
-    Queries documents from ChromaDB using Google Gemini
+    Queries documents from ChromaDB using Google Gemini API to generate summaries.
     """
-    if not GOOGLE_API_KEY:
-        print("❌ Google API key not found. Please check your .env file.")
-        return []
-
     try:
         # Initialize embeddings
         embeddings = GoogleGenerativeAIEmbeddings(
-            google_api_key=GOOGLE_API_KEY,
-            model="models/embedding-001"
+            model="models/embedding-001",
+            google_api_key=GOOGLE_API_KEY
         )
-        
-        # Load the existing vector store
+
+        # Load the existing vector store with embeddings
         vector_store = Chroma(
             persist_directory=CHROMA_DB_DIR,
             embedding_function=embeddings,
@@ -62,4 +66,22 @@ if __name__ == "__main__":
     for i, result in enumerate(results, 1):
         print(f"\n{i}. Source: {result['metadata']['source']}")
         print(f"Distance: {result['distance']}")
-        print(f"Text snippet: {result['text'][:200]}...")
+        print(f"Processed text: {result['text'][:300]}...")  # Show snippet of the processed summary
+
+def generate_embeddings(texts):
+    """Generate embeddings using Gemini"""
+    try:
+        response = genai.embed_text(model="models/embedding-001", text=texts)
+        return [embedding['embedding'] for embedding in response['embeddings']]
+    except Exception as e:
+        print(f"Error generating embeddings: {str(e)}")
+        return []
+
+def query_with_gemini(query_text):
+    """Query with Gemini for generating relevant responses"""
+    try:
+        response = genai.generate_text(model="models/generative-001", text=query_text)
+        return response['text']
+    except Exception as e:
+        print(f"Error querying with Gemini: {str(e)}")
+        return None

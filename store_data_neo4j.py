@@ -4,10 +4,10 @@ from typing import List, Dict, Tuple
 from pypdf import PdfReader
 from neo4j import GraphDatabase
 
-# Neo4j Configuration
-URI = "bolt://localhost:7687"
-USERNAME = "neo4j"
-PASSWORD = "testtest"
+# Neo4j Configuration (from environment variables)
+URI = os.getenv("NEO4J_URI")
+USERNAME = os.getenv("NEO4J_USERNAME")
+PASSWORD = os.getenv("NEO4J_PASSWORD")
 
 class KnowledgeGraph:
     def __init__(self, uri, user, password):
