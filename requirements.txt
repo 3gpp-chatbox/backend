@@ -1,28 +1,26 @@
 # backend requirements
+fastapi>=0.115.0  # Backend framework
+uvicorn>=0.34.0  # ASGI server for FastAPI
+pydantic>=2.10.0  # Data validation
 
-fastapi 	#or flask Backend framework (choose one)
-uvicorn	 #ASGI server for FastAPI
-gunicorn	 #Production-ready WSGI server for Flask
-requests	 #Handle API requests
-pydantic	 #Define API request/response models
-
-# Data Preparation and RAG pipeline
-pandas	 #Handle structured text data
-numpy	 #Numerical operations
-faiss-cpu	 #Vector search for document retrieval
-chromadb	 #Alternative vector database
-sentence-transformers	 #Convert text into embeddings
-langchain_google_genai
-pypdf
-python-dotenv
+# Data Processing
+pypdf>=5.2.0  # PDF processing
+python-dotenv>=1.0.0  # Environment variables
+neo4j>=5.28.0  # Graph database
 
 # Knowledge Graph and Visualization
-networkx	#Create knowledge graphs
-matplotlib	 #Generates static graph visualizations
-neo4j	 #Stores and retrieves graph data (optional)
+networkx>=3.4.0  # Graph manipulation
+matplotlib>=3.10.0  # Graph visualization
 
-# Replace OpenAI with Google Gemini
-google-generativeai
+# Vector Database and Embeddings
+chromadb>=0.4.24  # Vector database
+langchain>=0.1.12  # LangChain framework
+langchain-google-genai>=0.0.11  # Google Generative AI integration
+google-generativeai>=0.4.0  # Google Generative AI
+
+# Logging and utilities
+rich>=13.9.0  # Better console output
+tqdm>=4.65.0  # Progress bars
 
 # to install all the requirements
 # pip install -r requirements.txt

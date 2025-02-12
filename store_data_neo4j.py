@@ -90,21 +90,17 @@ def extract_relationships(text: str, entities: List[Tuple[str, str]]) -> List[Tu
 
     return relationships
 
-def store_in_neo4j(documents: List[Dict[str, str]]):
+def store_in_neo4j(documents: List[Dict]):
     """Stores extracted entities and relationships in Neo4j"""
     graph = KnowledgeGraph(URI, USERNAME, PASSWORD)
 
     for doc in documents:
-        text = doc["text"]
-        entities = extract_entities(text)
-        relationships = extract_relationships(text, entities)
-
         # Store entities in Neo4j
-        for entity_name, entity_type in entities:
-            graph.create_entity(entity_name, entity_type)
+        for entity_text, entity_type in doc["entities"]:
+            graph.create_entity(entity_text, entity_type)
 
         # Store relationships in Neo4j
-        for entity1, entity2, relation in relationships:
+        for entity1, entity2, relation in doc["relationships"]:
             graph.create_relationship(entity1, entity2, relation)
 
     graph.close()

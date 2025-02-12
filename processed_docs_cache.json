@@ -1,0 +1,292 @@
+{
+  "data\\TS 24.234.pdf": {
+    "hash": "4c669ca4d59233e9af0e8d09b0ca21f54a531e977096f300371301a7a0fab7b4",
+    "data": {
+      "entities": [
+        [
+          "UE",
+          "NETWORK_ELEMENT"
+        ],
+        [
+          "3Gpp Ts 24.234",
+          "SPECIFICATION"
+        ],
+        [
+          "Ts 24.234",
+          "SPECIFICATION"
+        ],
+        [
+          "Release 12",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "UE",
+          "3Gpp Ts 24.234",
+          "REFERENCED_IN"
+        ],
+        [
+          "UE",
+          "Ts 24.234",
+          "REFERENCED_IN"
+        ],
+        [
+          "UE",
+          "Release 12",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.234",
+          "Ts 24.234",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.234",
+          "Release 12",
+          "REFERENCED_IN"
+        ],
+        [
+          "Ts 24.234",
+          "Release 12",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.234.pdf",
+        "file_path": "data\\TS 24.234.pdf",
+        "chunk_number": 1,
+        "total_chunks": 38
+      }
+    }
+  },
+  "data\\TS 24.301.pdf": {
+    "hash": "379e2d3b9c7c32fb3b7c77fc510a56d2904841b756527872b7ceba9fb37ef0a2",
+    "data": {
+      "entities": [
+        [
+          "3Gpp Ts 24.301",
+          "SPECIFICATION"
+        ],
+        [
+          "Release 18",
+          "SPECIFICATION"
+        ],
+        [
+          "Ts 24.301",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "3Gpp Ts 24.301",
+          "Release 18",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.301",
+          "Ts 24.301",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 18",
+          "Ts 24.301",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.301.pdf",
+        "file_path": "data\\TS 24.301.pdf",
+        "chunk_number": 1,
+        "total_chunks": 616
+      }
+    }
+  },
+  "data\\TS 24.334 v18 r18.pdf": {
+    "hash": "3f21ed200512aed441f9d948779719c82409f3f78de7d0b6e4606f1cbf57550a",
+    "data": {
+      "entities": [
+        [
+          "Release 18",
+          "SPECIFICATION"
+        ],
+        [
+          "3Gpp Ts 24.334",
+          "SPECIFICATION"
+        ],
+        [
+          "UE",
+          "NETWORK_ELEMENT"
+        ],
+        [
+          "Ts 24.334",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "Release 18",
+          "3Gpp Ts 24.334",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 18",
+          "UE",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 18",
+          "Ts 24.334",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.334",
+          "UE",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.334",
+          "Ts 24.334",
+          "REFERENCED_IN"
+        ],
+        [
+          "UE",
+          "Ts 24.334",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.334 v18 r18.pdf",
+        "file_path": "data\\TS 24.334 v18 r18.pdf",
+        "chunk_number": 1,
+        "total_chunks": 262
+      }
+    }
+  },
+  "data\\TS 24.341 v18 r18.pdf": {
+    "hash": "e0835917b8a9330fe2d251d89290f822deff01ecf08b6838918c0e214c387f24",
+    "data": {
+      "entities": [
+        [
+          "Release 18",
+          "SPECIFICATION"
+        ],
+        [
+          "3Gpp Ts 24.341",
+          "SPECIFICATION"
+        ],
+        [
+          "Ts 24.341",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "Release 18",
+          "3Gpp Ts 24.341",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 18",
+          "Ts 24.341",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.341",
+          "Ts 24.341",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.341 v18 r18.pdf",
+        "file_path": "data\\TS 24.341 v18 r18.pdf",
+        "chunk_number": 1,
+        "total_chunks": 58
+      }
+    }
+  },
+  "data\\TS 24.368.pdf": {
+    "hash": "e8ad99cb2a53bb189ab60af61c600563b8a4f26d8aebdc5fe54df71af968701e",
+    "data": {
+      "entities": [
+        [
+          "Release 16",
+          "SPECIFICATION"
+        ],
+        [
+          "3Gpp Ts 24.368",
+          "SPECIFICATION"
+        ],
+        [
+          "Ts 24.368",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "Release 16",
+          "3Gpp Ts 24.368",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 16",
+          "Ts 24.368",
+          "REFERENCED_IN"
+        ],
+        [
+          "3Gpp Ts 24.368",
+          "Ts 24.368",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.368.pdf",
+        "file_path": "data\\TS 24.368.pdf",
+        "chunk_number": 1,
+        "total_chunks": 41
+      }
+    }
+  },
+  "data\\TS 24.501.pdf": {
+    "hash": "e45b73955bbddeeb7447587cf0e34eb21f5b685ecdacd15f945d50a6a7ca7b16",
+    "data": {
+      "entities": [
+        [
+          "Release 18",
+          "SPECIFICATION"
+        ],
+        [
+          "Ts 24.501",
+          "SPECIFICATION"
+        ],
+        [
+          "3Gpp Ts 24.501",
+          "SPECIFICATION"
+        ]
+      ],
+      "relationships": [
+        [
+          "Release 18",
+          "Ts 24.501",
+          "REFERENCED_IN"
+        ],
+        [
+          "Release 18",
+          "3Gpp Ts 24.501",
+          "REFERENCED_IN"
+        ],
+        [
+          "Ts 24.501",
+          "3Gpp Ts 24.501",
+          "REFERENCED_IN"
+        ]
+      ],
+      "metadata": {
+        "source": "TS 24.501.pdf",
+        "file_path": "data\\TS 24.501.pdf",
+        "chunk_number": 1,
+        "total_chunks": 1134
+      }
+    }
+  }
+}
