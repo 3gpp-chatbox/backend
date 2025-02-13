@@ -22,4 +22,7 @@ neo4j	 #Stores and retrieves graph data (optional)
 
 google.generativeai>=0.3.0
 
+# Add requests package
+requests>=2.26.0
+
 
