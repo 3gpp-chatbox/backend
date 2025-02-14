@@ -1,0 +1,10 @@
+{
+  "5G": "2024-12\tSP#106\tSP-241499\t5816\t-\tB\tAdding MSISDN verification operation support to Nnef_UEId Service \t19.2.0",
+  "RAN": "2024-12\tSP#106\tSP-241489\t5844\t2\tB\tHandling of UE capability for MPQUIC-IP and MPQUIC-E steering functionalities\t19.2.0 2024-12\tSP#106\tSP-241496\t5845\t2\tB\tMWAB-gNB configuration during MWAB mobility\t19.2.0 2024-12\tSP#106\tSP-241482\t5856\t2\tB\tCAG information Provisioning clarification of roaming support\t19.2.0 2024-12\tSP#106\tSP-241484\t5866\t3\tC\tS-NSSAI selection while in EPS\t19.2.0",
+  "AUTHENTICATION": "2023-12\tSP#102\tSP-231259\t4988\t-\tF\tCorrection the interface in the NSWO architecture for SNPN\t18.4.0",
+  "REGISTRATION": "2024-09\tSP#105\tSP-241258\t5536\t-\tA\tCorrection on N3IWF selection\t19.1.0 2024-09\tSP#105\tSP-241269\t5540\t3\tB\tSupporting direct subscription of UPF event exposure using UE's IP address\t19.1.0 2024-09\tSP#105\tSP-241270\t5544\t2\tB\tSupport for Location Service Support of UEs served by MWAB \t19.1.0 2024-09\tSP#105\tSP-241241\t5559\t2\tA\tNetwork Slicing handling for EHPLMN case\t19.1.0 2024-09\tSP#105\tSP-241272\t5560\t3\tF\tClarification on network slice handling for Indirect Network Sharing\t19.1.0 2024-09\tSP#105\tSP-241270\t5561\t2\tB\tControl Plane and User Plane Protocol stacks involving the MWAB node\t19.1.0 2024-09\tSP#105\tSP-241269\t5565\t2\tB\tUPF event exposure during UPF relocation\t19.1.0 2024-09\tSP#105\tSP-241261\t5567\t-\tA\tCorrection of PCF related terminology\t19.1.0 2024-09\tSP#105\tSP-241256\t5570\t1\tA\tClarification on PRU timer considering start of unavailability period\t19.1.0 2024-09\tSP#105\tSP-241259\t5577\t1\tA\tCorrection of MPQUIC Datagram mode 1\t19.1.0",
+  "AMF": "2024-03\tSP#103\tSP-240098\t5310\t2\tF\tKI#4 Clarifications on common EAS/DNAI procedure\t18.5.0",
+  "NR": "2024-12\tSP#106\tSP-241496\t5708\t1\tF\tClarification on MWAB architecture figure\t19.2.0",
+  "SESSION": "2024-12\tSP#106\tSP-241482\t5808\t3\tB\tCAG information provisioning\t19.2.0",
+  "SMF": "2025-01\tSP#106\t-\t-\t-\t-\tMCC Implementation correction: Removal of noted 23.501 CR5713R3\t19.2.1"
+}

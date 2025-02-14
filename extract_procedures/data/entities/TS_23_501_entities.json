@@ -1,0 +1,19 @@
+{
+  "entities": {
+    "STATES": [],
+    "MESSAGES": [],
+    "COMPONENTS": [
+      "CAG",
+      "Correction of MPQUIC Datagram",
+      "Correction of PCF",
+      "EHPLMN",
+      "EPS",
+      "IP",
+      "Indirect Network Sharing",
+      "MCC Implementation",
+      "MWAB",
+      "SNPN",
+      "UE"
+    ]
+  }
+}

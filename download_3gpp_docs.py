@@ -6,7 +6,6 @@ from typing import Dict
 class DocumentDownloader:
     def __init__(self):
         self.base_dir = "3GPP_Documents"
-        self.unzip_dir = os.path.join(self.base_dir, "Unzipped_Files")
         self.documents = {
             "TS_24_501": {"url": "https://www.3gpp.org/ftp/Specs/archive/24_series/24.501/24501-j11.zip", "filename": "24501-j11.zip"},
             "TS_23_501": {"url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j21.zip", "filename": "23501-j21.zip"},
