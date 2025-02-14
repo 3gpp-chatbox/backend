@@ -1,25 +1,25 @@
-# backend requirements
+# # backend requirements
 
-fastapi 	#or flask Backend framework (choose one)
-uvicorn	 #ASGI server for FastAPI
-gunicorn	 #Production-ready WSGI server for Flask
-requests	 #Handle API requests
-pydantic	 #Define API request/response models
+# fastapi 	#or flask Backend framework (choose one)
+# uvicorn	 #ASGI server for FastAPI
+# gunicorn	 #Production-ready WSGI server for Flask
+# requests	 #Handle API requests
+# pydantic	 #Define API request/response models
 
-# Data Preparation and RAG pipeline
-pandas	 #Handle structured text data
-numpy	 #Numerical operations
-faiss-cpu	 #Vector search for document retrieval
-chromadb	 #Alternative vector database
-sentence-transformers	 #Convert text into embeddings
-langchain	 #Orchestrate RAG pipeline
-PyMuPDF #for pdf file handling
+# # Data Preparation and RAG pipeline
+# pandas	 #Handle structured text data
+# numpy	 #Numerical operations
+# faiss-cpu	 #Vector search for document retrieval
+# chromadb	 #Alternative vector database
+# sentence-transformers	 #Convert text into embeddings
+# langchain	 #Orchestrate RAG pipeline
+# PyMuPDF #for pdf file handling
 
-# Knowledge Graph and Visualization
-networkx	#Create knowledge graphs
-matplotlib	 #Generates static graph visualizations
-neo4j	 #Stores and retrieves graph data (optional)
+# # Knowledge Graph and Visualization
+# networkx	#Create knowledge graphs
+# matplotlib	 #Generates static graph visualizations
+# neo4j	 #Stores and retrieves graph data (optional)
 
-google.generativeai>=0.3.0
+# google.generativeai>=0.3.0
 
 
