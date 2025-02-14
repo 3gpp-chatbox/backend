@@ -1,4 +1,7 @@
 python-docx
 langchain-google-genai
+langchain-ollama
 langchain-experimental
+langchain-community
 python-dotenv
+neo4j
