@@ -8,6 +8,10 @@ from preprocess_pdfs import read_pdfs_from_directory
 from rich.console import Console
 from tqdm import tqdm
 import hashlib
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 console = Console()
 CACHE_FILE = "processed_docs_cache.json"
@@ -53,12 +57,30 @@ class ThreeGPPEntityExtractor:
                 r'\b(?:Next Generation Node B|Next Generation eNodeB)\b'
             ],
             "PROCEDURE": [
-                # NAS Procedures
-                r'\b(?:Initial|Service|Periodic|Emergency|Normal)\s+(?:Registration|Attach)\b',
-                r'\b(?:Authentication|Security Mode Control|Identity)\s+(?:Procedure)\b',
-                r'\b(?:NAS Transport|PDU Session Establishment)\s+(?:Procedure)\b',
-                r'\b(?:Handover|De-registration|Service Request)\s+(?:Procedure)\b',
-                r'\b(?:5GMM|EMM)\s+(?:Specific Procedure|Common Procedure)\b'
+                # Main NAS Procedures
+                r'\b(?:Initial|Mobility|Periodic|Emergency)\s+Registration\s+Procedure\b',
+                r'\b(?:UE|Network)-initiated\s+De-registration\s+Procedure\b',
+                r'\b(?:Service\s+Request|PDU\s+Session\s+Establishment)\s+Procedure\b',
+                # Sub-procedures
+                r'\b(?:Authentication|Security Mode Control|Identity)\s+Procedure\b',
+                r'\b(?:UE Configuration Update|QoS Flow Establishment)\s+Procedure\b',
+                r'\b(?:PDU Session Resource Setup|Service Accept|Service Reject)\s+Procedure\b',
+                # Generic Procedure Patterns
+                r'\b(?:5GMM|EMM)\s+(?:Specific|Common)\s+Procedure\b',
+                r'\b(?:NAS Transport|Handover)\s+Procedure\b'
+            ],
+            "PROCEDURE_RELATIONSHIP": [
+                # Sub-procedure relationships
+                r'as\s+part\s+of\s+(?:the\s+)?([A-Za-z\s]+(?:Procedure|procedure))',
+                r'during\s+(?:the\s+)?([A-Za-z\s]+(?:Procedure|procedure))',
+                r'initiated\s+by\s+(?:the\s+)?([A-Za-z\s]+(?:Procedure|procedure))',
+                r'required\s+for\s+(?:the\s+)?([A-Za-z\s]+(?:Procedure|procedure))'
+            ],
+            "SPECIFICATION_REFERENCE": [
+                # Section references
+                r'(?:section|clause)\s+(\d+\.\d+\.\d+(?:\.\d+)?)',
+                r'TS\s+24\.501\s+(?:section|clause)?\s*(\d+\.\d+\.\d+(?:\.\d+)?)',
+                r'3GPP\s+TS\s+24\.501\s+(?:section|clause)?\s*(\d+\.\d+\.\d+(?:\.\d+)?)'
             ],
             "MESSAGE": [
                 # NAS Messages
@@ -67,40 +89,11 @@ class ThreeGPPEntityExtractor:
                 r'\b(?:Service|Configuration|Status)\s+(?:Request|Accept|Reject|Notification)\b',
                 r'\b(?:PDU Session|Bearer Resource|NAS)\s+(?:Establishment|Modification|Release)\s+(?:Request|Accept|Reject)\b'
             ],
-            "PROTOCOL": [
-                # Protocol Types
-                r'\b(?:NAS|RRC|NGAP|S1AP)\s+(?:Protocol|Signalling|Layer)\b',
-                r'\b(?:5G|LTE)\s+(?:NAS|RRC)\b',
-                r'\b(?:N1|N2|N11|N12)\s+(?:Interface|Protocol)\b'
-            ],
             "STATE": [
                 # UE and Network States
                 r'\b(?:CM|RM|EMM|MM|RRC)-(?:IDLE|CONNECTED|REGISTERED|DEREGISTERED)\b',
                 r'\b(?:5GMM|EMM)-(?:IDLE|CONNECTED|REGISTERED|DEREGISTERED)\b',
                 r'\b(?:REGISTERED|DEREGISTERED|IDLE|CONNECTED)\s+(?:State|Mode)\b'
-            ],
-            "SPECIFICATION": [
-                # 3GPP Specifications
-                r'(?:3GPP\s+)?TS\s+\d+\.\d+(?:\.\d+)?',
-                r'3GPP\s+(?:TS|TR)\s+\d+\.\d+(?:\.\d+)?',
-                r'Release\s+(?:1[5-9]|20)',
-                r'Rel-(?:1[5-9]|20)'
-            ],
-            "ACTION": [
-                # NAS Actions
-                r'\b(?:Start|Stop|Initiate|Release|Establish|Modify)\s+(?:Timer|Connection|Session|Bearer)\b',
-                r'\b(?:Send|Receive|Forward|Process)\s+(?:Message|Request|Response)\b',
-                r'\b(?:Verify|Check|Validate)\s+(?:Identity|Security|Integrity|MAC)\b',
-                r'\b(?:Generate|Derive|Calculate)\s+(?:Key|Token|Parameter|Value)\b',
-                r'\b(?:Allocate|Assign|Reserve)\s+(?:Resource|Address|Identity)\b'
-            ],
-            "EVENT": [
-                # NAS Events
-                r'\b(?:Timer)\s+(?:Expiry|Timeout|Start|Stop)\b',
-                r'\b(?:Authentication|Security)\s+(?:Success|Failure|Error)\b',
-                r'\b(?:Connection|Session|Bearer)\s+(?:Setup|Release|Loss)\b',
-                r'\b(?:Registration|Service)\s+(?:Accept|Reject|Success|Failure)\b',
-                r'\b(?:Radio|Link)\s+(?:Failure|Recovery|Error)\b'
             ]
         }
         
@@ -110,23 +103,109 @@ class ThreeGPPEntityExtractor:
             for entity_type, patterns in self.patterns.items()
         }
 
-        # Properties patterns for metadata extraction
-        self.property_patterns = {
-            "parameters": [
-                r'(?:with|using)\s+parameter[s]?\s+([^.]+)',
-                r'parameter[s]?\s+(?:include|are)\s+([^.]+)',
-                r'(?:value|setting)\s+(?:of|for)\s+([^.]+)'
-            ],
-            "conditions": [
-                r'(?:if|when|unless)\s+([^,]+)',
-                r'(?:provided|assuming)\s+that\s+([^,]+)',
-                r'(?:in case|in the event)\s+(?:of|that)\s+([^.]+)'
-            ],
-            "timing": [
-                r'(?:after|before|during|within)\s+([^,]+)',
-                r'(?:timeout|expiry)\s+of\s+([^.]+)',
-                r'(?:timer|counter)\s+(?:T\d+|N\d+)'
-            ]
+        # Known procedure relationships from multiple 3GPP specifications
+        self.known_procedures = {
+            # TS 24.501 (5G NAS) Procedures
+            "Initial Registration Procedure": {
+                "section": "5.5.1.2",
+                "specification": "TS 24.501",
+                "description": "Register a UE with the network for 5GS services",
+                "sub_procedures": [
+                    ("Authentication Procedure", "5.4.1", "Primary and secondary authentication of the UE"),
+                    ("Security Mode Control Procedure", "5.4.2", "Activate NAS security between UE and network"),
+                    ("UE Configuration Update Procedure", "5.4.4", "Update UE configuration information")
+                ]
+            },
+            "Mobility Registration Procedure": {
+                "section": "5.5.1.3",
+                "specification": "TS 24.501",
+                "description": "Handle mobility and periodic updates",
+                "sub_procedures": [
+                    ("Authentication Procedure", "5.4.1", "Re-authentication during mobility"),
+                    ("Security Mode Control Procedure", "5.4.2", "Security context handling during mobility")
+                ]
+            },
+            "Deregistration Procedure": {
+                "section": "5.5.2",
+                "specification": "TS 24.501",
+                "description": "Detach UE from the network",
+                "sub_procedures": [
+                    ("UE-initiated Deregistration Procedure", "5.5.2.2", "UE requests to deregister from network"),
+                    ("Network-initiated Deregistration Procedure", "5.5.2.3", "Network requests UE to deregister")
+                ]
+            },
+            "Service Request Procedure": {
+                "section": "5.6.1",
+                "specification": "TS 24.501",
+                "description": "Request services from the network in CM-IDLE state",
+                "sub_procedures": [
+                    ("Service Accept Procedure", "5.6.1.4", "Network accepts the service request"),
+                    ("Service Reject Procedure", "5.6.1.5", "Network rejects the service request"),
+                    ("Authentication Procedure", "5.4.1.3", "Authentication during service request")
+                ]
+            },
+            "PDU Session Establishment": {
+                "section": "6.4.1",
+                "specification": "TS 24.501",
+                "description": "Establish data connectivity through PDU session",
+                "sub_procedures": [
+                    ("PDU Session Authentication Procedure", "6.4.1.2", "Authenticate PDU session establishment request"),
+                    ("QoS Flow Establishment Procedure", "6.4.1.3", "Set up quality of service flows"),
+                    ("PDU Session Resource Setup Procedure", "6.4.1.4", "Allocate network resources")
+                ]
+            },
+            
+            # TS 24.301 (EPS NAS) Procedures
+            "EPS Attach Procedure": {
+                "section": "5.5.1",
+                "specification": "TS 24.301",
+                "description": "Register a UE with the network for EPS services",
+                "sub_procedures": [
+                    ("EPS Authentication Procedure", "5.4.2", "Authentication and key agreement"),
+                    ("EPS Security Mode Control", "5.4.3", "Activate NAS security"),
+                    ("ESM Default Bearer Setup", "6.4.1", "Establish default EPS bearer")
+                ]
+            },
+            "EPS Tracking Area Update": {
+                "section": "5.5.3",
+                "specification": "TS 24.301",
+                "description": "Update UE location and registration in EPS",
+                "sub_procedures": [
+                    ("EPS Authentication Procedure", "5.4.2", "Re-authentication during TAU"),
+                    ("EPS Security Mode Control", "5.4.3", "Security context update during TAU")
+                ]
+            },
+            "EPS Detach Procedure": {
+                "section": "5.5.2",
+                "specification": "TS 24.301",
+                "description": "Detach UE from EPS network",
+                "sub_procedures": [
+                    ("UE-initiated Detach", "5.5.2.2", "UE requests to detach from network"),
+                    ("Network-initiated Detach", "5.5.2.3", "Network requests UE to detach")
+                ]
+            },
+            
+            # Cross-specification Procedures (Interworking)
+            "5GS to EPS Handover": {
+                "section": "4.11.2",
+                "specification": "TS 24.501",
+                "related_spec": "TS 24.301",
+                "description": "Handover from 5GS to EPS network",
+                "sub_procedures": [
+                    ("TAU Procedure", "5.5.3", "Registration in target EPS network"),
+                    ("EPS Bearer Context Setup", "6.4.1", "Setup EPS bearers for handed over PDU sessions")
+                ]
+            },
+            "EPS to 5GS Handover": {
+                "section": "4.11.2",
+                "specification": "TS 24.301",
+                "related_spec": "TS 24.501",
+                "description": "Handover from EPS to 5GS network",
+                "sub_procedures": [
+                    ("Registration Procedure", "5.5.1.2", "Registration in target 5GS network"),
+                    ("PDU Session Establishment", "6.4.1", "Convert EPS bearers to PDU sessions")
+                ]
+            }
         }
 
     def extract_entities(self, text: str) -> Set[Tuple[str, str]]:
@@ -291,42 +370,123 @@ class ThreeGPPEntityExtractor:
         
         return relationships
 
+    def extract_procedure_relationships(self, text: str) -> List[Dict]:
+        """Extract procedure relationships with their specifications"""
+        relationships = []
+        
+        # First pass: identify main procedures
+        for proc_name, proc_info in self.known_procedures.items():
+            if re.search(rf'\b{re.escape(proc_name)}\b', text, re.IGNORECASE):
+                proc_data = {
+                    "name": proc_name,
+                    "type": "MAIN_PROCEDURE",
+                    "section": proc_info["section"],
+                    "specification": proc_info["specification"],
+                    "description": proc_info["description"],
+                    "sub_procedures": []
+                }
+                
+                # Add related specification if it exists
+                if "related_spec" in proc_info:
+                    proc_data["related_specification"] = proc_info["related_spec"]
+                
+                # Second pass: identify sub-procedures for this main procedure
+                for sub_proc in proc_info["sub_procedures"]:
+                    name, section, description = sub_proc
+                    if re.search(rf'\b{re.escape(name)}\b', text, re.IGNORECASE):
+                        proc_data["sub_procedures"].append({
+                            "name": name,
+                            "type": "SUB_PROCEDURE",
+                            "section": section,
+                            "description": description
+                        })
+                
+                relationships.append(proc_data)
+        
+        return relationships
+
 def process_documents(documents: List[Dict[str, str]]) -> List[Dict]:
     """Process documents to extract entities and relationships with properties"""
-    processed_docs = []
-    cache = load_cache()
     extractor = ThreeGPPEntityExtractor()
+    processed_docs = []
     
     for doc in documents:
-        file_path = doc["metadata"]["file_path"]
-        file_hash = get_file_hash(file_path)
+        text = doc['text']
         
-        if file_path in cache and cache[file_path]["hash"] == file_hash:
-            console.print(f"[green]Using cached results for {file_path}[/green]")
-            processed_docs.append(cache[file_path]["data"])
-            continue
-            
-        console.print(f"[blue]Processing {file_path}[/blue]")
-        text = doc["text"]
-        
+        # Extract all entities
         entities = extractor.extract_entities(text)
-        relationships = extractor.extract_relationships(text, entities)
         
+        # Extract procedure relationships
+        procedures = extractor.extract_procedure_relationships(text)
+        
+        # Process the document
         processed_doc = {
-            "entities": list(entities),
-            "relationships": list(relationships),  # Now includes properties
-            "metadata": doc["metadata"]
-        }
-        
-        cache[file_path] = {
-            "hash": file_hash,
-            "data": processed_doc
+            'source': doc.get('source', 'Unknown'),
+            'entities': [{'text': entity[0], 'type': entity[1]} for entity in entities],
+            'procedures': procedures,
+            'relationships': []  # We'll focus on procedure relationships for now
         }
         
         processed_docs.append(processed_doc)
     
-    save_cache(cache)
     return processed_docs
+
+def store_procedures_in_neo4j(driver, procedures: List[Dict]):
+    """Store procedures and their relationships in Neo4j"""
+    with driver.session() as session:
+        for proc in procedures:
+            # Create main procedure node with specification info
+            session.run("""
+                MERGE (p:Procedure {name: $name})
+                SET p.type = $type,
+                    p.section = $section,
+                    p.specification = $specification,
+                    p.description = $description
+            """, name=proc['name'], type=proc['type'], 
+                 section=proc['section'], 
+                 specification=proc['specification'],
+                 description=proc['description'])
+            
+            # Add related specification if it exists
+            if 'related_specification' in proc:
+                session.run("""
+                    MATCH (p:Procedure {name: $name})
+                    MERGE (s:Specification {name: $spec_name})
+                    MERGE (p)-[:RELATED_TO_SPEC]->(s)
+                """, name=proc['name'], spec_name=proc['related_specification'])
+            
+            # Create sub-procedure nodes and relationships
+            for sub in proc.get('sub_procedures', []):
+                session.run("""
+                    MERGE (p:Procedure {name: $main_name})
+                    MERGE (s:Procedure {name: $sub_name})
+                    SET s.type = $type,
+                        s.section = $section,
+                        s.description = $description
+                    MERGE (p)-[:HAS_SUB_PROCEDURE]->(s)
+                """, main_name=proc['name'], 
+                     sub_name=sub['name'],
+                     type=sub['type'], 
+                     section=sub['section'],
+                     description=sub['description'])
+
+def extract_and_store_procedures(pdf_dir: str, neo4j_driver) -> None:
+    """Extract procedures from PDFs and store them in Neo4j"""
+    # Read PDFs
+    documents = read_pdfs_from_directory(pdf_dir)
+    
+    # Process documents
+    processed_docs = process_documents(documents)
+    
+    # Extract all procedures
+    all_procedures = []
+    for doc in processed_docs:
+        all_procedures.extend(doc.get('procedures', []))
+    
+    # Store in Neo4j
+    store_procedures_in_neo4j(neo4j_driver, all_procedures)
+    
+    return all_procedures
 
 # Usage Example
 if __name__ == "__main__":
@@ -359,11 +519,21 @@ if __name__ == "__main__":
         console.print(f"[green]✅ Successfully processed {len(processed_docs)} documents.[/green]")
         console.print("[blue]💾 Storing data in Neo4j...[/blue]")
         
-        # Import the store_in_neo4j function from the correct module
-        from store_data_neo4j import store_in_neo4j
-        store_in_neo4j(processed_docs)
+        # Create Neo4j driver
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
+        
+        # Extract all procedures from processed documents
+        all_procedures = []
+        for doc in processed_docs:
+            all_procedures.extend(doc.get('procedures', []))
+        
+        # Store procedures in Neo4j
+        store_procedures_in_neo4j(driver, all_procedures)
         
         console.print("[green]✅ Successfully stored data in Neo4j![/green]")
+        
+        # Close Neo4j driver
+        driver.close()
         
     except Exception as e:
         console.print(f"[red]❌ Error: {str(e)}[/red]")

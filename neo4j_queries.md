@@ -93,6 +93,42 @@ WHERE p1.type = 'PROTOCOL' AND p2.type IN ['MESSAGE', 'PROCEDURE']
 RETURN path;
 ```
 
+## Specific Procedure Queries
+
+```cypher
+// Find the Attach procedure and all its direct relationships
+MATCH path = (n:Entity)-[r]-(p:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach'
+RETURN path;
+
+// Find all messages used in the Attach procedure
+MATCH path = (p:Entity)-[r:USES]->(m:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach' AND m.type = 'MESSAGE'
+RETURN p.name as Procedure, m.name as Message, r.parameters as Parameters;
+
+// Find network elements involved in Attach procedure
+MATCH path = (n:Entity)-[r:INITIATES|PERFORMS]->(p:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach' AND n.type = 'NETWORK_ELEMENT'
+RETURN n.name as NetworkElement, type(r) as Role, p.name as Procedure;
+
+// Find state transitions during Attach procedure
+MATCH path = (p:Entity)-[r1]->(s1:Entity)-[r2:TRANSITIONS_TO]->(s2:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach' AND s1.type = 'STATE'
+RETURN path;
+
+// Find complete Attach procedure flow with timing
+MATCH path = (n1:Entity)-[r1]->(p:Entity)-[r2]->(n2:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach'
+AND EXISTS(r1.timing) OR EXISTS(r2.timing)
+RETURN path;
+
+// Find error handling in Attach procedure
+MATCH path = (p:Entity)-[r1]->(e:Entity)-[r2]->(a:Entity)
+WHERE p.type = 'PROCEDURE' AND p.name CONTAINS 'Attach'
+AND e.type = 'EVENT' AND a.type = 'ACTION'
+RETURN path;
+```
+
 ## Usage Tips
 
 1. Access Neo4j Browser at `http://localhost:7474`
