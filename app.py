@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from utils.database import Neo4jConnection, ChromaDBConnection
 
 app = FastAPI()
 
@@ -11,6 +12,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize connections
+neo4j = Neo4jConnection()
+chroma = ChromaDBConnection()
 
 @app.get("/")
 async def root():

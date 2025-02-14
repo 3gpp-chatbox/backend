@@ -1,26 +1,24 @@
 # backend requirements
-fastapi>=0.115.0  # Backend framework
-uvicorn[standard]>=0.27.0  # ASGI server for FastAPI
-pydantic>=2.10.0  # Data validation
+fastapi==0.109.2  # Backend framework
+uvicorn[standard]==0.27.1  # ASGI server for FastAPI
+pydantic==2.6.1  # Data validation
 
 # Data Processing
-pypdf>=5.2.0  # PDF processing
-python-dotenv>=1.0.0  # Environment variables
-neo4j>=5.14.0  # Graph database
-
-# Knowledge Graph and Visualization
-networkx>=3.2.0  # Graph manipulation
-matplotlib>=3.8.0  # Graph visualization
+# PyMuPDF will be installed separately
+pypdf==3.17.1
+python-dotenv==1.0.1
 
 # Vector Database and Embeddings
-chromadb>=0.4.24  # Vector database
-langchain>=0.1.0  # LangChain framework
-langchain-google-genai>=0.0.11  # Google Generative AI integration
-google-generativeai>=0.4.0  # Google Generative AI
+chromadb==0.4.22
+neo4j==5.14.1
 
 # Logging and utilities
-rich>=13.7.0  # Better console output
-tqdm>=4.65.0  # Progress bars
+rich==13.7.0
+tqdm==4.66.1
+pathlib==1.0.1
+
+# Optional but recommended
+pytest==8.0.1  # For testing
 
 # to install all the requirements
 # pip install -r requirements.txt
