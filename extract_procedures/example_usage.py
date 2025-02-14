@@ -1,4 +1,4 @@
-from nas_graph_extractor import GraphExtractor
+from backend.extract_procedures.graph_extractor import GraphExtractor
 from docx import Document
 import os
 
