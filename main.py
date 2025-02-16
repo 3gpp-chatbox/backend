@@ -226,6 +226,33 @@ async def get_procedures():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/procedure/{procedure_id}")
+async def get_procedure_by_id(procedure_id: int):
+    """
+    Get a specific procedure by its ID from the database
+    """
+    try:
+        conn = sqlite3.connect(extractor.db_path)
+        c = conn.cursor()
+        c.execute('SELECT chunk_text, nodes, edges FROM chunk_results WHERE id = ?', (procedure_id,))
+        result = c.fetchone()
+        conn.close()
+        
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"Procedure with id {procedure_id} not found")
+            
+        chunk_text, nodes_json, edges_json = result
+        
+        return JSONResponse({
+            "id": procedure_id,
+            "chunk_text": chunk_text,
+            "nodes": json.loads(nodes_json),
+            "edges": json.loads(edges_json)
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
