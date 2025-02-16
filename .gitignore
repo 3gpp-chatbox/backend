@@ -8,6 +8,7 @@ ckeckapi.py
 .venv/
 venv/
 ENV/
+myenv/
 
 # ChromaDB files
 chroma_db/
