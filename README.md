@@ -1,6 +1,6 @@
 # 3GPP Document Analysis Backend
 
-This project provides a backend system for analyzing and querying 3GPP technical specification documents using vector databases and knowledge graphs.
+This project provides a backend system for analyzing and querying 3GPP technical specification documents using vector databases (ChromaDB) and knowledge graphs (Neo4j).
 
 ## Project Overview
 
@@ -30,8 +30,8 @@ This system processes 3GPP technical specification PDFs and stores their content
 
 - PDF document preprocessing and text extraction
 - Entity extraction from 3GPP specifications
-- Vector database storage using ChromaDB
-- Knowledge graph storage using Neo4j
+- Vector database storage using ChromaDB for semantic search
+- Knowledge graph storage using Neo4j for relationship queries
 - Flexible querying interface
 - FastAPI backend for frontend integration
 
@@ -40,6 +40,7 @@ This system processes 3GPP technical specification PDFs and stores their content
 - Python 3.8+
 - Neo4j Database (for knowledge graph storage)
 - ChromaDB (for vector storage)
+- Google API Key (for embeddings generation)
 
 ## Installation
 
@@ -61,49 +62,54 @@ This system processes 3GPP technical specification PDFs and stores their content
    pip install -r requirements.txt
    ```
 
-4. To deactivate the virtual environment when you're done:
-   ```bash
-   deactivate
-   ```
-
 ## Environment Setup
 
-Create a `.env` file in the root directory with the following configurations:
+1. Create a `.env` file in the root directory with the following configurations:
+   ```env
+   # Neo4j Configuration
+   NEO4J_URI=bolt://localhost:7687
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=your_password_here
 
-```env
-NEO4J_URI=your_neo4j_uri
-NEO4J_USERNAME=your_username
-NEO4J_PASSWORD=your_password
-CHROMA_PERSIST_DIRECTORY=path_to_chroma_storage
-```
+   # ChromaDB Configuration
+   CHROMA_PERSIST_DIRECTORY=./chroma_db
+   
+   # Google API for embeddings
+   GOOGLE_API_KEY=your_google_api_key_here
+   ```
+
+2. Set up Neo4j:
+   - Download and install [Neo4j Desktop](https://neo4j.com/download/)
+   - Create a new database
+   - Start the database
+   - Make sure the credentials match your `.env` file
 
 ## Usage
 
-1. **Preprocess PDFs**:
-   ```bash
-   python preprocess_pdfs.py
-   ```
+The system requires a specific order of operations:
 
-2. **Extract Entities**:
+1. **Store Document Embeddings in ChromaDB**:
+   ```bash
+   python store_data_chroma.py
+   ```
+   This creates vector embeddings of your documents for semantic search.
+
+2. **Extract and Store Entities in Neo4j**:
    ```bash
    python extract_3gpp_entities.py
    ```
+   This extracts entities and relationships from the documents and stores them in Neo4j.
 
-3. **Store Data**:
-   ```bash
-   python store_data_chroma.py  # For vector database
-   python store_data_neo4j.py   # For knowledge graph
-   ```
-
-4. **Query Data**:
+3. **Query Data** (after both storage steps are complete):
    ```bash
    python query_data.py
    ```
 
-5. **Run the API**:
+4. **Run the API**:
    ```bash
    uvicorn app:app --reload
    ```
+   Access the API documentation at `http://localhost:8000/docs`
 
 ## API Endpoints
 
@@ -112,6 +118,23 @@ The FastAPI backend provides several endpoints for querying and retrieving infor
 ## Neo4j Queries
 
 For detailed Neo4j query examples and patterns, refer to `neo4j_queries.md`.
+
+## Troubleshooting
+
+1. **Neo4j Connection Issues**:
+   - Ensure Neo4j is running
+   - Verify credentials in `.env`
+   - Check if port 7687 is accessible
+
+2. **ChromaDB Issues**:
+   - Verify Google API key is valid
+   - Check CHROMA_PERSIST_DIRECTORY exists
+   - Ensure enough disk space for embeddings
+
+3. **PDF Processing Issues**:
+   - Verify PDFs are in the data directory
+   - Check PDF file permissions
+   - Ensure PDFs are valid and not corrupted
 
 ## Contributing
 
