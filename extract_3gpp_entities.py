@@ -12,14 +12,14 @@ from tqdm import tqdm
 import hashlib
 from dotenv import load_dotenv
 from store_data_neo4j import KnowledgeGraph
-from utils.pdf_processor import PDFProcessor
+
 from utils.preprocessing import TextPreprocessor
 from utils.database import Neo4jConnection, ChromaDBConnection
 from utils.refined_extractor import RefinedExtractor
 from utils.validator import DataValidator
 from utils.query_interface import GraphQueryInterface
 import logging
-from utils.pdf_handler import PDFHandler
+
 
 # Configure logging
 logging.basicConfig(
