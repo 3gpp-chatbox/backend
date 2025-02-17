@@ -189,26 +189,33 @@ def extract_text_from_pdf(file_path: str) -> List[str]:
     return text_pages
 
 def semantic_chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
-    """Split text into semantically meaningful chunks using NLTK and LangChain"""
+    """Split text into semantically meaningful chunks optimized for 3GPP documents"""
     try:
         # First, try to split into sentences using punkt
         sentences = sent_tokenize(text)
     except LookupError:
         # Fallback to simple splitting if NLTK resources aren't available
         console.print("[yellow]Warning: NLTK sentence tokenizer not available, using simple splitting[/yellow]")
-        # Split on common sentence endings
         sentences = []
         for paragraph in text.split('\n'):
             for possible_sentence in re.split(r'(?<=[.!?])\s+', paragraph):
                 if possible_sentence.strip():
                     sentences.append(possible_sentence.strip())
     
-    # Create chunks using LangChain's RecursiveCharacterTextSplitter
+    # Create chunks using LangChain's RecursiveCharacterTextSplitter with 3GPP-specific separators
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=max_chunk_size,
         chunk_overlap=200,  # Overlap to maintain context
         length_function=len,
-        separators=["\n\n", "\n", ". ", " ", ""]
+        separators=[
+            "\n\n",  # Paragraph breaks
+            "\n",    # Line breaks
+            ".",     # Sentence endings
+            ";",     # Common in 3GPP for lists
+            ":",     # Common in 3GPP for definitions
+            " ",     # Word boundaries
+            ""       # Character level
+        ]
     )
     
     # Group sentences into initial chunks
@@ -216,49 +223,215 @@ def semantic_chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
     
     # Further process chunks to ensure semantic coherence
     processed_chunks = []
+    current_section = None
+    current_chunk = []
+    
     for chunk in chunks:
         # Clean the chunk
         chunk = clean_text(chunk)
         if not chunk:
             continue
-            
+        
+        # Check for section headings
+        lines = chunk.split('\n')
+        for line in lines:
+            if is_section_heading(line):
+                # Save previous chunk if it exists
+                if current_chunk:
+                    processed_text = '\n'.join(current_chunk)
+                    if len(processed_text) > 100:  # Minimum chunk size
+                        if current_section:
+                            processed_text = f"{current_section}\n{processed_text}"
+                        processed_chunks.append(processed_text)
+                current_section = line
+                current_chunk = []
+            else:
+                current_chunk.append(line)
+        
         # Get sentence embeddings if transformer is available
-        if sentence_transformer:
+        if sentence_transformer and current_chunk:
             try:
-                # Split chunk into sentences
-                chunk_sentences = sent_tokenize(chunk)
+                chunk_text = '\n'.join(current_chunk)
+                chunk_sentences = sent_tokenize(chunk_text)
                 
-                # Calculate embeddings silently
-                embeddings = sentence_transformer.encode(
-                    chunk_sentences,
-                    show_progress_bar=False,
-                    batch_size=32  # Adjust based on your memory
-                )
-                
-                # Calculate sentence similarities
-                similarities = np.dot(embeddings, embeddings.T)
-                
-                # Only keep sentences that are semantically related
-                coherent_sentences = []
-                prev_embedding = None
-                
-                for i, sentence in enumerate(chunk_sentences):
-                    if prev_embedding is None or np.dot(embeddings[i], prev_embedding) > 0.5:
-                        coherent_sentences.append(sentence)
-                        prev_embedding = embeddings[i]
-                
-                chunk = ' '.join(coherent_sentences)
+                if chunk_sentences:
+                    # Calculate embeddings silently
+                    embeddings = sentence_transformer.encode(
+                        chunk_sentences,
+                        show_progress_bar=False,
+                        batch_size=32
+                    )
+                    
+                    # Calculate sentence similarities
+                    similarities = np.dot(embeddings, embeddings.T)
+                    
+                    # Only keep sentences that are semantically related
+                    coherent_sentences = []
+                    prev_embedding = None
+                    
+                    for i, sentence in enumerate(chunk_sentences):
+                        if prev_embedding is None or np.dot(embeddings[i], prev_embedding) > 0.5:
+                            coherent_sentences.append(sentence)
+                            prev_embedding = embeddings[i]
+                    
+                    if coherent_sentences:
+                        processed_text = ' '.join(coherent_sentences)
+                        if len(processed_text) > 100:  # Minimum chunk size
+                            if current_section:
+                                processed_text = f"{current_section}\n{processed_text}"
+                            processed_chunks.append(processed_text)
             except Exception as e:
                 console.print(f"[yellow]Warning: Error in semantic processing: {str(e)}[/yellow]")
                 # Continue with the original chunk if semantic processing fails
-        
-        if chunk and len(chunk) > 100:  # Minimum chunk size
-            processed_chunks.append(chunk)
+                if current_chunk:
+                    processed_text = '\n'.join(current_chunk)
+                    if len(processed_text) > 100:
+                        if current_section:
+                            processed_text = f"{current_section}\n{processed_text}"
+                        processed_chunks.append(processed_text)
+    
+    # Add the last chunk if it exists
+    if current_chunk:
+        processed_text = '\n'.join(current_chunk)
+        if len(processed_text) > 100:
+            if current_section:
+                processed_text = f"{current_section}\n{processed_text}"
+            processed_chunks.append(processed_text)
     
     return processed_chunks
 
+def extract_attach_procedure_elements(text: str) -> Dict[str, List[str]]:
+    """Extract specific elements related to the attach procedure"""
+    elements = {
+        'states': [],
+        'actions': [],
+        'events': [],
+        'parameters': [],
+        'flow_steps': [],
+        'conditionals': [],
+        'metadata': []
+    }
+    
+    # State patterns for attach procedure
+    state_patterns = [
+        r'(?:UE|MS)\s+(?:in|enters?|transitions?\s+to)\s+EMM-(?:DEREGISTERED|REGISTERED)(?:\.[\w-]+)?',
+        r'(?:UE|MS)\s+(?:is|becomes?)\s+(?:attached|detached)',
+        r'EMM-(?:REGISTERED|DEREGISTERED)\.(?:NORMAL-SERVICE|ATTEMPTING-TO-ATTACH|LIMITED-SERVICE)',
+        r'(?:MME|eNB)\s+(?:in|enters?)\s+(?:CONNECTED|IDLE)\s+state',
+        r'(?:AUTHENTICATION|SECURITY MODE|ATTACH)\s+(?:INITIATED|IN_PROGRESS|COMPLETED)',
+        r'(?:UE|MS)\s+(?:powers?\s+on|starts?\s+up|boots?\s+up)',
+        r'(?:UE|MS)\s+(?:not\s+attached|no\s+network\s+connection)',
+        r'(?:UE|MS)\s+(?:can\s+access|has\s+access\s+to)\s+(?:services|network)',
+        r'(?:UE|MS)\s+(?:gains?|obtains?)\s+(?:service|network)\s+access',
+        r'(?:UE|MS)\s+(?:ready\s+for|available\s+for)\s+service'
+    ]
+    
+    # Action patterns for attach procedure
+    action_patterns = [
+        r'(?:UE|MS)\s+(?:sends?|initiates?|transmits?)\s+ATTACH\s+REQUEST',
+        r'MME\s+(?:initiates?|starts?)\s+authentication(?:\s+procedure)?',
+        r'MME\s+(?:sends?|transmits?)\s+SECURITY\s+MODE\s+COMMAND',
+        r'MME\s+(?:sends?|transmits?)\s+ATTACH\s+ACCEPT',
+        r'(?:UE|MS)\s+(?:sends?|responds?\s+with)\s+ATTACH\s+COMPLETE',
+        r'(?:generate|verify)\s+(?:AUTH|AUTN|RAND|RES|XRES)',
+        r'(?:derive|compute)\s+(?:K_ASME|NAS\s+keys)'
+    ]
+    
+    # Event patterns for attach procedure
+    event_patterns = [
+        r'(?:upon|when|after)\s+receiving\s+ATTACH\s+REQUEST',
+        r'(?:on|upon)\s+successful\s+authentication',
+        r'(?:after|when)\s+security\s+mode\s+(?:complete|success)',
+        r'T3410\s+(?:starts?|expires?|stops?)',  # Attach attempt timer
+        r'T3411\s+(?:starts?|expires?|stops?)',  # Attach retry timer
+        r'T3450\s+(?:starts?|expires?|stops?)'   # Attach accept timer
+    ]
+    
+    # Parameter patterns for attach procedure
+    parameter_patterns = [
+        r'(?:IMSI|GUTI|TMSI|OLD\s+GUTI)',
+        r'(?:TAI|LAI|RAI|PLMN)',
+        r'(?:KSI|eKSI|KASME)',
+        r'(?:AUTH|AUTN|RAND|RES|XRES)',
+        r'(?:NAS-MAC|NAS\s+COUNT)',
+        r'UE\s+(?:network|security)\s+capabilities',
+        r'(?:EPS|DEFAULT)\s+bearer\s+context',
+        r'ESM\s+message\s+container'
+    ]
+    
+    # Flow step patterns for attach procedure
+    flow_patterns = [
+        r'Step\s+\d+[:.]\s*(?:The\s+)?(?:UE|MME)\s+(?:sends?|performs?)',
+        r'(?:First|Then|Next|Finally)\s+(?:the\s+)?(?:UE|MME)\s+(?:shall|must|may)',
+        r'(?:After|Before|Following)\s+(?:the|this)\s+(?:step|procedure|message)',
+        r'(?:If|When|In\s+case)\s+(?:the|this)\s+(?:condition|check|verification)\s+(?:succeeds|fails)'
+    ]
+    
+    # Conditional patterns for attach procedure
+    conditional_patterns = [
+        r'if\s+authentication\s+(?:successful|failed)',
+        r'when\s+security\s+mode\s+(?:completed|rejected)',
+        r'if\s+(?:IMSI|GUTI|TMSI)\s+is\s+(?:valid|invalid|available)',
+        r'if\s+UE\s+(?:is|was)\s+in\s+EMM-(?:REGISTERED|DEREGISTERED)',
+        r'when\s+default\s+bearer\s+is\s+(?:established|activated)',
+        r'if\s+T34[0-9]+\s+(?:expires|running)'
+    ]
+    
+    # Metadata patterns for attach procedure
+    metadata_patterns = [
+        r'Message\s+Type:\s*(?:0x[0-9A-F]{2}|[0-9]+)',
+        r'Protocol\s+(?:Discriminator|Identifier):\s*(?:0x[0-9A-F]{2}|[0-9]+)',
+        r'T34[0-9]+\s*=\s*\d+\s*(?:sec|seconds)',
+        r'Message\s+ID:\s*(?:0x[0-9A-F]{4}|[0-9]+)',
+        r'EMM\s+cause:\s*(?:0x[0-9A-F]{2}|[0-9]+)',
+        r'(?:NAS|EPS)\s+security\s+context:\s*\d+'
+    ]
+    
+    # Extract elements using patterns
+    for line in text.split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Extract states
+        for pattern in state_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['states'].append(line)
+                
+        # Extract actions
+        for pattern in action_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['actions'].append(line)
+                
+        # Extract events
+        for pattern in event_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['events'].append(line)
+                
+        # Extract parameters
+        for pattern in parameter_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['parameters'].append(line)
+                
+        # Extract flow steps
+        for pattern in flow_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['flow_steps'].append(line)
+                
+        # Extract conditionals
+        for pattern in conditional_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['conditionals'].append(line)
+                
+        # Extract metadata
+        for pattern in metadata_patterns:
+            if re.search(pattern, line, re.IGNORECASE):
+                elements['metadata'].append(line)
+    
+    return elements
+
 def clean_text(text: str) -> str:
-    """Enhanced text cleaning using NLTK"""
+    """Enhanced text cleaning specifically for 3GPP attach procedure"""
     try:
         if not isinstance(text, str):
             text = str(text, errors='ignore')
@@ -266,6 +439,29 @@ def clean_text(text: str) -> str:
         # Skip title pages and TOC
         if is_title_page_content(text) or is_toc_content(text):
             return ""
+        
+        # Extract attach procedure elements
+        elements = extract_attach_procedure_elements(text)
+        
+        # 3GPP-specific cleanups
+        text = re.sub(r'3GPP\s+TS\s+\d+\.\d+\.\d+\s+V\d+\.\d+\.\d+', '', text)  # Remove spec numbers
+        text = re.sub(r'Release\s+\d+', '', text)  # Remove release numbers
+        text = re.sub(r'(?<=\d)[\-\s](?=G)', '', text)  # Fix "5-G" to "5G"
+        text = re.sub(r'(?<=\d)[\-\s](?=GPP)', '', text)  # Fix "3-GPP" to "3GPP"
+        
+        # Fix common 3GPP terms
+        text = re.sub(r'e\s*-?\s*UTRAN', 'E-UTRAN', text, flags=re.IGNORECASE)
+        text = re.sub(r'e\s*-?\s*NodeB', 'eNodeB', text, flags=re.IGNORECASE)
+        text = re.sub(r'g\s*-?\s*NodeB', 'gNodeB', text, flags=re.IGNORECASE)
+        text = re.sub(r'(?i)ue\s+equipment', 'UE', text)
+        
+        # Fix attach procedure specific terms
+        text = re.sub(r'(?i)attach\s+request', 'ATTACH REQUEST', text)
+        text = re.sub(r'(?i)attach\s+accept', 'ATTACH ACCEPT', text)
+        text = re.sub(r'(?i)attach\s+complete', 'ATTACH COMPLETE', text)
+        text = re.sub(r'(?i)attach\s+reject', 'ATTACH REJECT', text)
+        text = re.sub(r'(?i)security\s+mode\s+command', 'SECURITY MODE COMMAND', text)
+        text = re.sub(r'(?i)authentication\s+request', 'AUTHENTICATION REQUEST', text)
         
         try:
             # Try to tokenize into sentences using NLTK
@@ -278,13 +474,17 @@ def clean_text(text: str) -> str:
         
         for sentence in sentences:
             # Skip short sentences and known patterns
-            if len(sentence) < 5 or any(pattern in sentence.lower() for pattern in ['page', 'etsi', '3gpp']):
+            if len(sentence) < 5 or any(pattern in sentence.lower() for pattern in ['page', 'etsi', '3gpp ts']):
                 continue
             
             # Remove common PDF artifacts and normalize text
             sentence = re.sub(r'\bPage\s+\d+\s+of\s+\d+\b', '', sentence)
             sentence = re.sub(r'\.{3,}', '...', sentence)
             sentence = re.sub(r'\s+', ' ', sentence)
+            
+            # Fix section references
+            sentence = re.sub(r'clause\s+(\d+\.[\d.]*)', r'Clause \1', sentence, flags=re.IGNORECASE)
+            sentence = re.sub(r'section\s+(\d+\.[\d.]*)', r'Section \1', sentence, flags=re.IGNORECASE)
             
             # Remove lines that are just numbers or section numbers
             if not sentence.strip().isdigit() and not re.match(r'^\d+(\.\d+)*$', sentence.strip()):
@@ -304,45 +504,95 @@ def clean_text(text: str) -> str:
         return ""
 
 def is_section_heading(line: str) -> bool:
-    """Check if a line is a section heading."""
-    # Common 3GPP section heading patterns
+    """Check if a line is a section heading in 3GPP documents."""
+    # 3GPP-specific section heading patterns
     heading_patterns = [
         r'^\d+(?:\.\d+)*\s+[A-Z]',  # Numbered sections (e.g., "4.1 Overview")
-        r'^Annex [A-Z]',  # Annexes
-        r'^Table \d+[\-\.]?\d*',  # Tables with possible subsections
-        r'^Figure \d+[\-\.]?\d*',  # Figures with possible subsections
+        r'^Annex [A-Z](?:\s+\([Nn]ormative|[Ii]nformative\))?',  # Annexes with optional type
+        r'^Table \d+(?:\.\d+)*(?:-\d+)*',  # Tables with possible subsections or ranges
+        r'^Figure \d+(?:\.\d+)*(?:-\d+)*',  # Figures with possible subsections or ranges
         r'^[A-Z][A-Za-z\s]+$',  # All caps or Title Case headings
+        r'^Scope$',  # Common 3GPP sections
+        r'^References$',
+        r'^Definitions(?:,\s+symbols\s+and\s+abbreviations)?$',
+        r'^Abbreviations$',
+        r'^General$',
+        r'^Introduction$',
+        r'^Procedures?$',
+        r'^Requirements?$'
     ]
     
     line = line.strip()
-    return any(re.match(pattern, line) for pattern in heading_patterns) and len(line) < 100
+    
+    # Skip lines that are too long to be headings
+    if len(line) > 100:
+        return False
+        
+    # Skip lines that are likely page headers or footers
+    if re.search(r'3GPP\s+TS|Page|Release', line):
+        return False
+        
+    return any(re.match(pattern, line) for pattern in heading_patterns)
 
 def chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
-    """Split text into meaningful chunks based on 3GPP document structure."""
+    """Split text into meaningful chunks optimized for attach procedure flow"""
     chunks = []
     current_chunk = []
     current_heading = None
     current_size = 0
     
+    # Extract attach procedure elements first
+    elements = extract_attach_procedure_elements(text)
+    
     # Split into lines while preserving paragraph structure
     lines = text.split('\n')
+    in_attach_procedure = False
     
     for line in lines:
         line = line.strip()
         if not line:
             continue
-            
+        
+        # Detect start of attach procedure section
+        if re.search(r'(?i)attach\s+procedure|EPS\s+attach|initial\s+attach', line):
+            in_attach_procedure = True
+            if current_chunk and current_size > 50:
+                chunk_text = '\n'.join(current_chunk)
+                if current_heading:
+                    chunk_text = f"{current_heading}\n{chunk_text}"
+                chunks.append(chunk_text)
+            current_chunk = [line]
+            current_heading = line
+            current_size = len(line)
+            continue
+        
+        # Detect end of attach procedure section
+        if in_attach_procedure and re.search(r'(?i)end\s+of\s+attach|completion\s+of\s+attach', line):
+            in_attach_procedure = False
+            if current_chunk:
+                chunk_text = '\n'.join(current_chunk)
+                if current_heading:
+                    chunk_text = f"{current_heading}\n{chunk_text}"
+                chunks.append(chunk_text)
+            current_chunk = []
+            current_heading = None
+            current_size = 0
+            continue
+        
         # Skip unnecessary sections
         if is_index_or_appendix_content(line):
             if current_chunk and current_size > 50:
-                chunks.append('\n'.join(current_chunk))
+                chunk_text = '\n'.join(current_chunk)
+                if current_heading:
+                    chunk_text = f"{current_heading}\n{chunk_text}"
+                chunks.append(chunk_text)
             current_chunk = []
             current_size = 0
             continue
         
         if is_section_heading(line):
             # Save previous chunk if it exists
-            if current_chunk and current_size > 50:  # Minimum chunk size
+            if current_chunk and current_size > 50:
                 chunk_text = '\n'.join(current_chunk)
                 if current_heading:
                     chunk_text = f"{current_heading}\n{chunk_text}"
@@ -355,18 +605,44 @@ def chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
             # Skip lines that are just numbers or very short
             if len(line) <= 5 or line.isdigit():
                 continue
-                
-            current_chunk.append(line)
-            current_size += len(line)
             
-            # Split if chunk is too large, but try to break at paragraph boundaries
-            if current_size > max_chunk_size:
-                chunk_text = '\n'.join(current_chunk)
-                if current_heading:
-                    chunk_text = f"{current_heading}\n{chunk_text}"
-                chunks.append(chunk_text)
-                current_chunk = []
-                current_size = 0
+            # Check if line contains any attach procedure elements
+            is_attach_element = False
+            for element_type, element_list in elements.items():
+                if any(element in line for element in element_list):
+                    is_attach_element = True
+                    break
+            
+            if is_attach_element or in_attach_procedure:
+                current_chunk.append(line)
+                current_size += len(line)
+                
+                # Split if chunk is too large, but try to break at procedure boundaries
+                if current_size > max_chunk_size:
+                    # Try to find a good breaking point
+                    break_point = -1
+                    for i, l in enumerate(current_chunk):
+                        if re.search(r'(?i)step\s+\d+|then|next|finally', l):
+                            break_point = i
+                    
+                    if break_point != -1:
+                        # Split at the procedure step
+                        first_part = current_chunk[:break_point]
+                        if first_part:
+                            chunk_text = '\n'.join(first_part)
+                            if current_heading:
+                                chunk_text = f"{current_heading}\n{chunk_text}"
+                            chunks.append(chunk_text)
+                        current_chunk = current_chunk[break_point:]
+                        current_size = sum(len(l) for l in current_chunk)
+                    else:
+                        # No good breaking point found, split as is
+                        chunk_text = '\n'.join(current_chunk)
+                        if current_heading:
+                            chunk_text = f"{current_heading}\n{chunk_text}"
+                        chunks.append(chunk_text)
+                        current_chunk = []
+                        current_size = 0
     
     # Add the last chunk if it's substantial
     if current_chunk and current_size > 50:
@@ -380,6 +656,24 @@ def chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
              if len(chunk) > 100  # Minimum chunk size
              and not is_toc_content(chunk)
              and not is_title_page_content(chunk)]
+    
+    # Sort chunks to ensure attach procedure flow is preserved
+    def get_chunk_order(chunk):
+        if re.search(r'(?i)initial\s+attach|attach\s+procedure', chunk):
+            return 0
+        if re.search(r'(?i)attach\s+request', chunk):
+            return 1
+        if re.search(r'(?i)authentication', chunk):
+            return 2
+        if re.search(r'(?i)security\s+mode', chunk):
+            return 3
+        if re.search(r'(?i)attach\s+accept', chunk):
+            return 4
+        if re.search(r'(?i)attach\s+complete', chunk):
+            return 5
+        return 6
+    
+    chunks.sort(key=get_chunk_order)
     
     return chunks
 
@@ -460,7 +754,7 @@ def read_pdfs_from_directory(directory: str) -> List[Dict[str, str]]:
 if __name__ == "__main__":
     try:
         console.print("[bold blue]Starting PDF preprocessing...[/bold blue]")
-        data_directory = "data"
+        data_directory = os.path.join("backend", "data")
         documents = read_pdfs_from_directory(data_directory)
         console.print(f"[bold green]✅ Successfully processed {len(documents)} document chunks from {data_directory}[/bold green]")
     except Exception as e:

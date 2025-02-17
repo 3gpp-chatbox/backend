@@ -343,6 +343,186 @@ class KnowledgeGraph:
             
             prev_step = step_name
 
+    def create_node(self, label: str, properties: Dict):
+        """Create a node with the given label and properties"""
+        with self.driver.session() as session:
+            property_string = ", ".join(f"{k}: ${k}" for k in properties.keys())
+            query = f"""
+            MERGE (n:{label} {{{property_string}}})
+            """
+            session.run(query, **properties)
+
+    def create_5g_registration_procedure(self):
+        """Create the 5G Registration procedure in Neo4j"""
+        # Clear existing procedure data
+        with self.driver.session() as session:
+            session.run("""
+            MATCH (n) WHERE n:Action OR n:Parameter
+            DETACH DELETE n
+            """)
+        
+        # Define the procedure steps
+        steps = [
+            {
+                "step": 1,
+                "actor": "UE",
+                "action": "sends Registration Request",
+                "parameters": ["SUCI", "5GS registration type", "5GMM capability"],
+                "description": "UE initiates registration by sending Registration Request with identity and capabilities"
+            },
+            {
+                "step": 2,
+                "actor": "AMF",
+                "action": "initiates Primary Authentication",
+                "parameters": ["5G-AKA", "SUCI", "SUPI"],
+                "description": "AMF starts authentication procedure to verify UE identity"
+            },
+            {
+                "step": 3,
+                "actor": "AMF",
+                "action": "sends Security Mode Command",
+                "parameters": ["UE security capability", "5G NAS security algorithms"],
+                "description": "AMF activates NAS security with the UE"
+            },
+            {
+                "step": 4,
+                "actor": "UE",
+                "action": "sends Security Mode Complete",
+                "parameters": ["IMEISV", "NAS-MAC"],
+                "description": "UE confirms security activation and provides equipment identity if requested"
+            },
+            {
+                "step": 5,
+                "actor": "AMF",
+                "action": "sends Registration Accept",
+                "parameters": ["5G-GUTI", "Registration result", "Allowed NSSAI"],
+                "description": "AMF accepts registration and provides temporary identity and allowed services"
+            },
+            {
+                "step": 6,
+                "actor": "UE",
+                "action": "sends Registration Complete",
+                "parameters": ["5G-GUTI"],
+                "description": "UE acknowledges registration completion and new temporary identity"
+            }
+        ]
+        
+        # Create nodes and relationships for each step
+        prev_action = None
+        for step in steps:
+            # Create Action node
+            action_props = {
+                "name": f"{step['actor']} {step['action']}",
+                "actor": step['actor'],
+                "description": step['description'],
+                "step_number": step['step']
+            }
+            self.create_node("Action", action_props)
+            
+            # Create Parameter nodes and relationships
+            for param in step['parameters']:
+                param_props = {
+                    "name": param,
+                    "type": "5G_PARAMETER"
+                }
+                self.create_node("Parameter", param_props)
+                self.create_relationship(
+                    "Action", action_props["name"],
+                    "USES_PARAMETER",
+                    "Parameter", param
+                )
+            
+            # Create relationship with previous step
+            if prev_action:
+                self.create_relationship(
+                    "Action", prev_action["name"],
+                    "TRIGGERS",
+                    "Action", action_props["name"]
+                )
+            
+            prev_action = action_props
+
+    def store_procedure_data(self, entities: Dict[str, List[str]], text: str):
+        """Store procedure data extracted from text"""
+        try:
+            # Extract procedure steps
+            steps = []
+            step_number = 1
+            
+            # Look for procedure steps in text
+            step_pattern = r'(?:Step|step)\s+(\d+)[:.]\s*([^.!?\n]+)'
+            matches = re.finditer(step_pattern, text, re.IGNORECASE)
+            
+            for match in matches:
+                step_num = int(match.group(1))
+                step_text = match.group(2).strip()
+                
+                # Get context around the step
+                start = max(0, match.start() - 100)
+                end = min(len(text), match.end() + 100)
+                context = text[start:end].strip()
+                
+                # Determine actor (UE or AMF)
+                actor = "UE" if "UE" in step_text else "AMF" if "AMF" in step_text else "System"
+                
+                # Extract parameters mentioned in this step
+                parameters = []
+                for param in entities.get("5G_PARAMETER", []):
+                    if param in context:
+                        parameters.append(param)
+                
+                steps.append({
+                    "step_number": step_num,
+                    "actor": actor,
+                    "action": step_text,
+                    "parameters": parameters,
+                    "description": context
+                })
+                step_number += 1
+            
+            # Sort steps by number
+            steps.sort(key=lambda x: x["step_number"])
+            
+            # Store steps in Neo4j
+            prev_action = None
+            for step in steps:
+                # Create Action node
+                action_props = {
+                    "name": f"{step['actor']} {step['action']}",
+                    "actor": step['actor'],
+                    "description": step['description'],
+                    "step_number": step['step_number']
+                }
+                self.create_node("Action", action_props)
+                
+                # Create Parameter nodes and relationships
+                for param in step['parameters']:
+                    param_props = {
+                        "name": param,
+                        "type": "5G_PARAMETER"
+                    }
+                    self.create_node("Parameter", param_props)
+                    self.create_relationship(
+                        "Action", action_props["name"],
+                        "USES_PARAMETER",
+                        "Parameter", param
+                    )
+                
+                # Create relationship with previous step
+                if prev_action:
+                    self.create_relationship(
+                        "Action", prev_action["name"],
+                        "TRIGGERS",
+                        "Action", action_props["name"]
+                    )
+                
+                prev_action = action_props
+            
+            return True
+        except Exception as e:
+            print(f"Error storing procedure data: {str(e)}")
+            return False
+
 def extract_text_from_pdfs(directory: str) -> List[Dict[str, str]]:
     """Extracts text from PDFs in a given directory"""
     documents = []
@@ -864,16 +1044,30 @@ def store_in_neo4j(documents: List[Dict]):
         graph.close()
 
 if __name__ == "__main__":
-    DATA_DIR = "data"
-    
-    print("📂 Extracting text from PDFs...")
-    documents = extract_text_from_pdfs(DATA_DIR)
-
-    if not documents:
-        print("❌ No documents found.")
-    else:
-        print(f"✅ Extracted {len(documents)} documents.")
-
-        print(" Storing entities & relationships in Neo4j...")
-        store_in_neo4j(documents)
-        print("✅ Data successfully stored in Neo4j!")
+    try:
+        # Initialize Neo4j connection
+        graph = KnowledgeGraph(
+            uri=os.getenv("NEO4J_URI", "bolt://localhost:7687"),
+            user=os.getenv("NEO4J_USERNAME", "neo4j"),
+            password=os.getenv("NEO4J_PASSWORD")
+        )
+        
+        # Extract text from PDFs
+        print("📂 Extracting text from PDFs...")
+        documents = extract_text_from_pdfs("data")
+        
+        if not documents:
+            print("❌ No documents found.")
+        else:
+            print(f"✅ Found {len(documents)} documents")
+            
+            # Process and store documents
+            print("💾 Processing and storing document data...")
+            graph.process_and_store_documents(documents)
+            print("✅ Successfully processed and stored document data!")
+        
+        # Close connection
+        graph.close()
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")

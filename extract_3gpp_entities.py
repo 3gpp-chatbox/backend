@@ -12,6 +12,7 @@ from tqdm import tqdm
 import hashlib
 from dotenv import load_dotenv
 from store_data_neo4j import KnowledgeGraph
+from generate_mermaid import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 import logging
 
 # Configure logging
@@ -115,82 +116,81 @@ def save_cache(cache: Dict):
 
 class ThreeGPPEntityExtractor:
     def __init__(self):
-        # Core regex patterns for 3GPP NAS domain
+        # Core regex patterns for 3GPP NAS domain with focus on 5G Registration
         self.patterns = {
-            # Network Elements
-            "NETWORK_ELEMENT": [
-                r'\b(?:UE|AMF|SMF|UDM|AUSF|SEAF|MME|gNB|ng-eNB)\b',
-                r'\b(?:Access and Mobility Management Function|Session Management Function)\b',
-                r'\b(?:User Equipment|Authentication Server Function|Security Anchor Function)\b',
-                r'\b(?:Next Generation Node B|Next Generation eNodeB)\b'
+            # 5G Registration specific patterns
+            "REGISTRATION_PROCEDURE": [
+                r'(?:Initial|Mobility|Periodic|Emergency)\s+Registration\s+(?:procedure|Procedure)',
+                r'Registration\s+(?:Request|Accept|Complete|Reject)',
+                r'(?:UE|AMF)-initiated\s+Registration',
+                r'5G(?:S|MM)\s+Registration'
             ],
             
-            # NAS Message Categories
-            "MM_MESSAGE": [
-                r'\b(?:Attach|Detach)\s+(?:Request|Accept|Complete|Reject)\b',
-                r'\bTracking\s+Area\s+Update\s+Request\b',
-                r'\bService\s+Request\b',
-                r'\bIdentity\s+(?:Request|Response)\b'
-            ],
-            "SM_MESSAGE": [
-                r'\bPDU\s+Session\s+(?:Establishment|Release|Modification)\s+(?:Request|Accept|Reject)\b',
-                r'\bBearer\s+Resource\s+Modification\s+Request\b'
-            ],
-            "SECURITY_MESSAGE": [
-                r'\bAuthentication\s+(?:Request|Response)\b',
-                r'\bSecurity\s+Mode\s+Command\b',
-                r'\bIntegrity\s+Protection\s+(?:Activation|Command)\b',
-                r'\bCiphering\s+(?:Mode|Activation)\b'
+            # 5G States
+            "5G_STATE": [
+                r'5GMM-(?:REGISTERED|DEREGISTERED|IDLE|CONNECTED)',
+                r'5GMM-(?:REGISTERED)\.(?:NORMAL-SERVICE|UPDATE-NEEDED|ATTEMPTING-TO-UPDATE|LIMITED-SERVICE)',
+                r'5GMM-(?:DEREGISTERED)\.(?:NORMAL-SERVICE|ATTEMPTING-REGISTRATION|LIMITED-SERVICE|NO-CELL-AVAILABLE)',
+                r'RM-(?:REGISTERED|DEREGISTERED)'
             ],
             
-            # State Machines
-            "STATE_MACHINE": [
-                r'\bRRC-(?:CONNECTED|IDLE)\b',
-                r'\b(?:REGISTERED|DEREGISTERED)\b',
-                r'\bCM-(?:CONNECTED|IDLE)\b',
-                r'\bPDU\s+Session\s+(?:ACTIVE|INACTIVE)\b'
+            # 5G Network Elements
+            "5G_NETWORK_ELEMENT": [
+                r'(?:AMF|SMF|UDM|AUSF|SEAF|UPF|gNB|ng-eNB)',
+                r'Access and Mobility Management Function',
+                r'Session Management Function',
+                r'Authentication Server Function',
+                r'Security Anchor Function'
             ],
             
-            # Security Mechanisms
-            "SECURITY_ALGORITHM": [
-                r'\bEAP-AKA\b',
-                r'\b5G-AKA\b',
-                r'\bSUCI/SUPI\s+protection\b',
-                r'\bIntegrity\s+Protection\b',
-                r'\bNAS\s+Encryption\b'
+            # 5G Messages
+            "5G_MESSAGE": [
+                r'Registration\s+(?:Request|Accept|Complete|Reject)',
+                r'Authentication\s+(?:Request|Response|Result|Reject)',
+                r'Security Mode\s+(?:Command|Complete|Reject)',
+                r'Identity\s+(?:Request|Response)',
+                r'Configuration Update\s+Command'
             ],
             
-            # NAS Timers
-            "NAS_TIMER": [
-                r'\bT3(?:412|513|550)\b',  # Specific important timers
-                r'\bT3[0-9]{3}[a-z]?\b',  # Generic timer pattern
-                r'\bT3(?:510|511|512|513|515|516|517|520|522|525|540)\b',  # 5G Timers
-                r'\bT3(?:410|411|412|413|415|416|417|420|421|423|440)\b'   # EPS Timers
+            # 5G Parameters
+            "5G_PARAMETER": [
+                r'5G-GUTI',
+                r'SUCI',
+                r'SUPI',
+                r'5G-S-TMSI',
+                r'PEI',
+                r'(?:Allowed|Rejected)\s+NSSAI',
+                r'(?:Request|Configured)\s+NSSAI',
+                r'TAI',
+                r'5GS\s+(?:registration|update)\s+type',
+                r'5GMM\s+capability',
+                r'UE\s+security\s+capability'
             ],
             
-            # NAS Identifiers
-            "NAS_IDENTIFIER": [
-                r'\b(?:5G-)?GUTI\b',
-                r'\bSUCI\b',
-                r'\bSUPI\b',
-                r'\bS-TMSI\b',
-                r'\b(?:5G-)?S-TMSI\b',
-                r'\bIMSI\b',
-                r'\bIMEI(?:-SV)?\b',
-                r'\bPEI\b'
+            # 5G Security
+            "5G_SECURITY": [
+                r'5G-(?:AKA|EAP)',
+                r'SUCI/SUPI\s+de-concealment',
+                r'5G\s+security\s+context',
+                r'5G\s+NAS\s+security',
+                r'KAMF',
+                r'5G\s+(?:integrity|ciphering)\s+key'
             ],
             
-            # NAS Procedures
-            "PROCEDURE": [
-                # Main Procedures
-                r'\b(?:Initial|Mobility|Periodic|Emergency)\s+Registration\s+Procedure\b',
-                r'\b(?:UE|Network)-initiated\s+De-registration\s+Procedure\b',
-                r'\b(?:Service\s+Request|PDU\s+Session\s+Establishment)\s+Procedure\b',
-                r'\b(?:Handover|Tracking Area Update)\s+Procedure\b',
-                # Sub-procedures
-                r'\b(?:Authentication|Security Mode Control|Identity)\s+Procedure\b',
-                r'\b(?:UE Configuration Update|QoS Flow Establishment)\s+Procedure\b',
-                r'\b(?:PDU Session Resource Setup|Service Accept|Service Reject)\s+Procedure\b'
+            # 5G Timers
+            "5G_TIMER": [
+                r'T3(?:510|511|512|513|515|516|517|520|522|525|540)',
+                r'Mobile\s+reachable\s+timer',
+                r'Implicit\s+de-registration\s+timer'
+            ],
+            
+            # Procedure Flow Steps
+            "PROCEDURE_STEP": [
+                r'(?:Step|step)\s+(\d+)[:.]\s*([^.!?\n]+)',
+                r'(?:^|\n)\s*(\d+)[).]\s*([^.!?\n]+)',
+                r'(?:First|Then|Next|Finally)\s*[,.]\s*([^.!?\n]+)',
+                r'(?:shall|must|will)\s+(?:then|subsequently|afterwards)\s+([^.!?\n]+)',
+                r'(?:consists of|includes|contains)\s+(?:the following|these)\s+steps?:\s*([^.!?\n]+)'
             ]
         }
         
@@ -200,56 +200,52 @@ class ThreeGPPEntityExtractor:
             for entity_type, patterns in self.patterns.items()
         }
 
-        # Known procedure relationships from multiple 3GPP specifications
-        self.known_procedures = {
-            # TS 24.501 (5G NAS) Procedures
-            "Initial Registration Procedure": {
-                "section": "5.5.1.2",
-                "specification": "TS 24.501",
-                "description": "Register a UE with the network for 5GS services",
-                "sub_procedures": [
-                    ("Authentication Procedure", "5.4.1", "Primary and secondary authentication of the UE"),
-                    ("Security Mode Control Procedure", "5.4.2", "Activate NAS security between UE and network"),
-                    ("UE Configuration Update Procedure", "5.4.4", "Update UE configuration information")
-                ]
-            },
-            "Mobility Registration Procedure": {
-                "section": "5.5.1.3",
-                "specification": "TS 24.501",
-                "description": "Handle mobility and periodic updates",
-                "sub_procedures": [
-                    ("Authentication Procedure", "5.4.1", "Re-authentication during mobility"),
-                    ("Security Mode Control Procedure", "5.4.2", "Security context handling during mobility")
-                ]
-            },
-            "Deregistration Procedure": {
-                "section": "5.5.2",
-                "specification": "TS 24.501",
-                "description": "Detach UE from the network",
-                "sub_procedures": [
-                    ("UE-initiated Deregistration Procedure", "5.5.2.2", "UE requests to deregister from network"),
-                    ("Network-initiated Deregistration Procedure", "5.5.2.3", "Network requests UE to deregister")
-                ]
-            },
-            "Service Request Procedure": {
-                "section": "5.6.1",
-                "specification": "TS 24.501",
-                "description": "Request services from the network in CM-IDLE state",
-                "sub_procedures": [
-                    ("Service Accept Procedure", "5.6.1.4", "Network accepts the service request"),
-                    ("Service Reject Procedure", "5.6.1.5", "Network rejects the service request"),
-                    ("Authentication Procedure", "5.4.1.3", "Authentication during service request")
-                ]
-            },
-            "PDU Session Establishment": {
-                "section": "6.4.1",
-                "specification": "TS 24.501",
-                "description": "Establish a PDU session for data connectivity",
-                "sub_procedures": [
-                    ("QoS Flow Establishment", "6.2.1", "Establish QoS flows for the PDU session"),
-                    ("PDU Session Resource Setup", "6.4.1.2", "Setup network resources for PDU session")
-                ]
-            }
+        # Known 5G Registration procedure steps
+        self.registration_steps = {
+            "Initial Registration": [
+                {
+                    "step": 1,
+                    "actor": "UE",
+                    "action": "sends Registration Request",
+                    "parameters": ["SUCI", "5GS registration type", "5GMM capability"],
+                    "description": "UE initiates registration by sending Registration Request with identity and capabilities"
+                },
+                {
+                    "step": 2,
+                    "actor": "AMF",
+                    "action": "initiates Primary Authentication",
+                    "parameters": ["5G-AKA", "SUCI", "SUPI"],
+                    "description": "AMF starts authentication procedure to verify UE identity"
+                },
+                {
+                    "step": 3,
+                    "actor": "AMF",
+                    "action": "sends Security Mode Command",
+                    "parameters": ["UE security capability", "5G NAS security algorithms"],
+                    "description": "AMF activates NAS security with the UE"
+                },
+                {
+                    "step": 4,
+                    "actor": "UE",
+                    "action": "sends Security Mode Complete",
+                    "parameters": ["IMEISV", "NAS-MAC"],
+                    "description": "UE confirms security activation and provides equipment identity if requested"
+                },
+                {
+                    "step": 5,
+                    "actor": "AMF",
+                    "action": "sends Registration Accept",
+                    "parameters": ["5G-GUTI", "Registration result", "Allowed NSSAI"],
+                    "description": "AMF accepts registration and provides temporary identity and allowed services"
+                },
+                {
+                    "step": 6,
+                    "actor": "UE",
+                    "action": "sends Registration Complete",
+                    "parameters": ["5G-GUTI"],
+                    "description": "UE acknowledges registration completion and new temporary identity"
+                }
+            ]
         }
 
     def extract_entities(self, text: str) -> Dict[str, List[str]]:
@@ -357,7 +353,7 @@ class ThreeGPPEntityExtractor:
                 
                 # Extract procedure flows for known procedures
                 procedure_flows = {}
-                for proc_name in self.known_procedures.keys():
+                for proc_name in self.registration_steps.keys():
                     if proc_name.lower() in text.lower():
                         flow_steps = self.extract_procedure_flow(text, proc_name)
                         procedure_flows[proc_name] = flow_steps
@@ -412,7 +408,11 @@ def main():
     
     # Store results in Neo4j
     try:
-        graph = KnowledgeGraph()
+        graph = KnowledgeGraph(
+            uri=NEO4J_URI,
+            user=NEO4J_USER,
+            password=NEO4J_PASSWORD
+        )
         for file_result in processed_files:
             # Store entities
             for entity_type, entities in file_result["entities"].items():
@@ -426,6 +426,40 @@ def main():
             # Store state transitions
             for from_state, to_state, conditions in file_result["state_transitions"]:
                 graph.create_state_transition(from_state, to_state, conditions)
+            
+            # Store 5G Registration steps
+            for proc_name, steps in extractor.registration_steps.items():
+                for step in steps:
+                    # Create Action node for the step
+                    action_props = {
+                        "name": f"{step['actor']} {step['action']}",
+                        "actor": step['actor'],
+                        "description": step['description'],
+                        "step_number": step['step']
+                    }
+                    graph.create_node("Action", action_props)
+                    
+                    # Create Parameter nodes and relationships
+                    for param in step['parameters']:
+                        param_props = {
+                            "name": param,
+                            "type": "5G_PARAMETER"
+                        }
+                        graph.create_node("Parameter", param_props)
+                        graph.create_relationship(
+                            "Action", action_props["name"],
+                            "USES_PARAMETER",
+                            "Parameter", param
+                        )
+                    
+                    # Create relationships between consecutive steps
+                    if step['step'] > 1:
+                        prev_step = next(s for s in steps if s['step'] == step['step'] - 1)
+                        graph.create_relationship(
+                            "Action", f"{prev_step['actor']} {prev_step['action']}",
+                            "TRIGGERS",
+                            "Action", action_props["name"]
+                        )
         
         console.print("[bold green]Successfully stored results in Neo4j[/bold green]")
         
