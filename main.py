@@ -253,6 +253,295 @@ async def get_procedure_by_id(procedure_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/procedures/types")
+async def get_procedure_types():
+    """
+    Get all available procedure types from the database
+    """
+    try:
+        conn = sqlite3.connect(extractor.db_path)
+        c = conn.cursor()
+        
+        # First, get all unique procedures from the database
+        c.execute('''
+            SELECT DISTINCT json_extract(nodes, '$.procedures[0]') as proc
+            FROM chunk_results 
+            WHERE json_extract(nodes, '$.procedures[0]') IS NOT NULL
+        ''')
+        procedures = [row[0] for row in c.fetchall() if row[0]]
+        
+        # If no procedures found in database, return predefined types
+        if not procedures:
+            predefined_types = [
+                'NAS Registration Procedure',
+                'NAS Authentication Procedure',
+                'LTE Attach Procedure',
+                'LTE Detach Procedure',
+                '5G Registration Procedure',
+                '5G PDU Session Procedure'
+            ]
+            return JSONResponse({
+                "types": predefined_types
+            })
+        
+        # Categorize procedures based on keywords
+        categorized = {
+            'NAS': [],
+            'LTE': [],
+            '5G': []
+        }
+        
+        for proc in procedures:
+            proc_lower = proc.lower()
+            if any(kw in proc_lower for kw in ['nas', '5gmm', 'emm']):
+                categorized['NAS'].append(proc)
+            elif any(kw in proc_lower for kw in ['eps', 'lte', 'emm', 'esm']):
+                categorized['LTE'].append(proc)
+            elif any(kw in proc_lower for kw in ['5g', '5gs', '5gmm', '5gsm']):
+                categorized['5G'].append(proc)
+        
+        # Format the results
+        result = []
+        for category, procs in categorized.items():
+            for proc in procs:
+                result.append(f"{category} {proc}")
+        
+        return JSONResponse({
+            "types": sorted(result) if result else predefined_types
+        })
+        
+    except Exception as e:
+        print(f"Error getting procedure types: {str(e)}")
+        # Return predefined types on error
+        predefined_types = [
+            'NAS Registration Procedure',
+            'NAS Authentication Procedure',
+            'LTE Attach Procedure',
+            'LTE Detach Procedure',
+            '5G Registration Procedure',
+            '5G PDU Session Procedure'
+        ]
+        return JSONResponse({
+            "types": predefined_types
+        })
+    finally:
+        conn.close()
+
+@app.get("/procedures/by-type/{procedure_type}")
+async def get_procedures_by_type(procedure_type: str):
+    """
+    Get all procedures of a specific type
+    """
+    try:
+        conn = sqlite3.connect(extractor.db_path)
+        c = conn.cursor()
+        c.execute('SELECT id, chunk_text, nodes, edges FROM chunk_results')
+        rows = c.fetchall()
+        conn.close()
+        
+        matching_procedures = []
+        for row in rows:
+            id, chunk_text, nodes_json, edges_json = row
+            nodes = json.loads(nodes_json)
+            if 'procedures' in nodes and any(
+                proc.lower() == procedure_type.lower() 
+                for proc in nodes['procedures']
+            ):
+                matching_procedures.append({
+                    "id": id,
+                    "chunk_text": chunk_text,
+                    "nodes": nodes,
+                    "edges": json.loads(edges_json)
+                })
+        
+        return JSONResponse({
+            "total": len(matching_procedures),
+            "procedures": matching_procedures
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/procedures/flow/{procedure_type}")
+async def get_procedure_flow(procedure_type: str):
+    """
+    Get the complete flow for a specific procedure type with sub-procedures
+    """
+    try:
+        conn = sqlite3.connect(extractor.db_path)
+        c = conn.cursor()
+        c.execute('SELECT id, chunk_text, nodes, edges FROM chunk_results')
+        rows = c.fetchall()
+        conn.close()
+        
+        procedure_lower = procedure_type.lower()
+        
+        # Collect all nodes and edges related to this procedure
+        all_nodes = {
+            "states": set(),
+            "messages": set(),
+            "procedures": set(),
+            "entities": set()
+        }
+        all_edges = []
+        relevant_chunks = []
+        
+        for row in rows:
+            id, chunk_text, nodes_json, edges_json = row
+            nodes = json.loads(nodes_json)
+            edges = json.loads(edges_json)
+            
+            # Check if this chunk is related to our procedure
+            is_relevant = False
+            if 'procedures' in nodes:
+                for proc in nodes['procedures']:
+                    proc_lower = proc.lower()
+                    # Match both main procedure and potential sub-procedures
+                    if (procedure_lower in proc_lower or
+                        any(term in proc_lower for term in [
+                            'initial', 'periodic', 'emergency', 'combined',
+                            'ue-initiated', 'network-initiated', 'network-triggered'
+                        ])):
+                        is_relevant = True
+                        break
+            
+            if is_relevant:
+                # Add nodes
+                for node_type in all_nodes:
+                    if node_type in nodes:
+                        all_nodes[node_type].update(nodes[node_type])
+                # Add edges
+                all_edges.extend(edges)
+                # Store chunk info
+                relevant_chunks.append({
+                    "id": id,
+                    "text": chunk_text
+                })
+        
+        # If no data found in database, provide default flow data for predefined procedures
+        if not all_edges and not any(len(nodes) > 0 for nodes in all_nodes.values()):
+            # Default flows for predefined procedures
+            DEFAULT_FLOWS = {
+                'lte attach procedure': {
+                    'nodes': {
+                        'states': ['EMM-DEREGISTERED', 'EMM-REGISTERED', 'EMM-COMMON-PROCEDURE-INITIATED'],
+                        'messages': ['Attach Request', 'Authentication Request', 'Authentication Response', 
+                                   'Security Mode Command', 'Security Mode Complete', 'ESM Information Request',
+                                   'ESM Information Response', 'Attach Accept', 'Attach Complete'],
+                        'procedures': ['LTE Attach Procedure', 'Authentication Procedure', 'Security Mode Procedure'],
+                        'entities': ['UE', 'MME', 'HSS', 'SGW']
+                    },
+                    'edges': [
+                        {'source': 'EMM-DEREGISTERED', 'target': 'Attach Request', 'relationship': 'sends'},
+                        {'source': 'Attach Request', 'target': 'EMM-COMMON-PROCEDURE-INITIATED', 'relationship': 'triggers'},
+                        {'source': 'EMM-COMMON-PROCEDURE-INITIATED', 'target': 'Authentication Request', 'relationship': 'initiates'},
+                        {'source': 'Authentication Request', 'target': 'Authentication Response', 'relationship': 'receives'},
+                        {'source': 'Authentication Response', 'target': 'Security Mode Command', 'relationship': 'triggers'},
+                        {'source': 'Security Mode Command', 'target': 'Security Mode Complete', 'relationship': 'receives'},
+                        {'source': 'Security Mode Complete', 'target': 'ESM Information Request', 'relationship': 'triggers'},
+                        {'source': 'ESM Information Request', 'target': 'ESM Information Response', 'relationship': 'receives'},
+                        {'source': 'ESM Information Response', 'target': 'Attach Accept', 'relationship': 'triggers'},
+                        {'source': 'Attach Accept', 'target': 'Attach Complete', 'relationship': 'receives'},
+                        {'source': 'Attach Complete', 'target': 'EMM-REGISTERED', 'relationship': 'transitions'}
+                    ]
+                },
+                'nas registration procedure': {
+                    'nodes': {
+                        'states': ['5GMM-DEREGISTERED', '5GMM-REGISTERED', '5GMM-COMMON-PROCEDURE-INITIATED'],
+                        'messages': ['Registration Request', 'Authentication Request', 'Authentication Response',
+                                   'Security Mode Command', 'Security Mode Complete', 'Registration Accept',
+                                   'Registration Complete'],
+                        'procedures': ['NAS Registration Procedure', 'Authentication Procedure', 'Security Mode Procedure'],
+                        'entities': ['UE', 'AMF', 'AUSF', 'UDM']
+                    },
+                    'edges': [
+                        {'source': '5GMM-DEREGISTERED', 'target': 'Registration Request', 'relationship': 'sends'},
+                        {'source': 'Registration Request', 'target': '5GMM-COMMON-PROCEDURE-INITIATED', 'relationship': 'triggers'},
+                        {'source': '5GMM-COMMON-PROCEDURE-INITIATED', 'target': 'Authentication Request', 'relationship': 'initiates'},
+                        {'source': 'Authentication Request', 'target': 'Authentication Response', 'relationship': 'receives'},
+                        {'source': 'Authentication Response', 'target': 'Security Mode Command', 'relationship': 'triggers'},
+                        {'source': 'Security Mode Command', 'target': 'Security Mode Complete', 'relationship': 'receives'},
+                        {'source': 'Security Mode Complete', 'target': 'Registration Accept', 'relationship': 'triggers'},
+                        {'source': 'Registration Accept', 'target': 'Registration Complete', 'relationship': 'receives'},
+                        {'source': 'Registration Complete', 'target': '5GMM-REGISTERED', 'relationship': 'transitions'}
+                    ]
+                }
+            }
+            
+            # Check if we have a default flow for this procedure
+            for key, flow in DEFAULT_FLOWS.items():
+                if key in procedure_lower:
+                    all_nodes = {k: set(v) for k, v in flow['nodes'].items()}
+                    all_edges = flow['edges']
+                    relevant_chunks = [{
+                        "id": 0,
+                        "text": f"Default flow diagram for {procedure_type}"
+                    }]
+                    break
+        
+        # Convert sets to lists for JSON
+        nodes_json = {k: sorted(list(v)) for k, v in all_nodes.items()}
+        
+        return JSONResponse({
+            "procedure_type": procedure_type,
+            "nodes": nodes_json,
+            "edges": all_edges,
+            "relevant_chunks": relevant_chunks,
+            "total_chunks": len(relevant_chunks)
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Add new endpoint for sub-procedures
+@app.get("/procedures/{procedure_type}/sub-procedures")
+async def get_sub_procedures(procedure_type: str):
+    """
+    Get available sub-procedures for a specific procedure type
+    """
+    try:
+        # Define sub-procedure mappings based on 3GPP specifications
+        SUB_PROCEDURE_MAPPINGS = {
+            'Registration': [
+                'Initial Registration',
+                'Periodic Registration',
+                'Emergency Registration',
+                'Mobility Registration'
+            ],
+            'Authentication': [
+                'Primary Authentication',
+                'EAP Authentication',
+                'Secondary Authentication'
+            ],
+            'Security Mode Control': [
+                'NAS Security Mode Control',
+                'AS Security Mode Control'
+            ],
+            'PDU Session': [
+                'PDU Session Establishment',
+                'PDU Session Modification',
+                'PDU Session Release'
+            ],
+            'Service Request': [
+                'UE Triggered Service Request',
+                'Network Triggered Service Request',
+                'Emergency Service Request'
+            ]
+        }
+        
+        # Extract main procedure from procedure_type
+        main_proc = procedure_type.split()[-1]
+        
+        if main_proc in SUB_PROCEDURE_MAPPINGS:
+            return JSONResponse({
+                "sub_procedures": SUB_PROCEDURE_MAPPINGS[main_proc]
+            })
+        else:
+            return JSONResponse({
+                "sub_procedures": []
+            })
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
