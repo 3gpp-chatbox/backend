@@ -91,8 +91,16 @@ doc = doc_processor.load_document(docx_file_path)
 # Extract sections from the document
 sections = doc_processor.extract_section_tree(doc)
 
+paragraphs = doc_processor.extract_paragraphs(doc)
+
 # ============== START OF PRINTING FOR DEBUGGING ==================
 print(f"\nFound {len(sections)} top-level sections:")
+
+for para in paragraphs:
+    if "annex b" in para['text'].lower():
+        print(para['style'])
+        print(para['text'])
+        print("*" * 80)
 
 
 def get_section_content_length(section):

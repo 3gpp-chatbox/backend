@@ -81,28 +81,6 @@ def extract_paragraphs(doc: Document) -> List[Dict[str, any]]:
     
     return paragraphs
 
-def extract_tables(doc: Document) -> List[List[List[str]]]:
-    """
-    Extract tables from the document.
-
-    Args:
-        doc (Document): The loaded document object
-
-    Returns:
-        List[List[List[str]]]: List of tables, where each table is a list of rows,
-                              and each row is a list of cell texts
-    """
-    tables = []
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            row_data = [cell.text.strip() for cell in row.cells]
-            if any(row_data):  # Only include rows that have some content
-                table_data.append(row_data)
-        if table_data:  # Only include tables that have content
-            tables.append(table_data)
-    return tables
-
 def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Section]:
     """
     Extract document content as a tree of sections based on heading hierarchy.
@@ -123,13 +101,14 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
     current_sections = [None] * (max_heading_level + 1)  # Track current section at each level
     current_content = []
     top_level_sections = []  # Store all level 1 sections
+    excluded_section = ["scope", "references", "abbreviations", ]
     
     paragraphs = extract_paragraphs(doc)
     
     for para in paragraphs:
         level = para.get("level")
         
-        if level is not None and level <= max_heading_level:
+        if level is not None and level <= max_heading_level and para["text"][0].isdigit() and all(word not in para["text"].lower() for word in excluded_section):
             # We found a heading, create a new section
             new_section = Section(
                 level=level,
@@ -158,7 +137,11 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
                 top_level_sections.append(new_section)
         else:
             # Accumulate content for the current lowest-level section
-            current_content.append(para["text"])
+            if current_content and len(current_content[-1]) + len(para["text"]) < 3000 and para.get("level") is None:
+                # Combine with previous text if conditions are met
+                current_content[-1] = current_content[-1] + " " + para["text"]
+            else:
+                current_content.append(para["text"])
     
     # Add any remaining content to the last section
     for level in range(max_heading_level, 0, -1):
@@ -168,62 +151,6 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
     
     return top_level_sections
 
-def extract_procedure_sections(doc: Document) -> List[Dict]:
-    """
-    Extract sections that likely contain procedure descriptions.
-    This is specifically designed for 3GPP specifications where procedures
-    are typically described in sections with specific heading patterns.
-
-    Args:
-        doc (Document): The loaded document object
-
-    Returns:
-        List[Dict]: List of procedure sections, each containing:
-            - heading: The procedure section heading
-            - content: The procedure content
-            - level: The heading level
-            - subsections: List of subsections
-    """
-    procedure_keywords = [
-        "procedure", "procedures", "flow", "flows", "message flow",
-        "call flow", "signalling flow", "operation", "operations"
-    ]
-    
-    procedure_sections = []
-    sections = extract_section_tree(doc)
-    
-    for section in sections:
-        if any(keyword in section.heading.lower() for keyword in procedure_keywords):
-            procedure_sections.append({
-                "heading": section.heading,
-                "content": section.content,
-                "level": section.level,
-                "subsections": section.subsections
-            })
-    
-    return procedure_sections
-
-def process_procedures_in_chunks(file_path: str) -> List[Dict]:
-    """
-    Process a 3GPP specification document focusing on procedures.
-
-    Args:
-        file_path (str): Path to the .docx file
-
-    Returns:
-        List[Dict]: List of procedure information suitable for graph creation
-    """
-    try:
-        doc = load_document(file_path)
-        if not doc:
-            return []
-
-        procedures = extract_procedure_sections(doc)
-        return procedures
-
-    except Exception as e:
-        print(f"Error processing procedures: {str(e)}")
-        return []
 
 def text_cleaner(text: str) -> str:
     """
@@ -281,5 +208,3 @@ def text_cleaner(text: str) -> str:
             normalized_words.append(word.lower())
     
     return ' '.join(normalized_words)
-
-
