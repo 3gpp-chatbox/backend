@@ -225,54 +225,26 @@ def process_procedures_in_chunks(file_path: str) -> List[Dict]:
         print(f"Error processing procedures: {str(e)}")
         return []
 
-def process_specification(file_path: str) -> None:
-    """
-    Process a specification document and print its content for review.
-
-    Args:
-        file_path (str): Path to the .docx file
-    """
-    try:
-        doc = load_document(file_path)
-        if not doc:
-            return
-
-        print(f"\nProcessing document: {file_path}")
-        
-        print("\n=== Paragraphs ===")
-        paragraphs = extract_paragraphs(doc)
-        for para in paragraphs:
-            if para["level"] is not None:
-                print(f"\nHeading Level {para['level']}:")
-            print(f"Style: {para['style']}")
-            print(f"Text: {para['text']}\n")
-
-        print("\n=== Tables ===")
-        tables = extract_tables(doc)
-        for table in tables:
-            print("\nNew Table:")
-            for row in table:
-                print(row)
-            print()
-
-    except Exception as e:
-        print(f"Error processing document: {str(e)}")
-
-
-
 def text_cleaner(text: str) -> str:
     """
-    Clean and normalize text while preserving 3GPP-specific patterns.
-    Handles:
-    - Version numbers (e.g., 1.2, 5.5.1.2, 3.2.433, 15.4.0)
-    - Technical terms with special characters (e.g., s-nssai(s))
-    - Non-breaking spaces and tabs
+    Clean and normalize text while preserving specific patterns and cases.
+    
+    The function performs the following operations:
+    1. Replaces non-breaking spaces and tabs with regular spaces
+    2. Preserves version numbers (e.g., 1.2, 5.5.1.2)
+    3. Removes punctuation marks (.,!?:) when they appear at the end of words
+    4. Normalizes whitespace
+    5. Performs case normalization with specific preservation rules:
+        - Preserves words containing numbers (e.g., "5G")
+        - Preserves words with multiple uppercase letters (e.g., "IP", "NSSAI")
+        - Preserves words containing special characters (e.g., "S-NSSAI(s)")
+        - Converts all other words to lowercase
     
     Args:
         text (str): Input text to clean
         
     Returns:
-        str: Cleaned and normalized text
+        str: Cleaned and normalized text with preserved patterns
     """
     if not text:
         return ""
@@ -284,31 +256,30 @@ def text_cleaner(text: str) -> str:
     # This pattern matches two or more numbers separated by dots
     text = re.sub(r'\b\d+\.\d+(?:\.\d+)*\b', lambda x: f"__{x.group(0)}__", text)
     
-    return text
-    # # Preserve technical terms with hyphens and parentheses
-    # # e.g., s-nssai(s), n1-mode, amf-ue-ngap-id
-    # text = re.sub(r'[a-zA-Z0-9]+(?:[-][a-zA-Z0-9]+)*(?:\([a-zA-Z]+\))?',
-    #               lambda x: f"__{x.group(0)}__", text)
+    # Remove punctuation marks only when they appear at the end of words
+    text = re.sub(r'([.,!?:])\s', ' ', text)
+    text = re.sub(r'([.,!?:])$', '', text)
     
-    # # Remove other special characters but keep the preserved patterns
-    # text = ''.join([char if char.isalnum() or char.isspace() or char == '__' 
-    #                 else ' ' for char in text])
+    text = text.replace("__", "")
+
+    # Normalize whitespace
+    text = ' '.join(text.split())
     
-    # # Restore preserved patterns
-    # text = text.replace("__", "")
+    # Process each word for case normalization
+    words = text.split()
+    normalized_words = []
+    for word in words:
+        # Preserve if:
+        # 1. Contains numbers
+        # 2. Contains more than one uppercase letter
+        # 3. Contains special characters (excluding common punctuation)
+        if (any(c.isdigit() for c in word) or  # Has numbers
+            sum(1 for c in word if c.isupper()) > 1 or  # Multiple uppercase
+            any(c for c in word if not c.isalnum())):  # Has symbols
+            normalized_words.append(word)
+        else:
+            normalized_words.append(word.lower())
     
-    # # Normalize whitespace
-    # text = ' '.join(text.split())
-    
-    # # Convert to lowercase but preserve acronyms of 2-5 characters
-    # words = text.split()
-    # normalized_words = []
-    # for word in words:
-    #     if word.isupper() and 2 <= len(word) <= 5:
-    #         normalized_words.append(word)  # Keep acronyms as is
-    #     else:
-    #         normalized_words.append(word.lower())
-    
-    # return ' '.join(normalized_words)
+    return ' '.join(normalized_words)
 
 
