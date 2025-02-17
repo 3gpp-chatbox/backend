@@ -1,7 +1,7 @@
 import os
 import re
 import json
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
 from pypdf import PdfReader
 from neo4j import GraphDatabase
 import hashlib
@@ -632,6 +632,168 @@ def store_procedure_steps(graph: KnowledgeGraph, steps: List[Dict], procedure_na
                     {'sequence_order': step['sequence_number']}
                 )
 
+def store_procedure_flow_in_neo4j(session, flow: Dict):
+    """Store complete procedure flow in Neo4j"""
+    try:
+        # Create procedure node
+        session.run("""
+            MERGE (p:Procedure {name: $name})
+            SET p.specification = $spec,
+                p.section = $section,
+                p.release = $release,
+                p.description = $description
+        """, name=flow['name'],
+             spec=flow['metadata'].get('specification'),
+             section=flow['metadata'].get('section'),
+             release=flow['metadata'].get('release'),
+             description=flow['metadata'].get('description'))
+        
+        # Store initial and final states
+        if flow['initial_state']:
+            session.run("""
+                MATCH (p:Procedure {name: $proc_name})
+                MERGE (s:State {name: $state_name})
+                SET s.description = $description
+                MERGE (p)-[:STARTS_FROM]->(s)
+            """, proc_name=flow['name'],
+                 state_name=flow['initial_state']['state'],
+                 description=flow['initial_state']['description'])
+        
+        if flow['final_state']:
+            session.run("""
+                MATCH (p:Procedure {name: $proc_name})
+                MERGE (s:State {name: $state_name})
+                SET s.description = $description
+                MERGE (p)-[:ENDS_AT]->(s)
+            """, proc_name=flow['name'],
+                 state_name=flow['final_state']['state'],
+                 description=flow['final_state']['description'])
+        
+        # Store state transitions
+        for transition in flow['state_transitions']:
+            session.run("""
+                MATCH (p:Procedure {name: $proc_name})
+                MERGE (s1:State {name: $from_state})
+                MERGE (s2:State {name: $to_state})
+                MERGE (s1)-[t:TRANSITIONS_TO]->(s2)
+                SET t.trigger = $trigger,
+                    t.conditions = $conditions
+                MERGE (p)-[:INCLUDES_TRANSITION]->(t)
+            """, proc_name=flow['name'],
+                 from_state=transition['from_state'],
+                 to_state=transition['to_state'],
+                 trigger=transition.get('trigger'),
+                 conditions=[c['condition'] for c in transition.get('conditions', [])])
+        
+        # Store messages
+        for msg in flow['messages']:
+            session.run("""
+                MATCH (p:Procedure {name: $proc_name})
+                MERGE (m:Message {name: $msg_name})
+                SET m.type = $msg_type,
+                    m.parameters = $parameters,
+                    m.conditions = $conditions
+                MERGE (p)-[:USES_MESSAGE]->(m)
+            """, proc_name=flow['name'],
+                 msg_name=msg['message'],
+                 msg_type=msg['type'],
+                 parameters=[p['name'] for p in msg.get('parameters', [])],
+                 conditions=[c['condition'] for c in msg.get('conditions', [])])
+        
+        # Store procedure steps
+        prev_step = None
+        for step in flow['steps']:
+            # Create step node
+            session.run("""
+                MATCH (p:Procedure {name: $proc_name})
+                MERGE (s:Step {
+                    number: $number,
+                    description: $description
+                })
+                SET s.parameters = $parameters,
+                    s.conditions = $conditions
+                MERGE (p)-[:HAS_STEP]->(s)
+            """, proc_name=flow['name'],
+                 number=step['step_number'],
+                 description=step['description'],
+                 parameters=[p['name'] for p in step.get('parameters', [])],
+                 conditions=[c['condition'] for c in step.get('conditions', [])])
+            
+            # Link step to messages
+            for msg in step['messages']:
+                session.run("""
+                    MATCH (s:Step {number: $step_num})
+                    MATCH (m:Message {name: $msg_name})
+                    MERGE (s)-[:USES_MESSAGE]->(m)
+                """, step_num=step['step_number'],
+                     msg_name=msg['message'])
+            
+            # Link step to states
+            for state in step['states']:
+                session.run("""
+                    MATCH (s:Step {number: $step_num})
+                    MATCH (st:State {name: $state_name})
+                    MERGE (s)-[:INVOLVES_STATE]->(st)
+                """, step_num=step['step_number'],
+                     state_name=state)
+            
+            # Link to previous step
+            if prev_step is not None:
+                session.run("""
+                    MATCH (s1:Step {number: $prev_num})
+                    MATCH (s2:Step {number: $curr_num})
+                    MERGE (s1)-[:NEXT]->(s2)
+                """, prev_num=prev_step['step_number'],
+                     curr_num=step['step_number'])
+            
+            prev_step = step
+        
+        return True
+    except Exception as e:
+        print(f"Error storing procedure flow: {str(e)}")
+        return False
+
+def store_entities_in_neo4j(session, entities: Set[Tuple[str, str]]):
+    """Store extracted entities in Neo4j"""
+    try:
+        for entity_text, entity_type in entities:
+            # Create entity node with its type
+            session.run("""
+                MERGE (e:Entity {name: $name, type: $type})
+            """, name=entity_text, type=entity_type)
+            
+            # For messages, also create specific message type label
+            if entity_type in ["MM_MESSAGE", "SM_MESSAGE", "SECURITY_MESSAGE"]:
+                session.run(f"""
+                    MATCH (e:Entity {{name: $name, type: $type}})
+                    SET e:{entity_type.replace('_', '')}
+                """, name=entity_text, type=entity_type)
+        
+        return True
+    except Exception as e:
+        print(f"Error storing entities: {str(e)}")
+        return False
+
+def store_relationships_in_neo4j(session, relationships: List[Tuple[str, str, str, Dict]]):
+    """Store relationships between entities in Neo4j"""
+    try:
+        for entity1, entity2, relationship, properties in relationships:
+            # Create relationship with properties
+            session.run("""
+                MATCH (e1:Entity {name: $name1})
+                MATCH (e2:Entity {name: $name2})
+                MERGE (e1)-[r:RELATIONSHIP {type: $rel_type}]->(e2)
+                SET r += $props
+            """, name1=entity1,
+                 name2=entity2,
+                 rel_type=relationship,
+                 props=properties)
+        
+        return True
+    except Exception as e:
+        print(f"Error storing relationships: {str(e)}")
+        return False
+
 def store_in_neo4j(documents: List[Dict]):
     """Stores extracted entities and relationships in Neo4j"""
     graph = KnowledgeGraph(URI, USERNAME, PASSWORD)
@@ -671,12 +833,12 @@ def store_in_neo4j(documents: List[Dict]):
             # Extract and store LTE Attach procedure
             lte_flow = extractor.extract_procedure(text, "LTE_ATTACH")
             if lte_flow:
-                graph.store_procedure_flow(lte_flow)
+                store_procedure_flow_in_neo4j(graph.driver.session(), lte_flow)
             
             # Extract and store 5G Registration procedure
             reg_flow = extractor.extract_procedure(text, "REGISTRATION")
             if reg_flow:
-                graph.store_procedure_flow(reg_flow)
+                store_procedure_flow_in_neo4j(graph.driver.session(), reg_flow)
             
             # Store other entities and relationships
             for entity_text, entity_type, metadata in doc["entities"]:

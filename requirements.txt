@@ -1,15 +1,15 @@
 # backend requirements
-fastapi==0.109.2  # Backend framework
-uvicorn[standard]==0.27.1  # ASGI server for FastAPI
+fastapi==0.104.1  # Backend framework
+uvicorn==0.24.0  # ASGI server for FastAPI
 pydantic==2.6.1  # Data validation
 
 # Data Processing
 # PyMuPDF will be installed separately
 pypdf==3.17.1
-python-dotenv==1.0.1
+python-dotenv==1.0.0
 
 # Vector Database and Embeddings
-chromadb==0.4.22
+chromadb==0.4.18
 neo4j==5.14.1
 
 # Logging and utilities
@@ -18,7 +18,43 @@ tqdm==4.66.1
 pathlib==1.0.1
 
 # Optional but recommended
-pytest==8.0.1  # For testing
+pytest==7.4.3  # For testing
+pytest-cov==4.1.0
 
 # to install all the requirements
 # pip install -r requirements.txt
+
+# Core dependencies
+numpy==1.24.3
+pandas==2.0.3
+
+# NLP and ML
+sentence-transformers==2.2.2
+transformers==4.36.2
+torch==2.1.2
+scikit-learn==1.3.2
+
+# PDF Processing
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+pdf2image==1.16.3
+
+# Logging and Console
+loguru==0.7.2
+
+# Data Processing
+regex==2023.10.3
+
+# Development Tools
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
+
+# API and Web
+requests==2.31.0
+aiohttp==3.9.1
+
+# Documentation
+sphinx==7.2.6
+sphinx-rtd-theme==1.3.0
