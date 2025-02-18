@@ -1,7 +1,5 @@
 from docx import Document
-from docx.enum.text import WD_COLOR_INDEX
-from docx.table import Table  # Import Table class
-from docx.text.paragraph import Paragraph # Import Paragraph class
+from docx.enum.style import WD_STYLE_TYPE  # Import WD_STYLE_TYPE
 import spacy
 import re
 
@@ -11,7 +9,7 @@ class TextPreprocessor:
 
     def preprocess(self, doc_path: str) -> str:
         doc = Document(doc_path)
-        self.remove_headings(doc)
+        # self.remove_headings(doc)
         self.remove_content_lists(doc)
         self.remove_text_lists(doc)
         self.remove_headers_footers(doc)
@@ -21,20 +19,29 @@ class TextPreprocessor:
         cleaned_text = self.remove_numberings(cleaned_text)
         return cleaned_text
 
-    def remove_headings(self, doc: Document):
-        for para in doc.paragraphs:
-            if self.is_heading(para):
-                para.clear()
+    # def remove_headings(self, doc: Document):
+    #     for para in doc.paragraphs:
+    #         if self.is_heading(para):
+    #             para.clear()
 
     def is_heading(self, para) -> bool:
         doc = self.nlp(para.text.strip())
         return len(doc) <= 5 or bool(re.match(r"^\d+(\.\d+)*[A-Z]?(\s|$)", para.text.strip()))
 
     def remove_content_lists(self, doc: Document):
-        toc_pattern = re.compile(r"^\d*\s*\d+(\.\d+)*[A-Z]?\.\d*\s+.+?\s*\.{2,}\s*\d+$") #Improved regex
-        for para in doc.paragraphs:
-            if toc_pattern.match(para.text):
-                para.clear()
+        """Remove content lists based on heading style and name."""
+        paragraphs = doc.paragraphs
+        remove_content = False  # Flag to indicate if we're in the content section
+
+        for i, para in enumerate(paragraphs):
+            if para.style.type == WD_STYLE_TYPE.PARAGRAPH: # Check if it is paragraph style, otherwise, it might be table or other element
+                if "contents" in para.text.strip().lower() and para.style.name.lower().startswith("heading"): #Check if it is heading and contains "contents"
+                    remove_content = True
+                    para.clear()  # Clear the "Contents" heading itself
+                elif remove_content and para.style.name.lower().startswith("heading"): # Check if it is the next heading
+                    remove_content = False  # Stop removing
+                elif remove_content:
+                    para.clear()  # Clear the paragraph if it's within the content section
 
     def remove_text_lists(self, doc: Document):
         ref_pattern = re.compile(r"^\[\d+[A-Z]?\]\s*.+$", re.MULTILINE)

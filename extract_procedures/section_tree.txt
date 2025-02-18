@@ -1,0 +1,4461 @@
+Document Section Tree Analysis
+Found 7 top-level sections:
+Largest content in chars: 3000
+================================================================================
+Top Level Section: 4 general
+ Level: 1
+ Number of subsections: 28
+ Parent: None (Root level)
+  └─ Section: 4.1 overview
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.2 coordination between the protocols for 5GS mobility management and 5GS session management
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.2A controlling of UE access technology utilization by 5GS
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.3 UE domain selection
+      Level: 2
+      Number of subsections: 4
+      Parent: 4 general
+    └─ Section: 4.3.1 UE's usage setting
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.3 UE domain selection
+    └─ Section: 4.3.2 domain selection for UE originating sessions / calls
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.3 UE domain selection
+    └─ Section: 4.3.3 change of UE's usage setting
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.3 UE domain selection
+    └─ Section: 4.3.4 change or determination of IMS voice availability
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.3 UE domain selection
+  └─ Section: 4.4 NAS security
+      Level: 2
+      Number of subsections: 7
+      Parent: 4 general
+    └─ Section: 4.4.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.4 NAS security
+    └─ Section: 4.4.2 handling of 5G NAS security contexts
+        Level: 3
+        Number of subsections: 6
+        Parent: 4.4 NAS security
+      └─ Section: 4.4.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+      └─ Section: 4.4.2.2 establishment of a mapped 5G NAS security context during inter-system change from S1 mode to N1 mode in 5GMM-CONNECTED mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+      └─ Section: 4.4.2.3 establishment of a 5G NAS security context during N1 mode to N1 mode handover
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+      └─ Section: 4.4.2.4 establishment of an EPS security context during inter-system change from N1 mode to S1 mode in 5GMM-CONNECTED mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+      └─ Section: 4.4.2.5 establishment of secure exchange of NAS messages
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+      └─ Section: 4.4.2.6 change of security keys
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.2 handling of 5G NAS security contexts
+    └─ Section: 4.4.3 handling of NAS COUNT and NAS sequence number
+        Level: 3
+        Number of subsections: 5
+        Parent: 4.4 NAS security
+      └─ Section: 4.4.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.3 handling of NAS COUNT and NAS sequence number
+      └─ Section: 4.4.3.2 replay protection
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.3 handling of NAS COUNT and NAS sequence number
+      └─ Section: 4.4.3.3 integrity protection and verification
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.3 handling of NAS COUNT and NAS sequence number
+      └─ Section: 4.4.3.4 ciphering and deciphering
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.3 handling of NAS COUNT and NAS sequence number
+      └─ Section: 4.4.3.5 NAS COUNT wrap around
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.3 handling of NAS COUNT and NAS sequence number
+    └─ Section: 4.4.4 integrity protection of NAS signalling messages
+        Level: 3
+        Number of subsections: 3
+        Parent: 4.4 NAS security
+      └─ Section: 4.4.4.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.4 integrity protection of NAS signalling messages
+      └─ Section: 4.4.4.2 integrity checking of NAS signalling messages in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.4 integrity protection of NAS signalling messages
+      └─ Section: 4.4.4.3 integrity checking of NAS signalling messages in the AMF
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.4.4 integrity protection of NAS signalling messages
+    └─ Section: 4.4.5 ciphering of NAS signalling messages
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.4 NAS security
+    └─ Section: 4.4.6 protection of initial NAS signalling messages
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.4 NAS security
+    └─ Section: 4.4.7 protection of NAS IEs
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.4 NAS security
+  └─ Section: 4.5 unified access control
+      Level: 2
+      Number of subsections: 7
+      Parent: 4 general
+    └─ Section: 4.5.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+    └─ Section: 4.5.2 determination of the access identities and access category associated with a request for access for UEs not operating in SNPN access operation mode over 3GPP access
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+    └─ Section: 4.5.2A determination of the access identities and access category associated with a request for access for UEs operating in SNPN access operation mode over 3GPP access
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+    └─ Section: 4.5.3 Operator-defined access categories
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+    └─ Section: 4.5.4 access control and checking
+        Level: 3
+        Number of subsections: 2
+        Parent: 4.5 unified access control
+      └─ Section: 4.5.4.1 access control and checking in 5GMM-IDLE mode and in 5GMM-IDLE mode with suspend indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.5.4 access control and checking
+      └─ Section: 4.5.4.2 access control and checking in 5GMM-CONNECTED mode and in 5GMM-CONNECTED mode with RRC inactive indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.5.4 access control and checking
+    └─ Section: 4.5.5 exception handling and avoiding double barring
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+    └─ Section: 4.5.6 mapping between access categories/access identities and RRC establishment cause
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.5 unified access control
+  └─ Section: 4.6 network slicing
+      Level: 2
+      Number of subsections: 3
+      Parent: 4 general
+    └─ Section: 4.6.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.6 network slicing
+    └─ Section: 4.6.2 mobility management aspects
+        Level: 3
+        Number of subsections: 11
+        Parent: 4.6 network slicing
+      └─ Section: 4.6.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.2 NSSAI storage
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.3 provision of NSSAI to lower layers in 5GMM-IDLE mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.4 network slice-specific authentication and authorization
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.5 mobility management based network slice admission control
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.6 provision of NSAG information to lower layers
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.7 mobility management based network slice replacement
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.8 mobility management for optimised handling of temporarily available network slices
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.9 mobility management based network slice usage control
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.10 mobility management aspects of handling network slices with NS-AoS not matching deployed tracking areas
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+      └─ Section: 4.6.2.11 mobility management for partial network slice
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.2 mobility management aspects
+    └─ Section: 4.6.3 session management aspects
+        Level: 3
+        Number of subsections: 8
+        Parent: 4.6 network slicing
+      └─ Section: 4.6.3.0 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.1 session management based network slice admission control
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.2 support of network slice admission control and interworking with EPC
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.3 session management based network slice data rate limitation control
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.4 session management based network slice replacement
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.5 session management for optimized handling of temporarily available network slices
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.6 session management for partial network slice
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+      └─ Section: 4.6.3.7 session management aspect of handling network slices with NS-AoS not matching deployed tracking areas
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.6.3 session management aspects
+  └─ Section: 4.7 NAS over non-3GPP access
+      Level: 2
+      Number of subsections: 5
+      Parent: 4 general
+    └─ Section: 4.7.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.7 NAS over non-3GPP access
+    └─ Section: 4.7.2 5GS mobility management aspects
+        Level: 3
+        Number of subsections: 2
+        Parent: 4.7 NAS over non-3GPP access
+      └─ Section: 4.7.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.7.2 5GS mobility management aspects
+      └─ Section: 4.7.2.2 establishment cause for non-3GPP access
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.7.2 5GS mobility management aspects
+    └─ Section: 4.7.3 5GS session management aspects
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.7 NAS over non-3GPP access
+    └─ Section: 4.7.4 limited service state over non-3GPP access
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.7 NAS over non-3GPP access
+    └─ Section: 4.7.5 NAS signalling using trusted WLAN access network
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.7 NAS over non-3GPP access
+  └─ Section: 4.8 interworking with E-UTRAN connected to EPC
+      Level: 2
+      Number of subsections: 5
+      Parent: 4 general
+    └─ Section: 4.8.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.8 interworking with E-UTRAN connected to EPC
+    └─ Section: 4.8.2 Single-registration mode
+        Level: 3
+        Number of subsections: 3
+        Parent: 4.8 interworking with E-UTRAN connected to EPC
+      └─ Section: 4.8.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.8.2 Single-registration mode
+      └─ Section: 4.8.2.2 Single-registration mode with N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.8.2 Single-registration mode
+      └─ Section: 4.8.2.3 Single-registration mode without N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.8.2 Single-registration mode
+    └─ Section: 4.8.3 Dual-registration mode
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.8 interworking with E-UTRAN connected to EPC
+    └─ Section: 4.8.4 core network selection for UEs not using CIoT 5GS optimizations
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.8 interworking with E-UTRAN connected to EPC
+    └─ Section: 4.8.4A core network selection and redirection for UEs using CIoT optimizations
+        Level: 3
+        Number of subsections: 2
+        Parent: 4.8 interworking with E-UTRAN connected to EPC
+      └─ Section: 4.8.4A.1 core network selection
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.8.4A core network selection and redirection for UEs using CIoT optimizations
+      └─ Section: 4.8.4A.2 redirection of the UE by the core network
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.8.4A core network selection and redirection for UEs using CIoT optimizations
+  └─ Section: 4.9 disabling and re-enabling of UE's N1 mode capability
+      Level: 2
+      Number of subsections: 4
+      Parent: 4 general
+    └─ Section: 4.9.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.9 disabling and re-enabling of UE's N1 mode capability
+    └─ Section: 4.9.2 disabling and re-enabling of UE's N1 mode capability for 3GPP access
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.9 disabling and re-enabling of UE's N1 mode capability
+    └─ Section: 4.9.3 disabling and re-enabling of UE's N1 mode capability for non-3GPP access
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.9 disabling and re-enabling of UE's N1 mode capability
+    └─ Section: 4.9.4 disabling and re-enabling of UE's satellite NG-RAN capability
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.9 disabling and re-enabling of UE's N1 mode capability
+  └─ Section: 4.10 interworking with ePDG connected to EPC
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.11 UE configuration parameter updates
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.12 access traffic steering switching and splitting (ATSSS)
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.13 support of NAS signalling using wireline access network
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.14 Non-public network (NPN)
+      Level: 2
+      Number of subsections: 3
+      Parent: 4 general
+    └─ Section: 4.14.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.14 Non-public network (NPN)
+    └─ Section: 4.14.2 Stand-alone non-public network (SNPN)
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.14 Non-public network (NPN)
+    └─ Section: 4.14.3 public network integrated non-public network (PNI-NPN)
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.14 Non-public network (NPN)
+  └─ Section: 4.15 time synchronization and time sensitive communication
+      Level: 2
+      Number of subsections: 4
+      Parent: 4 general
+    └─ Section: 4.15.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.15 time synchronization and time sensitive communication
+    └─ Section: 4.15.2 void
+        Level: 3
+        Number of subsections: 3
+        Parent: 4.15 time synchronization and time sensitive communication
+      └─ Section: 4.15.2.1 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.15.2 void
+      └─ Section: 4.15.2.2 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.15.2 void
+      └─ Section: 4.15.2.3 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 4.15.2 void
+    └─ Section: 4.15.3 time synchronization
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.15 time synchronization and time sensitive communication
+    └─ Section: 4.15.4 user plane node management
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.15 time synchronization and time sensitive communication
+  └─ Section: 4.16 UE radio capability signalling optimisation
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.17 5GS mobility management in NB-N1 mode
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.18 5GS session management in NB-N1 mode
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.19 5GS mobility management in WB-N1 mode for IoT
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.20 5GS session management in WB-N1 mode for IoT
+      Level: 2
+      Number of subsections: 5
+      Parent: 4 general
+    └─ Section: 4.22.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.20 5GS session management in WB-N1 mode for IoT
+    └─ Section: 4.22.2 authentication and authorization of UAV
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.20 5GS session management in WB-N1 mode for IoT
+    └─ Section: 4.22.3 authorization of C2 communication
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.20 5GS session management in WB-N1 mode for IoT
+    └─ Section: 4.22.4 void
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.20 5GS session management in WB-N1 mode for IoT
+    └─ Section: 4.22.5 support of no-transmit zone
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.20 5GS session management in WB-N1 mode for IoT
+  └─ Section: 4.23 NAS over Non-Terrestrial network
+      Level: 2
+      Number of subsections: 5
+      Parent: 4 general
+    └─ Section: 4.23.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.23 NAS over Non-Terrestrial network
+    └─ Section: 4.23.2 list of "PLMNs not allowed to operate at the present UE location"
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.23 NAS over Non-Terrestrial network
+    └─ Section: 4.23.3 5GS mobility management via a satellite NG-RAN cell
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.23 NAS over Non-Terrestrial network
+    └─ Section: 4.23.4 5GS session management via a satellite NG-RAN cell
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.23 NAS over Non-Terrestrial network
+    └─ Section: 4.23.5 handling multiple tracking area codes from the lower layers
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.23 NAS over Non-Terrestrial network
+  └─ Section: 4.24 minimization of service interruption
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.25 support of MUSIM features
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.26 support for personal IoT network service
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.27 mobile base station relay support
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+  └─ Section: 4.28 NAS-specific aspects of mobile gNB with wireless access backhauling (MWAB)
+      Level: 2
+      Number of subsections: 3
+      Parent: 4 general
+    └─ Section: 4.28.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.28 NAS-specific aspects of mobile gNB with wireless access backhauling (MWAB)
+    └─ Section: 4.28.2 authorization of MWAB-UE
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.28 NAS-specific aspects of mobile gNB with wireless access backhauling (MWAB)
+    └─ Section: 4.28.3 control of UE access via MWAB
+        Level: 3
+        Number of subsections: 0
+        Parent: 4.28 NAS-specific aspects of mobile gNB with wireless access backhauling (MWAB)
+  └─ Section: 4.29 support of indirect network sharing
+      Level: 2
+      Number of subsections: 0
+      Parent: 4 general
+--------------------------------------------------------------------------------
+
+Top Level Section: 5 elementary procedures for 5GS mobility management
+ Level: 1
+ Number of subsections: 6
+ Parent: None (Root level)
+  └─ Section: 5.1 overview
+      Level: 2
+      Number of subsections: 5
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.1.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.1 overview
+    └─ Section: 5.1.2 types of 5GMM procedures
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.1 overview
+    └─ Section: 5.1.3 5GMM sublayer states
+        Level: 3
+        Number of subsections: 2
+        Parent: 5.1 overview
+      └─ Section: 5.1.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.1.3 5GMM sublayer states
+      └─ Section: 5.1.3.2 5GMM sublayer states
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.1.3 5GMM sublayer states
+    └─ Section: 5.1.4 coordination between 5GMM and EMM
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.1 overview
+      └─ Section: 5.1.4.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.1.4 coordination between 5GMM and EMM
+      └─ Section: 5.1.4.2 coordination between 5GMM for 3GPP access and EMM with N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.1.4 coordination between 5GMM and EMM
+      └─ Section: 5.1.4.3 coordination between 5GMM for 3GPP access and EMM without N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.1.4 coordination between 5GMM and EMM
+    └─ Section: 5.1.5 coordination between 5GMM and GMM
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.1 overview
+  └─ Section: 5.2 behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED
+      Level: 2
+      Number of subsections: 3
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.2.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.2 behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED
+    └─ Section: 5.2.2 UE behaviour in state 5GMM-DEREGISTERED
+        Level: 3
+        Number of subsections: 4
+        Parent: 5.2 behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED
+      └─ Section: 5.2.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.2 UE behaviour in state 5GMM-DEREGISTERED
+      └─ Section: 5.2.2.2 primary substate selection
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.2 UE behaviour in state 5GMM-DEREGISTERED
+      └─ Section: 5.2.2.3 detailed description of UE behaviour in state 5GMM-DEREGISTERED
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.2 UE behaviour in state 5GMM-DEREGISTERED
+      └─ Section: 5.2.2.4 substate when back to state 5GMM-DEREGISTERED from another 5GMM state
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.2 UE behaviour in state 5GMM-DEREGISTERED
+    └─ Section: 5.2.3 UE behaviour in state 5GMM-REGISTERED
+        Level: 3
+        Number of subsections: 2
+        Parent: 5.2 behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED
+      └─ Section: 5.2.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.3 UE behaviour in state 5GMM-REGISTERED
+      └─ Section: 5.2.3.2 detailed description of UE behaviour in state 5GMM-REGISTERED
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.2.3 UE behaviour in state 5GMM-REGISTERED
+  └─ Section: 5.3 general on elementary 5GMM procedures
+      Level: 2
+      Number of subsections: 30
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.3.1 5GMM modes and N1 NAS signalling connection
+        Level: 3
+        Number of subsections: 5
+        Parent: 5.3 general on elementary 5GMM procedures
+      └─ Section: 5.3.1.1 establishment of the N1 NAS signalling connection
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.1 5GMM modes and N1 NAS signalling connection
+      └─ Section: 5.3.1.2 Re-establishment of the N1 NAS signalling connection
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.1 5GMM modes and N1 NAS signalling connection
+      └─ Section: 5.3.1.3 release of the N1 NAS signalling connection
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.1 5GMM modes and N1 NAS signalling connection
+      └─ Section: 5.3.1.4 5GMM-CONNECTED mode with RRC inactive indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.1 5GMM modes and N1 NAS signalling connection
+      └─ Section: 5.3.1.5 suspend and resume of the N1 NAS signalling connection
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.1 5GMM modes and N1 NAS signalling connection
+    └─ Section: 5.3.2 permanent identifiers
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.3 temporary identities
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.4 registration areas
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.5 service area restrictions
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.3 general on elementary 5GMM procedures
+      └─ Section: 5.3.5.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.5 service area restrictions
+      └─ Section: 5.3.5.2 3GPP access service area restrictions
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.5 service area restrictions
+      └─ Section: 5.3.5.3 wireline access service area restrictions
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.5 service area restrictions
+    └─ Section: 5.3.6 mobile initiated connection only mode
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.7 handling of the periodic registration update timer and mobile reachable timer
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.8 handling of timer T3502
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.9 handling of NAS level mobility management congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.10 handling of DNN based congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.11 handling of S-NSSAI based congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.12 handling of local emergency numbers
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.12A handling of local emergency numbers received via 3GPP access and non-3GPP access
+        Level: 3
+        Number of subsections: 2
+        Parent: 5.3 general on elementary 5GMM procedures
+      └─ Section: 5.3.12A.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.12A handling of local emergency numbers received via 3GPP access and non-3GPP access
+      └─ Section: 5.3.12A.2 receiving a REGISTRATION ACCEPT message via non-3GPP access
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.12A handling of local emergency numbers received via 3GPP access and non-3GPP access
+    └─ Section: 5.3.13 lists of 5GS forbidden tracking areas
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.13A forbidden PLMN lists
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.14 list of equivalent PLMNs
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.14A list of equivalent SNPNs
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.15 transmission failure abnormal case in the UE
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.16 extended DRX cycle for UEs in 5GMM-IDLE and 5GMM-CONNECTED mode with RRC inactive indication
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.17 service gap control
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.18 restriction on use of enhanced coverage
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.19 handling of congestion control for transport of user data via the control plane
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.19A specific requirements for UE configured to use timer T3245
+        Level: 3
+        Number of subsections: 2
+        Parent: 5.3 general on elementary 5GMM procedures
+      └─ Section: 5.3.19A.1 UE not operating in SNPN access operation mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.19A specific requirements for UE configured to use timer T3245
+      └─ Section: 5.3.19A.2 UE operating in SNPN access operation mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.19A specific requirements for UE configured to use timer T3245
+    └─ Section: 5.3.20 specific requirements for UE when receiving non-integrity protected reject messages
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.3 general on elementary 5GMM procedures
+      └─ Section: 5.3.20.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.20 specific requirements for UE when receiving non-integrity protected reject messages
+      └─ Section: 5.3.20.2 requirements for UE in a PLMN
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.20 specific requirements for UE when receiving non-integrity protected reject messages
+      └─ Section: 5.3.20.3 requirements for UE in an SNPN
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.3.20 specific requirements for UE when receiving non-integrity protected reject messages
+    └─ Section: 5.3.21 CIoT 5GS optimizations
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.22 interaction between MICO mode with active time and extended idle mode DRX cycle
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.23 forbidden wireline access area
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.24 WUS assistance
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.25 paging early indication with paging subgrouping assistance
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+    └─ Section: 5.3.26 support for unavailability period
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.3 general on elementary 5GMM procedures
+  └─ Section: 5.4 5GMM common procedures
+      Level: 2
+      Number of subsections: 7
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.4.1 primary authentication and key agreement procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.1.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.1 primary authentication and key agreement procedure
+      └─ Section: 5.4.1.2 EAP based primary authentication and key agreement procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.1 primary authentication and key agreement procedure
+      └─ Section: 5.4.1.3 5G AKA based primary authentication and key agreement procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.1 primary authentication and key agreement procedure
+    └─ Section: 5.4.2 security mode control procedure
+        Level: 3
+        Number of subsections: 7
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.2 NAS security mode control initiation by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.3 NAS security mode command accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.4 NAS security mode control completion by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.5 NAS security mode command not accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.6 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+      └─ Section: 5.4.2.7 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.2 security mode control procedure
+    └─ Section: 5.4.3 identification procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+      └─ Section: 5.4.3.2 identification initiation by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+      └─ Section: 5.4.3.3 identification response by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+      └─ Section: 5.4.3.4 identification completion by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+      └─ Section: 5.4.3.5 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+      └─ Section: 5.4.3.6 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.3 identification procedure
+    └─ Section: 5.4.4 generic UE configuration update procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.4.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+      └─ Section: 5.4.4.2 generic UE configuration update procedure initiated by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+      └─ Section: 5.4.4.3 generic UE configuration update accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+      └─ Section: 5.4.4.4 generic UE configuration update completion by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+      └─ Section: 5.4.4.5 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+      └─ Section: 5.4.4.6 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.4 generic UE configuration update procedure
+    └─ Section: 5.4.5 NAS transport procedure(s)
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.5.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.5 NAS transport procedure(s)
+      └─ Section: 5.4.5.2 UE-initiated NAS transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.5 NAS transport procedure(s)
+      └─ Section: 5.4.5.3 Network-initiated NAS transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.5 NAS transport procedure(s)
+    └─ Section: 5.4.6 5GMM status procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.6.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.6 5GMM status procedure
+      └─ Section: 5.4.6.2 5GMM status received in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.6 5GMM status procedure
+      └─ Section: 5.4.6.3 5GMM status received in the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.6 5GMM status procedure
+    └─ Section: 5.4.7 network slice-specific authentication and authorization procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.4 5GMM common procedures
+      └─ Section: 5.4.7.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.7 network slice-specific authentication and authorization procedure
+      └─ Section: 5.4.7.2 network slice-specific EAP message reliable transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.7 network slice-specific authentication and authorization procedure
+      └─ Section: 5.4.7.3 network slice-specific EAP result message transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.4.7 network slice-specific authentication and authorization procedure
+  └─ Section: 5.5 5GMM specific procedures
+      Level: 2
+      Number of subsections: 4
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.5.1 registration procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.5 5GMM specific procedures
+      └─ Section: 5.5.1.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.1 registration procedure
+      └─ Section: 5.5.1.2 registration procedure for initial registration
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.1 registration procedure
+      └─ Section: 5.5.1.3 registration procedure for mobility and periodic registration update
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.1 registration procedure
+    └─ Section: 5.5.2 De-registration procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 5.5 5GMM specific procedures
+      └─ Section: 5.5.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.2 De-registration procedure
+      └─ Section: 5.5.2.2 UE-initiated de-registration procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.2 De-registration procedure
+      └─ Section: 5.5.2.3 Network-initiated de-registration procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.2 De-registration procedure
+    └─ Section: 5.5.3 ecall inactivity procedure
+        Level: 3
+        Number of subsections: 0
+        Parent: 5.5 5GMM specific procedures
+    └─ Section: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+        Level: 3
+        Number of subsections: 7
+        Parent: 5.5 5GMM specific procedures
+      └─ Section: 5.5.4.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.2 ProSe relay transaction identity (PRTI)
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.3 UE-initiated authentication and key agreement procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.4 UE-initiated authentication and key agreement procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.5 UE-initiated authentication and key agreement procedure not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.6 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+      └─ Section: 5.5.4.7 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.5.4 authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+  └─ Section: 5.6 5GMM connection management procedures
+      Level: 2
+      Number of subsections: 3
+      Parent: 5 elementary procedures for 5GS mobility management
+    └─ Section: 5.6.1 service request procedure
+        Level: 3
+        Number of subsections: 9
+        Parent: 5.6 5GMM connection management procedures
+      └─ Section: 5.6.1.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.2 service request procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.3 common procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.4 service request procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.5 service request procedure not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.6 service request procedure for initiating an emergency PDU session not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.6A service request procedure for an emergency services fallback not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.7 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+      └─ Section: 5.6.1.8 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.1 service request procedure
+    └─ Section: 5.6.2 paging procedure
+        Level: 3
+        Number of subsections: 2
+        Parent: 5.6 5GMM connection management procedures
+      └─ Section: 5.6.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.2 paging procedure
+      └─ Section: 5.6.2.2 paging for 5GS services
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.2 paging procedure
+    └─ Section: 5.6.3 notification procedure
+        Level: 3
+        Number of subsections: 5
+        Parent: 5.6 5GMM connection management procedures
+      └─ Section: 5.6.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.3 notification procedure
+      └─ Section: 5.6.3.2 notification procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.3 notification procedure
+      └─ Section: 5.6.3.3 notification procedure completion
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.3 notification procedure
+      └─ Section: 5.6.3.4 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.3 notification procedure
+      └─ Section: 5.6.3.5 abnormal cases on the UE side
+          Level: 4
+          Number of subsections: 0
+          Parent: 5.6.3 notification procedure
+--------------------------------------------------------------------------------
+
+Top Level Section: 6 elementary procedures for 5GS session management
+ Level: 1
+ Number of subsections: 6
+ Parent: None (Root level)
+  └─ Section: 6.1 overview
+      Level: 2
+      Number of subsections: 6
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.1.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.1 overview
+    └─ Section: 6.1.2 types of 5GSM procedures
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.1 overview
+    └─ Section: 6.1.3 5GSM sublayer states
+        Level: 3
+        Number of subsections: 3
+        Parent: 6.1 overview
+      └─ Section: 6.1.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.1.3 5GSM sublayer states
+      └─ Section: 6.1.3.2 5GSM sublayer states in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.1.3 5GSM sublayer states
+      └─ Section: 6.1.3.3 5GSM sublayer states in the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.1.3 5GSM sublayer states
+    └─ Section: 6.1.4 coordination between 5GSM and ESM
+        Level: 3
+        Number of subsections: 2
+        Parent: 6.1 overview
+      └─ Section: 6.1.4.1 coordination between 5GSM and ESM with N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.1.4 coordination between 5GSM and ESM
+      └─ Section: 6.1.4.2 coordination between 5GSM and ESM without N26 interface
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.1.4 coordination between 5GSM and ESM
+    └─ Section: 6.1.4A coordination between 5GSM and SM
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.1 overview
+    └─ Section: 6.1.5 coordination for interworking with ePDG connected to EPC
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.1 overview
+  └─ Section: 6.2 general on elementary 5GSM procedures
+      Level: 2
+      Number of subsections: 20
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.2.1 principles of PTI handling for 5GSM procedures
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.2 PDU session types
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.3 PDU session management
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.4 IP address allocation
+        Level: 3
+        Number of subsections: 5
+        Parent: 6.2 general on elementary 5GSM procedures
+      └─ Section: 6.2.4.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.4 IP address allocation
+      └─ Section: 6.2.4.2 IP address allocation via NAS signalling
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.4 IP address allocation
+      └─ Section: 6.2.4.2a IPv6 prefix delegation via DHCPv6
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.4 IP address allocation
+      └─ Section: 6.2.4.3 additional RG related requirements for IP address allocation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.4 IP address allocation
+      └─ Section: 6.2.4.4 additional requirements of the UE acting as 5G ProSe layer-3 UE-to-network relay UE for IP address allocation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.4 IP address allocation
+    └─ Section: 6.2.5 quality of service
+        Level: 3
+        Number of subsections: 2
+        Parent: 6.2 general on elementary 5GSM procedures
+      └─ Section: 6.2.5.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.5 quality of service
+      └─ Section: 6.2.5.2 QoS in MA PDU session
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.5 quality of service
+    └─ Section: 6.2.6 local area data network (LADN)
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.7 handling of DNN based congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.8 handling of S-NSSAI based congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.9 interaction with upper layers
+        Level: 3
+        Number of subsections: 3
+        Parent: 6.2 general on elementary 5GSM procedures
+      └─ Section: 6.2.9.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.9 interaction with upper layers
+      └─ Section: 6.2.9.2 URSP
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.9 interaction with upper layers
+      └─ Section: 6.2.9.3 ProSeP
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.2.9 interaction with upper layers
+    └─ Section: 6.2.10 handling of 3GPP PS data off
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.11 Multi-homed IPv6 PDU session
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.12 handling of network rejection not due to congestion control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.13 handling of small data rate control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.14 handling of serving PLMN rate control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.15 handling of reliable data service
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.16 handling of header compression for control plane CIoT optimizations
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.17 handling of edge computing enhancements
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.18 support of redundant PDU sessions
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.19 handling of maximum group data rate limitation control
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+    └─ Section: 6.2.20 support of UL PDU set handling
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.2 general on elementary 5GSM procedures
+  └─ Section: 6.3 Network-requested 5GSM procedures
+      Level: 2
+      Number of subsections: 4
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.3.1 PDU session authentication and authorization procedure
+        Level: 3
+        Number of subsections: 3
+        Parent: 6.3 Network-requested 5GSM procedures
+      └─ Section: 6.3.1.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1 PDU session authentication and authorization procedure
+      └─ Section: 6.3.1.2 PDU EAP message reliable transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1 PDU session authentication and authorization procedure
+      └─ Section: 6.3.1.3 PDU EAP result message transport procedure
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1 PDU session authentication and authorization procedure
+    └─ Section: 6.3.1A Service-level authentication and authorization procedure
+        Level: 3
+        Number of subsections: 5
+        Parent: 6.3 Network-requested 5GSM procedures
+      └─ Section: 6.3.1A.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1A Service-level authentication and authorization procedure
+      └─ Section: 6.3.1A.2 Service-level authentication and authorization procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1A Service-level authentication and authorization procedure
+      └─ Section: 6.3.1A.3 Service-level authentication and authorization procedure accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1A Service-level authentication and authorization procedure
+      └─ Section: 6.3.1A.4 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1A Service-level authentication and authorization procedure
+      └─ Section: 6.3.1A.5 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.1A Service-level authentication and authorization procedure
+    └─ Section: 6.3.2 Network-requested PDU session modification procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 6.3 Network-requested 5GSM procedures
+      └─ Section: 6.3.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+      └─ Section: 6.3.2.2 Network-requested PDU session modification procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+      └─ Section: 6.3.2.3 Network-requested PDU session modification procedure accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+      └─ Section: 6.3.2.4 Network-requested PDU session modification procedure not accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+      └─ Section: 6.3.2.5 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+      └─ Section: 6.3.2.6 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.2 Network-requested PDU session modification procedure
+    └─ Section: 6.3.3 Network-requested PDU session release procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 6.3 Network-requested 5GSM procedures
+      └─ Section: 6.3.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+      └─ Section: 6.3.3.2 Network-requested PDU session release procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+      └─ Section: 6.3.3.3 Network-requested PDU session release procedure accepted by the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+      └─ Section: 6.3.3.4 N1 SM delivery skipped
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+      └─ Section: 6.3.3.5 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+      └─ Section: 6.3.3.6 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.3.3 Network-requested PDU session release procedure
+  └─ Section: 6.4 UE-requested 5GSM procedures
+      Level: 2
+      Number of subsections: 3
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.4.1 UE-requested PDU session establishment procedure
+        Level: 3
+        Number of subsections: 8
+        Parent: 6.4 UE-requested 5GSM procedures
+      └─ Section: 6.4.1.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.2 UE-requested PDU session establishment procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.3 UE-requested PDU session establishment procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.4 UE-requested PDU session establishment procedure not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.5 handling the maximum number of established PDU sessions
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.5A handling the maximum number of allowed active user-plane resources for PDU sessions of UEs in NB-N1 mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.6 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+      └─ Section: 6.4.1.7 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.1 UE-requested PDU session establishment procedure
+    └─ Section: 6.4.2 UE-requested PDU session modification procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 6.4 UE-requested 5GSM procedures
+      └─ Section: 6.4.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+      └─ Section: 6.4.2.2 UE-requested PDU session modification procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+      └─ Section: 6.4.2.3 UE-requested PDU session modification procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+      └─ Section: 6.4.2.4 UE-requested PDU session modification procedure not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+      └─ Section: 6.4.2.5 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+      └─ Section: 6.4.2.6 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.2 UE-requested PDU session modification procedure
+    └─ Section: 6.4.3 UE-requested PDU session release procedure
+        Level: 3
+        Number of subsections: 6
+        Parent: 6.4 UE-requested 5GSM procedures
+      └─ Section: 6.4.3.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+      └─ Section: 6.4.3.2 UE-requested PDU session release procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+      └─ Section: 6.4.3.3 UE-requested PDU session release procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+      └─ Section: 6.4.3.4 UE-requested PDU session release procedure not accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+      └─ Section: 6.4.3.5 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+      └─ Section: 6.4.3.6 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.4.3 UE-requested PDU session release procedure
+  └─ Section: 6.5 5GSM status procedure
+      Level: 2
+      Number of subsections: 3
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.5.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.5 5GSM status procedure
+    └─ Section: 6.5.2 5GSM status received in the UE
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.5 5GSM status procedure
+    └─ Section: 6.5.3 5GSM status received in the SMF
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.5 5GSM status procedure
+  └─ Section: 6.6 miscellaneous procedures
+      Level: 2
+      Number of subsections: 2
+      Parent: 6 elementary procedures for 5GS session management
+    └─ Section: 6.6.1 exchange of extended protocol configuration options
+        Level: 3
+        Number of subsections: 0
+        Parent: 6.6 miscellaneous procedures
+    └─ Section: 6.6.2 remote UE report procedure
+        Level: 3
+        Number of subsections: 5
+        Parent: 6.6 miscellaneous procedures
+      └─ Section: 6.6.2.1 general
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.6.2 remote UE report procedure
+      └─ Section: 6.6.2.2 remote UE report procedure initiation
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.6.2 remote UE report procedure
+      └─ Section: 6.6.2.3 remote UE report procedure accepted by the network
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.6.2 remote UE report procedure
+      └─ Section: 6.6.2.4 abnormal cases in the UE
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.6.2 remote UE report procedure
+      └─ Section: 6.6.2.5 abnormal cases on the network side
+          Level: 4
+          Number of subsections: 0
+          Parent: 6.6.2 remote UE report procedure
+--------------------------------------------------------------------------------
+
+Top Level Section: 7 handling of unknown unforeseen and erroneous protocol data
+ Level: 1
+ Number of subsections: 8
+ Parent: None (Root level)
+  └─ Section: 7.1 general
+      Level: 2
+      Number of subsections: 0
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+  └─ Section: 7.2 message too short or too long
+      Level: 2
+      Number of subsections: 2
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+    └─ Section: 7.2.1 message too short
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.2 message too short or too long
+    └─ Section: 7.2.2 message too long
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.2 message too short or too long
+  └─ Section: 7.3 unknown or unforeseen procedure transaction identity or PDU session identity
+      Level: 2
+      Number of subsections: 2
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+    └─ Section: 7.3.1 procedure transaction identity
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.3 unknown or unforeseen procedure transaction identity or PDU session identity
+    └─ Section: 7.3.2 PDU session identity
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.3 unknown or unforeseen procedure transaction identity or PDU session identity
+  └─ Section: 7.4 unknown or unforeseen message type
+      Level: 2
+      Number of subsections: 0
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+  └─ Section: 7.5 Non-semantical mandatory information element errors
+      Level: 2
+      Number of subsections: 3
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+    └─ Section: 7.5.1 common procedures
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.5 Non-semantical mandatory information element errors
+    └─ Section: 7.5.2 5GS mobility management
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.5 Non-semantical mandatory information element errors
+    └─ Section: 7.5.3 5GS session management
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.5 Non-semantical mandatory information element errors
+  └─ Section: 7.6 unknown and unforeseen IEs in the non-imperative message part
+      Level: 2
+      Number of subsections: 4
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+    └─ Section: 7.6.1 IEIs unknown in the message
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.6 unknown and unforeseen IEs in the non-imperative message part
+    └─ Section: 7.6.2 out of sequence IEs
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.6 unknown and unforeseen IEs in the non-imperative message part
+    └─ Section: 7.6.3 repeated IEs
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.6 unknown and unforeseen IEs in the non-imperative message part
+    └─ Section: 7.6.4 unknown and unforeseen IEs in a type 6 IE container information element
+        Level: 3
+        Number of subsections: 3
+        Parent: 7.6 unknown and unforeseen IEs in the non-imperative message part
+      └─ Section: 7.6.4.1 IEIs unknown in the type 6 IE container information element
+          Level: 4
+          Number of subsections: 0
+          Parent: 7.6.4 unknown and unforeseen IEs in a type 6 IE container information element
+      └─ Section: 7.6.4.2 out of sequence IEs
+          Level: 4
+          Number of subsections: 0
+          Parent: 7.6.4 unknown and unforeseen IEs in a type 6 IE container information element
+      └─ Section: 7.6.4.3 repeated IEs
+          Level: 4
+          Number of subsections: 0
+          Parent: 7.6.4 unknown and unforeseen IEs in a type 6 IE container information element
+  └─ Section: 7.7 Non-imperative message part errors
+      Level: 2
+      Number of subsections: 3
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+    └─ Section: 7.7.1 syntactically incorrect optional IEs
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.7 Non-imperative message part errors
+    └─ Section: 7.7.2 conditional IE errors
+        Level: 3
+        Number of subsections: 0
+        Parent: 7.7 Non-imperative message part errors
+    └─ Section: 7.7.3 errors in a type 6 IE container information element
+        Level: 3
+        Number of subsections: 2
+        Parent: 7.7 Non-imperative message part errors
+      └─ Section: 7.7.3.1 syntactically incorrect optional IEs
+          Level: 4
+          Number of subsections: 0
+          Parent: 7.7.3 errors in a type 6 IE container information element
+      └─ Section: 7.7.3.2 conditional IE errors
+          Level: 4
+          Number of subsections: 0
+          Parent: 7.7.3 errors in a type 6 IE container information element
+  └─ Section: 7.8 messages with semantically incorrect contents
+      Level: 2
+      Number of subsections: 0
+      Parent: 7 handling of unknown unforeseen and erroneous protocol data
+--------------------------------------------------------------------------------
+
+Top Level Section: 8 message functional definitions and contents
+ Level: 1
+ Number of subsections: 3
+ Parent: None (Root level)
+  └─ Section: 8.1 overview
+      Level: 2
+      Number of subsections: 0
+      Parent: 8 message functional definitions and contents
+  └─ Section: 8.2 5GS mobility management messages
+      Level: 2
+      Number of subsections: 38
+      Parent: 8 message functional definitions and contents
+    └─ Section: 8.2.1 authentication request
+        Level: 3
+        Number of subsections: 5
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.1.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.1 authentication request
+      └─ Section: 8.2.1.2 authentication parameter RAND
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.1 authentication request
+      └─ Section: 8.2.1.3 authentication parameter AUTN
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.1 authentication request
+      └─ Section: 8.2.1.4 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.1 authentication request
+      └─ Section: 8.2.1.5 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.1 authentication request
+    └─ Section: 8.2.2 authentication response
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.2.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.2 authentication response
+      └─ Section: 8.2.2.2 authentication response parameter
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.2 authentication response
+      └─ Section: 8.2.2.3 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.2 authentication response
+    └─ Section: 8.2.3 authentication result
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.3.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.3 authentication result
+      └─ Section: 8.2.3.2 ABBA
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.3 authentication result
+      └─ Section: 8.2.3.3 AUN3 device security key
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.3 authentication result
+    └─ Section: 8.2.4 authentication failure
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.4.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.4 authentication failure
+      └─ Section: 8.2.4.2 authentication failure parameter
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.4 authentication failure
+    └─ Section: 8.2.5 authentication reject
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.5.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.5 authentication reject
+      └─ Section: 8.2.5.2 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.5 authentication reject
+    └─ Section: 8.2.6 registration request
+        Level: 3
+        Number of subsections: 44
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.6.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.2 Non-current native NAS key set identifier
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.3 5GMM capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.4 UE security capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.5 requested NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.6 last visited registered TAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.7 S1 UE network capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.8 uplink data status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.9 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.10 MICO indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.11 UE status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.12 additional GUTI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.13 allowed PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.14 UE's usage setting
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.15 requested DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.16 EPS NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.17 LADN indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.17A payload container type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.18 payload container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.19 network slicing indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.20 5GS update type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.21 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.22 requested extended DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.23 EPS bearer context status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.24 T3324 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.25 mobile station classmark 2
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.26 supported codecs
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.27 UE radio capability ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.28 requested mapped NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.29 additional information requested
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.30 requested WUS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.31 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.32 N5GC indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.33 requested NB-N1 mode DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.34 UE request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.35 paging restriction
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.35 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.36 NID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.37 UE determined PLMN with disaster condition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.38 requested PEIPS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.39 requested T3512 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.40 unavailability information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.41 Non-3GPP path switching information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+      └─ Section: 8.2.6.42 AUN3 indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.6 registration request
+    └─ Section: 8.2.7 registration accept
+        Level: 3
+        Number of subsections: 61
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.7.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.2 5G-GUTI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.3 equivalent PLMNs
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.4 TAI list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.5 allowed NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.6 rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.7 configured NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.8 5GS network feature support
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.9 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.10 PDU session reactivation result
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.11 PDU session reactivation result error cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.12 LADN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.13 MICO indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.14 network slicing indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.15 service area list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.16 T3512 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.17 Non-3GPP de-registration timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.18 T3502 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.19 emergency number list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.20 extended emergency number list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.21 SOR transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.22 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.23 NSSAI inclusion mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.24 Operator-defined access category definitions
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.25 negotiated DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.26 Non-3GPP NW policies
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.27 negotiated extended DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.28 T3447 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.29 T3448 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.30 T3324 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.31 EPS bearer context status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.32 UE radio capability ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.33 UE radio capability ID deletion indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.34 pending NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.35 ciphering key data
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.36 CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.37 truncated 5G-S-TMSI configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.38 negotiated NB-N1 mode DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.39 negotiated WUS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.40 extended rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.41 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.42 negotiated PEIPS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.43 5GS additional request result
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.44 NSSRG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.45 disaster roaming wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.46 disaster return wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.47 list of PLMNs to be used in disaster condition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.48 forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.49 forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.50 extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.51 NSAG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.52 equivalent SNPNs
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.53 NID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.54 registration accept type 6 IE container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.55 RAN timing synchronization
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.56 alternative NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.57 maximum time offset
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.58 S-NSSAI time validity information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.59 unavailability configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.61 On-demand NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+      └─ Section: 8.2.7.62 RAT utilization control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.7 registration accept
+    └─ Section: 8.2.8 registration complete
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.8.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.8 registration complete
+      └─ Section: 8.2.8.2 SOR transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.8 registration complete
+    └─ Section: 8.2.9 registration reject
+        Level: 3
+        Number of subsections: 16
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.9.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.2 T3346 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.3 T3502 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.4 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.5 rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.6 CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.7 extended rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.8 disaster return wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.9 extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.10 lower bound timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.11 forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.12 forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.13 N3IWF identifier
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.14 TNAN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.15 extended 5GMM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+      └─ Section: 8.2.9.16 RAT utilization control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.9 registration reject
+    └─ Section: 8.2.10 UL NAS transport
+        Level: 3
+        Number of subsections: 12
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.10.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.2 PDU session ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.3 old PDU session ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.4 request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.5 S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.6 DNN
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.7 additional information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.8 MA PDU session information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.9 release assistance indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.10 Non-3GPP access path switching indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.11 alternative S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+      └─ Section: 8.2.10.12 payload container information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.10 UL NAS transport
+    └─ Section: 8.2.11 DL NAS transport
+        Level: 3
+        Number of subsections: 6
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.11.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+      └─ Section: 8.2.11.2 PDU session ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+      └─ Section: 8.2.11.3 additional information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+      └─ Section: 8.2.11.4 5GMM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+      └─ Section: 8.2.11.5 Back-off timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+      └─ Section: 8.2.11.6 lower bound timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.11 DL NAS transport
+    └─ Section: 8.2.12 De-registration request (UE originating de-registration)
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.12.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.12 De-registration request (UE originating de-registration)
+      └─ Section: 8.2.12.2 unavailability information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.12 De-registration request (UE originating de-registration)
+      └─ Section: 8.2.12.3 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.12 De-registration request (UE originating de-registration)
+    └─ Section: 8.2.13 De-registration accept (UE originating de-registration)
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.13.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.13 De-registration accept (UE originating de-registration)
+    └─ Section: 8.2.14 De-registration request (UE terminated de-registration)
+        Level: 3
+        Number of subsections: 12
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.14.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.2 5GMM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.3 T3346 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.4 rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.5 CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.6 extended rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.7 disaster return wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.7A extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.8 lower bound timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.9 forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.10 forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+      └─ Section: 8.2.14.11 RAT utilization control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.14 De-registration request (UE terminated de-registration)
+    └─ Section: 8.2.15 De-registration accept (UE terminated de-registration)
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.15.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.15 De-registration accept (UE terminated de-registration)
+    └─ Section: 8.2.16 service request
+        Level: 3
+        Number of subsections: 7
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.16.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.2 uplink data status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.3 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.4 allowed PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.5 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.6 UE request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+      └─ Section: 8.2.16.7 paging restriction
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.16 service request
+    └─ Section: 8.2.17 service accept
+        Level: 3
+        Number of subsections: 9
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.17.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.2 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.3 PDU session reactivation result
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.4 PDU session reactivation result error cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.5 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.6 T3448 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.7 5GS additional request result
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.8 forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+      └─ Section: 8.2.17.9 forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.17 service accept
+    └─ Section: 8.2.18 service reject
+        Level: 3
+        Number of subsections: 11
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.18.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.2 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.3 T3346 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.4 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.5 T3448 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.6 CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.7 disaster return wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.8 extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.9 lower bound timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.10 forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+      └─ Section: 8.2.18.11 forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.18 service reject
+    └─ Section: 8.2.19 configuration update command
+        Level: 3
+        Number of subsections: 46
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.19.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.2 configuration update indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.3 5G-GUTI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.4 TAI list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.5 allowed NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.6 service area list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.7 full name for network
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.8 short name for network
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.9 local time zone
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.10 universal time and local time zone
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.11 network daylight saving time
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.12 LADN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.13 MICO indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.14 network slicing indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.15 configured NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.16 rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.17 Operator-defined access category definitions
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.18 SMS indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.19 T3447 value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.20 CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.21 UE radio capability ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.22 UE radio capability ID deletion indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.23 5GS registration result
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.24 truncated 5G-S-TMSI configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.25 additional configuration indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.26 extended rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.27 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.28 NSSRG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.29 disaster roaming wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.30 disaster return wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.31 list of PLMNs to be used in disaster condition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.32 extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.33 updated PEIPS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.34 NSAG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.35 priority indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.36 RAN timing synchronization
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.37 extended LADN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.38 alternative NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.39 S-NSSAI location validity information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.40 S-NSSAI time validity information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.41 maximum time offset
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.42 partially allowed NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.43 partially rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.44 feature authorization indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.45 On-demand NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+      └─ Section: 8.2.19.46 RAT utilization control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.19 configuration update command
+    └─ Section: 8.2.20 configuration update complete
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.20.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.20 configuration update complete
+      └─ Section: 8.2.20.2 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.20 configuration update complete
+    └─ Section: 8.2.21 identity request
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.21.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.21 identity request
+    └─ Section: 8.2.22 identity response
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.22.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.22 identity response
+    └─ Section: 8.2.23 notification
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.23.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.23 notification
+    └─ Section: 8.2.24 notification response
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.24.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.24 notification response
+      └─ Section: 8.2.24.2 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.24 notification response
+    └─ Section: 8.2.25 security mode command
+        Level: 3
+        Number of subsections: 9
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.25.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.2 IMEISV request
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.3 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.4 selected EPS NAS security algorithms
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.5 additional 5G security information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.6 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.7 ABBA
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.8 replayed S1 UE security capabilities
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+      └─ Section: 8.2.25.9 AUN3 device security key
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.25 security mode command
+    └─ Section: 8.2.26 security mode complete
+        Level: 3
+        Number of subsections: 4
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.26.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.26 security mode complete
+      └─ Section: 8.2.26.2 IMEISV
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.26 security mode complete
+      └─ Section: 8.2.26.3 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.26 security mode complete
+      └─ Section: 8.2.26.4 non-IMEISV PEI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.26 security mode complete
+    └─ Section: 8.2.27 security mode reject
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.6.27.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.27 security mode reject
+    └─ Section: 8.2.28 security protected 5GS NAS message
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.28.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.28 security protected 5GS NAS message
+    └─ Section: 8.2.29 5GMM status
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.29.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.29 5GMM status
+    └─ Section: 8.2.30 control plane service request
+        Level: 3
+        Number of subsections: 13
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.30.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.2 CIoT small data container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.3 payload container type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.4 payload container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.5 PDU session ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.6 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.7 release assistance indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.8 uplink data status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.9 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.10 additional information
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.11 allowed PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.12 UE request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+      └─ Section: 8.2.30.13 paging restriction
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.30 control plane service request
+    └─ Section: 8.2.31 network slice-specific authentication command
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.31.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.31 network slice-specific authentication command
+    └─ Section: 8.2.32 network slice-specific authentication complete
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.32.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.32 network slice-specific authentication complete
+    └─ Section: 8.2.33 network slice-specific authentication result
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.33.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.33 network slice-specific authentication result
+    └─ Section: 8.2.34 relay key request
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.34.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.34 relay key request
+    └─ Section: 8.2.35 relay key accept
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.35.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.35 relay key accept
+      └─ Section: 8.2.35.2 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.35 relay key accept
+    └─ Section: 8.2.36 relay key reject
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.36.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.36 relay key reject
+      └─ Section: 8.2.36.2 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.36 relay key reject
+    └─ Section: 8.2.37 relay authentication request
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.37.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.37 relay authentication request
+    └─ Section: 8.2.38 relay authentication response
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.2 5GS mobility management messages
+      └─ Section: 8.2.38.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.2.38 relay authentication response
+  └─ Section: 8.3 5GS session management messages
+      Level: 2
+      Number of subsections: 20
+      Parent: 8 message functional definitions and contents
+    └─ Section: 8.3.1 PDU session establishment request
+        Level: 3
+        Number of subsections: 20
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.1.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.2 PDU session type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.3 SSC mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.4 maximum number of supported packet filters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.5 5GSM capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.6 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.7 Always-on PDU session requested
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.8 SM PDU DN request container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.9 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.10 IP header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.11 DS-TT ethernet port MAC address
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.12 UE-DS-TT residence time
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.13 port management information container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.14 ethernet header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.15 suggested interface identifier
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.16 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.17 requested MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.18 PDU session pair ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.19 RSN
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+      └─ Section: 8.3.1.20 URSP rule enforcement reports
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.1 PDU session establishment request
+    └─ Section: 8.3.2 PDU session establishment accept
+        Level: 3
+        Number of subsections: 23
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.2.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.2 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.3 PDU address
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.4 RQ timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.5 S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.6 Always-on PDU session indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.7 mapped EPS bearer contexts
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.8 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.9 authorized QoS flow descriptions
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.10 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.11 DNN
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.12 5GSM network feature support
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.13 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.14 serving PLMN rate control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.15 ATSSS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.16 control plane only indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.17 IP header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.18 ethernet header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.19 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.20 received MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.21 N3QAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.22 protocol description
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+      └─ Section: 8.3.2.23 ECN marking for L4S indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.2 PDU session establishment accept
+    └─ Section: 8.3.3 PDU session establishment reject
+        Level: 3
+        Number of subsections: 8
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.3.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.2 Back-off timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.3 allowed SSC mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.4 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.4A 5GSM congestion re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.5 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.6 Re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+      └─ Section: 8.3.3.7 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.3 PDU session establishment reject
+    └─ Section: 8.3.4 PDU session authentication command
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.4.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.4 PDU session authentication command
+      └─ Section: 8.3.4.2 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.4 PDU session authentication command
+      └─ Section: 8.3.4.3 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.4 PDU session authentication command
+    └─ Section: 8.3.5 PDU session authentication complete
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.5.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.5 PDU session authentication complete
+      └─ Section: 8.3.5.2 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.5 PDU session authentication complete
+      └─ Section: 8.3.5.3 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.5 PDU session authentication complete
+    └─ Section: 8.3.6 PDU session authentication result
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.6.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.6 PDU session authentication result
+      └─ Section: 8.3.6.2 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.6 PDU session authentication result
+      └─ Section: 8.3.6.3 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.6 PDU session authentication result
+    └─ Section: 8.3.7 PDU session modification request
+        Level: 3
+        Number of subsections: 17
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.7.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.2 5GSM capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.3 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.4 maximum number of supported packet filters
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.5 Always-on PDU session requested
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.6 integrity protection maximum data rate
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.7 requested QoS rules
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.8 requested QoS flow descriptions
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.9 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.10 mapped EPS bearer contexts
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.11 port management information container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.12 IP header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.13 ethernet header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.14 requested MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.15 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.16 Non-3GPP delay budget
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+      └─ Section: 8.3.7.17 URSP rule enforcement reports
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.7 PDU session modification request
+    └─ Section: 8.3.8 PDU session modification reject
+        Level: 3
+        Number of subsections: 5
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.8.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.8 PDU session modification reject
+      └─ Section: 8.3.8.2 Back-off timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.8 PDU session modification reject
+      └─ Section: 8.3.8.2A 5GSM congestion re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.8 PDU session modification reject
+      └─ Section: 8.3.8.3 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.8 PDU session modification reject
+      └─ Section: 8.3.8.4 Re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.8 PDU session modification reject
+    └─ Section: 8.3.9 PDU session modification command
+        Level: 3
+        Number of subsections: 21
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.9.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.2 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.3 Session-AMBR
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.4 RQ timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.5 Always-on PDU session indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.6 authorized QoS rules
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.7 mapped EPS bearer contexts
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.8 authorized QoS flow descriptions
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.9 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.10 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.11 ATSSS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.12 IP header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.13 port management information container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.14 serving PLMN rate control
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.15 ethernet header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.16 received MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.17 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.18 alternative S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.19 N3QAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.20 protocol description
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+      └─ Section: 8.3.9.21 ECN marking for L4S indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.9 PDU session modification command
+    └─ Section: 8.3.10 PDU session modification complete
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.10.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.10 PDU session modification complete
+      └─ Section: 8.3.10.2 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.10 PDU session modification complete
+      └─ Section: 8.3.10.3 port management information container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.10 PDU session modification complete
+    └─ Section: 8.3.11 PDU session modification command reject
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.11.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.11 PDU session modification command reject
+      └─ Section: 8.3.11.2 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.11 PDU session modification command reject
+    └─ Section: 8.3.12 PDU session release request
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.12.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.12 PDU session release request
+      └─ Section: 8.3.12.2 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.12 PDU session release request
+      └─ Section: 8.3.12.3 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.12 PDU session release request
+    └─ Section: 8.3.13 PDU session release reject
+        Level: 3
+        Number of subsections: 2
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.13.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.13 PDU session release reject
+      └─ Section: 8.3.13.2 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.13 PDU session release reject
+    └─ Section: 8.3.14 PDU session release command
+        Level: 3
+        Number of subsections: 8
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.14.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.2 Back-off timer value
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.3 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.4 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.5 5GSM congestion re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.6 access type
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.7 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+      └─ Section: 8.3.14.8 alternative S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.14 PDU session release command
+    └─ Section: 8.3.15 PDU session release complete
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.15.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.15 PDU session release complete
+      └─ Section: 8.3.15.2 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.15 PDU session release complete
+      └─ Section: 8.3.15.3 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.15 PDU session release complete
+    └─ Section: 8.3.16 5GSM status
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.16.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.16 5GSM status
+    └─ Section: 8.3.17 Service-level authentication command
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.17.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.17 Service-level authentication command
+    └─ Section: 8.3.18 Service-level authentication complete
+        Level: 3
+        Number of subsections: 1
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.18.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.18 Service-level authentication complete
+    └─ Section: 8.3.19 remote UE report
+        Level: 3
+        Number of subsections: 3
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.19.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.19 remote UE report
+      └─ Section: 8.3.19.2 remote UE context connected
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.19 remote UE report
+      └─ Section: 8.3.19.3 remote UE context disconnected
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.19 remote UE report
+    └─ Section: 8.3.20 remote UE report response
+        Level: 3
+        Number of subsections: 4
+        Parent: 8.3 5GS session management messages
+      └─ Section: 8.3.20.1 message definition
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.20 remote UE report response
+      └─ Section: 8.3.20.2 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.20 remote UE report response
+      └─ Section: 8.3.20.3 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.20 remote UE report response
+      └─ Section: 8.3.20.4 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 8.3.20 remote UE report response
+--------------------------------------------------------------------------------
+
+Top Level Section: 9 general message format and information elements coding
+ Level: 1
+ Number of subsections: 12
+ Parent: None (Root level)
+  └─ Section: 9.1 overview
+      Level: 2
+      Number of subsections: 2
+      Parent: 9 general message format and information elements coding
+    └─ Section: 9.1.1 NAS message format
+        Level: 3
+        Number of subsections: 0
+        Parent: 9.1 overview
+    └─ Section: 9.1.2 field format and mapping
+        Level: 3
+        Number of subsections: 0
+        Parent: 9.1 overview
+  └─ Section: 9.2 extended protocol discriminator
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.3 security header type
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.4 PDU session identity
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.5 spare half octet
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.6 procedure transaction identity
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.7 message type
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.8 message authentication code
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.9 plain 5GS NAS message
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.10 sequence number
+      Level: 2
+      Number of subsections: 0
+      Parent: 9 general message format and information elements coding
+  └─ Section: 9.11 other information elements
+      Level: 2
+      Number of subsections: 4
+      Parent: 9 general message format and information elements coding
+    └─ Section: 9.11.1 general
+        Level: 3
+        Number of subsections: 0
+        Parent: 9.11 other information elements
+    └─ Section: 9.11.2 common information elements
+        Level: 3
+        Number of subsections: 23
+        Parent: 9.11 other information elements
+      └─ Section: 9.11.2.1 additional information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.1A access type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.1B DNN
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.2 EAP message
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.3 GPRS timer
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.4 GPRS timer 2
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.5 GPRS timer 3
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.6 intra N1 mode NAS transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.7 N1 mode to S1 mode NAS transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.8 S-NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.9 S1 mode to N1 mode NAS transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.10 Service-level-AA container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.11 Service-level device ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.12 Service-level-AA server address
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.13 Service-level-AA payload
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.14 Service-level-AA response
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.15 Service-level-AA payload type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.16 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.17 Service-level-AA pending indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.18 Service-level-AA service status indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.19 time duration
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.20 unavailability information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+      └─ Section: 9.11.2.21 unavailability configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.2 common information elements
+    └─ Section: 9.11.3 5GS mobility management (5GMM) information elements
+        Level: 3
+        Number of subsections: 128
+        Parent: 9.11 other information elements
+      └─ Section: 9.11.3.1 5GMM capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.2 5GMM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.2A 5GS DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.3 5GS identity type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.4 5GS mobile identity
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.5 5GS network feature support
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.6 5GS registration result
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.7 5GS registration type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.8 5GS tracking area identity
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.9 5GS tracking area identity list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.9A 5GS update type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.10 ABBA
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.11 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.12 additional 5G security information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.12A additional information requested
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.13 allowed PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.14 authentication failure parameter
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.15 authentication parameter AUTN
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.16 authentication parameter RAND
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.17 authentication response parameter
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.18 configuration update indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.18A CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.18B CIoT small data container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.18C ciphering key data
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.18D control plane service type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.19 daylight saving time
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.20 De-registration type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.21 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.22 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.23 emergency number list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.23A EPS bearer context status
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.24 EPS NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.25 EPS NAS security algorithms
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.26 extended emergency number list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.26A extended DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.27 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.28 IMEISV request
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.29 LADN indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.30 LADN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.31 MICO indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.31A MA PDU session information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.31B mapped NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.31C mobile station classmark 2
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.32 NAS key set identifier
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.33 NAS message container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.34 NAS security algorithms
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.35 network name
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.36 network slicing indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.36A Non-3GPP NW provided policies
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.37 NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.37A NSSAI inclusion mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.38 Operator-defined access category definitions
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.39 payload container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.40 payload container type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.41 PDU session identity 2
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.42 PDU session reactivation result
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.43 PDU session reactivation result error cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.44 PDU session status
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.45 PLMN list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.46 rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.46A release assistance indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.47 request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.48 S1 UE network capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.48A S1 UE security capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.49 service area list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.50 service type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.50A SMS indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.51 SOR transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.51A supported codec list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.52 time zone
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.53 time zone and time
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.53A UE parameters update transparent container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.54 UE security capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.55 UE's usage setting
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.56 UE status
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.57 uplink data status
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.58 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.59 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.60 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.61 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.62 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.63 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.64 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.65 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.66 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.67 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.68 UE radio capability ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.69 UE radio capability ID deletion indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.70 truncated 5G-S-TMSI configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.71 WUS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.72 N5GC indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.73 NB-N1 mode DRX parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.74 additional configuration indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.75 extended rejected NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.76 UE request type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.77 paging restriction
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.78 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.79 NID
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.80 PEIPS assistance information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.81 5GS additional request result
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.82 NSSRG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.83 list of PLMNs to be used in disaster condition
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.84 registration wait range
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.85 PLMN identity
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.86 extended CAG information list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.87 NSAG information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.88 ProSe relay transaction identity
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.89 relay key request parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.90 relay key response parameters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.91 priority indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.92 SNPN list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.93 N3IWF identifier
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.94 TNAN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.95 RAN timing synchronization
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.96 extended LADN information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.97 alternative NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.98 type 6 IE container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.99 Non-3GPP access path switching indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.100 S-NSSAI location validity information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.101 S-NSSAI time validity information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.102 Non-3GPP path switching information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.103 partial NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.104 AUN3 indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.106 payload container information
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.107 AUN3 device security key
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.108 On-demand NSSAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.109 extended 5GMM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+      └─ Section: 9.11.3.110 RAT utilization control
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.3 5GS mobility management (5GMM) information elements
+    └─ Section: 9.11.4 5GS session management (5GSM) information elements
+        Level: 3
+        Number of subsections: 40
+        Parent: 9.11 other information elements
+      └─ Section: 9.11.4.1 5GSM capability
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.2 5GSM cause
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.3 Always-on PDU session indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.4 Always-on PDU session requested
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.5 allowed SSC mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.6 extended protocol configuration options
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.7 integrity protection maximum data rate
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.8 mapped EPS bearer contexts
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.9 maximum number of supported packet filters
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.10 PDU address
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.11 PDU session type
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.12 QoS flow descriptions
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.13 QoS rules
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.14 Session-AMBR
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.15 SM PDU DN request container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.16 SSC mode
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.17 Re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.18 5GSM network feature support
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.19 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.20 serving PLMN rate control
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.21 5GSM congestion re-attempt indicator
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.22 ATSSS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.23 control plane only indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.24 IP header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.25 DS-TT ethernet port MAC address
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.26 UE-DS-TT residence time
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.27 port management information container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.28 ethernet header compression configuration
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.29 remote UE context list
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.30 requested MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.31 received MBS container
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.32 PDU session pair ID
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.33 RSN
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.34 ECS address
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.35 void
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.36 N3QAI
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.37 Non-3GPP delay budget
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.38 URSP rule enforcement reports
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.39 protocol description
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+      └─ Section: 9.11.4.40 ECN marking for L4S indication
+          Level: 4
+          Number of subsections: 0
+          Parent: 9.11.4 5GS session management (5GSM) information elements
+  └─ Section: 9.12 3GPP specific coding information defined within present document
+      Level: 2
+      Number of subsections: 1
+      Parent: 9 general message format and information elements coding
+    └─ Section: 9.12.1 serving network name (SNN)
+        Level: 3
+        Number of subsections: 0
+        Parent: 9.12 3GPP specific coding information defined within present document
+--------------------------------------------------------------------------------
+
+Top Level Section: 10 list of system parameters
+ Level: 1
+ Number of subsections: 4
+ Parent: None (Root level)
+  └─ Section: 10.1 general
+      Level: 2
+      Number of subsections: 0
+      Parent: 10 list of system parameters
+  └─ Section: 10.2 timers of 5GS mobility management
+      Level: 2
+      Number of subsections: 0
+      Parent: 10 list of system parameters
+  └─ Section: 10.3 timers of 5GS session management
+      Level: 2
+      Number of subsections: 0
+      Parent: 10 list of system parameters
+  └─ Section: 10.4 void
+      Level: 2
+      Number of subsections: 0
+      Parent: 10 list of system parameters
+--------------------------------------------------------------------------------

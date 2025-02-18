@@ -12,7 +12,7 @@ numpy	 #Numerical operations
 faiss-cpu	 #Vector search for document retrieval
 chromadb	 #Alternative vector database
 sentence-transformers	 #Convert text into embeddings
-langchain	 #Orchestrate RAG pipeline
+langchain>=0.0.300
 PyMuPDF #for pdf file handling
 
 # Knowledge Graph and Visualization
