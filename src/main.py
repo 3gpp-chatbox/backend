@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from langchain_community.graphs import Neo4jGraph
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
-import lib.doc_processor as doc_processor
+import backend.doc_processor as doc_processor
 
 
 # Load the Google API Key from the .env file
