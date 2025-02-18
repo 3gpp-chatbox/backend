@@ -47,30 +47,39 @@ def save_docs_cache(cache: Dict):
         console.print(f"[yellow]Warning: Could not save docs cache file: {str(e)}[/yellow]")
 
 def clean_text(text: str) -> str:
-    """Cleans extracted text by removing noise and normalizing content."""
+    """Cleans extracted text by removing noise, ToC, and normalizing content."""
     try:
-        # Handle potential encoding issues
+        # Ensure text is a string
+        if text is None:
+            return ""  # Return empty string if text is None
+        
         if not isinstance(text, str):
-            text = str(text, errors='ignore')
+            text = str(text)  # Convert to string if it's not already
         
         # Remove common PDF artifacts
         text = re.sub(r'\bPage\s+\d+\s+of\s+\d+\b', '', text)  # Remove "Page X of Y"
         text = re.sub(r'\f', '\n', text)  # Replace form feeds with newlines
         text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)  # Replace single newlines with spaces
-        
+
         # Remove 3GPP document headers and footers
         text = re.sub(r'(?m)^3GPP TS \d+\.\d+.*$', '', text)  # Remove TS headers
         text = re.sub(r'(?m)^3GPP TR \d+\.\d+.*$', '', text)  # Remove TR headers
         text = re.sub(r'(?m)^Release \d+.*$', '', text)  # Remove Release info
         text = re.sub(r'ETSI\s+\d+\s+\d+\s+V\d+\.\d+\.\d+.*$', '', text, flags=re.MULTILINE)
-        
-        # Clean up whitespace
-        text = re.sub(r'\s+', ' ', text)  # Normalize spaces
-        text = re.sub(r'\n\s*\n+', '\n\n', text)  # Normalize paragraph breaks
-        
+
+        # Remove Table of Contents (ToC) based on common patterns
+        text = re.sub(r'(?m)^\s*\d+(\.\d+)*\s+.*?\.{3,}\s*\d+\s*$', '', text)  # Matches "1.2 Section Name .... 5"
+        text = re.sub(r'(?m)^\s*[IVXLCDM]+\.\s+.*?\.{3,}\s*\d+\s*$', '', text)  # Matches "III. Some Title .... 12"
+        text = re.sub(r'(?m)^\s*Chapter\s+\d+\s+.*?\.{3,}\s*\d+\s*$', '', text)  # Matches "Chapter 3 ... 45"
+        text = re.sub(r'(?m)^\s*\d+\s+[A-Za-z].*?\.{3,}\s*\d+\s*$', '', text)  # Matches "5 Introduction ... 3"
+
         # Remove very short lines (likely artifacts)
         lines = [line for line in text.split('\n') if len(line.strip()) > 5]
         text = '\n'.join(lines)
+
+        # Clean up whitespace
+        text = re.sub(r'\s+', ' ', text)  # Normalize spaces
+        text = re.sub(r'\n\s*\n+', '\n\n', text)  # Normalize paragraph breaks
         
         return text.strip()
     except Exception as e:
@@ -139,81 +148,26 @@ def chunk_text(text: str, max_chunk_size: int = 1000) -> List[str]:
     
     return chunks
 
-def read_pdfs_from_directory(directory: str) -> List[Dict[str, str]]:
-    """Read and preprocess PDFs from a directory with caching"""
+def read_pdfs_from_directory(data_dir: str) -> List[Dict[str, str]]:
+    """Read PDF files from the specified directory and return a list of documents with extracted text."""
     documents = []
-    cache = load_docs_cache()
+    for filename in os.listdir(data_dir):
+        if filename.endswith('.pdf'):
+            file_path = os.path.join(data_dir, filename)
+            try:
+                with open(file_path, "rb") as f:
+                    reader = PdfReader(f)
+                    text = ""
+                    for page in reader.pages:
+                        text += page.extract_text() + "\n"
+                    
+                    # Clean and chunk the text if necessary
+                    cleaned_text = clean_text(text)
+                    documents.append({"filename": filename, "text": cleaned_text})
+                    console.print(f"[green]✅ Successfully extracted text from {filename}[/green]")
+            except Exception as e:
+                console.print(f"[red]❌ Error reading {filename}: {str(e)}[/red]")
     
-    if not os.path.exists(directory):
-        error_msg = f"Directory {directory} not found"
-        console.print(f"[red]{error_msg}[/red]")
-        raise FileNotFoundError(error_msg)
-    
-    # Get list of PDF files
-    pdf_files = [f for f in os.listdir(directory) if f.endswith('.pdf')]
-    if not pdf_files:
-        console.print(f"[yellow]Warning: No PDF files found in {directory}[/yellow]")
-        return documents
-    
-    console.print(f"[bold green]Found {len(pdf_files)} PDF files to process[/bold green]")
-    
-    # Process each PDF with progress bar
-    for filename in tqdm(pdf_files, desc="Processing PDFs"):
-        file_path = os.path.join(directory, filename)
-        
-        # Check if file is in cache and hash matches
-        file_hash = get_file_hash(file_path)
-        if file_path in cache and cache[file_path]["hash"] == file_hash:
-            console.print(f"[green]Using cached content for {filename}[/green]")
-            documents.append(cache[file_path]["data"])
-            continue
-        
-        console.print(f"[blue]Processing {filename}[/blue]")
-        try:
-            pdf_reader = PdfReader(file_path)
-            text_chunks = []
-            
-            # Extract and clean text from each page
-            for page_num, page in enumerate(tqdm(pdf_reader.pages, desc=f"Reading {filename}", leave=False), 1):
-                try:
-                    page_text = page.extract_text()
-                    if page_text:
-                        cleaned_text = clean_text(page_text)
-                        if cleaned_text:
-                            text_chunks.append(cleaned_text)
-                except Exception as e:
-                    console.print(f"[yellow]Warning: Error extracting text from page {page_num} in {filename}: {str(e)}[/yellow]")
-                    continue
-            
-            if not text_chunks:
-                console.print(f"[yellow]Warning: No text content extracted from {filename}[/yellow]")
-                continue
-            
-            # Create document entry
-            document = {
-                "text": "\n\n".join(text_chunks),
-                "metadata": {
-                    "source": filename,
-                    "file_path": file_path,
-                    "total_pages": len(pdf_reader.pages)
-                }
-            }
-            
-            # Update cache
-            cache[file_path] = {
-                "hash": file_hash,
-                "data": document
-            }
-            
-            documents.append(document)
-            console.print(f"[green]Successfully processed {filename}[/green]")
-            
-        except Exception as e:
-            console.print(f"[red]Error processing {filename}: {str(e)}[/red]")
-            continue
-    
-    # Save updated cache
-    save_docs_cache(cache)
     return documents
 
 if __name__ == "__main__":
@@ -221,8 +175,6 @@ if __name__ == "__main__":
         console.print("[bold blue]Starting PDF preprocessing...[/bold blue]")
         data_directory = "data"
         documents = read_pdfs_from_directory(data_directory)
-        console.print(f"[bold green]✅ Successfully processed {len(documents)} document chunks from {data_directory}[/bold green]")
+        console.print(f"[bold green]✅ Successfully processed {len(documents)} documents[/bold green]")
     except Exception as e:
-        console.print(f"[bold red]❌ Error: {str(e)}[/bold red]")
-        logging.error(f"Main execution error: {str(e)}")
-        exit(1)
+        console.print(f"[red]An error occurred: {str(e)}[/red]")

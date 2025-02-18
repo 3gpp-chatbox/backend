@@ -9,6 +9,10 @@ from rich.console import Console
 from tqdm import tqdm
 import hashlib
 
+from dotenv import load_dotenv
+load_dotenv()  # This will load the variables from the .env file
+
+
 console = Console()
 CACHE_FILE = "processed_docs_cache.json"
 
@@ -43,89 +47,145 @@ def save_cache(cache: Dict):
 
 class ThreeGPPEntityExtractor:
     def __init__(self):
-        # Core regex patterns for 3GPP NAS domain
+        # Core patterns for Mobility Management analysis
         self.patterns = {
-            "NETWORK_ELEMENT": [
-                # Core Network Elements
-                r'\b(?:UE|AMF|SMF|UDM|AUSF|SEAF|MME|gNB|ng-eNB)\b',
-                r'\b(?:Access and Mobility Management Function|Session Management Function)\b',
-                r'\b(?:User Equipment|Authentication Server Function|Security Anchor Function)\b',
-                r'\b(?:Next Generation Node B|Next Generation eNodeB)\b'
+            "UE": [
+                # UE Patterns
+                r'\b(?:UE|User Equipment)\b',
+                r'\b(?:Mobile Station|MS)\b',
+                r'\b(?:UE|MS)\s+(?:ID|Identifier|Identity)\b',
+                r'\b(?:UE|MS)\s+(?:Status|State|Mode)\b'
             ],
-            "PROCEDURE": [
-                # NAS Procedures
-                r'\b(?:Initial|Service|Periodic|Emergency|Normal)\s+(?:Registration|Attach)\b',
-                r'\b(?:Authentication|Security Mode Control|Identity)\s+(?:Procedure)\b',
-                r'\b(?:NAS Transport|PDU Session Establishment)\s+(?:Procedure)\b',
-                r'\b(?:Handover|De-registration|Service Request)\s+(?:Procedure)\b',
-                r'\b(?:5GMM|EMM)\s+(?:Specific Procedure|Common Procedure)\b'
+            "AMF": [
+                # AMF Patterns
+                r'\b(?:AMF|Access and Mobility Management Function)\b',
+                r'\b(?:AMF)\s+(?:ID|Identifier|Region|Set)\b',
+                r'\b(?:AMF)\s+(?:Status|State|Capacity)\b',
+                r'\b(?:AMF)\s+(?:Selection|Reselection)\b'
             ],
-            "MESSAGE": [
-                # NAS Messages
-                r'\b(?:Authentication|Identity|Security Mode)\s+(?:Request|Response|Command|Result|Complete)\b',
-                r'\b(?:Registration|Deregistration)\s+(?:Request|Accept|Reject|Complete)\b',
-                r'\b(?:Service|Configuration|Status)\s+(?:Request|Accept|Reject|Notification)\b',
-                r'\b(?:PDU Session|Bearer Resource|NAS)\s+(?:Establishment|Modification|Release)\s+(?:Request|Accept|Reject)\b'
+            "REGISTRATION": [
+                # Registration Patterns
+                r'\b(?:Initial|Periodic|Emergency)\s+Registration\b',
+                r'\b(?:Registration|Update)\s+(?:Request|Accept|Reject|Complete)\b',
+                r'\b(?:Registration)\s+(?:Area|Timer|Status)\b',
+                r'\b(?:Registration)\s+(?:Type|Procedure|Flow)\b'
             ],
-            "PROTOCOL": [
-                # Protocol Types
-                r'\b(?:NAS|RRC|NGAP|S1AP)\s+(?:Protocol|Signalling|Layer)\b',
-                r'\b(?:5G|LTE)\s+(?:NAS|RRC)\b',
-                r'\b(?:N1|N2|N11|N12)\s+(?:Interface|Protocol)\b'
+            "DEREGISTRATION": [
+                # Deregistration Patterns
+                r'\b(?:UE|Network)-initiated\s+Deregistration\b',
+                r'\b(?:Deregistration)\s+(?:Request|Accept|Reject)\b',
+                r'\b(?:Deregistration)\s+(?:Type|Procedure|Flow)\b',
+                r'\b(?:Implicit|Explicit)\s+Deregistration\b'
             ],
-            "STATE": [
-                # UE and Network States
-                r'\b(?:CM|RM|EMM|MM|RRC)-(?:IDLE|CONNECTED|REGISTERED|DEREGISTERED)\b',
-                r'\b(?:5GMM|EMM)-(?:IDLE|CONNECTED|REGISTERED|DEREGISTERED)\b',
-                r'\b(?:REGISTERED|DEREGISTERED|IDLE|CONNECTED)\s+(?:State|Mode)\b'
+            "CONNECTION": [
+                # Connection Patterns
+                r'\b(?:RRC|CM|RM)\s+(?:Connected|Idle|Inactive)\b',
+                r'\b(?:Connection)\s+(?:Setup|Release|Modify)\b',
+                r'\b(?:Connection)\s+(?:State|Status|Type)\b',
+                r'\b(?:PDU|Bearer)\s+(?:Session|Connection)\b'
             ],
-            "SPECIFICATION": [
-                # 3GPP Specifications
-                r'(?:3GPP\s+)?TS\s+\d+\.\d+(?:\.\d+)?',
-                r'3GPP\s+(?:TS|TR)\s+\d+\.\d+(?:\.\d+)?',
-                r'Release\s+(?:1[5-9]|20)',
-                r'Rel-(?:1[5-9]|20)'
+            "NETWORK_AREA": [
+                # Network Area Patterns
+                r'\b(?:Tracking|Registration|Location)\s+Area\b',
+                r'\b(?:TA|RA|LA)\s+(?:Code|Identity|List)\b',
+                r'\b(?:Cell|Sector|Coverage)\s+(?:ID|Area)\b',
+                r'\b(?:PLMN|Network)\s+(?:ID|Code|Area)\b'
             ],
-            "ACTION": [
-                # NAS Actions
-                r'\b(?:Start|Stop|Initiate|Release|Establish|Modify)\s+(?:Timer|Connection|Session|Bearer)\b',
-                r'\b(?:Send|Receive|Forward|Process)\s+(?:Message|Request|Response)\b',
-                r'\b(?:Verify|Check|Validate)\s+(?:Identity|Security|Integrity|MAC)\b',
-                r'\b(?:Generate|Derive|Calculate)\s+(?:Key|Token|Parameter|Value)\b',
-                r'\b(?:Allocate|Assign|Reserve)\s+(?:Resource|Address|Identity)\b'
+            "MOBILITY_EVENT": [
+                # Mobility Event Patterns
+                r'\b(?:Handover|Cell Reselection|Cell Change)\b',
+                r'\b(?:Mobility)\s+(?:Event|Trigger|Update)\b',
+                r'\b(?:Location|Area)\s+(?:Update|Change)\b',
+                r'\b(?:Inter|Intra)-(?:System|RAT|Cell)\s+(?:Handover|Change)\b'
             ],
-            "EVENT": [
-                # NAS Events
-                r'\b(?:Timer)\s+(?:Expiry|Timeout|Start|Stop)\b',
-                r'\b(?:Authentication|Security)\s+(?:Success|Failure|Error)\b',
-                r'\b(?:Connection|Session|Bearer)\s+(?:Setup|Release|Loss)\b',
-                r'\b(?:Registration|Service)\s+(?:Accept|Reject|Success|Failure)\b',
-                r'\b(?:Radio|Link)\s+(?:Failure|Recovery|Error)\b'
+            "PROCEDURE_TYPE": [
+                # Procedure Type Patterns
+                r'\b(?:Initial|Periodic|Emergency)\s+(?:Registration|Update)\b',
+                r'\b(?:Service|Tracking Area)\s+(?:Request|Update)\b',
+                r'\b(?:Authentication|Security Mode|Identity)\s+(?:Procedure)\b',
+                r'\b(?:N1|N2|NAS)\s+(?:Message|Procedure|Flow)\b'
             ]
         }
-        
-        # Compile all patterns
-        self.compiled_patterns = {
-            entity_type: [re.compile(pattern, re.IGNORECASE) for pattern in patterns]
-            for entity_type, patterns in self.patterns.items()
+
+        # Define relationships between entities
+        self.relationships = {
+            "UE_TO_AMF": [
+                r'(?:UE|MS)\s+(?:registers|connects|attaches)\s+(?:with|to)\s+(?:AMF)',
+                r'(?:AMF)\s+(?:serves|manages|handles)\s+(?:UE|MS)',
+                r'(?:UE|MS)\s+(?:authentication|security)\s+(?:with|by)\s+(?:AMF)'
+            ],
+            "UE_TO_AREA": [
+                r'(?:UE|MS)\s+(?:moves|enters|leaves)\s+(?:Tracking|Registration|Location)\s+Area',
+                r'(?:UE|MS)\s+(?:performs|initiates)\s+(?:cell|area)\s+(?:change|update)',
+                r'(?:Mobility|Location)\s+(?:event|update)\s+(?:for|by)\s+(?:UE|MS)'
+            ],
+            "AMF_TO_AREA": [
+                r'(?:AMF)\s+(?:manages|controls|serves)\s+(?:Tracking|Registration|Location)\s+Area',
+                r'(?:AMF)\s+(?:handles|processes)\s+(?:area|location)\s+(?:update|change)',
+                r'(?:Area|Location)\s+(?:managed|controlled)\s+(?:by)\s+(?:AMF)'
+            ],
+            "PROCEDURE_FLOW": [
+                r'(?:Initial|Periodic|Emergency)\s+(?:Registration)\s+(?:procedure|flow)',
+                r'(?:Service|Tracking Area)\s+(?:Request|Update)\s+(?:procedure|flow)',
+                r'(?:Deregistration|Authentication)\s+(?:procedure|flow)'
+            ]
         }
 
-        # Properties patterns for metadata extraction
+        # Properties for entities
         self.property_patterns = {
-            "parameters": [
-                r'(?:with|using)\s+parameter[s]?\s+([^.]+)',
-                r'parameter[s]?\s+(?:include|are)\s+([^.]+)',
-                r'(?:value|setting)\s+(?:of|for)\s+([^.]+)'
+            "UE_PROPERTIES": [
+                "ID",
+                "Status",
+                "Registration_Time",
+                "Connection_State",
+                "Security_Context",
+                "5G_GUTI",
+                "Location"
             ],
-            "conditions": [
-                r'(?:if|when|unless)\s+([^,]+)',
-                r'(?:provided|assuming)\s+that\s+([^,]+)',
-                r'(?:in case|in the event)\s+(?:of|that)\s+([^.]+)'
+            "AMF_PROPERTIES": [
+                "AMF_ID",
+                "AMF_Region",
+                "AMF_Set",
+                "Capacity",
+                "Status",
+                "Served_Areas",
+                "Load_Level"
             ],
-            "timing": [
-                r'(?:after|before|during|within)\s+([^,]+)',
-                r'(?:timeout|expiry)\s+of\s+([^.]+)',
-                r'(?:timer|counter)\s+(?:T\d+|N\d+)'
+            "REGISTRATION_PROPERTIES": [
+                "Type",
+                "Status",
+                "Timestamp",
+                "Result",
+                "Cause",
+                "Follow_On_Request",
+                "Update_Type"
+            ],
+            "CONNECTION_PROPERTIES": [
+                "State",
+                "Type",
+                "Quality",
+                "Establishment_Cause",
+                "Release_Cause",
+                "Duration",
+                "PDU_Sessions"
+            ],
+            "AREA_PROPERTIES": [
+                "Area_Code",
+                "PLMN_ID",
+                "TAC",
+                "Cell_ID",
+                "Access_Type",
+                "Coverage_Level",
+                "Congestion_Level"
+            ],
+            "EVENT_PROPERTIES": [
+                "Event_Type",
+                "Trigger",
+                "Timestamp",
+                "Source_Area",
+                "Target_Area",
+                "Result",
+                "Cause"
             ]
         }
 
@@ -134,9 +194,9 @@ class ThreeGPPEntityExtractor:
         entities = set()
         
         # Apply each pattern and collect entities
-        for entity_type, patterns in self.compiled_patterns.items():
+        for entity_type, patterns in self.patterns.items():
             for pattern in patterns:
-                matches = pattern.finditer(text)
+                matches = re.finditer(pattern, text)
                 for match in matches:
                     entity_text = match.group().strip()
                     # Normalize entity text to handle case variations
@@ -147,6 +207,12 @@ class ThreeGPPEntityExtractor:
                     entities.add((entity_text, entity_type))
         
         return entities
+    
+    def _normalize_entity_text(self, text: str, entity_type: str) -> str:
+        """Normalize entity text based on its type."""
+        if entity_type in ["NETWORK_ELEMENT", "PROTOCOL", "STATE"]:
+            return text.upper()  # For network-related types, make it uppercase
+        return text.title()  # Otherwise, convert to title case
 
     def _extract_properties(self, sentence: str) -> Dict:
         """Extract properties like parameters, conditions, and timing from text"""
@@ -194,78 +260,10 @@ class ThreeGPPEntityExtractor:
             'interrupts': r'(?:interrupts?|stops?|halts?)',
             'processes': r'(?:processes?|handles?|manages?)'
         }
-        
-        # Relationship mapping based on entity types
-        if type1 == "PROCEDURE" and type2 == "MESSAGE":
-            if re.search(f"{entity1_lower}.*{patterns['uses']}.*{entity2_lower}", sentence):
-                return "USES_MESSAGE", properties
-            
-        elif type1 == "NETWORK_ELEMENT" and type2 == "PROCEDURE":
-            if re.search(f"{entity1_lower}.*{patterns['initiates']}.*{entity2_lower}", sentence):
-                return "INITIATES", properties
-            if re.search(f"{entity1_lower}.*{patterns['performs']}.*{entity2_lower}", sentence):
-                return "PERFORMS", properties
-            
-        elif type1 == "NETWORK_ELEMENT" and type2 == "MESSAGE":
-            if re.search(f"{entity1_lower}.*{patterns['sends']}.*{entity2_lower}", sentence):
-                return "SENDS", properties
-            if re.search(f"{entity1_lower}.*{patterns['receives']}.*{entity2_lower}", sentence):
-                return "RECEIVES", properties
-            
-        elif type1 == "NETWORK_ELEMENT" and type2 == "NETWORK_ELEMENT":
-            if re.search(f"{entity1_lower}.*{patterns['communicates']}.*{entity2_lower}", sentence):
-                return "COMMUNICATES_WITH", properties
-            if re.search(f"{entity1_lower}.*{patterns['authenticates']}.*{entity2_lower}", sentence):
-                return "AUTHENTICATES", properties
-            
-        elif type1 == "PROTOCOL" and type2 in ["MESSAGE", "PROCEDURE"]:
-            if re.search(f"{entity1_lower}.*{patterns['defines']}.*{entity2_lower}", sentence):
-                return "DEFINES", properties
-            if re.search(f"{entity1_lower}.*{patterns['uses']}.*{entity2_lower}", sentence):
-                return "USES", properties
-            
-        elif type1 == "STATE" and type2 == "PROCEDURE":
-            if re.search(f"{entity2_lower}.*{patterns['results']}.*{entity1_lower}", sentence):
-                return "RESULTS_IN", properties
-                
-        elif type1 == "SPECIFICATION" and type2 in ["PROCEDURE", "MESSAGE"]:
-            if re.search(f"{entity1_lower}.*{patterns['defines']}.*{entity2_lower}", sentence):
-                return "DEFINES", properties
-                
-        elif type1 == "STATE" and type2 == "STATE":
-            if re.search(f"{patterns['transitions']}.*{entity2_lower}", sentence):
-                return "TRANSITIONS_TO", properties
-                
-        elif type1 == "ACTION" and type2 == "EVENT":
-            if re.search(f"{entity1_lower}.*{patterns['triggers']}.*{entity2_lower}", sentence):
-                return "TRIGGERS", properties
-            if re.search(f"{entity1_lower}.*{patterns['handles']}.*{entity2_lower}", sentence):
-                return "HANDLES", properties
-                
-        elif type1 == "EVENT" and type2 == "ACTION":
-            if re.search(f"{entity1_lower}.*{patterns['triggers']}.*{entity2_lower}", sentence):
-                return "TRIGGERS", properties
-                
-        elif type1 == "ACTION" and type2 == "STATE":
-            if re.search(f"{entity1_lower}.*{patterns['results']}.*{entity2_lower}", sentence):
-                return "RESULTS_IN", properties
-                
-        elif type1 == "EVENT" and type2 == "PROCEDURE":
-            if re.search(f"{entity1_lower}.*{patterns['triggers']}.*{entity2_lower}", sentence):
-                return "TRIGGERS", properties
-            if re.search(f"{entity1_lower}.*{patterns['interrupts']}.*{entity2_lower}", sentence):
-                return "INTERRUPTS", properties
-                
-        elif type1 == "ACTION" and type2 == "MESSAGE":
-            if re.search(f"{entity1_lower}.*{patterns['sends']}.*{entity2_lower}", sentence):
-                return "SENDS", properties
-            if re.search(f"{entity1_lower}.*{patterns['processes']}.*{entity2_lower}", sentence):
-                return "PROCESSES", properties
-        
-        return None, {}
+
+        return 'relationship_type', properties
 
     def extract_relationships(self, text: str, entities: Set[Tuple[str, str]]) -> List[Tuple[str, str, str, Dict]]:
-        """Extract relationships with properties between entities"""
         relationships = []
         sentences = [s.strip() for s in re.split(r'[.!?]+(?=(?:[A-Z]|\s|$))', text) if s.strip()]
         entity_dict = {entity[0].lower(): (entity[0], entity[1]) for entity in entities}
@@ -290,6 +288,117 @@ class ThreeGPPEntityExtractor:
                         relationships.append((entity1, entity2, relationship, properties))
         
         return relationships
+
+
+    def _match_relationship(self, entity1, entity2, pattern_key, sentence):
+        """Helper function to match relationship patterns."""
+        entity1_lower = re.escape(entity1.lower())
+        entity2_lower = re.escape(entity2.lower())
+        pattern = self.patterns.get(pattern_key)
+
+        if not pattern:
+            return None, {}  # Return early if the pattern is not found
+
+        # Using re.finditer correctly with re module
+        matches = re.finditer(f"{entity1_lower}.*{pattern}.*{entity2_lower}", sentence)
+
+        # Return the first match or None if there are no matches
+        for match in matches:
+            return match, pattern
+
+        return None, {}
+
+    def map_relationship(self, entity1, type1, entity2, type2, sentence):
+        """Main function to map relationships."""
+        if type1 == "PROCEDURE" and type2 == "MESSAGE":
+            match, pattern = self._match_relationship(entity1, entity2, 'uses', sentence)
+            if match:
+                return "USES_MESSAGE", {"pattern": pattern}
+
+        elif type1 == "NETWORK_ELEMENT" and type2 == "PROCEDURE":
+            match, pattern = self._match_relationship(entity1, entity2, 'initiates', sentence)
+            if match:
+                return "INITIATES", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'performs', sentence)
+            if match:
+                return "PERFORMS", {"pattern": pattern}
+
+        elif type1 == "NETWORK_ELEMENT" and type2 == "MESSAGE":
+            match, pattern = self._match_relationship(entity1, entity2, 'sends', sentence)
+            if match:
+                return "SENDS", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'receives', sentence)
+            if match:
+                return "RECEIVES", {"pattern": pattern}
+
+        elif type1 == "NETWORK_ELEMENT" and type2 == "NETWORK_ELEMENT":
+            match, pattern = self._match_relationship(entity1, entity2, 'communicates', sentence)
+            if match:
+                return "COMMUNICATES_WITH", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'authenticates', sentence)
+            if match:
+                return "AUTHENTICATES", {"pattern": pattern}
+
+        elif type1 == "PROTOCOL" and type2 in ["MESSAGE", "PROCEDURE"]:
+            match, pattern = self._match_relationship(entity1, entity2, 'defines', sentence)
+            if match:
+                return "DEFINES", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'uses', sentence)
+            if match:
+                return "USES", {"pattern": pattern}
+
+        elif type1 == "STATE" and type2 == "PROCEDURE":
+            match, pattern = self._match_relationship(entity2, entity1, 'results', sentence)
+            if match:
+                return "RESULTS_IN", {"pattern": pattern}
+
+        elif type1 == "SPECIFICATION" and type2 in ["PROCEDURE", "MESSAGE"]:
+            match, pattern = self._match_relationship(entity1, entity2, 'defines', sentence)
+            if match:
+                return "DEFINES", {"pattern": pattern}
+
+        elif type1 == "STATE" and type2 == "STATE":
+            match, pattern = self._match_relationship(entity1, entity2, 'transitions', sentence)
+            if match:
+                return "TRANSITIONS_TO", {"pattern": pattern}
+
+        elif type1 == "ACTION" and type2 == "EVENT":
+            match, pattern = self._match_relationship(entity1, entity2, 'triggers', sentence)
+            if match:
+                return "TRIGGERS", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'handles', sentence)
+            if match:
+                return "HANDLES", {"pattern": pattern}
+
+        elif type1 == "EVENT" and type2 == "ACTION":
+            match, pattern = self._match_relationship(entity1, entity2, 'triggers', sentence)
+            if match:
+                return "TRIGGERS", {"pattern": pattern}
+
+        elif type1 == "ACTION" and type2 == "STATE":
+            match, pattern = self._match_relationship(entity1, entity2, 'results', sentence)
+            if match:
+                return "RESULTS_IN", {"pattern": pattern}
+
+        elif type1 == "EVENT" and type2 == "PROCEDURE":
+            match, pattern = self._match_relationship(entity1, entity2, 'triggers', sentence)
+            if match:
+                return "TRIGGERS", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'interrupts', sentence)
+            if match:
+                return "INTERRUPTS", {"pattern": pattern}
+
+        elif type1 == "ACTION" and type2 == "MESSAGE":
+            match, pattern = self._match_relationship(entity1, entity2, 'sends', sentence)
+            if match:
+                return "SENDS", {"pattern": pattern}
+            match, pattern = self._match_relationship(entity1, entity2, 'processes', sentence)
+            if match:
+                return "PROCESSES", {"pattern": pattern}
+
+        return None, {}
+
+
 
 def process_documents(documents: List[Dict[str, str]]) -> List[Dict]:
     """Process documents to extract entities and relationships with properties"""
@@ -368,3 +477,53 @@ if __name__ == "__main__":
     except Exception as e:
         console.print(f"[red]❌ Error: {str(e)}[/red]")
         exit(1)
+
+def extract_entities_and_relationships(documents):
+    """Extract entities and relationships from the documents using regex patterns."""
+    extracted_entities = []
+    extracted_relationships = []
+
+    # Define regex patterns for entities and relationships
+    entity_patterns = {
+        "UE": r'\b(?:User Equipment|UE)\b',
+        "AMF": r'\b(?:Access and Mobility Management Function|AMF)\b',
+        "Registration": r'\b(?:Registration)\b',
+        "Deregistration": r'\b(?:Deregistration)\b',
+        "Connection": r'\b(?:Connection)\b',
+        "Network Area": r'\b(?:Network Area)\b',
+        "Mobility Event": r'\b(?:Mobility Event)\b',
+        "Procedure Type": r'\b(?:Procedure Type)\b',
+    }
+
+    relationship_patterns = {
+        "REGISTERS_WITH": r'\b(?:UE|User Equipment)\s+(?:registers|attaches)\s+(?:with|to)\s+(?:AMF)\b',
+        "DEREGISTERS_FROM": r'\b(?:UE|User Equipment)\s+(?:deregisters|detaches)\s+(?:from)\s+(?:AMF)\b',
+        "MOVES_TO": r'\b(?:UE|User Equipment)\s+(?:moves|enters|leaves)\s+(?:Network Area)\b',
+        "HANDLES": r'\b(?:AMF)\s+(?:handles|manages)\s+(?:Mobility Event)\b',
+    }
+
+    for doc in documents:
+        text = doc["text"]
+
+        # Extract entities
+        for entity_type, pattern in entity_patterns.items():
+            matches = re.findall(pattern, text)
+            for match in matches:
+                extracted_entities.append({
+                    "name": match,
+                    "type": entity_type,
+                    "properties": {}  # Add any relevant properties if needed
+                })
+
+        # Extract relationships
+        for rel_type, pattern in relationship_patterns.items():
+            matches = re.findall(pattern, text)
+            for match in matches:
+                # Assuming the relationship involves UE and AMF
+                extracted_relationships.append({
+                    "from": "User Equipment",  # Adjust based on actual extraction
+                    "to": "Access and Mobility Management Function",  # Adjust based on actual extraction
+                    "type": rel_type
+                })
+
+    return extracted_entities, extracted_relationships
