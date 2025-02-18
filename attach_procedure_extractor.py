@@ -911,7 +911,7 @@ class Neo4jProtocolStore:
         except Exception as e:
             console.print(f"[red]Failed to connect to Neo4j: {str(e)}[/red]")
             raise
-
+        
     def batch_store_all(self, tx, all_entities: Dict):
         """Store all entities in a single transaction"""
         # Store states
@@ -1056,32 +1056,34 @@ class Neo4jProtocolStore:
         log_progress(f"Mermaid diagram exported to {output_file}")
 
     def setup_neo4j_schema(self):
-        """Setup Neo4j schema with constraints and indexes"""
+        """Setup Neo4j schema with constraints and indexes for attach procedure"""
         with self.driver.session() as session:
-            # Create constraints
+            # Create constraints for nodes
             constraints = [
                 # State constraints
-                "CREATE CONSTRAINT state_name IF NOT EXISTS FOR (s:State) REQUIRE s.name IS UNIQUE",
-                "CREATE CONSTRAINT state_type IF NOT EXISTS FOR (s:State) REQUIRE s.type IS NOT NULL",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (s:State) REQUIRE s.name IS UNIQUE",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (s:State) REQUIRE s.type IS NOT NULL",
                 
                 # Event constraints
-                "CREATE CONSTRAINT event_name IF NOT EXISTS FOR (e:Event) REQUIRE e.name IS UNIQUE",
-                "CREATE CONSTRAINT event_trigger IF NOT EXISTS FOR (e:Event) REQUIRE e.trigger IS NOT NULL",
-                
-                # Parameter constraints
-                "CREATE CONSTRAINT param_name IF NOT EXISTS FOR (p:Parameter) REQUIRE p.name IS UNIQUE",
-                "CREATE CONSTRAINT param_type IF NOT EXISTS FOR (p:Parameter) REQUIRE p.type IS NOT NULL",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (e:Event) REQUIRE e.name IS UNIQUE",
                 
                 # Action constraints
-                "CREATE CONSTRAINT action_name IF NOT EXISTS FOR (a:Action) REQUIRE (a.name, a.actor) IS UNIQUE"
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (a:Action) REQUIRE a.name IS UNIQUE",
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (a:Action) REQUIRE a.actor IS NOT NULL",
+                
+                # Parameter constraints
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (p:Parameter) REQUIRE p.name IS UNIQUE",
+                
+                # Conditional constraints
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (c:Conditional) REQUIRE c.name IS UNIQUE"
             ]
             
-            # Create indexes
+            # Create indexes for better query performance
             indexes = [
-                "CREATE INDEX state_idx IF NOT EXISTS FOR (s:State) ON (s.type)",
-                "CREATE INDEX event_idx IF NOT EXISTS FOR (e:Event) ON (e.trigger)",
-                "CREATE INDEX param_idx IF NOT EXISTS FOR (p:Parameter) ON (p.type)",
-                "CREATE INDEX action_idx IF NOT EXISTS FOR (a:Action) ON (a.actor)"
+                "CREATE INDEX IF NOT EXISTS FOR (s:State) ON (s.type)",
+                "CREATE INDEX IF NOT EXISTS FOR (a:Action) ON (a.actor)",
+                "CREATE INDEX IF NOT EXISTS FOR (p:Parameter) ON (p.type)",
+                "CREATE INDEX IF NOT EXISTS FOR (e:Event) ON (e.trigger)"
             ]
             
             for constraint in constraints:
@@ -1097,14 +1099,15 @@ class Neo4jProtocolStore:
                     console.print(f"[yellow]Warning: Could not create index: {str(e)}[/yellow]")
 
     def store_attach_procedure(self, data: Dict):
-        """Store Attach procedure specific data"""
+        """Store Attach procedure specific data with proper relationships"""
         with self.driver.session() as session:
-            # Store nodes and relationships in separate transactions
+            # Store nodes first
             session.execute_write(self._create_attach_nodes, data)
+            # Then create relationships
             session.execute_write(self._create_attach_relationships, data)
 
     def _create_attach_nodes(self, tx, data: Dict):
-        """Create nodes for Attach procedure"""
+        """Create nodes for Attach procedure with proper properties"""
         # Create State nodes
         if data.get('states'):
             tx.run("""
@@ -1112,7 +1115,9 @@ class Neo4jProtocolStore:
             MERGE (s:State {name: state.name})
             SET s.type = state.type,
                 s.description = state.description,
-                s.conditions = state.conditions
+                s.conditions = state.conditions,
+                s.source_spec = state.source_spec,
+                s.section = state.section
             """, states=data['states'])
 
         # Create Event nodes
@@ -1121,8 +1126,24 @@ class Neo4jProtocolStore:
             UNWIND $events as event
             MERGE (e:Event {name: event.name})
             SET e.trigger = event.trigger,
-                e.description = event.description
+                e.description = event.description,
+                e.conditions = event.conditions,
+                e.source_spec = event.source_spec,
+                e.section = event.section
             """, events=data['events'])
+
+        # Create Action nodes
+        if data.get('actions'):
+            tx.run("""
+            UNWIND $actions as action
+            MERGE (a:Action {name: action.name})
+            SET a.actor = action.actor,
+                a.description = action.description,
+                a.parameters = action.parameters,
+                a.prerequisites = action.prerequisites,
+                a.source_spec = action.source_spec,
+                a.section = action.section
+            """, actions=data['actions'])
 
         # Create Parameter nodes
         if data.get('parameters'):
@@ -1131,39 +1152,86 @@ class Neo4jProtocolStore:
             MERGE (p:Parameter {name: param.name})
             SET p.type = param.type,
                 p.description = param.description,
-                p.mandatory = param.mandatory
+                p.mandatory = param.mandatory,
+                p.value_range = param.value_range,
+                p.source_spec = param.source_spec,
+                p.section = param.section
             """, parameters=data['parameters'])
 
     def _create_attach_relationships(self, tx, data: Dict):
-        """Create relationships for Attach procedure with enhanced properties"""
-        # Create State transitions with conditions
+        """Create relationships for Attach procedure with proper properties"""
+        # Create State transitions
         if data.get('flow'):
             tx.run("""
             UNWIND $steps as step
             MATCH (s1:State {name: step.from_state})
             MATCH (s2:State {name: step.to_state})
-            MERGE (s1)-[r:TRANSITIONS_TO {
-                sequence: step.step_number,
-                description: step.description,
-                conditions: step.conditions,
-                metadata: step.metadata
-            }]->(s2)
+            MERGE (s1)-[r:TRANSITIONS_TO]->(s2)
+            SET r.sequence = step.step_number,
+                r.description = step.description,
+                r.conditions = step.conditions,
+                r.metadata = step.metadata
             """, steps=data['flow'])
 
-        # Create Action-Event relationships with parameters
+        # Create Action-State relationships
         if data.get('actions'):
             tx.run("""
             UNWIND $actions as action
-            MATCH (e:Event {name: action.triggers})
-            MERGE (a:Action {
-                name: action.name,
-                actor: action.actor
-            })
+            MATCH (a:Action {name: action.name})
+            WITH a, action
+            UNWIND action.target_states as state_name
+            MATCH (s:State {name: state_name})
+            MERGE (a)-[r:LEADS_TO]->(s)
+            SET r.conditions = action.conditions,
+                r.sequence = action.sequence
+            """, actions=data['actions'])
+
+        # Create Action-Parameter relationships
+        if data.get('actions'):
+            tx.run("""
+            UNWIND $actions as action
+            MATCH (a:Action {name: action.name})
+            WITH a, action
+            UNWIND action.parameters as param_name
+            MATCH (p:Parameter {name: param_name})
+            MERGE (a)-[r:USES_PARAMETER]->(p)
+            SET r.mandatory = p.mandatory
+            """, actions=data['actions'])
+
+        # Create Event-State relationships
+        if data.get('events'):
+            tx.run("""
+            UNWIND $events as event
+            MATCH (e:Event {name: event.name})
+            WITH e, event
+            UNWIND event.target_states as state_name
+            MATCH (s:State {name: state_name})
+            MERGE (e)-[r:LEADS_TO]->(s)
+            SET r.conditions = event.conditions
+            """, events=data['events'])
+
+        # Create Action-Event relationships
+        if data.get('actions'):
+            tx.run("""
+            UNWIND $actions as action
+            MATCH (a:Action {name: action.name})
+            WITH a, action
+            UNWIND action.triggered_events as event_name
+            MATCH (e:Event {name: event_name})
             MERGE (a)-[r:TRIGGERS]->(e)
-            SET r.description = action.description,
-                r.parameters = action.parameters,
-                r.conditions = action.conditions,
-                r.metadata = action.metadata
+            SET r.conditions = action.conditions
+            """, actions=data['actions'])
+
+        # Create sequential relationships between actions
+        if data.get('actions'):
+            tx.run("""
+            UNWIND $actions as action
+            MATCH (a1:Action {name: action.name})
+            WITH a1, action
+            WHERE action.next_action IS NOT NULL
+            MATCH (a2:Action {name: action.next_action})
+            MERGE (a1)-[r:FOLLOWED_BY]->(a2)
+            SET r.sequence = action.sequence
             """, actions=data['actions'])
 
     def generate_attach_diagram(self):
@@ -1316,6 +1384,8 @@ def process_pdfs_and_store():
         console.print(f"\n[red]Error: {str(e)}[/red]")
         raise
 
+# ... existing code ...
+
 if __name__ == "__main__":
     # Load environment variables
     load_dotenv()
@@ -1422,4 +1492,4 @@ if __name__ == "__main__":
     finally:
         # Close Neo4j connection if it exists
         if 'store' in locals():
-            store.driver.close() 
+            store.close()

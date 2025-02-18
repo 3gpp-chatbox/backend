@@ -1,18 +1,3 @@
-from neo4j import GraphDatabase
-import os
-from dotenv import load_dotenv
-from rich.console import Console
-
-# Load environment variables
-load_dotenv()
-
-# Neo4j Configuration
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-NEO4J_USER = os.getenv("NEO4J_USERNAME", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-
-console = Console()
-
 class MermaidGenerator:
     def __init__(self):
         self.driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
@@ -20,236 +5,142 @@ class MermaidGenerator:
     def close(self):
         self.driver.close()
 
-    def generate_state_diagram(self, limit: int = 50) -> str:
-        """Generate a state diagram showing state transitions"""
-        mermaid_code = ["stateDiagram-v2"]
-        
-        with self.driver.session() as session:
-            # Get states and their transitions with conditions
-            result = session.run("""
-            MATCH (s1:State)-[r:TRANSITIONS_TO|IMPACTS|TRIGGERS]->(s2:State)
-            WHERE s1.type = s2.type  // Only show transitions between same type states
-            RETURN DISTINCT s1.name as source, s2.name as target, 
-                   s1.type as type, s1.section as section,
-                   collect(DISTINCT r.description) as descriptions
-            ORDER BY s1.type, s1.section
-            LIMIT $limit
-            """, limit=limit)
-            
-            # Group states by type
-            for record in result:
-                source = record["source"].replace(" ", "_")
-                target = record["target"].replace(" ", "_")
-                state_type = record["type"]
-                section = record["section"]
-                descriptions = record["descriptions"]
-                
-                # Add state transition with type and section info
-                if descriptions and descriptions[0]:
-                    desc = descriptions[0][:50] + "..." if len(descriptions[0]) > 50 else descriptions[0]
-                    mermaid_code.append(f"    {source} --> {target}: {desc}")
-                else:
-                    mermaid_code.append(f"    {source} --> {target}")
-                
-                # Add notes for important states
-                if section:
-                    mermaid_code.append(f"    note right of {source}: {state_type}<br/>Section: {section}")
-        
-        return "\n".join(mermaid_code)
-
-    def generate_procedure_flow(self, procedure_name: str = "Registration") -> str:
-        """Generate a flow diagram for a specific procedure"""
+    def generate_attach_procedure_diagram(self) -> str:
+        """Generate a Mermaid diagram specifically for the attach procedure"""
         mermaid_code = [
             "graph TB",
-            "    %% Node styling",
-            "    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;",
-            "    classDef ue fill:#d4e6ff,stroke:#0066cc,stroke-width:2px;",
-            "    classDef amf fill:#ffe6cc,stroke:#ff9933,stroke-width:2px;",
-            "    classDef param fill:#e6ffe6,stroke:#33cc33,stroke-width:1px;",
-            "    linkStyle default stroke:#666,stroke-width:1px;"
+            "    %% Styling",
+            "    classDef state fill:#f9f,stroke:#333,stroke-width:2px;",
+            "    classDef action fill:#bbf,stroke:#333,stroke-width:1px;",
+            "    classDef parameter fill:#bfb,stroke:#333,stroke-width:1px;",
+            "    classDef event fill:#fbf,stroke:#333,stroke-width:1px;",
+            "    classDef conditional fill:#ffd,stroke:#333,stroke-width:1px;",
+            "    %% Node definitions"
         ]
-        
-        with self.driver.session() as session:
-            # Get all actions in sequence
-            result = session.run("""
-            MATCH (a:Action)
-            RETURN a.name as name, a.actor as actor, a.description as description, 
-                   a.step_number as step
-            ORDER BY a.step_number
-            """)
-            
-            # Process actions and their parameters
-            for record in result:
-                step = record["step"]
-                name = record["name"].replace(" ", "_")
-                actor = record["actor"]
-                desc = record["description"]
-                
-                # Format node with step number and description
-                node_text = f"Step {step}: {record['name']}<br/>{desc}"
-                
-                # Style node based on actor
-                if actor == "UE":
-                    mermaid_code.append(f"    {name}[{node_text}]:::ue")
-                else:
-                    mermaid_code.append(f"    {name}[{node_text}]:::amf")
-                
-                # Get parameters for this action
-                param_result = session.run("""
-                MATCH (a:Action {name: $name})-[:USES_PARAMETER]->(p:Parameter)
-                RETURN p.name as param
-                """, name=record["name"])
-                
-                # Add parameter nodes
-                for param_record in param_result:
-                    param_name = param_record["param"].replace(" ", "_")
-                    mermaid_code.append(f"    {param_name}[{param_record['param']}]:::param")
-                    mermaid_code.append(f"    {name} -.->|uses| {param_name}")
-                
-                # Add relationship to next step
-                if step < 6:  # Not the last step
-                    next_result = session.run("""
-                    MATCH (a:Action {step_number: $next_step})
-                    RETURN a.name as next_name
-                    """, next_step=step + 1)
-                    
-                    if next_result.peek():
-                        next_name = next_result.single()["next_name"].replace(" ", "_")
-                        mermaid_code.append(f"    {name} -->|triggers| {next_name}")
-        
-        return "\n".join(mermaid_code)
-
-    def generate_parameter_dependencies(self) -> str:
-        """Generate a diagram showing parameter dependencies"""
-        mermaid_code = ["""graph TB
-        %% Configure graph layout
-        classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-        classDef category fill:#e1e1e1,stroke:#666,stroke-width:2px;
-        linkStyle default stroke:#666,stroke-width:1px;
-        """]
         
         processed_nodes = set()
         processed_edges = set()
         
         with self.driver.session() as session:
-            # Get parameter dependencies with improved categorization
-            result = session.run("""
-            MATCH (p1:Parameter)-[r:DEPENDS_ON|USES_PARAMETER]->(p2:Parameter)
-            WHERE p1 <> p2  // Exclude self-references
-            WITH p1, p2, r,
-                 CASE 
-                    WHEN p1.type IS NOT NULL THEN p1.type
-                    WHEN p1.name =~ '(?i).*(TAI|PLMN|TAC|cell|area).*' THEN 'Location'
-                    WHEN p1.name =~ '(?i).*(security|KSI|eKSI|key|auth).*' THEN 'Security'
-                    WHEN p1.name =~ '(?i).*(bearer|PDU|QoS).*' THEN 'Bearer'
-                    WHEN p1.name =~ '(?i).*(message|container|IE|payload).*' THEN 'Message'
-                    WHEN p1.name =~ '(?i).*(IMSI|GUTI|identity).*' THEN 'Identity'
-                    WHEN p1.name =~ '(?i).*(timer|counter|retry).*' THEN 'Timer'
-                    ELSE 'Other'
-                 END as category,
-                 CASE TYPE(r)
-                    WHEN 'DEPENDS_ON' THEN 'requires'
-                    WHEN 'USES_PARAMETER' THEN 'uses'
-                    ELSE 'depends on'
-                 END as rel_type
-            RETURN p1.name as param1, p2.name as param2,
-                   category,
-                   p1.description as desc1, p2.description as desc2,
-                   rel_type
-            ORDER BY category, param1
-            LIMIT 40
-            """)
+            # First check if we have any nodes
+            result = session.run("MATCH (n) RETURN count(n) as count")
+            count = result.single()["count"]
             
-            current_category = None
-            for record in result:
-                param1 = record["param1"].replace(" ", "_")
-                param2 = record["param2"].replace(" ", "_")
-                category = record["category"]
-                rel_type = record["rel_type"]
+            if count == 0:
+                # If database is empty, create a basic attach procedure diagram
+                mermaid_code.extend([
+                    "    %% Initial State",
+                    "    EMM_DEREGISTERED[EMM-DEREGISTERED]:::state",
+                    "    %% Actions",
+                    "    ATTACH_REQUEST[UE: Send Attach Request]:::action",
+                    "    AUTHENTICATION[MME: Authenticate UE]:::action",
+                    "    SECURITY_MODE[MME: Security Mode Command]:::action",
+                    "    ATTACH_ACCEPT[MME: Send Attach Accept]:::action",
+                    "    ATTACH_COMPLETE[UE: Send Attach Complete]:::action",
+                    "    %% Final State",
+                    "    EMM_REGISTERED[EMM-REGISTERED]:::state",
+                    "    %% Parameters",
+                    "    IMSI[IMSI/GUTI]:::parameter",
+                    "    AUTH_PARAMS[Authentication Parameters]:::parameter",
+                    "    SEC_PARAMS[Security Parameters]:::parameter",
+                    "    BEARER_PARAMS[Bearer Parameters]:::parameter",
+                    "    %% Flow",
+                    "    EMM_DEREGISTERED -->|1| ATTACH_REQUEST",
+                    "    ATTACH_REQUEST -->|2| AUTHENTICATION",
+                    "    AUTHENTICATION -->|3| SECURITY_MODE",
+                    "    SECURITY_MODE -->|4| ATTACH_ACCEPT",
+                    "    ATTACH_ACCEPT -->|5| ATTACH_COMPLETE",
+                    "    ATTACH_COMPLETE -->|6| EMM_REGISTERED",
+                    "    %% Parameter Usage",
+                    "    ATTACH_REQUEST -.->|uses| IMSI",
+                    "    AUTHENTICATION -.->|uses| AUTH_PARAMS",
+                    "    SECURITY_MODE -.->|uses| SEC_PARAMS",
+                    "    ATTACH_ACCEPT -.->|uses| BEARER_PARAMS"
+                ])
+            else:
+                # Query for attach procedure elements with proper relationships
+                result = session.run("""
+                MATCH (n)
+                WHERE (n:State OR n:Action OR n:Event OR n:Parameter)
+                AND (n.name CONTAINS 'ATTACH' OR n.name CONTAINS 'EMM' OR n.type = 'EMM')
+                OPTIONAL MATCH (n)-[r]->(m)
+                WHERE type(r) IN ['TRANSITIONS_TO', 'TRIGGERS', 'USES_PARAMETER', 'LEADS_TO']
+                RETURN n, r, m, labels(n) as node_labels
+                ORDER BY 
+                    CASE 
+                        WHEN 'State' IN labels(n) THEN 1
+                        WHEN 'Action' IN labels(n) THEN 2
+                        WHEN 'Event' IN labels(n) THEN 3
+                        WHEN 'Parameter' IN labels(n) THEN 4
+                        ELSE 5
+                    END
+                """)
                 
-                # Format descriptions - take first sentence and clean it
-                desc1 = record["desc1"]
-                if desc1:
-                    desc1 = desc1.split('.')[0].strip()
-                    if len(desc1) > 50:
-                        desc1 = desc1[:47] + "..."
-                
-                desc2 = record["desc2"]
-                if desc2:
-                    desc2 = desc2.split('.')[0].strip()
-                    if len(desc2) > 50:
-                        desc2 = desc2[:47] + "..."
-                
-                # Add subgraph for each category with styling
-                if category != current_category:
-                    if current_category:
-                        mermaid_code.append("    end")
-                    mermaid_code.append(f"""    subgraph {category}
-    style {category} fill:#e1e1e1,stroke:#666,stroke-width:2px""")
-                    current_category = category
-                
-                # Add nodes with descriptions if not already added
-                if param1 not in processed_nodes:
-                    node_text = record["param1"]
-                    if desc1:
-                        node_text += f"<br/>{desc1}"
-                    mermaid_code.append(f"    {param1}[{node_text}]")
-                    processed_nodes.add(param1)
-                
-                if param2 not in processed_nodes:
-                    node_text = record["param2"]
-                    if desc2:
-                        node_text += f"<br/>{desc2}"
-                    mermaid_code.append(f"    {param2}[{node_text}]")
-                    processed_nodes.add(param2)
-                
-                # Add relationship if not already added
-                edge_key = f"{param1}-{param2}"
+                for record in result:
+                    source_node = record["n"]
+                    rel = record["r"]
+                    target_node = record["m"]
+                    node_labels = record["node_labels"]
+                    
+                    # Process source node
+                    if source_node and source_node["name"] not in processed_nodes:
+                        node_id = source_node["name"].replace(" ", "_")
+                        node_label = f"{source_node['name']}"
+                        if source_node.get("actor"):
+                            node_label = f"{source_node['actor']}: {node_label}"
+                        
+                        # Add node with proper styling
+                        if "State" in node_labels:
+                            mermaid_code.append(f"    {node_id}[{node_label}]:::state")
+                        elif "Action" in node_labels:
+                            mermaid_code.append(f"    {node_id}[{node_label}]:::action")
+                        elif "Parameter" in node_labels:
+                            mermaid_code.append(f"    {node_id}[{node_label}]:::parameter")
+                        elif "Event" in node_labels:
+                            mermaid_code.append(f"    {node_id}[{node_label}]:::event")
+                        
+                        processed_nodes.add(source_node["name"])
+                    
+                    # Process relationship and target node
+                    if rel and target_node:
+                        source_id = source_node["name"].replace(" ", "_")
+                        target_id = target_node["name"].replace(" ", "_")
+                        edge_key = f"{source_id}-{target_id}"
+                        
                 if edge_key not in processed_edges:
-                    mermaid_code.append(f"    {param1} -->|{rel_type}| {param2}")
-                    processed_edges.add(edge_key)
-            
-            if current_category:
-                mermaid_code.append("    end")
+                            # Add target node if not already added
+                            if target_node["name"] not in processed_nodes:
+                                node_label = f"{target_node['name']}"
+                                if target_node.get("actor"):
+                                    node_label = f"{target_node['actor']}: {node_label}"
+                                
+                                if "State" in str(target_node.labels):
+                                    mermaid_code.append(f"    {target_id}[{node_label}]:::state")
+                                elif "Action" in str(target_node.labels):
+                                    mermaid_code.append(f"    {target_id}[{node_label}]:::action")
+                                elif "Parameter" in str(target_node.labels):
+                                    mermaid_code.append(f"    {target_id}[{node_label}]:::parameter")
+                                elif "Event" in str(target_node.labels):
+                                    mermaid_code.append(f"    {target_id}[{node_label}]:::event")
+                                
+                                processed_nodes.add(target_node["name"])
+                            
+                            # Add relationship with proper styling
+                            rel_type = rel.type
+                            if rel_type == "TRANSITIONS_TO":
+                                sequence = rel.get("sequence", "")
+                                mermaid_code.append(f"    {source_id} -->|{sequence}| {target_id}")
+                            elif rel_type == "USES_PARAMETER":
+                                mermaid_code.append(f"    {source_id} -.->|uses| {target_id}")
+                            elif rel_type == "TRIGGERS":
+                                mermaid_code.append(f"    {source_id} ==>|triggers| {target_id}")
+                            elif rel_type == "LEADS_TO":
+                                conditions = rel.get("conditions", [])
+                                if conditions:
+                                    mermaid_code.append(f"    {source_id} -->|{', '.join(conditions)}| {target_id}")
+                                else:
+                                    mermaid_code.append(f"    {source_id} --> {target_id}")
+                            
+                            processed_edges.add(edge_key)
         
-        return "\n".join(mermaid_code)
-
-    def export_diagrams(self, output_dir: str = "diagrams"):
-        """Export all diagram types to files"""
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Generate and save state diagram
-        state_diagram = self.generate_state_diagram()
-        with open(os.path.join(output_dir, "state_diagram.md"), "w") as f:
-            f.write("# 3GPP Protocol State Diagram\n\n")
-            f.write("```mermaid\n")
-            f.write(state_diagram)
-            f.write("\n```")
-        
-        # Generate and save procedure flow
-        procedure_flow = self.generate_procedure_flow("Registration")
-        with open(os.path.join(output_dir, "procedure_flow.md"), "w") as f:
-            f.write("# 5G Registration Procedure Flow\n\n")
-            f.write("```mermaid\n")
-            f.write(procedure_flow)
-            f.write("\n```")
-        
-        # Generate and save parameter dependencies
-        param_diagram = self.generate_parameter_dependencies()
-        with open(os.path.join(output_dir, "parameter_dependencies.md"), "w") as f:
-            f.write("# 5G Registration Parameter Dependencies\n\n")
-            f.write("```mermaid\n")
-            f.write(param_diagram)
-            f.write("\n```")
-        
-        console.print(f"[green]Diagrams exported to {output_dir}/[/green]")
-
-if __name__ == "__main__":
-    try:
-        console.print("[bold blue]Generating Mermaid diagrams from Neo4j...[/bold blue]")
-        generator = MermaidGenerator()
-        generator.export_diagrams()
-        generator.close()
-        console.print("[bold green]✅ Successfully generated all diagrams![/bold green]")
-    except Exception as e:
-        console.print(f"[bold red]Error: {str(e)}[/bold red]") 
+        return "\n".join(mermaid_code) 
