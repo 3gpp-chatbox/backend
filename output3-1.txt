@@ -1,65 +1,55 @@
-The provided text describes several procedures related to 5G registration, specifically focusing on initial registration and mobility/periodic registration updates.  Let's list them and then analyze the second procedure.
+Based on the provided text from 3GPP 24.501, here's a list of the procedures described, followed by an extraction of the first procedure's information and a Mermaid diagram.
 
 
 **List of Procedures:**
 
-1. Registration procedure for initial registration
-2. 5GMM common procedure initiation
-3. Initial registration accepted by the network
-4. Initial registration not accepted by the network
-5. Initial registration for emergency services not accepted by the network
-6. Initial registration for initiating an emergency PDU session not accepted by the network
-7. Abnormal cases in the UE
-8. Abnormal cases on the network side
-9. Registration procedure for mobility and periodic registration update
-10. Mobility and periodic registration update initiation
+1.  Registration procedure for initial registration
+2.  5GMM common procedure initiation
+3.  Registration procedure for mobility and periodic registration update
 
 
-**Second Procedure: 5GMM Common Procedure Initiation**
+**Extraction of First Procedure Information (Registration procedure for initial registration):**
 
-Let's extract information for the second procedure using the provided mapping:
+Using the provided mapping:
 
-* **States:**  The text doesn't explicitly define states for this procedure, but it implies transitions *within* an ongoing registration procedure. The AMF might be in a state waiting for authentication or security information, transitioning to a state where those procedures are complete.  The UE is implicitly in a 5GMM-DEREGISTERED state before and a 5GMM-REGISTERED state after.
+*   **States:** 5GMM-DEREGISTERED, 5GMM-REGISTERED, 5GMM-REGISTERED-INITIATED, 5GMM-COMMON-PROCEDURE-INITIATED, 5GMM-REGISTERED.LIMITED-SERVICE, 5GMM-REGISTERED.PLMN-SEARCH, EMM-DEREGISTERED, EMM-REGISTERED.
+*   **Actions:** UE sends REGISTRATION REQUEST message, UE sends ATTACH REQUEST message, UE sends REGISTRATION COMPLETE message, UE starts/stops timers (T3510, T3502, T3511, T3519), UE creates 5G-GUTI, UE handles 5GS mobile identity IE, UE includes UE status IE, UE includes Additional GUTI IE, UE includes 5GS update type IE, UE includes MICO indication IE, UE includes T3324 IE, UE includes Requested T3512 IE, UE includes Requested DRX parameters IE, UE includes Requested NB-N1 mode DRX parameters IE, UE includes Requested extended DRX parameters IE, UE includes LADN indication IE, UE includes requested NSSAI, UE sets various bits in 5GMM capability IE (S1 mode, EPS-UPIP, HO attach, LPP, 5G-LCS, LCS-UPP, SUPL, NVL-SATNR, Control plane CIoT 5GS optimization, Control plane CIoT EPS optimization, Multiple user-plane resources support, 5G-SRVCC from NG-RAN to UTRAN, SGC, RestrictEC, NSSAA, CAG, Ex-CAG, ECI, NSR, RCMP, RACS, V2X, V2XCEPC5, V2XCNPC5, ER-NSSAI, NSSRG, UAS, A2XEPC5, A2XNPC5, A2X-Uu, 5G ProSe-dd, 5G ProSe-dc, 5G ProSe-l2relay, 5G ProSe-l3relay, 5G ProSe-l2rmt, 5G ProSe-l3rmt, 5G ProSe-l2U2U relay, 5G ProSe-l3U2U relay, 5G ProSe-l2end, 5G ProSe-l3end, N1 NAS signalling connection release, paging indication for voice services, reject paging request, paging restriction, MINT, SBNS, SBTS, EventNotification, SSNPNSI, ESI, UN-PER, Reconnection to the network due to RAN timing synchronization status change, LADN-DS, MPSIU, MCSIU, RSLP, RSLPL, RSLPS, RSLPVU, RSLPPU, PNS, NSUC, TempNS, SLVI, RATUC), AMF sends REGISTRATION ACCEPT message, AMF sends REGISTRATION REJECT message, AMF assigns TAI list, AMF includes service area restrictions, AMF includes list of equivalent PLMNs/SNPNs, AMF determines LADN DNNs, AMF determines negotiated UE paging probability information, AMF determines Paging subgroup ID, AMF sets UN-PER bit in 5GS network feature support IE, AMF includes LADN information/Extended LADN information, AMF allocates 5G-GUTI, AMF updates CAG information list, AMF starts timer T3550, AMF includes MICO indication IE, AMF includes active time value, AMF includes T3512 value IE, AMF includes non-3GPP de-registration timer value IE, AMF indicates CIoT 5GS optimization, AMF includes T3447 value IE, AMF includes T3448 value IE, AMF includes Truncated 5G-S-TMSI configuration IE, AMF initiates UUAA-MM procedure, AMF includes service-level-AA response, AMF includes List of PLMNs to be used in disaster condition IE, AMF includes Disaster roaming wait range IE, AMF includes Disaster return wait range IE, AMF includes Forbidden TAI(s) IE, AMF includes RAN timing synchronization IE, AMF includes Feature authorization indication IE, AMF sets IWK N26 bit, AMF includes NSSAI inclusion mode IE, AMF includes Operator-defined access category definitions IE, AMF includes Negotiated DRX parameters IE, AMF includes Negotiated NB-N1 mode DRX parameters IE, AMF includes Negotiated extended DRX parameters IE, AMF includes Ciphering key data IE, AMF includes Network slicing indication IE, AMF includes Alternative NSSAI IE, AMF includes Partially rejected NSSAI IE, AMF includes Partially allowed NSSAI IE, AMF includes On-demand NSSAI IE, AMF includes NSAG information IE, AMF includes RAT utilization control IE, AMF sets RestrictEC bit, AMF sets N1 NAS signalling connection release bit, AMF sets paging indication for voice services bit, AMF sets reject paging request bit, AMF sets paging restriction bit, AMF sets ranging and sidelink positioning support bit, AMF includes SOR transparent container IE, AMF includes NSSAI inclusion mode IE, AMF includes Operator-defined access category definitions IE.
 
-* **Actions:** The network (AMF) initiates identification, authentication, and security procedures.  This might include sending authentication requests, receiving responses, and establishing a security context.
+*   **Events:** Timer T3510 expiry, Timer T3511 expiry, Timer T3502 expiry, Timer T3447 expiry, Timer T3519 expiry, T3448 expiry, UE moves from GERAN/UTRAN to NG-RAN, UE performs 5G-SRVCC, UE moves from EPC, UE enters EMM-DEREGISTERED state, network sends "interworking without N26 interface not supported" indication,  REGISTRATION REQUEST message received (by AMF), REGISTRATION ACCEPT message received (by UE), REGISTRATION REJECT message received (by UE),  TAI change, lower layer failure,  DEREGISTRATION REQUEST message received,  REGISTRATION COMPLETE message transmission failure, REGISTRATION REQUEST message transmission failure,  access attempt barred,  UE initiated de-registration,  access for localized services no longer allowed.
+*   **Parameters:** 5GS registration type IE, 5GS mobile identity IE, UE status IE, ATTACH REQUEST message, Additional GUTI IE, 5GS update type IE, MICO indication IE, T3324 IE, Requested T3512 IE, Requested DRX parameters IE, Requested NB-N1 mode DRX parameters IE, Requested extended DRX parameters IE, LADN indication IE, requested NSSAI, 5GMM capability IE, TAI list, service area list IE, list of equivalent PLMNs/SNPNs, LADN information IE, Extended LADN information IE, 5G-GUTI, CAG information list IE, Extended CAG information list IE,  T3550 timer, MICO indication IE, T3324 IE, T3512 value IE, non-3GPP de-registration timer value IE, 5GS network feature support IE, T3447 value IE, T3448 value IE, Truncated 5G-S-TMSI configuration IE, service-level-AA container IE, List of PLMNs to be used in disaster condition IE, Disaster roaming wait range IE, Disaster return wait range IE, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming" IE, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service" IE, RAN timing synchronization IE, Feature authorization indication IE, 5GS registration result IE, IWK N26 bit, NSSAI inclusion mode IE, Operator-defined access category definitions IE, Negotiated DRX parameters IE, Negotiated NB-N1 mode DRX parameters IE, Negotiated extended DRX parameters IE, Ciphering key data IE, Network slicing indication IE, Alternative NSSAI IE, Partially rejected NSSAI IE, Partially allowed NSSAI IE, On-demand NSSAI IE, NSAG information IE, RAT utilization control IE, RestrictEC bit, N1 NAS signalling connection release bit, paging indication for voice services bit, reject paging request bit, paging restriction bit, ranging and sidelink positioning support bit, SOR transparent container IE, registration attempt counter, timer T3510, timer T3502, timer T3511, timer T3519, timer T3346,  UE paging probability information, Paging subgroup ID,  Unavailability configuration IE,  MBSRAI field,  access identity, MPS indicator bit, MCS indicator bit,  UE radio capability ID IE, UE radio capability ID deletion indication IE, service-level-AA pending indication, service-level-AA response,  PLMN with disaster condition IE,  Disaster roaming registration result value bit,  rejected NSSAI,  extended rejected NSSAI,  pending NSSAI,  NSSAA to be performed indicator,  Discontinuous coverage maximum time offset IE, RecReq bit,  ME support of SOR-CMCI indicator, ME support of SOR-SNPN-SI indicator, ME support of SOR-SNPN-SI-LS indicator,  NSSAI inclusion mode IE, T3447 value IE, T3448 value IE,  UE determined value,  MBSR authorization status,  list of "PLMNs with associated RAT restrictions",  5GMM cause value,  back-off timer T3346,  N3IWF identifier IE, TNAN information IE,  PEI.
 
-* **Events:** The trigger is the receipt of the REGISTRATION REQUEST message by the AMF.  Internal events within the AMF drive the progression of identification, authentication, and security procedures.
+*   **Flow of Execution:**  The UE, in the 5GMM-DEREGISTERED state, sends a REGISTRATION REQUEST message to the AMF.  The AMF processes the request and either sends a REGISTRATION ACCEPT or REGISTRATION REJECT message.  Success involves security procedures and potentially other procedures, resulting in a 5GMM-REGISTERED state.  Failure results in the UE retrying or taking other actions based on the cause.  There are specific details on how different information elements (IEs) are handled in both request and acceptance messages. The overall flow includes conditional logic based on the type of registration (emergency, onboarding, etc.), UE capabilities, and network configuration.
 
-* **Parameters:** Information from the REGISTRATION REQUEST message (especially security capabilities) are key parameters.  The AMF might also send security related information elements.
-
-* **Flow of Execution:** The AMF processes the REGISTRATION REQUEST.  If necessary, it initiates identification, authentication, and security procedures sequentially.  The flow depends on whether the authentication process is skipped for emergency cases.
-
-* **Conditionals:** The need for authentication and the number of security mode control procedures (one or two) are conditional based on the 5GS registration type and the presence of a security context.
-
-* **Metadata:** Not explicitly detailed in the text.
+*   **Conditionals:**  Numerous conditionals are present, determining which IEs are included in the REGISTRATION REQUEST and REGISTRATION ACCEPT messages.  Conditions include the type of registration, the availability of various GUTI and SUCI identifiers, the UE's capabilities (e.g., support for S1 mode, MICO, etc.), network support for features, and the results of authentication and authorization procedures.
 
 
-**First Procedure: Registration Procedure for Initial Registration**
+*   **Metadata:**  While not explicitly listed as metadata, timers (T3510, T3502, T3511, T3519, T3346, T3550, T3447, T3448, T3245) and message types (REGISTRATION REQUEST, REGISTRATION ACCEPT, REGISTRATION REJECT, REGISTRATION COMPLETE, ATTACH REQUEST, DEREGISTRATION REQUEST) act as implicit metadata, providing timing and message flow information.
 
-**Mermaid Diagram:**
+
+
+**Mermaid Diagram for Initial Registration:**
 
 ```mermaid
 graph LR
-    A[UE (5GMM-DEREGISTERED)] --> B{REGISTRATION REQUEST (5GS registration type)};
-    B -- Initial Registration --> C[AMF Processes Request];
-    B -- Emergency Registration --> D[AMF Processes Emergency Request];
-    B -- SNPN Onboarding --> E[AMF Processes SNPN Request];
-    B -- Disaster Roaming --> F[AMF Processes Disaster Roaming Request];
-    C --> G{Registration Accepted?};
-    G -- Yes --> H[AMF sends REGISTRATION ACCEPT];
-    H --> I[UE (5GMM-REGISTERED)];
-    G -- No --> J[AMF sends REGISTRATION REJECT];
-    J --> K[UE Handles Rejection];
-    D --> G;
-    E --> G;
-    F --> G;
+    A[UE (5GMM-DEREGISTERED)] --> B{REGISTRATION REQUEST};
+    B -- Success --> C[AMF];
+    C --> D{5GMM Common Procedures};
+    D -- Success --> E[AMF sends REGISTRATION ACCEPT];
+    E --> F[UE (5GMM-REGISTERED)];
+    B -- Failure --> G[AMF sends REGISTRATION REJECT];
+    G --> H[UE handles rejection, retries?];
+    
+    subgraph "AMF Processing"
+        C --> I{Authentication/Security};
+        I --> J{Resource Allocation};
+        J --> K{Assign 5G-GUTI/TAI};
+        K --> E;
+    end
 
-    style B fill:#ccf,stroke:#333,stroke-width:2px
-    style G fill:#ccf,stroke:#333,stroke-width:2px
-    style H fill:#ccf,stroke:#333,stroke-width:2px
-
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+    style A fill:#ccf,stroke:#333,stroke-width:2px
 ```
 
-**Description:**
+**Description of Initial Registration Procedure:**
 
-The "Registration procedure for initial registration" begins with the UE, in the 5GMM-DEREGISTERED state, sending a REGISTRATION REQUEST message to the AMF. The 5GS registration type IE within the message specifies the reason for registration (e.g., initial 5GS service registration, emergency services, SNPN onboarding, or disaster roaming). The AMF processes the request. If the request is accepted, it sends a REGISTRATION ACCEPT message, and the UE transitions to the 5GMM-REGISTERED state.  If rejected, the AMF sends a REGISTRATION REJECT message, and the UE handles the rejection according to the cause provided (e.g., congestion, unauthorized, no network slices available).  The process includes several conditional steps based on registration type, security context, and network capabilities.  The UE populates the REGISTRATION REQUEST with various IEs (Information Elements) based on its capabilities and the type of registration.  The AMF's response in the REGISTRATION ACCEPT message provides configuration information and network capabilities.
+The initial registration procedure begins with the UE in the 5GMM-DEREGISTERED state. The UE sends a REGISTRATION REQUEST message to the AMF, which includes various information elements (IEs) depending on UE capabilities and the registration type (e.g., emergency, standard). The AMF performs authentication and security procedures, and allocates resources (including a 5G-GUTI and TAI). If successful, the AMF returns a REGISTRATION ACCEPT message, containing further configuration information and setting the UE to the 5GMM-REGISTERED state.  If unsuccessful, a REGISTRATION REJECT message is sent, along with a 5GMM cause code specifying the reason for the failure.  The UE then handles the rejection, which might involve retries, alternative network selection, or other actions dependent on the cause code.  The procedure involves several timers controlling retry attempts and timeouts.  Many conditional actions depend on the specifics of the registration type and UE capabilities.

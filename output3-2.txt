@@ -1,0 +1,75 @@
+Based on the provided text from 3GPP 24.501, here's a breakdown of the procedures, extraction of the second procedure's information, and the requested Mermaid diagrams.
+
+**List of Procedures:**
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Registration procedure for mobility and periodic registration update
+
+
+**Extraction of the Second Procedure Information:**
+
+The second procedure is "5GMM common procedure initiation".  Using the provided mapping:
+
+* **States:**  The text mentions the AMF entering state `5GMM-COMMON-PROCEDURE-INITIATED` (and implicitly, the UE being in a state where it can receive 5GMM procedures).  It also implies the AMF might be in other states before initiating these procedures,  depending on the `REGISTRATION REQUEST` message.
+* **Actions:** The network (AMF) initiates 5GMM common procedures (identification, authentication, security procedures).  Specific actions depend on the content of the `REGISTRATION REQUEST` message.  The text explicitly calls out the initiation of two NAS security mode control procedures as part of 5GMM common procedures under certain conditions. The AMF may choose to skip the authentication procedure if certain conditions about emergency registration and unauthenticated SUCIs are met.
+* **Events:** The trigger for this procedure is the receipt of a `REGISTRATION REQUEST` message by the AMF.  The  procedure¡¯s completion is triggered when the 5GMM common procedure is finished.
+* **Parameters:** The `REGISTRATION REQUEST` message content is a key parameter influencing the specific 5GMM procedures initiated. Other parameters include configuration settings within the AMF.
+* **Flow of Execution:**  The AMF receives the `REGISTRATION REQUEST`. Based on the message content, the AMF initiates one or more 5GMM common procedures (identification, authentication, and security procedures) in a sequence. The flow might skip authentication for emergency registrations under specific configurations. Two NAS security mode control procedures may be sequentially initiated if needed.
+* **Conditionals:** The AMF makes decisions based on the `REGISTRATION REQUEST` message (e.g., 5GS registration type, security context availability, emergency registration configuration).  If the `5GS registration type IE` is "emergency registration" and the AMF is configured to support emergency registration for unauthenticated SUCIs, then authentication might be skipped.
+* **Metadata:**  The text does not explicitly mention metadata like timestamps or message IDs, but these are implicitly part of the signaling process.
+
+
+**Mermaid Diagram and Description for the Second Procedure:**
+
+```mermaid
+sequenceDiagram
+    participant UE
+    participant AMF
+    UE->>AMF: REGISTRATION REQUEST
+    activate AMF
+    alt 5GS Registration Type != "emergency registration" OR AMF not configured for unauthenticated SUCIs
+        AMF->>AMF: Identification Procedure
+        AMF->>AMF: Authentication Procedure
+        AMF->>AMF: Security Mode Control Procedure(s)
+    else 5GS Registration Type == "emergency registration" AND AMF configured for unauthenticated SUCIs
+        AMF->>AMF: Security Mode Control Procedure(s)
+    end
+    AMF-->>UE: REGISTRATION ACCEPT (or REJECT)
+    deactivate AMF
+```
+
+**Description:** The 5GMM common procedure initiation begins when the AMF receives a `REGISTRATION REQUEST` from the UE.  The AMF then performs a series of actions, such as identification, authentication, and security procedures.  Whether authentication occurs depends on the registration type and AMF configuration.  The AMF then sends a `REGISTRATION ACCEPT` (or `REJECT`) message back to the UE.
+
+
+**Mermaid Diagram and Description for the First Procedure:**
+
+```mermaid
+sequenceDiagram
+    participant UE
+    participant AMF
+    Note right of UE: UE in 5GMM-DEREGISTERED state
+    UE->>AMF: REGISTRATION REQUEST (5GS registration type indicated)
+    activate AMF
+    alt Initial Registration Accepted
+        AMF->>AMF: Processes REGISTRATION REQUEST (checks restrictions, assigns resources)
+        AMF-->>UE: REGISTRATION ACCEPT (TAI list, 5G-GUTI, etc.)
+        activate UE
+        UE->>AMF: REGISTRATION COMPLETE (if needed)
+        deactivate UE
+        AMF->>AMF:  Timer T3550 starts (if applicable)
+        AMF->>AMF: Enters 5GMM-COMMON-PROCEDURE-INITIATED (if applicable)
+
+    else Initial Registration Rejected
+        AMF-->>UE: REGISTRATION REJECT (5GMM cause code)
+        activate UE
+        UE->>UE:  Handles rejection (increments counter, timer, etc.)
+        deactivate UE
+    end
+    deactivate AMF
+```
+
+**Description:**  The initial registration procedure starts when a UE in the `5GMM-DEREGISTERED` state sends a `REGISTRATION REQUEST` message to the AMF, specifying the registration type. The AMF processes the request, performing checks and assigning resources. If successful, it sends a `REGISTRATION ACCEPT` message containing information like the TAI list and a 5G-GUTI. The UE may respond with a `REGISTRATION COMPLETE` message. If the request is rejected, the AMF sends a `REGISTRATION REJECT` message including a cause code. The UE handles the rejection accordingly, possibly retrying the registration or taking other actions as defined in the specification.  The AMF may start a timer (T3550) under certain conditions.
+
+
+This analysis is based solely on the provided text excerpt and does not include information from referenced 3GPP documents (e.g., TS 23.003, TS 23.216, etc.).  A complete understanding would require reviewing those documents.

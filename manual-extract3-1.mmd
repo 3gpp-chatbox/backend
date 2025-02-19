@@ -1,0 +1,18 @@
+graph LR
+    A["UE (5GMM-DEREGISTERED)"] --> B{"REGISTRATION REQUEST"}
+    B --"Success"--> C["AMF"]
+    C --> D{"5GMM Common Procedures"}
+    D --"Success"--> E["AMF sends REGISTRATION ACCEPT"]
+    E --> F["UE (5GMM-REGISTERED)"]
+    B --"Failure"--> G["AMF sends REGISTRATION REJECT"]
+    G --> H["UE handles rejection, retries?"]
+    
+    subgraph "AMF Processing"
+        C --> I{"Authentication/Security"}
+        I --> J{"Resource Allocation"}
+        J --> K{"Assign 5G-GUTI/TAI"}
+        K --> E
+    end
+
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+    style A fill:#ccf,stroke:#333,stroke-width:2px
