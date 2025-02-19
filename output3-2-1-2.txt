@@ -1,0 +1,40 @@
+Based on the provided text, the procedures mentioned are:
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Abnormal cases in the UE
+6. Abnormal cases on the network side
+7. Registration procedure for mobility and periodic registration update
+8. Initial registration for emergency services not accepted by the network
+9. Initial registration for initiating an emergency PDU session not accepted by the network
+
+
+**Procedure 2: 5GMM common procedure initiation**
+
+| Core Component          | Information from 3GPP Specification                                                                                                                                                                     |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States**               | "5GMM-REGISTERED","5GMM-COMMON-PROCEDURE-INITIATED"                                                                                                                                                 |
+| **Actions**              | "The network may initiate 5GMM common procedures (e.g., the identification, authentication, and security procedures) during the registration procedure depending on the information received in the REGISTRATION REQUEST message." |
+| **Events**               | "Receiving REGISTRATION REQUEST message"                                                                                                                                                           |
+| **Parameters**           | "Information received in the REGISTRATION REQUEST message", "REGISTRATION REQUEST message"                                                                                                                         |
+| **Flow of Execution**    | "The network initiates 5GMM common procedures based on the REGISTRATION REQUEST message."                                                                                                               |
+| **Conditionals**         | "depending on the information received in the REGISTRATION REQUEST message" , "If two NAS security mode control procedures are needed..."                                                                         |
+| **Metadata**             |  "5GS registration type IE set to 'emergency registration'"                                                                                                                                   |
+
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[""Receiving REGISTRATION REQUEST message""] --> B{""5GS registration type IE set to 'emergency registration'?""};
+    B -- Yes --> C[""AMF may skip authentication""];
+    B -- No --> D[""Network initiates 5GMM common procedures (identification, authentication, security)""];
+    C --> E[""Proceed to security mode control procedure""];
+    D --> F[""Depending on REGISTRATION REQUEST message information""];
+    F --> G[""5GMM-COMMON-PROCEDURE-INITIATED""];
+    E --> G;
+    G --> H[""Registration procedure continues""];
+
+```

@@ -1,0 +1,12 @@
+%% **Procedure 2: 5GMM common procedure initiation**
+
+
+graph TD
+    A["Receiving REGISTRATION REQUEST message"] --> B{"5GS registration type IE set to 'emergency registration'?"};
+    B -- Yes --> C["AMF may skip authentication"];
+    B -- No --> D["Network initiates 5GMM common procedures (identification, authentication, security)"];
+    C --> E["Proceed to security mode control procedure"];
+    D --> F["Depending on REGISTRATION REQUEST message information"];
+    F --> G["5GMM-COMMON-PROCEDURE-INITIATED"];
+    E --> G;
+    G --> H["Registration procedure continues"];
