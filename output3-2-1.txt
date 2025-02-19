@@ -1,0 +1,82 @@
+Based on the provided text, here's a list of the procedures described, followed by an extraction of the fourth procedure's information, and finally a Mermaid flowchart.
+
+
+**List of Procedures:**
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Initial registration for emergency services not accepted by the network
+6. Initial registration for initiating an emergency PDU session not accepted by the network
+7. Abnormal cases in the UE
+8. Abnormal cases on the network side
+9. Registration procedure for mobility and periodic registration update
+
+
+**Extraction of the Fourth Procedure:**
+
+**Procedure Name:** "Initial registration not accepted by the network"
+
+**States:** 
+*  Implicit:  UE state before rejection (implied as needing initial registration).
+* AMF state (implied as processing REGISTRATION REQUEST)  
+* UE state after rejection (5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or other states depending on the 5GMM cause).
+
+
+**Actions:**
+* AMF sends REGISTRATION REJECT message to UE.
+* AMF sets 5GMM cause value (various values depending on the reason for rejection, including values for congestion, redirection, no network slices available, etc.).
+* AMF may assign a back-off timer value (T3346).
+* AMF may include rejected NSSAI information (Rejected NSSAI IE or Extended rejected NSSAI IE).
+* AMF may include RAT utilization control IE.
+* UE receives REGISTRATION REJECT message.
+* UE processes the 5GMM cause.
+* UE performs actions based on the 5GMM cause (various actions described for different cause values;  examples include setting update status, deleting parameters, resetting counters, entering different states, starting timers, disabling capabilities, etc.).
+* UE might start timer T3346 (depending on the 5GMM cause).
+
+
+**Events:**
+* Initial registration request is received by the AMF.
+* Initial registration request cannot be accepted by the network.
+* REGISTRATION REJECT message is sent by the AMF.
+* REGISTRATION REJECT message is received by the UE.
+* Timer T3346 expires (if applicable).
+
+
+**Parameters:**
+* REGISTRATION REQUEST message.
+* REGISTRATION REJECT message (including 5GMM cause value, back-off timer value T3346, rejected NSSAI information, RAT utilization control IE).
+* Various 5GMM cause values (#3, #6, #7, #10, #11, #12, #13, #15, #22, #27, #31, #36, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82, #95, #96, #97, #99, #111).
+* Timer T3346 value.
+
+
+**Flow of Execution:** The AMF receives a REGISTRATION REQUEST message and if it cannot be accepted, sends a REGISTRATION REJECT message with an appropriate 5GMM cause value to the UE. The UE then reacts based on the received 5GMM cause value, performing actions like resetting counters, updating status and attempting re-registration.
+
+**Conditionals:**  The AMF's actions depend on various conditions, including the reason for rejection, the UE's capabilities, and network policies. The UE's actions depend on the 5GMM cause code received, whether the message was integrity-protected, and other factors.
+
+**Metadata:** 5GMM cause values, timer values (T3346), message types (REGISTRATION REQUEST, REGISTRATION REJECT).
+
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph LR
+    A["UE initiates Initial Registration (REGISTRATION REQUEST)"] --> B{AMF processes request};
+    B -- "Request Accepted" --> C["AMF sends REGISTRATION ACCEPT"];
+    B -- "Request Rejected" --> D["AMF sends REGISTRATION REJECT"];
+    D --> E["UE receives REGISTRATION REJECT"];
+    E --> F{5GMM Cause Code};
+    F -- "#3, #6, etc." --> G["UE performs actions based on cause code (see detailed description)"];
+    F -- "#22 (Congestion)" --> H["UE starts T3346, re-attempts registration"];
+    F -- "#62 (No Network Slices)" --> I["UE handles rejected NSSAI, re-attempts"];
+    G --> J["UE updates state (e.g., 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION)"];
+    H --> J;
+    I --> J;
+    C --> K["UE receives REGISTRATION ACCEPT"];
+
+```
+
+**Description for the Fourth Procedure:**
+
+The "Initial registration not accepted by the network" procedure describes the scenario where the AMF rejects the UE's initial registration request.  The AMF sends a REGISTRATION REJECT message containing a 5GMM cause code indicating the reason for rejection.  The UE's response depends heavily on this cause code, with numerous different actions and state transitions defined based on the specific code received.  Examples of actions include timer management (T3346), state transitions (e.g., to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION), parameter deletion, counter updates, and network selection procedures.  The AMF may also include additional information in the REGISTRATION REJECT message to help the UE, such as a backoff timer and details about rejected network slices.

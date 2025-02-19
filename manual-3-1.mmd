@@ -1,0 +1,14 @@
+graph LR
+    A["UE (5GMM-DEREGISTERED)"] --> B{"REGISTRATION REQUEST"}
+    B --> C["AMF"]
+    C --"REGISTRATION ACCEPT"--> D["UE (5GMM-REGISTERED)"]
+    C --"REGISTRATION REJECT"--> E["UE (5GMM-DEREGISTERED)"]
+    D --> F{"REGISTRATION COMPLETE"}
+    F --> G["AMF (5GMM-REGISTERED)"]
+
+    subgraph "Conditions & Actions"
+        B -.-> H["Various conditions (previous state, registration type, capabilities, etc.)"]
+        C -.-> I["AMF processes request, initiates common procedures, assigns parameters, etc."]
+        D -.-> J["UE handles received parameters, updates state, etc."]
+        E -.-> K["UE handles rejection cause, updates state, etc."]
+    end

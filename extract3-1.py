@@ -13,7 +13,8 @@ def extract_procedural_info_from_text(text):
 
     {text}
 
-     now, list all procedures from the following section and then extract the the first procedure information from the list and use below mapping to extract the information(below is an example) finally,also return correct mermaid format and description for the first procedure.:
+     remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions, now, list all procedures from the  section and then extract the the first procedure information from the list and use below mapping to extract the information(below is an example) finally,also return correct mermaid format and description for the first procedure.:
+
 
 Extracting the Model from 3GPP Specification
 
@@ -34,7 +35,7 @@ Flow of Execution: Sequence of steps in the procedure.
 Conditionals: Decisions based on certain criteria or parameters.
 
 Metadata: Additional information like timestamps, message types, or IDs.
-finally, make mermaid diagram format and description for the first procedure.
+
 
     """
 

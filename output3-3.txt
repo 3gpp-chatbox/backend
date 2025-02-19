@@ -1,0 +1,62 @@
+Based on the provided text, here's a list of the procedures mentioned:
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Abnormal cases in the UE
+6. Abnormal cases on the network side
+7. Registration procedure for mobility and periodic registration update
+8. Initial registration for emergency services not accepted by the network
+9. Initial registration for initiating an emergency PDU session not accepted by the network
+
+
+**Third Procedure Information Extraction (5.5.1.2.3 Initial registration accepted by the network):**
+
+Using the provided mapping:
+
+* **States:** 5GMM-COMMON-PROCEDURE-INITIATED (implicitly mentioned), 5GMM-REGISTERED (implicitly mentioned).  The text doesn't explicitly define states for this procedure but implies transitions.
+
+* **Actions:** AMF sends REGISTRATION ACCEPT message; AMF stores information elements (5GMM capability, S1 UE network capability, UE security capability); AMF assigns TAI list; AMF may include service area restrictions, list of equivalent PLMNs, list of equivalent SNPNs; UE stores TAI list; UE may act on service area restrictions; UE stores list of equivalent PLMNs/SNPNs; UE deletes stored list if none provided.
+
+* **Events:** Initial registration request is accepted by the network;  UE receives REGISTRATION ACCEPT message.
+
+* **Parameters:** REGISTRATION REQUEST message (implicitly used as input), REGISTRATION ACCEPT message (output); TAI list; Service area list IE; List of equivalent PLMNs; List of equivalent SNPNs;  5GMM capability; S1 UE network capability; UE security capability.
+
+
+* **Flow of Execution:**  The network accepts the initial registration request. The AMF sends a REGISTRATION ACCEPT message to the UE.  The AMF includes a TAI list, and may include additional information.  The UE receives and processes the REGISTRATION ACCEPT message.
+
+
+* **Conditionals:**  AMF checks if initial registration request is received over non-3GPP access. AMF checks for compatibility of N3IWF/TNGF with allowed NSSAI.  AMF may choose to skip authentication for unauthenticated SUCIs if appropriate. The AMF checks whether to include equivalent PLMNs or SNPNs.  UE checks if initial registration is for emergency services, and removes PLMN codes or SNPN identities already in forbidden lists. The AMF checks if it should include a list of equivalent SNPNs based on ESI bit.
+
+
+* **Metadata:**  Information element lengths (for storage purposes), 5GMM cause values (implicitly, as the procedure is triggered *after* successful initial registration).
+
+
+**Mermaid Format and Description for the Third Procedure:**
+
+```mermaid
+sequenceDiagram
+    participant UE
+    participant AMF
+
+    activate UE
+    UE->>AMF: REGISTRATION REQUEST
+    activate AMF
+    Note right of AMF: Initial Registration Request Accepted
+    AMF->>AMF: Store 5GMM capability, S1 UE network capability, UE security capability
+    AMF->>AMF: Assign TAI list
+    AMF->>AMF:  May include service area restrictions, equivalent PLMNs/SNPNs
+    AMF-->>UE: REGISTRATION ACCEPT
+    deactivate AMF
+    activate UE
+    UE->>UE: Store TAI list
+    UE->>UE: Process service area restrictions (if any)
+    UE->>UE: Store equivalent PLMNs/SNPNs (if any)
+    deactivate UE
+
+```
+
+**Description:**
+
+The "Initial registration accepted by the network" procedure is initiated after the network successfully receives and processes a REGISTRATION REQUEST message from the UE.  The Access Management Function (AMF) then sends a REGISTRATION ACCEPT message back to the UE. This message includes crucial information like the Tracking Area Identity (TAI) list, indicating the areas where the UE is registered.  The AMF may optionally include other information such as service area restrictions and lists of equivalent PLMNs or SNPNs.  The UE, upon receiving the REGISTRATION ACCEPT message, updates its internal state and configuration based on this information.  The success of this procedure depends on several factors, including the validity of the registration request, network conditions, and UE capabilities.  Failure in this step would indicate a problem upstream, before this stage of the registration.

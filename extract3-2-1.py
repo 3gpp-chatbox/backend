@@ -9,11 +9,11 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 def extract_procedural_info_from_text(text):
     # Structured prompt for the model
     prompt = f"""
-   you are a expert in 3gpp 5g and 4g procedures,below is the thunk text is sectionabout registration procedure for initial registration from 3gpp 24.501,read them carefully first:
+    below is the thunk text of a section read them carefully first:
 
     {text}
 
-   remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions, now, list all procedures from the  section and then extract the the second procedure information from the list and use below mapping to extract the information(below is an example) finally,also return correct mermaid format and description for the second procedure.:
+ remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. now, list all procedures from the  section and then extract the the fourth procedure information  and use below pattern to mapping it (below is an example) finally,also Return a Mermaid flowchart using graph LR syntax. Ensure that all node labels are enclosed in double quotes ("")  ,and description for the fourth procedure.: 
 
 Extracting the Model from 3GPP Specification
 
@@ -90,4 +90,4 @@ procedural_info = process_section(625, 765, 'document_chunks.db')
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_txt(procedural_info, "output3-2.txt")  # For plain text
+save_procedural_info_to_txt(procedural_info, "output3-2-1.txt")  # For plain text
