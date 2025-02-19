@@ -1,0 +1,18 @@
+1. Document Processing (Automated)
+A script chunks and stores a DOCX document into a database.
+2. Section Identification (Manual)
+You manually review the document to find the start and end paragraphs of the section you need.
+3. Chunk ID Retrieval (Manual)
+You search the identified text in the database to locate the chunk IDs (e.g., ID 625 to ID 765).
+4. Targeted Data Extraction (Automated)
+A script queries SQLite to extract content only from the identified chunk range.
+5. AI Processing (Automated)
+The extracted content is sent to a Generative AI model to generate key information, descriptions, and Mermaid flowchart code.
+The AI response is automatically saved to a .txt file.
+6. Mermaid Code Extraction (Manual)
+You manually copy only the Mermaid flowchart code from the AI response.
+You create a new .mmd file and paste the Mermaid code.
+7. Mermaid Code Debugging (Manual & API-Assisted)
+Sometimes, the AI-generated Mermaid code contains syntax errors.
+You copy-paste the code into a browser and use an API (e.g., GPT) to correct it.
+Once corrected, you copy-paste the valid Mermaid code back into the .mmd file.

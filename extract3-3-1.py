@@ -1,11 +1,14 @@
 import sqlite3
-import google.generativeai as genai
-
-# Initialize Google Generative AI (Gemini)
 import os
+from dotenv import load_dotenv
 import google.generativeai as genai
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Load from environment variable
+# Load .env file
+load_dotenv()
+
+# Configure API key
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+  # Load from environment variable
 # Replace with your Gemini API key
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -17,7 +20,7 @@ def extract_procedural_info_from_text(text):
 
     {text}
 
- remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. now, list all procedures from the  section and then focus one first procedure ,extract the the first procedure information  and use below pattern to mapping it (below is an example) finally,also Return description  a Mermaid flowchart for the first procedure using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes ("").There are no extra spaces inside {{}} brackets. below is that example: 
+ remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. now, list all procedures from the  section and then focus one third procedure ,extract the the third procedure information  and use below pattern to mapping it (below is an example) finally,also Return description  a Mermaid flowchart for the third procedure using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets. below is that example: 
 
 Extracting the Model from 3GPP Specification
 
@@ -94,4 +97,4 @@ procedural_info = process_section(625, 765, 'document_chunks.db')
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_txt(procedural_info, "output3-1-1-1.txt")  # For plain text
+save_procedural_info_to_txt(procedural_info, "output3-3-1.txt")  # For plain text

@@ -1,0 +1,44 @@
+Based on the provided text, here's a list of the procedures described:
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Abnormal cases in the UE
+6. Abnormal cases on the network side
+7. Registration procedure for mobility and periodic registration update
+8. Initial registration for emergency services not accepted by the network
+9. Initial registration for initiating an emergency PDU session not accepted by the network
+
+
+Let's focus on the third procedure: **Initial registration accepted by the network**.
+
+**Extracting the Model from 3GPP Specification: Initial registration accepted by the network**
+
+| Core Component         | Information                                                                                                                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States**              | 5GMM-COMMON-PROCEDURE-INITIATED (AMF enters this state under several conditions)                                                                                                                     |
+| **Actions**             | AMF sends REGISTRATION ACCEPT message; AMF stores information elements (5GMM capability, S1 UE network capability, UE security capability); AMF assigns TAI list; AMF may include service area restrictions; AMF may include list of equivalent PLMNs/SNPNs;  UE stores received TAI list, list of equivalent PLMNs/SNPNs; UE removes forbidden PLMNs/SNPNs from list; UE deletes stored list if none received in message; UE acts on service area restrictions. |
+| **Events**              | Initial registration request is accepted by the network;  UE receives REGISTRATION ACCEPT message.                                                                                                 |
+| **Parameters**          | REGISTRATION REQUEST message (various IEs); REGISTRATION ACCEPT message (various IEs including TAI list, service area restrictions, list of equivalent PLMNs/SNPNs, LADN information, 5G-GUTI);  5GMM capability IE; S1 UE network capability IE; UE security capability IE;  TAI;  LADN indication IE;  UE subscription information; UE location; local configuration about LADN;  UE paging probability information;  Paging subgroup ID;  Unavailability period duration;  start of unavailability period;  discontinuous coverage maximum time offset; LADN DNNs; S-NSSAIs;  NSSAI inclusion mode; operator-defined access category definitions;  Extended emergency number list;  CAG information list; Extended CAG information list;  UE radio capability ID; UE radio capability ID deletion indication; MICO indication IE;  active time value;  T3324 IE; T3512 IE; non-3GPP de-registration timer value IE;  5GS network feature support IE; service gap time value;  T3447 value IE; T3448 value IE;  Truncated 5G-S-TMSI configuration IE; service-level device ID; Service-level-AA container IE;  List of PLMNs to be used in disaster condition IE; Disaster roaming wait range IE; Disaster return wait range IE;  Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming" IE; Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service" IE;  RAN timing synchronization IE; MBSRAI field of the Feature authorization indication IE; RAT utilization control IE;  NSSAI inclusion mode IE;  Operator-defined access category definitions IE;  T3447 value IE; T3448 value IE;  Truncated 5G-S-TMSI configuration IE; service-level-AA pending indication;  service-level-AA response;  SLAR field;  Negotiated DRX parameters IE;  Negotiated NB-N1 mode DRX parameters IE; Negotiated extended DRX parameters IE; SOR transparent container IE; Ciphering key data IE; Network slicing indication IE;  NSAG information IE;  Alternative NSSAI IE; Partially rejected NSSAI IE;  Rejected NSSAI IE;  Extended rejected NSSAI IE; Partially allowed NSSAI IE;  S-NSSAI time validity information IE;  On-demand NSSAI IE;  5GS registration result IE;  Discontinuous coverage maximum time offset IE; Unavailability configuration IE;  RAT utilization control IE;  MPS indicator bit;  MCS indicator bit;  RestrictEC bit;  N1 NAS signalling connection release bit; paging indication for voice services bit; reject paging request bit;  paging restriction bit;  ranging and sidelink positioning support bit;  5GS mobile identity IE. |
+| **Flow of Execution**   | 1. AMF receives initial registration request. 2. AMF checks for acceptance criteria. 3. If accepted, AMF sends REGISTRATION ACCEPT message. 4. AMF performs various actions based on the received information. 5. UE receives and processes the REGISTRATION ACCEPT message. |
+| **Conditionals**        | Initial registration request accepted/rejected;  various conditions based on IEs present in REGISTRATION REQUEST and UE capabilities; whether access is 3GPP or non-3GPP; whether emergency registration;  various conditions related to network slicing, CAG,  MICO, DRX parameters; whether UUAA procedure is needed. |
+| **Metadata**            | Timer T3550 (AMF);  various timers in UE;  message types (REGISTRATION REQUEST, REGISTRATION ACCEPT);  information element (IE) values.                                                         |
+
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["Initial Registration Request Received (AMF)"] --> B{ "Initial Registration Request Accepted?" };
+    B -- Yes --> C["Send REGISTRATION ACCEPT Message (AMF)"];
+    B -- No --> D["Send REGISTRATION REJECT Message (AMF)"];
+    C --> E["Store IEs (AMF)"];
+    E --> F["Assign TAI List (AMF)"];
+    F --> G["Include Optional IEs (AMF)"];
+    G --> H["Send REGISTRATION ACCEPT (AMF)"];
+    H --> I["Receive REGISTRATION ACCEPT (UE)"];
+    I --> J["Process & Store Information (UE)"];
+    J --> K["5GMM-REGISTERED (UE)"];
+
+```

@@ -1,10 +1,14 @@
 import sqlite3
-import google.generativeai as genai
-
 import os
+from dotenv import load_dotenv
 import google.generativeai as genai
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Load from environment variable
+# Load .env file
+load_dotenv()
+
+# Configure API key
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+# Load from environment variable
 # Replace with your Gemini API key
 model = genai.GenerativeModel('gemini-1.5-flash')
 

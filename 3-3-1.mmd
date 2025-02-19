@@ -1,0 +1,11 @@
+graph TD
+    A["Initial Registration Request Received (AMF)"] --> B{"Initial Registration Request Accepted?" };
+    B -- Yes --> C["Send REGISTRATION ACCEPT Message (AMF)"];
+    B -- No --> D["Send REGISTRATION REJECT Message (AMF)"];
+    C --> E["Store IEs (AMF)"];
+    E --> F["Assign TAI List (AMF)"];
+    F --> G["Include Optional IEs (AMF)"];
+    G --> H["Send REGISTRATION ACCEPT (AMF)"];
+    H --> I["Receive REGISTRATION ACCEPT (UE)"];
+    I --> J["Process & Store Information (UE)"];
+    J --> K["5GMM-REGISTERED (UE)"];
