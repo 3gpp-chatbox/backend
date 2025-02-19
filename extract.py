@@ -71,6 +71,13 @@ def retrieve_chunks_from_db(start_id, end_id, db_path="path_to_your_db.sqlite"):
 
     return full_text
 
+
+# Function to save extracted procedural info as plain text
+def save_procedural_info_to_txt(procedural_info, file_path):
+    with open(file_path, "w") as file:
+        file.write(procedural_info)
+    print(f"Procedural info saved to {file_path}")
+
 # Main function to process the document section
 def process_section(start_id, end_id, db_path="path_to_your_db.sqlite"):
     # Step 1: Retrieve the chunks for the desired section (e.g., 5.5.1.2 to 5.5.1.3)
@@ -90,5 +97,7 @@ db_path = "path_to_your_db.sqlite"  # Path to your SQLite database
 procedural_info = process_section(625, 765, 'document_chunks.db')
 
 # Print the extracted procedural info
-print("Extracted Procedural Information:\n")
-print(procedural_info)
+# print("Extracted Procedural Information:\n")
+# print(procedural_info)
+
+save_procedural_info_to_txt(procedural_info, "output.txt")  # For plain text

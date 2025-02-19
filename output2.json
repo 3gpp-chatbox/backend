@@ -1,0 +1,18 @@
+{
+    "nodes": [
+      {"id": "5GMM-DEREGISTERED", "type": "state"},
+      {"id": "REGISTRATION_REQUEST_SENT", "type": "event"},
+      {"id": "AMF_PROCESSING", "type": "state"},
+      {"id": "REGISTRATION_ACCEPTED", "type": "event"},
+      {"id": "5GMM-REGISTERED", "type": "state"},
+      {"id": "REGISTRATION_REJECTED", "type": "event"},
+      {"id": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION", "type": "state"}
+    ],
+    "edges": [
+      {"from": "5GMM-DEREGISTERED", "to": "REGISTRATION_REQUEST_SENT", "action": "Send_REGISTRATION_REQUEST", "properties": {"registration_type": "initial"}},
+      {"from": "REGISTRATION_REQUEST_SENT", "to": "AMF_PROCESSING", "event": "REGISTRATION_REQUEST_RECEIVED"},
+      {"from": "AMF_PROCESSING", "to": "5GMM-REGISTERED", "action": "Send_REGISTRATION_ACCEPT", "condition": "Registration_Request_Accepted"},
+      {"from": "AMF_PROCESSING", "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION", "action": "Send_REGISTRATION_REJECT", "condition": "Registration_Request_Rejected"},
+      {"from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION", "to": "REGISTRATION_REQUEST_SENT", "action": "Retry_REGISTRATION_REQUEST", "condition": "Retry_Count < 5"}
+    ]
+  }

@@ -1,0 +1,61 @@
+
+code:{{
+       "nodes": [
+                {
+                "id": "UE_Powered_On",
+               "type": "state",
+               "properties": {}
+                }
+                    {
+                "id": "UE_Attaching",
+                "type": "state",
+                "properties": {}
+                }
+                {
+                "id": "Attach_Request_Received",
+                "type": "event",
+                "properties": {
+            "message_type": "Attach Request"
+      },
+      "parameters": ["IMSI", "TAI"]
+    }]
+ } ,
+  
+  "edges": [
+    {
+      "from": "UE_Powered_On",
+      "to": "UE_Attaching",
+      "action": "Send_Attach_Request",
+      "properties": {
+        "parameters": ["IMSI", "TAI"],
+        "metadata": {
+          "timestamp": "T0"
+        }
+      }
+    },
+    {
+      "from": "UE_Attaching",
+      "to": "Attach_Request_Received",
+      "event": "Attach_Request_Received",
+      "properties": {}
+    }
+  ]
+}
+
+
+
+
+
+
+
+File "F:\IT-study\year3\s-2\intern\mediatek\3gpp\backend\extract-v2.py", line 116
+    "properties": {}
+                   ^
+SyntaxError: f-string: valid expression required before '}'
+
+
+The error you're encountering is due to a syntax issue in your f-string. Specifically, the f-string is not properly formatted, and there are some issues with the JSON structure you're trying to embed within it. Let's break down the issues and fix them:
+
+Invalid JSON Structure: The JSON structure you provided has some syntax errors, such as missing commas between objects in the nodes array.
+
+F-string Formatting: The f-string is not properly formatted, especially when embedding multi-line JSON structures.
