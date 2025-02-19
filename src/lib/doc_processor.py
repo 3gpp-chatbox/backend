@@ -101,7 +101,8 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
     current_sections = [None] * (max_heading_level + 1)  # Track current section at each level
     current_content = []
     top_level_sections = []  # Store all level 1 sections
-    excluded_section = ["scope", "references", "abbreviations", ]
+    excluded_section = ["scope", "references", "abbreviations" ]
+    max_chunk_size = 2000
     
     paragraphs = extract_paragraphs(doc)
     
@@ -137,7 +138,7 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
                 top_level_sections.append(new_section)
         else:
             # Accumulate content for the current lowest-level section
-            if current_content and len(current_content[-1]) + len(para["text"]) < 3000 and para.get("level") is None:
+            if current_content and len(current_content[-1]) + len(para["text"]) < max_chunk_size and para.get("level") is None:
                 # Combine with previous text if conditions are met
                 current_content[-1] = current_content[-1] + " " + para["text"]
             else:
@@ -208,3 +209,26 @@ def text_cleaner(text: str) -> str:
             normalized_words.append(word.lower())
     
     return ' '.join(normalized_words)
+
+
+def remove_paragraphs(doc, excluded_paragraphs):
+    """
+    Remove paragraphs from the document based on heading style.
+    This function removes all paragraphs that are part of excluded sections.
+    """
+    remove = True
+    for para in doc.paragraphs:
+        para.text = text_cleaner(para.text)
+        if para.style.name.startswith("Heading") and any(word in para.text.lower() for word in excluded_paragraphs):
+            remove = True
+
+        elif para.style.name.startswith("Heading") and remove:
+            remove = False
+        if remove:
+            para.clear()
+            p = para._element
+            p.getparent().remove(p)
+
+    doc.save("data/stripped/24501-j11.docx")
+        
+    
