@@ -1,0 +1,11 @@
+about accuracy of extract3-1-1-1.py and 3-1-1-1.mmd
+deepseekp's response:
+The provided description is largely correct and aligns with the 3GPP specifications. However, it includes some EPS-specific elements that should be removed or clarified. With minor adjustments, this description can serve as an accurate and comprehensive reference for the initial registration procedure in 5G.
+
+
+
+
+
+
+
+
