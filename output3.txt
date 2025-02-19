@@ -1,0 +1,52 @@
+The provided text describes the following procedures:
+
+1. **Registration procedure for initial registration:**  This covers the initial registration of a UE to the 5G network for various services (5GS, emergency, SMS, onboarding, disaster roaming).  It details UE and network actions, including message exchanges (REGISTRATION REQUEST, REGISTRATION ACCEPT, REGISTRATION REJECT), identity management (5G-GUTI, SUCI, PEI), security context establishment, and handling of various capabilities and features.
+
+2. **5GMM common procedure initiation:** The network may initiate procedures like identification, authentication, and security during registration.
+
+3. **Registration procedure for mobility and periodic registration update:** This covers UE registration updates due to mobility or periodic timer expiry (T3512).
+
+Let's extract information for the first procedure using the provided mapping structure:
+
+**1. Registration procedure for initial registration**
+
+1. **Initial UE State**: 5GMM-DEREGISTERED (UE is powered on but not registered to the 5G network).  Additional conditions for initiating registration are detailed (e.g., movement from 3G/4G,  emergencies, service resumption after unavailability).
+
+2. **Attach Request (Equivalent)**: UE sends a REGISTRATION REQUEST message to the AMF. This message contains various information elements depending on the registration type and UE capabilities.  (Note:  This isn't a direct equivalent to the 4G Attach Request; it's the 5G counterpart initiating the registration process).
+
+3. **Authentication (Conditional)**: The AMF may initiate authentication procedures depending on the registration type (e.g., emergency registration may skip authentication).
+
+4. **Security Mode Command (Equivalent)**: Security mode control procedures are initiated by the network (or skipped in the case of emergency registration for unauthenticated SUCIs).  This sets up security parameters for subsequent communication.
+
+5. **Attach Accept (Equivalent)**: AMF sends a REGISTRATION ACCEPT message to the UE. This message confirms successful registration and includes various parameters.
+
+6. **Attach Complete (Equivalent)**: UE may send a REGISTRATION COMPLETE message to acknowledge reception of certain information elements in the REGISTRATION ACCEPT message (e.g., NSAG information, PEIPS parameters).  This isn't always mandatory.
+
+
+7. **Final UE State**: 5GMM-REGISTERED (UE is registered and can access services).  The specific state might be 5GMM-REGISTERED.LIMITED-SERVICE or 5GMM-REGISTERED.PLMN-SEARCH depending on CAG restrictions or other factors.
+
+
+**Mermaid Diagram for the first procedure (Initial Registration):**
+
+```mermaid
+graph LR
+    A[UE (5GMM-DEREGISTERED)] --> B{REGISTRATION REQUEST};
+    B --> C[AMF];
+    C --> D{Authentication (Conditional)};
+    D -- Authentication Successful --> E{Security Mode Control};
+    D -- Authentication Skipped --> E;
+    E --> F{REGISTRATION ACCEPT};
+    F --> G[UE (5GMM-REGISTERED)];
+    C -- Authentication Failure --> H{REGISTRATION REJECT};
+    H --> A;
+    G --> I{REGISTRATION COMPLETE (Conditional)};
+    I --> C;
+
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+
+```
+
+**Description of the Initial Registration Procedure:**
+
+The initial registration procedure begins with the UE in the 5GMM-DEREGISTERED state. The UE initiates registration by sending a REGISTRATION REQUEST message to the Access and Mobility Management Function (AMF). The AMF performs conditional authentication, depending on the registration type.  This might involve a full authentication and security handshake, or it might be skipped in cases such as emergency registration. A REGISTRATION ACCEPT message is sent by the AMF to the UE to confirm successful registration and to provide various network parameters. The UE might respond with a REGISTRATION COMPLETE message to acknowledge certain information provided in the REGISTRATION ACCEPT message.  Upon successful completion, the UE transitions to the 5GMM-REGISTERED state, and can begin accessing 5G services.  If any of the steps fail, the AMF sends a REGISTRATION REJECT message causing the UE to retry or to transition to a deregistered state and potentially start a network selection process.

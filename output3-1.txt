@@ -1,0 +1,65 @@
+The provided text describes several procedures related to 5G registration, specifically focusing on initial registration and mobility/periodic registration updates.  Let's list them and then analyze the second procedure.
+
+
+**List of Procedures:**
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Initial registration for emergency services not accepted by the network
+6. Initial registration for initiating an emergency PDU session not accepted by the network
+7. Abnormal cases in the UE
+8. Abnormal cases on the network side
+9. Registration procedure for mobility and periodic registration update
+10. Mobility and periodic registration update initiation
+
+
+**Second Procedure: 5GMM Common Procedure Initiation**
+
+Let's extract information for the second procedure using the provided mapping:
+
+* **States:**  The text doesn't explicitly define states for this procedure, but it implies transitions *within* an ongoing registration procedure. The AMF might be in a state waiting for authentication or security information, transitioning to a state where those procedures are complete.  The UE is implicitly in a 5GMM-DEREGISTERED state before and a 5GMM-REGISTERED state after.
+
+* **Actions:** The network (AMF) initiates identification, authentication, and security procedures.  This might include sending authentication requests, receiving responses, and establishing a security context.
+
+* **Events:** The trigger is the receipt of the REGISTRATION REQUEST message by the AMF.  Internal events within the AMF drive the progression of identification, authentication, and security procedures.
+
+* **Parameters:** Information from the REGISTRATION REQUEST message (especially security capabilities) are key parameters.  The AMF might also send security related information elements.
+
+* **Flow of Execution:** The AMF processes the REGISTRATION REQUEST.  If necessary, it initiates identification, authentication, and security procedures sequentially.  The flow depends on whether the authentication process is skipped for emergency cases.
+
+* **Conditionals:** The need for authentication and the number of security mode control procedures (one or two) are conditional based on the 5GS registration type and the presence of a security context.
+
+* **Metadata:** Not explicitly detailed in the text.
+
+
+**First Procedure: Registration Procedure for Initial Registration**
+
+**Mermaid Diagram:**
+
+```mermaid
+graph LR
+    A[UE (5GMM-DEREGISTERED)] --> B{REGISTRATION REQUEST (5GS registration type)};
+    B -- Initial Registration --> C[AMF Processes Request];
+    B -- Emergency Registration --> D[AMF Processes Emergency Request];
+    B -- SNPN Onboarding --> E[AMF Processes SNPN Request];
+    B -- Disaster Roaming --> F[AMF Processes Disaster Roaming Request];
+    C --> G{Registration Accepted?};
+    G -- Yes --> H[AMF sends REGISTRATION ACCEPT];
+    H --> I[UE (5GMM-REGISTERED)];
+    G -- No --> J[AMF sends REGISTRATION REJECT];
+    J --> K[UE Handles Rejection];
+    D --> G;
+    E --> G;
+    F --> G;
+
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style G fill:#ccf,stroke:#333,stroke-width:2px
+    style H fill:#ccf,stroke:#333,stroke-width:2px
+
+```
+
+**Description:**
+
+The "Registration procedure for initial registration" begins with the UE, in the 5GMM-DEREGISTERED state, sending a REGISTRATION REQUEST message to the AMF. The 5GS registration type IE within the message specifies the reason for registration (e.g., initial 5GS service registration, emergency services, SNPN onboarding, or disaster roaming). The AMF processes the request. If the request is accepted, it sends a REGISTRATION ACCEPT message, and the UE transitions to the 5GMM-REGISTERED state.  If rejected, the AMF sends a REGISTRATION REJECT message, and the UE handles the rejection according to the cause provided (e.g., congestion, unauthorized, no network slices available).  The process includes several conditional steps based on registration type, security context, and network capabilities.  The UE populates the REGISTRATION REQUEST with various IEs (Information Elements) based on its capabilities and the type of registration.  The AMF's response in the REGISTRATION ACCEPT message provides configuration information and network capabilities.
