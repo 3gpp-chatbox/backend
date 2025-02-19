@@ -1,0 +1,43 @@
+The subprocedures listed in the provided text are:
+
+1.  `__5.5.1.2.1__ General`
+2.  `__5.5.1.2.2__ Initial registration initiation`
+3.  `__5.5.1.2.3__ 5GMM common procedure initiation`
+4.  `__5.5.1.2.4__ Initial registration accepted by the network`
+5.  `__5.5.1.2.5__ Initial registration not accepted by the network`
+6.  `__5.5.1.2.6__ Initial registration for emergency services not accepted by the network`
+7.  `__5.5.1.2.6A__ Initial registration for initiating an emergency PDU session not accepted by the network`
+8.  `__5.5.1.2.7__ Abnormal cases in the UE`
+9.  `__5.5.1.2.8__ Abnormal cases on the network side`
+10. `__5.5.1.3__ Registration procedure for mobility and periodic registration update`
+11. `__5.5.1.3.1__ General`
+12. `__5.5.1.3.2__ Mobility and periodic registration update initiation`
+
+
+**Extracting Information from the First Subprocedure: __5.5.1.2.1__ General**
+
+| Core Component         | Information                                                                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **States**              |  Not explicitly defined in this subclause.                                                                                                                                                                           |
+| **Actions**             | UE indicates registration type in the 5GS registration type IE of the REGISTRATION REQUEST message.  Network may not indicate support for certain features in REGISTRATION ACCEPT message if "emergency registration" is used. |
+| **Events**              | UE initiates registration procedure.                                                                                                                                                                                       |
+| **Parameters**          | 5GS registration type IE (values: "initial registration", "emergency registration", "SNPN onboarding registration", "disaster roaming initial registration").  Features supported/not supported by the network.       |
+| **Flow of Execution**    | UE sends REGISTRATION REQUEST with registration type. Network sends REGISTRATION ACCEPT (potentially with features disabled).                                                                                                |
+| **Conditionals**        | If 5GS registration type IE is "emergency registration", then network shall not indicate support for certain features.                                                                                                       |
+| **Metadata**            | 5GS registration type IE, REGISTRATION REQUEST and ACCEPT messages.                                                                                                                                                    |
+
+
+**Mermaid Flowchart for __5.5.1.2.1__ General**
+
+```mermaid
+graph TD
+    A[""UE initiates registration""] --> B{""5GS registration type IE""};
+    B -- ""initial registration"" --> C[""UE indicates 'initial registration'""];
+    B -- ""emergency registration"" --> D[""UE indicates 'emergency registration'""];
+    B -- ""SNPN onboarding registration"" --> E[""UE indicates 'SNPN onboarding registration'""];
+    B -- ""disaster roaming initial registration"" --> F[""UE indicates 'disaster roaming initial registration'""];
+    D --> G{""Network sends REGISTRATION ACCEPT""};
+    G -- ""Emergency registration"" --> H[""Network may NOT indicate support for certain features""];
+    G -- ""Other registration types"" --> I[""Network may indicate support for features""];
+
+```

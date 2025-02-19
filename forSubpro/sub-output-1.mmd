@@ -1,0 +1,14 @@
+%% **Mermaid Flowchart for Sub-procedure 5.5.1.2.2 Initial registration initiation:**
+
+
+graph TD
+    A["UE in 5GMM-DEREGISTERED state"] --> B{"Various Conditions?"};
+    B -- "Yes" --> C["Determine REGISTRATION REQUEST IEs" ];
+    B -- "No" --> D["Error: Unexpected State"];
+    C --> E["Send REGISTRATION REQUEST to AMF"];
+    E --> F["Start Timer T3510"];
+    F --> G{"Timers T3502 & T3511 running?" };
+    G -- "Yes" --> H["Stop Timers T3502 & T3511"];
+    G -- "No" --> I["Proceed"];
+    H --> I;
+    I --> J["End"];

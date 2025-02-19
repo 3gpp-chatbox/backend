@@ -1,0 +1,142 @@
+The provided text describes the following sub-procedures within the main "Registration procedure for initial registration":
+
+**5.5.1.2.2 Initial registration initiation**
+
+* **Key Information:**  The UE initiates the registration procedure by sending a REGISTRATION REQUEST message to the AMF under various conditions (e.g., initial registration for 5GS services, emergency services, SMS over NAS, handover from GERAN/UTRAN to NG-RAN, SNPN onboarding, disaster roaming, resuming services after unavailability).  Specific handling of the 5GS mobile identity IE is detailed based on the UE's previous registration status, available GUTIs and SUCIs.  Various optional IEs can be included in the REGISTRATION REQUEST message depending on UE capabilities and needs (e.g., SMS, MICO mode, DRX parameters, NSSAI, etc.). Timers T3510, T3502, and T3511 are managed.
+
+```mermaid
+graph TD
+    A[UE (5GMM-DEREGISTERED)] --> B{Conditions Met?};
+    B -- Yes --> C[Send REGISTRATION REQUEST to AMF];
+    B -- No --> D[Do Not Initiate];
+    C --> E[Start Timer T3510];
+    C --> F[Stop Timers T3502 & T3511];
+    F --> G[Handle 5GS Mobile Identity IE];
+    G --> H[Include other Optional IEs];
+    H --> I[REGISTRATION REQUEST Sent];
+
+```
+
+
+**5.5.1.2.3 5GMM common procedure initiation**
+
+* **Key Information:** The network may initiate 5GMM common procedures (identification, authentication, security) during registration, depending on the REGISTRATION REQUEST message.  If "emergency registration," the AMF may skip authentication if configured to support it for unauthenticated SUCIs.
+
+
+```mermaid
+graph TD
+    A[Network Receives REGISTRATION REQUEST] --> B{5GS Registration Type = "emergency registration"?};
+    B -- Yes --> C{AMF Supports Unauthenticated SUCIs?};
+    C -- Yes --> D[Skip Authentication];
+    C -- No --> E[Initiate Authentication];
+    B -- No --> F[Initiate 5GMM Common Procedures];
+    D --> G[Initiate Security Mode Control];
+    E --> G;
+    F --> G;
+```
+
+
+**5.5.1.2.4 Initial registration accepted by the network**
+
+* **Key Information:** If the initial registration is accepted, the AMF sends a REGISTRATION ACCEPT message.  The AMF's handling differs for "emergency registration" (no mobility/access/subscription/CAG checks).  The AMF assigns and includes a TAI list.  The AMF may include service area restrictions, equivalent PLMNs, or equivalent SNPNs (if applicable).
+
+
+```mermaid
+graph TD
+    A[AMF Receives REGISTRATION REQUEST] --> B{Initial Registration Accepted?};
+    B -- Yes --> C[Send REGISTRATION ACCEPT];
+    B -- No --> D[Send REGISTRATION REJECT];
+    C --> E[Assign TAI List];
+    C --> F{5GS Registration Type = "emergency registration"?};
+    F -- Yes --> G[Skip Restrictions Checks];
+    F -- No --> H[Perform Restrictions Checks];
+    C --> I[Include Optional Information (Service Area, Equivalent PLMNs/SNPNs)];
+
+```
+
+**5.5.1.2.5 Initial registration not accepted by the network**
+
+* **Key Information:** If registration fails, the AMF sends a REGISTRATION REJECT message with a 5GMM cause value.  Specific cause values and their handling are detailed (e.g., congestion, redirection to EPC, no network slices available, etc.).
+
+
+```mermaid
+graph TD
+    A[AMF Cannot Accept REGISTRATION REQUEST] --> B[Send REGISTRATION REJECT];
+    B --> C[Include 5GMM Cause Value];
+    C --> D{Specific Cause Value?};
+    D -- Yes --> E[Handle Specific Cause];
+    D -- No --> F[Handle Generic Rejection];
+```
+
+**5.5.1.2.6 Initial registration for emergency services not accepted by the network**
+
+* **Key Information:**  Handles the case where an initial registration for emergency services is rejected.  If the cause is "PEI not accepted", the UE enters a specific state. Otherwise, it follows the general rejection handling in 5.5.1.2.5, and additionally informs the upper layers.  Additional handling for shared networks is also described.
+
+
+```mermaid
+graph TD
+    A[AMF Rejects Emergency Registration Request] --> B{5GMM Cause = "PEI not accepted"?};
+    B -- Yes --> C[UE enters 5GMM-DEREGISTERED.NO-SUPI state];
+    B -- No --> D[Follow 5.5.1.2.5 handling];
+    D --> E[Inform Upper Layers of Failure];
+    C --> E;
+```
+
+**5.5.1.2.6A Initial registration for initiating an emergency PDU session not accepted by the network**
+
+* **Key Information:**  Handles rejection of initial registration for initiating an emergency PDU session. It follows 5.5.1.2.5, and informs upper layers of failure.  Additional handling is defined depending on whether the PDU session is for handover of an existing connection.
+
+
+```mermaid
+graph TD
+    A[AMF Rejects Initial Registration for Emergency PDU Session] --> B[Follow 5.5.1.2.5 handling];
+    B --> C[Inform Upper Layers of Failure];
+    B --> D{PDU Session Handover?};
+    D -- Yes --> E[Attempt Emergency Registration];
+    D -- No --> F[Attempt Emergency Registration or Inform Upper Layers];
+
+```
+
+**5.5.1.2.7 Abnormal cases in the UE**
+
+* **Key Information:** Describes various abnormal events during initial registration from the UE's perspective (e.g., timer timeouts, lower layer failures, de-registration collisions, TAI changes, transmission failures).  Specifies actions the UE should take in each case.
+
+
+```mermaid
+graph TD
+    A[Abnormal Event] --> B{Specific Abnormal Case?};
+    B -- Yes --> C[Handle Specific Case];
+    B -- No --> D[Handle Generic Abnormal Case];
+    C --> E[Take Appropriate Actions];
+    D --> E;
+
+```
+
+**5.5.1.2.8 Abnormal cases on the network side**
+
+* **Key Information:** Details various network-side abnormal events during initial registration (e.g., lower layer failures, protocol errors, timer timeouts, multiple REGISTRATION REQUEST messages, etc.). Specifies the AMF's actions in each case.
+
+
+```mermaid
+graph TD
+    A[Abnormal Network Event] --> B{Specific Abnormal Case?};
+    B -- Yes --> C[Handle Specific Case];
+    B -- No --> D[Handle Generic Abnormal Case];
+    C --> E[Take Appropriate Actions];
+    D --> E;
+
+```
+
+**5.5.1.3.2 Mobility and periodic registration update initiation**
+
+* **Key Information:** Describes UE initiation of mobility and periodic registration update procedures.  The UE sends a REGISTRATION REQUEST message to the AMF.  This procedure is performed in 3GPP access and is controlled by timer T3512.
+
+
+```mermaid
+graph TD
+    A[UE (5GMM-REGISTERED)] --> B{Conditions Met?};
+    B -- Yes --> C[Send REGISTRATION REQUEST to AMF];
+    B -- No --> D[Do Not Initiate];
+    C --> E[Timer T3512 Expired];
+
+```

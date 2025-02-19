@@ -1,0 +1,42 @@
+The sub-procedures in the provided text, in order, are:
+
+1.  5.5.1.2.2 Initial registration initiation
+2.  5.5.1.2.3 5GMM common procedure initiation
+3.  5.5.1.2.4 Initial registration accepted by the network
+4.  5.5.1.2.5 Initial registration not accepted by the network
+5.  5.5.1.2.6 Initial registration for emergency services not accepted by the network
+6.  5.5.1.2.6A Initial registration for initiating an emergency PDU session not accepted by the network
+7.  5.5.1.2.7 Abnormal cases in the UE
+8.  5.5.1.2.8 Abnormal cases on the network side
+9.  5.5.1.3.2 Mobility and periodic registration update initiation
+
+
+**Extraction of Information for Sub-procedure 5.5.1.2.2 Initial registration initiation:**
+
+| Core Component       | Information                                                                                                                                                                                                      |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States**            | 5GMM-DEREGISTERED                                                                                                                                                                                          |
+| **Actions**           | UE initiates registration by sending REGISTRATION REQUEST to AMF; UE starts timer T3510; UE stops timers T3502 and T3511; UE handles 5GS mobile identity IE (complex logic detailed below); UE includes UE status IE, ATTACH REQUEST (if applicable), Additional GUTI IE (if applicable), last visited registered TAI (if available), 5GS update type IE (if SMS over NAS requested), MICO indication IE (if MICO mode requested), active time value (if requested), Requested T3512 IE (if requested), Requested DRX parameters IE (if needed), Requested NB-N1 mode DRX parameters IE (if needed in NB-N1 mode), Requested extended DRX parameters IE (if eDRX requested), LADN indication IE (if LADN information requested), requested NSSAI, Network slicing indication IE (if default configured NSSAI used), Payload container type IE (if UE policy container sent), Additional information requested IE (if ciphering keys requested), 5GMM capability IE (various bits set based on UE capabilities). |
+| **Events**            | UE in 5GMM-DEREGISTERED state; various conditions (e.g., initial registration for 5GS services, emergency services, SMS over NAS, handover from GERAN/UTRAN, SNPN onboarding, disaster roaming, resuming normal services after unavailability).                                     |
+| **Parameters**        | REGISTRATION REQUEST message; timers T3510, T3502, T3511, T3519; 5GS registration type IE; 5GS mobile identity IE; UE status IE; ATTACH REQUEST message; Additional GUTI IE; last visited registered TAI; 5GS update type IE; SMS requested bit; MICO indication IE; active time value; T3324 IE; Requested T3512 IE; Strictly Periodic Registration Timer Indication bit; Requested DRX parameters IE; Requested NB-N1 mode DRX parameters IE; Requested extended DRX parameters IE; LADN indication IE; LADN DNN value; requested NSSAI; mapped S-NSSAI(s); allowed NSSAI; configured NSSAI; default configured NSSAI; pending NSSAI; rejected NSSAI; partially rejected NSSAI; SUCI; PEI;  Payload container type IE; UE STATE INDICATION message; NAS message container IE; Additional information requested IE; CipherKey bit; 5GMM capability IE; various bits within 5GMM capability IE (e.g., S1 mode, EPS-UPIP, HO attach, LPP, 5G-LCS, LCS-UPP, SUPL, NVL-SATNR, Control plane CIoT 5GS optimization, Control plane CIoT EPS optimization, Multiple user-plane resources support, 5G-SRVCC from NG-RAN to UTRAN, SGC, RestrictEC, NSSAA, CAG, Ex-CAG, ECI, NSR, RCMP, RACS, WUSA, NR-PSSI, V2X, V2XCEPC5, V2XCNPC5, ER-NSSAI, NSSRG, N5GC device indication, AUN3 device indication, UAS, A2XEPC5, A2XNPC5, A2X-Uu, 5G ProSe-dd, 5G ProSe-dc, 5G ProSe-l2relay, 5G ProSe-l3relay, 5G ProSe-l2rmt, 5G ProSe-l3rmt, 5G ProSe-l2U2U relay, 5G ProSe-l3U2U relay, 5G ProSe-l2end, 5G ProSe-l3end, N1 NAS signalling connection release, paging indication for voice services, reject paging request, paging restriction, MINT, SBNS, SBTS, EventNotification, SSNPNSI, ESI, UN-PER, Reconnection to the network due to RAN timing synchronization status change, LADN-DS, MPSIU, MCSIU, RSLP, RSLPL, RSLPVU, RSLPPU, PNS, NSUC, TempNS, SLVI, RATUC); UE determined PLMN with disaster condition IE; Follow-on request indicator.     |
+| **Flow of Execution**  | UE sends REGISTRATION REQUEST to AMF, starts timer T3510, stops timers T3502 and T3511,  processes various IEs according to complex logic based on registration type and UE capabilities.                                       |
+| **Conditionals**       | Multiple conditions govern the inclusion and values of various IEs in the REGISTRATION REQUEST message, based on UE state, capabilities, and the type of registration being performed.                                           |
+| **Metadata**           | Timers T3510, T3502, T3511, T3519; 5GS registration type IE; Message types (REGISTRATION REQUEST).                                                                                                           |
+
+
+**Mermaid Flowchart for Sub-procedure 5.5.1.2.2 Initial registration initiation:**
+
+```mermaid
+graph TD
+    A[ "UE in 5GMM-DEREGISTERED state" ] --> B{ "Various Conditions?" };
+    B -- "Yes" --> C[ "Determine REGISTRATION REQUEST IEs" ];
+    B -- "No" --> D[ "Error: Unexpected State" ];
+    C --> E[ "Send REGISTRATION REQUEST to AMF" ];
+    E --> F[ "Start Timer T3510" ];
+    F --> G{ "Timers T3502 & T3511 running?" };
+    G -- "Yes" --> H[ "Stop Timers T3502 & T3511" ];
+    G -- "No" --> I[ "Proceed" ];
+    H --> I;
+    I --> J[ "End" ];
+
+```
