@@ -1,0 +1,62 @@
+1. Structure of the 3GPP Specification
+The structure you provided is from 3GPP TS 24.501, which defines the Non-Access-Stratum (NAS) protocol for 5G. The section 5.5.1.2 describes the Registration procedure for initial registration, and under it, there are several sub-procedures (or sub-sections) that collectively define the entire procedure.
+
+2. Main Procedure vs. Sub-Procedures
+Main Procedure: Registration procedure for initial registration (5.5.1.2)
+This is the overarching procedure that defines how a UE performs initial registration with the 5G network. It encompasses all the steps, conditions, and behaviors required for the UE to register with the network.
+
+Sub-Procedures:
+These are the individual steps or components that make up the main procedure. Each sub-procedure focuses on a specific aspect of the initial registration process. For example:
+
+5.5.1.2.2 Initial registration initiation: Describes how the UE initiates the registration procedure (e.g., sending the REGISTRATION REQUEST message).
+
+5.5.1.2.3 5GMM common procedure initiation: Describes the initiation of common procedures (e.g., authentication, security setup) that may be triggered during initial registration.
+
+5.5.1.2.4 Initial registration accepted by the network: Describes the steps when the network accepts the registration request (e.g., sending the REGISTRATION ACCEPT message).
+
+5.5.1.2.5 Initial registration not accepted by the network: Describes the steps when the network rejects the registration request (e.g., sending the REGISTRATION REJECT message).
+
+5.5.1.2.6 Initial registration for emergency services not accepted by the network: Describes the steps when the network rejects an emergency registration request.
+
+5.5.1.2.6A Initial registration for initiating an emergency PDU session not accepted by the network: Describes the steps when the network rejects an emergency PDU session request.
+
+5.5.1.2.7 Abnormal cases in the UE: Describes how the UE handles abnormal situations during the registration procedure.
+
+5.5.1.2.8 Abnormal cases on the network side: Describes how the network handles abnormal situations during the registration procedure.
+
+3. Combining Sub-Procedures
+The main procedure (Registration procedure for initial registration) is essentially a combination of all these sub-procedures.
+
+Each sub-procedure defines a specific part of the overall process, and together, they provide a complete description of how the UE and network interact during initial registration.
+
+4. Why This Structure?
+The 3GPP specification uses this hierarchical structure to:
+
+Break down complexity: The initial registration procedure is complex, so breaking it into smaller, manageable sub-procedures makes it easier to understand and implement.
+
+Enable modularity: Each sub-procedure can be studied or implemented independently, which is useful for developers and engineers.
+
+Handle edge cases: Sub-procedures like "Abnormal cases in the UE" and "Abnormal cases on the network side" ensure that all possible scenarios (including errors) are covered.
+
+5. Your Understanding is Correct
+Yes, the Registration procedure for initial registration is the main procedure.
+
+Under it, there are several sub-procedures (e.g., Initial registration initiation, 5GMM common procedure initiation, etc.).
+
+When you combine all these sub-procedures, you get the complete Registration procedure for initial registration.
+
+6. Example Flow
+Here’s how the sub-procedures fit into the main procedure:
+
+Initial registration initiation: UE sends a REGISTRATION REQUEST message.
+
+5GMM common procedure initiation: Network may initiate authentication or security setup.
+
+Initial registration accepted by the network: Network sends a REGISTRATION ACCEPT message.
+
+Initial registration not accepted by the network: Network sends a REGISTRATION REJECT message.
+
+Abnormal cases: Handle errors or unexpected behaviors on the UE or network side.
+
+7. Conclusion
+Your understanding is correct! The Registration procedure for initial registration is the main procedure, and it is composed of several sub-procedures that describe specific aspects of the process. Together, these sub-procedures provide a complete description of how initial registration works in 5G.
