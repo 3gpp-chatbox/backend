@@ -1,0 +1,15 @@
+%% **Sub-Procedure 2: 5.5.1.2.3 5GMM common procedure initiation**
+
+%% * **Key Information:** The network may initiate 5GMM common procedures (identification, authentication, security) during registration, depending on the REGISTRATION REQUEST message.  Specific handling is defined for emergency registrations with unauthenticated SUCIs where authentication might be skipped.
+
+
+%% * **Mermaid Flowchart:**
+
+%% ```mermaid
+graph TD
+    A["Network receives REGISTRATION REQUEST"] --> B{"5GS registration type = 'emergency registration' & AMF supports unauthenticated SUCIs?"};
+    B -- Yes --> C["Skip authentication, proceed to security mode control"];
+    B -- No --> D["Initiate 5GMM common procedures (identification, authentication, security)"];
+    C --> E["Security mode control procedure"];
+    D --> E;
+```

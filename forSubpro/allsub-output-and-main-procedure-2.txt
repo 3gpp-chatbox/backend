@@ -1,0 +1,169 @@
+Here's the analysis of the provided 3GPP specification text, extracting the sub-procedures, their key information, Mermaid flowcharts, and finally, the main procedure's information and flowchart.
+
+
+**Sub-Procedure 1: 5.5.1.2.2 Initial registration initiation**
+
+* **Key Information:**  The UE initiates initial registration from the 5GMM-DEREGISTERED state by sending a REGISTRATION REQUEST message to the AMF under various conditions (e.g., initial 5GS service registration, emergency services, SMS over NAS, handover from GERAN/UTRAN, SNPN onboarding, disaster roaming, resuming service after unavailability).  Specific rules govern initial registration for emergency services (already registered on a different access, non-3GPP access). Timer T3510 starts; T3502 and T3511 are stopped. The UE handles the 5GS mobile identity IE according to a prioritized order based on available identities (5G-GUTI, SUCI, PEI).  UE status, ATTACH REQUEST message (if applicable), and other IEs are included in the REGISTRATION REQUEST.
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[UE (5GMM-DEREGISTERED)] --> B{Conditions met?};
+    B -- Yes --> C[Send REGISTRATION REQUEST to AMF];
+    B -- No --> D[Do not initiate];
+    C --> E[Start Timer T3510];
+    C --> F[Stop Timers T3502 & T3511];
+    E --> G[Handle 5GS Mobile Identity IE];
+    G --> H[Include other IEs (UE Status, ATTACH REQUEST etc.)];
+    H --> I[REGISTRATION REQUEST sent];
+
+```
+
+
+**Sub-Procedure 2: 5.5.1.2.3 5GMM common procedure initiation**
+
+* **Key Information:** The network initiates 5GMM common procedures (identification, authentication, security) during registration, depending on the REGISTRATION REQUEST.  If "emergency registration," and the AMF supports unauthenticated SUCIs, authentication may be skipped.
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[Network receives REGISTRATION REQUEST] --> B{5GS Registration Type == "emergency registration"?};
+    B -- Yes --> C{AMF supports unauthenticated SUCIs?};
+    C -- Yes --> D[Skip Authentication, Proceed to Security Mode Control];
+    C -- No --> E[Initiate Identification, Authentication & Security Procedures];
+    B -- No --> E;
+    D --> F[Security Mode Control Procedure];
+    E --> F;
+```
+
+
+**Sub-Procedure 3: 5.5.1.2.4 Initial registration accepted by the network**
+
+* **Key Information:** If the initial registration is accepted, the AMF sends a REGISTRATION ACCEPT message.  For "emergency registration," mobility and access restrictions are not checked. The AMF assigns a TAI list (single TAI for non-3GPP access), stores received IEs (5GMM capability, S1 UE network capability, UE security capability), and may include service area restrictions, equivalent PLMNs/SNPNs. The UE stores this information, potentially removing forbidden PLMNs/SNPNs.  The AMF may initiate further procedures.  LADN information is determined and included.  5G-GUTI reallocation occurs.
+
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[Network receives REGISTRATION REQUEST] --> B{Registration Request Accepted?};
+    B -- Yes --> C[Send REGISTRATION ACCEPT message];
+    B -- No --> D[Send REGISTRATION REJECT message];
+    C --> E[Assign TAI list];
+    C --> F[Store received IEs];
+    C --> G{Include Service Area Restrictions?};
+    G -- Yes --> H[Include Service Area Restrictions];
+    G -- No --> I[Do not include];
+    C --> J{Include Equivalent PLMNs/SNPNs?};
+    J -- Yes --> K[Include Equivalent PLMNs/SNPNs];
+    J -- No --> I;
+    C --> L[Determine & Include LADN information];
+    C --> M[Perform 5G-GUTI reallocation];
+    C --> N[Initiate further procedures (if necessary)];
+    H --> I;
+    K --> I;
+```
+
+**Sub-Procedure 4: 5.5.1.2.5 Initial registration not accepted by the network**
+
+* **Key Information:**  If registration fails, the AMF sends a REGISTRATION REJECT message with a 5GMM cause value (e.g., congestion, no network slices available, non-3GPP access not allowed, CAG restrictions, etc.).  Specific actions depend on the cause value. Backoff timer T3346 may be assigned.
+
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[Network cannot accept REGISTRATION REQUEST] --> B[Send REGISTRATION REJECT message];
+    B --> C[Include 5GMM cause value];
+    C --> D{5GMM Cause Value};
+    D -- #22 (Congestion) --> E[Assign Backoff Timer T3346];
+    D -- Other Cause Values --> F[Specific actions based on cause];
+    E --> G[REGISTRATION REJECT sent];
+    F --> G;
+
+```
+
+**Sub-Procedure 5: 5.5.1.2.6 Initial registration for emergency services not accepted by the network**
+
+* **Key Information:**  If emergency service registration fails (5GMM cause #5 "PEI not accepted" or other cause), the UE enters 5GMM-DEREGISTERED.NO-SUPI and informs upper layers. For other causes, it follows the steps in 5.5.1.2.5 and informs upper layers. In shared networks, it may attempt PLMN/SNPN selection and re-registration.
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[Network rejects Emergency Registration] --> B{5GMM Cause == #5 ("PEI not accepted")?};
+    B -- Yes --> C[UE enters 5GMM-DEREGISTERED.NO-SUPI];
+    B -- No --> D[Follow steps in 5.5.1.2.5];
+    C --> E[Inform Upper Layers];
+    D --> E;
+    C --> F[REGISTRATION REJECT received];
+    D --> F;
+    
+
+```
+
+**Sub-Procedure 6: 5.5.1.2.6A Initial registration for initiating an emergency PDU session not accepted by the network**
+
+* **Key Information:** If initial registration for an emergency PDU session fails, the UE follows 5.5.1.2.5 and attempts emergency service registration. Abnormal cases follow 5.5.1.2.7.
+
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[Network rejects Emergency PDU Session Registration] --> B[Follow steps in 5.5.1.2.5];
+    B --> C{Abnormal Case?};
+    C -- Yes --> D[Follow steps in 5.5.1.2.7];
+    C -- No --> E[Attempt Emergency Service Registration];
+    D --> F[Inform Upper Layers];
+    E --> F;
+```
+
+**Sub-Procedure 7: 5.5.1.2.7 Abnormal cases in the UE**
+
+* **Key Information:** This sub-procedure outlines various abnormal scenarios during registration for the UE, such as timer timeouts (T3346, T3510), lower layer failures, de-registration collisions, TAI changes, and transmission failures.  Actions include aborting the procedure, incrementing retry counters, initiating de-registration or mobility updates, and entering different states.
+
+
+* **Mermaid Flowchart:**  Too complex for a simple flowchart due to multiple independent branches and conditional logic.  A state machine diagram would be more appropriate.
+
+**Sub-Procedure 8: 5.5.1.2.8 Abnormal cases on the network side**
+
+* **Key Information:** This sub-procedure describes abnormal cases from the network's perspective, such as lower layer failures, protocol errors, timer timeouts (T3550), duplicate REGISTRATION REQUEST messages, and invalid UE security capabilities. Actions include aborting the procedure, resending messages, and returning REGISTRATION REJECT messages.
+
+* **Mermaid Flowchart:**  Similar to 5.5.1.2.7, too complex for a straightforward flowchart.
+
+
+**Main Procedure: 5.5.1.2 Registration procedure for initial registration**
+
+* **Key Information:** This procedure encompasses the initial registration process for 5GS services, including various scenarios like emergency services, SNPN onboarding, and disaster roaming.  It involves interactions between the UE and the AMF, including the exchange of REGISTRATION REQUEST and REGISTRATION ACCEPT (or REJECT) messages.  The procedure includes sub-procedures for initiation, network acceptance, and handling of abnormal situations.
+
+
+* **Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A[UE initiates Initial Registration] --> B[5.5.1.2.2 Initial Registration Initiation];
+    B --> C[5.5.1.2.3 5GMM Common Procedure Initiation];
+    C --> D{Initial Registration Accepted?};
+    D -- Yes --> E[5.5.1.2.4 Initial Registration Accepted by Network];
+    D -- No --> F[5.5.1.2.5 Initial Registration Not Accepted by Network];
+    E --> G[Registration Complete];
+    F --> G;
+    B --> H{Emergency Services?};
+    H -- Yes --> I[5.5.1.2.6 Initial Registration for Emergency Services Not Accepted by Network];
+    I --> G;
+    B --> J{Emergency PDU Session?};
+    J -- Yes --> K[5.5.1.2.6A Initial Registration for Initiating Emergency PDU Session Not Accepted by Network];
+    K --> G;
+    B --> L[Abnormal UE Case?];
+    L -- Yes --> M[5.5.1.2.7 Abnormal Cases in the UE];
+    M --> G;
+    D --> N[Abnormal Network Case?];
+    N -- Yes --> O[5.5.1.2.8 Abnormal Cases on the Network Side];
+    O --> G;
+
+```
+
+Note that sub-procedures 5.5.1.2.7 and 5.5.1.2.8 (Abnormal Cases) are too complex to be effectively represented within a simple flowchart integrated into the main procedure's flowchart without excessive clutter.  A separate state diagram would be better suited for those sub-procedures.

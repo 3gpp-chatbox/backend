@@ -1,0 +1,13 @@
+%% **Sub-Procedure 4: 5.5.1.2.5 Initial registration not accepted by the network**
+
+%% * **Key Information:** If registration fails, the AMF sends a REGISTRATION REJECT message with a 5GMM cause value.  Specific cause values and actions are defined for various failure scenarios (e.g., congestion, no network slices available, access not allowed, etc.).
+
+
+%% * **Mermaid Flowchart:**
+
+%% ```mermaid
+graph TD
+    A["AMF cannot accept REGISTRATION REQUEST"] --> B["Send REGISTRATION REJECT message"];
+    B --> C["Include 5GMM cause value"];
+    C --> D["Assign back-off timer (if applicable)"];
+

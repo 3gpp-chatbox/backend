@@ -1,0 +1,22 @@
+%% **Sub-Procedure 3: 5.5.1.2.4 Initial registration accepted by the network**
+
+%% * **Key Information:** If the initial registration request is accepted, the AMF sends a REGISTRATION ACCEPT message.  The AMF handles restrictions differently for emergency registrations.  The AMF assigns and includes a TAI list, storing received information elements (5GMM capability, S1 UE network capability, UE security capability).  The AMF may include service area restrictions, equivalent PLMNs, or equivalent SNPNs (depending on the registration type).
+
+
+%% * **Mermaid Flowchart:**
+
+%% ```mermaid
+graph TD
+    A["AMF receives REGISTRATION REQUEST"] --> B{Registration accepted?};
+    B -- Yes --> C["Send REGISTRATION ACCEPT message"];
+    B -- No --> D["Send REGISTRATION REJECT message"];
+    C --> E["Assign TAI list"];
+    C --> F["Store received IEs"];
+    C --> G{Include service area restrictions?};
+    G -- Yes --> H["Include service area restrictions"];
+    G -- No --> I;
+    C --> J{Include equivalent PLMNs/SNPNs?};
+    J -- Yes --> K["Include equivalent PLMNs/SNPNs"];
+    J -- No --> I;
+
+```

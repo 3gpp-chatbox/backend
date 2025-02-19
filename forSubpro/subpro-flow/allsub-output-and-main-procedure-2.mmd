@@ -1,0 +1,37 @@
+
+
+
+%% **Main Procedure: 5.5.1.2 Registration procedure for initial registration**
+
+%% * **Key Information:** This procedure encompasses the initial registration process for 5GS services, including various scenarios like emergency services, SNPN onboarding, and disaster roaming.  It involves interactions between the UE and the AMF, including the exchange of REGISTRATION REQUEST and REGISTRATION ACCEPT (or REJECT) messages.  The procedure includes sub-procedures for initiation, network acceptance, and handling of abnormal situations.
+
+
+%% * **Mermaid Flowchart:**
+
+%% ```mermaid
+graph TD
+    A[UE initiates Initial Registration] --> B[5.5.1.2.2 Initial Registration Initiation];
+    B --> C[5.5.1.2.3 5GMM Common Procedure Initiation];
+    C --> D{Initial Registration Accepted?};
+    D -- Yes --> E[5.5.1.2.4 Initial Registration Accepted by Network];
+    D -- No --> F[5.5.1.2.5 Initial Registration Not Accepted by Network];
+    E --> G[Registration Complete];
+    F --> G;
+    B --> H{Emergency Services?};
+    H -- Yes --> I[5.5.1.2.6 Initial Registration for Emergency Services Not Accepted by Network];
+    I --> G;
+    B --> J{Emergency PDU Session?};
+    J -- Yes --> K[5.5.1.2.6A Initial Registration for Initiating Emergency PDU Session Not Accepted by Network];
+    K --> G;
+    B --> L[Abnormal UE Case?];
+    L -- Yes --> M[5.5.1.2.7 Abnormal Cases in the UE];
+    M --> G;
+    D --> N[Abnormal Network Case?];
+    N -- Yes --> O[5.5.1.2.8 Abnormal Cases on the Network Side];
+    O --> G;
+
+```
+
+
+
+

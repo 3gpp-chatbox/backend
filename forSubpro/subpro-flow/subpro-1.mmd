@@ -1,0 +1,19 @@
+%% **Sub-Procedure 1: 5.5.1.2.2 Initial registration initiation**
+
+%% * **Key Information:**  The UE initiates initial registration by sending a REGISTRATION REQUEST message to the AMF under various conditions (e.g., initial 5GS service registration, emergency service registration,  movement between RAN technologies, etc.).  Specific rules govern emergency service registration initiation based on existing registrations on other accesses. The UE handles the 5GS mobile identity IE according to specific prioritization rules based on available identities (5G-GUTI, SUCI, PEI).  The UE also includes other IEs based on its capabilities and the type of registration (e.g., SMS over NAS, MICO mode, DRX parameters, NSSAI, etc.).  Timers T3510, T3502, and T3511 are managed.
+
+
+%% * **Mermaid Flowchart:**
+
+
+graph TD
+    A["UE (5GMM-DEREGISTERED)"] --> B{Conditions met?};
+    B -- Yes --> C["Send REGISTRATION REQUEST to AMF"];
+    B -- No --> D["Do not initiate"];
+    C --> E["Start timer T3510"];
+    C --> F["Stop timers T3502 & T3511"];
+    F --> G["Handle 5GS mobile identity IE"];
+    G --> H["Include other IEs based on capabilities"];
+    H --> I["REGISTRATION REQUEST sent"];
+
+

@@ -16,12 +16,15 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 def extract_procedural_info_from_text(text):
     # Structured prompt for the model
     prompt = f"""
-    below is the thunk text of a section, read them carefully first:
+   Below is the text of a section from the 3GPP specification. This section describes a main procedure, and under it, there are several sub-procedures that collectively define the entire procedure. Read the text carefully:
 
-    {text}
+{text}
 
- remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. 
-this section is now, list all procedures from the  section and then focus one first procedure ,extract the the first procedure information  and use below pattern to mapping it (below is an example) finally,also Return description  a Mermaid flowchart for the first procedure using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes ("").There are no extra spaces inside {{}} brackets. below is that example: 
+Remember, all your analysis and extraction should be based on the text I provided above. Do not make any assumptions or include information from outside the provided text.
+
+Now, analyze the text and find all sub-procedures. Please only focus on the specific sub-procedures in the text I provided. Exclude all sections marked as 'General' or anything unrelated to the core procedure flow.Identify and list only the sub-procedures in correct order. Do not include general sections or unrelated procedures.
+ extract each's key information, and map it using the following pattern (example provided below). return each's Mermaid flowchart using `graph TD` syntax (for a vertical layout). Ensure that all node labels are enclosed in double quotes and there are no extra spaces inside `{{}}` brackets.in the end, combine all subprocedure to become their main parent procedure,return its key information and its Mermaid flowchart.
+ that example: 
 
 Extracting the Model from 3GPP Specification
 
@@ -98,4 +101,4 @@ procedural_info = process_section(625, 765, 'document_chunks.db')
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_txt(procedural_info, "output3-1-1-1.txt")  # For plain text
+save_procedural_info_to_txt(procedural_info, "allsub-output-and-main-procedure-2.txt")  # For plain text

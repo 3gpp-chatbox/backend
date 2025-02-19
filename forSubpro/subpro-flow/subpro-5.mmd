@@ -1,0 +1,13 @@
+%% **Sub-Procedure 5: 5.5.1.2.6 Initial registration for emergency services not accepted by the network**
+
+%% * **Key Information:**  Handles rejection of emergency service registration requests.  If the cause is "PEI not accepted," the UE enters a specific state. Otherwise, it follows the general registration rejection procedure and informs upper layers of the failure. Additional actions are specified for shared networks.
+
+
+%% * **Mermaid Flowchart:**
+
+%% ```mermaid
+graph TD
+    A["AMF rejects emergency REGISTRATION REQUEST"] --> B{"5GMM cause = 'PEI not accepted'?"};
+    B -- Yes --> C["UE enters 5GMM-DEREGISTERED.NO-SUPI state"];
+    B -- No --> D["Follow 5.5.1.2.5 procedure & inform upper layers"];
+
