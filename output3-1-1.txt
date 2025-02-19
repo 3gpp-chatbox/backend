@@ -1,0 +1,42 @@
+Based on the provided text, the procedures listed are:
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Initial registration for emergency services not accepted by the network
+6. Initial registration for initiating an emergency PDU session not accepted by the network
+7. Abnormal cases in the UE
+8. Abnormal cases on the network side
+9. Registration procedure for mobility and periodic registration update
+
+
+**1. Registration procedure for initial registration**
+
+Extracting the Model from 3GPP Specification: Registration procedure for initial registration
+
+| Core Component          | Information                                                                                                                                                                                                                                                      |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States**               | 5GMM-DEREGISTERED, 5GMM-REGISTERED, 5GMM-REGISTERED-INITIATED, 5GMM-COMMON-PROCEDURE-INITIATED, 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, 5GMM-DEREGISTERED.PLMN-SEARCH, 5GMM-REGISTERED.LIMITED-SERVICE, 5GMM-REGISTERED.PLMN-SEARCH, EMM-DEREGISTERED, EMM-REGISTERED  |
+| **Actions**              | UE sends REGISTRATION REQUEST message to AMF; AMF sends REGISTRATION ACCEPT or REGISTRATION REJECT message to UE; UE sends REGISTRATION COMPLETE message to AMF; UE starts/stops timers (T3510, T3502, T3511, T3519); UE handles 5GS mobile identity IE; AMF assigns TAI list; AMF stores information elements; UE stores TAI list, equivalent PLMNs/SNPNs, LADN information, etc. |
+| **Events**               | Timer T3510 expiry; Timer T3502/T3511 running; UE in 5GMM-DEREGISTERED state; UE moves between GERAN/UTRAN and NG-RAN coverage; UE performs 5G-SRVCC; UE performs initial registration for various services (5GS, emergency, SMS, onboarding, disaster roaming); UE comes out of unavailability period;  AMF receives REGISTRATION REQUEST;  REGISTRATION REQUEST accepted/rejected. |
+| **Parameters**           | 5GS registration type IE; 5GS mobile identity IE; UE status IE; ATTACH REQUEST message; 5G-GUTI; SUCI; PEI; last visited registered TAI; 5GS update type IE; MICO indication IE; T3324 IE; Requested T3512 IE; Requested DRX parameters IE; Requested NB-N1 mode DRX parameters IE; Requested extended DRX parameters IE; LADN indication IE; NSSAI;  5GMM capability IE; Follow-on request indicator; S1 UE network capability IE; etc. Many more parameters are detailed within the text. |
+| **Flow of Execution**    | UE (in 5GMM-DEREGISTERED) -> REGISTRATION REQUEST -> AMF -> (Acceptance: REGISTRATION ACCEPT -> UE -> REGISTRATION COMPLETE  or Rejection: REGISTRATION REJECT -> UE)                                                                                                       |
+| **Conditionals**         |  Various conditions based on registration type, UE state, capabilities, network support, timer status, access type (3GPP/non-3GPP),  availability of 5G-GUTI/SUCI, etc. (Many detailed conditions described throughout the text).                                 |
+| **Metadata**             | Timer values (T3510, T3502, T3511, T3519, T3324, T3512, T3447, T3448, T3245, T3526, etc.), Message types (REGISTRATION REQUEST, REGISTRATION ACCEPT, REGISTRATION REJECT, REGISTRATION COMPLETE, DEREGISTRATION REQUEST, etc.), IEs (Information Elements)  |
+
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph LR
+    A[ "UE (5GMM-DEREGISTERED)"] --> B{ "Initiate Initial Registration" };
+    B -- "Send REGISTRATION REQUEST" --> C[ "AMF" ];
+    C -- "Registration Accepted" --> D{ "Send REGISTRATION ACCEPT" };
+    D --> E[ "UE" ];
+    E -- "Send REGISTRATION COMPLETE" --> F[ "AMF (5GMM-REGISTERED)" ];
+    C -- "Registration Rejected" --> G{ "Send REGISTRATION REJECT" };
+    G --> H[ "UE (5GMM-DEREGISTERED)" ];
+```
+
+This flowchart shows a simplified overview.  The actual procedure is significantly more complex due to the numerous conditional branches and actions detailed in the provided text.  A complete flowchart would be extremely large and unwieldy.

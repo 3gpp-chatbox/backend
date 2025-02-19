@@ -1,0 +1,18 @@
+graph TD
+    A[""UE in 5GMM-DEREGISTERED""] --> B{""Conditions Met?""};
+    B -- ""Yes"" --> C[""UE sends REGISTRATION REQUEST""];
+    B -- ""No"" --> D[""Stay in 5GMM-DEREGISTERED""];
+    C --> E{""Network accepts?""};
+    E -- ""Yes"" --> F[""Network sends REGISTRATION ACCEPT""];
+    E -- ""No"" --> G[""Network sends REGISTRATION REJECT""];
+    F --> H[""UE processes REGISTRATION ACCEPT""];
+    G --> I[""UE processes REGISTRATION REJECT""];
+    H --> J[""UE enters 5GMM-REGISTERED""];
+    I --> K{""Abnormal Case?""};
+    K -- ""Yes"" --> L[""UE handles abnormal case""];
+    K -- ""No"" --> M[""UE handles rejection""];
+    M --> N[""UE handles specific rejection based on cause""];
+    L --> O[""UE handles specific abnormal case""];
+    O --> P[""UE enters appropriate state""];
+    N --> P;
+    J --> Q[""Registration complete""];
