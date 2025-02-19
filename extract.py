@@ -1,8 +1,11 @@
 import sqlite3
 import google.generativeai as genai
 
-# Initialize Google Generative AI (Gemini)
-genai.configure(api_key="AIzaSyCXPLahgYeLeOICLr87Zv7AJnjBBuMOCJo")  # Replace with your Gemini API key
+import os
+import google.generativeai as genai
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Load from environment variable
+# Replace with your Gemini API key
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Function to extract procedural flow from the chunk of text using Gemini
