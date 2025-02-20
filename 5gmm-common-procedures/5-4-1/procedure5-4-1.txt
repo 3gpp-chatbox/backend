@@ -1,0 +1,89 @@
+Okay, I will analyze the provided text and extract the information about the "EAP based primary authentication and key agreement procedure", mapping it to the specified pattern, and providing a Mermaid flowchart.
+
+**Analysis and Extraction: EAP based primary authentication and key agreement procedure**
+
+**1. Purpose:**
+
+*   To enable mutual authentication between the UE and the network.
+*   To agree on the keys KAUSF, KSEAF, and KAMF.
+
+**2. Initiation:**
+
+*   Always initiated and controlled by the network.
+*   Initiated by sending an AUTHENTICATION REQUEST message to the UE. The AUTHENTICATION REQUEST message includes the EAP-request message, ngKSI, and ABBA.
+
+**3. Procedure Flow:**
+
+1.  **Network to UE:** The network (AMF) sends an AUTHENTICATION REQUEST message containing an EAP-request message, an ngKSI, and an ABBA. The AMF starts timer T3560.
+2.  **UE Processing:** Upon receiving the AUTHENTICATION REQUEST message, the UE handles the EAP message and the ABBA.
+3.  **UE to Network:** The UE creates an AUTHENTICATION RESPONSE message with the corresponding EAP-response message. The UE sends the AUTHENTICATION RESPONSE message to the AMF.
+4.  **Network Processing Response:** Upon receiving the AUTHENTICATION RESPONSE message, the AMF stops timer T3560 and handles the EAP message from the AUTHENTICATION RESPONSE message.
+5.  **Success:** If authentication completes successfully, the AMF *may* initiate a security mode control procedure using SECURITY MODE COMMAND.
+6.  **Success (Alternative):** If authentication completes successfully and a security mode control procedure is not initiated, the AMF sends an AUTHENTICATION RESULT message to the UE.
+7.  **Failure:** If authentication completes unsuccessfully, the AMF sends an AUTHENTICATION RESULT message *or* an AUTHENTICATION REJECT message, or a response of the initial 5GMM procedure to the UE. These messages contain the EAP-failure message.
+
+**4.  EAP-AKA' related procedures:**
+
+*   The UE supports acting as EAP-AKA' peer.
+*   The AUSF or AAA server of the CH or DCS may support acting as EAP-AKA' server.
+*   The procedure starts with the AUSF or AAA server of the CH or DCS sending an EAP-request/AKA'-challenge message.
+*   The network selects an ngKSI value, which is sent to the UE along with the EAP message.
+*   UE checks USIM presence and AT_KDF attributes.
+*   Upon successful authentication, the ME derives CK' and IK' from CK and IK.
+*   ME generates KAUSF, KSEAF, and KAMF.
+
+**5. EAP-TLS related procedures:**
+
+*   The UE may support acting as EAP-TLS peer.
+*   The AUSF may support acting as EAP-TLS server.
+*   The AAA server of the CH or the DCS may support acting as EAP server of such EAP method.
+*   The procedure starts with the network selecting an ngKSI value and sending it to the UE along with each EAP message and ABBA value.
+*   If the UE does not accept the server certificate of the network, the UE shall start timer T3520.
+
+**6. Procedures related to EAP methods other than EAP-AKA' and EAP-TLS**
+
+*   The UE may support acting as EAP peer of such EAP method.
+*   The AUSF may support acting as EAP server of such EAP method.
+*   The AAA server of the CH or the DCS may support acting as EAP server of such EAP method.
+*   The procedure starts with the network selecting an ngKSI value and sending it to the UE along with each EAP message and ABBA value.
+*   If the UE fails to authenticate the network the UE shall start timer T3520.
+
+**7. EAP message reliable transport procedure:**
+
+*   The purpose is to provide a reliable transport of an EAP-request message, the ngKSI, and the ABBA from the network to the UE and of an EAP-response message from the UE to the network
+*   The procedure is initiated by an AUTHENTICATION REQUEST message with the EAP message IE.
+
+**Key Information and Description:**
+
+| Information          | Description                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Procedure Name       | EAP based primary authentication and key agreement procedure                                                                                                                                                          |
+| Purpose              | Mutual authentication between UE and network; Key agreement (KAUSF, KSEAF, KAMF)                                                                                                                                   |
+| Initiator            | Network (AMF)                                                                                                                                                                                                     |
+| Trigger              | Need for authentication and key agreement.                                                                                                                                                                      |
+| Success Outcome      | Secure communication channel established, KAUSF, KSEAF, and KAMF agreed upon.                                                                                                                                  |
+| Failure Outcome      | Authentication rejected; UE may take actions such as re-initiation of registration, barring of cell, etc.                                                                                                        |
+| Key Messages         | AUTHENTICATION REQUEST, AUTHENTICATION RESPONSE, SECURITY MODE COMMAND (optional), AUTHENTICATION RESULT, AUTHENTICATION REJECT                                                                                 |
+| Main Actors          | UE, AMF, AUSF, AAA server of the CH or DCS                                                                                                                                                                     |
+| EAP Methods Supported| EAP-AKA', EAP-TLS, EAP-TTLS with two phases of authentication, other EAP methods                                                                                                                                       |
+| Timers               | T3560, T3520                                                                                                                                                                                                        |
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["Network (AMF)"] -- "AUTHENTICATION REQUEST (EAP-Request, ngKSI, ABBA)" --> B("UE")
+    B -- "Handle EAP-Request and ABBA" --> C{{"EAP Message Valid?"}}
+    C -- Yes --> D["UE"] -- "AUTHENTICATION RESPONSE (EAP-Response)" --> E["Network (AMF)"]
+    E -- "Stop Timer T3560, Handle EAP-Response" --> F{{"Authentication Successful?"}}
+    F -- Yes, Security Mode Control Initiated --> G["Network (AMF)"] -- "SECURITY MODE COMMAND" --> H("UE")
+    F -- Yes, No Security Mode Control Initiated --> I["Network (AMF)"] -- "AUTHENTICATION RESULT (EAP-Success, ngKSI)" --> J("UE")
+    F -- No --> K["Network (AMF)"] -- "AUTHENTICATION RESULT (EAP-Failure)" --> L("UE")
+     K -- "AUTHENTICATION REJECT (EAP-Failure)" --> L("UE")
+    L -- "Handle EAP-Failure" --> M("Procedure Complete (Failure)")
+     J -- "Handle EAP-Success" --> N("Procedure Complete (Success)")
+     H -- "Execute Security Mode Control Procedure" --> O("Procedure Complete (Success)")
+      A -- "Start Timer T3560" --> A
+        B -- "Start Timer T3520 (if UE fails to authenticate the network)" --> B
+          B -- "Start Timer T3520 (if UE does not accept server certificate)" --> B
+```

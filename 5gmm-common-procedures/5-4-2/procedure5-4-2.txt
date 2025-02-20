@@ -1,0 +1,126 @@
+Okay, I will analyze the provided text and extract the information about the main procedure described, mapping it to the specified pattern.
+
+**Main Procedure: NAS Security Mode Control Procedure**
+
+**1. Core Components:**
+
+*   **States:**
+    *   UE in 5GMM-CONNECTED mode
+    *   UE in 5GMM-IDLE mode
+    *   AMF with a valid current 5G NAS security context
+    *   AMF without a valid current 5G NAS security context
+    * UE has emergency PDU session
+    * UE registered for emergency services
+    * Security Mode Control Procedure Ongoing
+*   **Actions (UE):**
+    *   Receive SECURITY MODE COMMAND message
+    *   Check if SECURITY MODE COMMAND message can be accepted
+    *   Take 5G NAS security context into use
+    *   Reset uplink NAS COUNT counter
+    *   Derive a new K'AMF
+    *   Activate new 5G NAS security context over non-current access (if applicable)
+    *   Send SECURITY MODE COMPLETE message
+    *   Cipher and integrity protect NAS signalling messages
+     *   Include IMEISV or EUI-64 in SECURITY MODE COMPLETE message (if requested)
+    *   Retransmit initial NAS message (if requested)
+    *   Send SECURITY MODE REJECT message (if command not accepted)
+    *   Abort the security mode control procedure
+    *   Re-initiate the registration procedure (in case of transmission failure during registration)
+*   **Actions (AMF):**
+    *   Initiate NAS security mode control procedure by sending SECURITY MODE COMMAND message
+    *   Start timer T3560
+    *   Reset downlink NAS COUNT counter
+    *   Create a locally generated KAMF
+    *   Include selected EPS NAS security algorithms IE (if applicable)
+    *   Indicate use of new mapped 5G NAS security context or set ngKSI to "000"
+    *   Include replayed security capabilities, selected 5GS ciphering and integrity algorithms, and the ngKSI
+    *   Re-derive 5G NAS keys from KAMF
+    *   Include Additional 5G security information IE (if applicable)
+    *   Include horizontal derivation parameter (if applicable)
+    *   Include EAP message IE (if applicable)
+    *   Include AUN3 device security key IE (if applicable)
+    *   Stop timer T3560
+    *   Integrity protect and encipher signalling messages
+    *   Complete ongoing procedures (registration, deregistration, service request)
+    *   Retransmit the SECURITY MODE COMMAND message (upon timer expiry)
+    *   Abort the security mode control procedure
+    *   Initiate another NAS security mode control procedure in order to provide the selected EPS NAS security algorithms to the UE
+*   **Events:**
+    *   Receipt of REGISTRATION REQUEST message
+    *   Receipt of DEREGISTRATION REQUEST message
+    *   Receipt of SERVICE REQUEST message
+    *   Receipt of SECURITY MODE COMMAND message
+    *   Receipt of SECURITY MODE COMPLETE message
+    *   Receipt of SECURITY MODE REJECT message
+    *   Expiry of timer T3560
+    *   Successful primary authentication and key agreement procedure (5G AKA or EAP)
+    *   Detection of integrity check failure or inability to decipher NAS message container IE
+    *   Handover
+    *   Lower layer failure
+*   **Parameters:**
+    *   SECURITY MODE COMMAND message
+    *   SECURITY MODE COMPLETE message
+    *   SECURITY MODE REJECT message
+    *   ngKSI (NAS key set identifier)
+    *   5G NAS security algorithms (ciphering and integrity)
+    *   Selected EPS NAS security algorithms IE
+    *   Replayed UE security capabilities IE
+    *   Additional 5G security information IE
+    *   Horizontal derivation parameter
+    *   EAP message IE
+    *   AUN3 device security key IE
+    *   IMEISV IE / EUI-64 / MAC address (in SECURITY MODE COMPLETE)
+    *   NAS message container IE (containing REGISTRATION REQUEST, DEREGISTRATION REQUEST, SERVICE REQUEST, or CONTROL PLANE SERVICE REQUEST)
+    *   Downlink NAS COUNT
+    *   Uplink NAS COUNT
+*   **Flow of Execution:**
+    1.  AMF initiates the procedure by sending SECURITY MODE COMMAND message to UE and starts timer T3560.
+    2.  UE receives the SECURITY MODE COMMAND message and performs integrity check. UE verifies that the Replayed UE security capabilities IE has not been altered.
+    3.  If the message is acceptable, UE takes the indicated 5G NAS security context into use, resets uplink NAS COUNT (if required), derives new KAMF(if required), and activates security context over non-current access (if needed).
+    4.  UE sends SECURITY MODE COMPLETE message, integrity protected and ciphered with the new security context. It may also include IMEISV/EUI-64/MAC address and retransmit the initial NAS message if requested by AMF.
+    5.  If the message is not acceptable, UE sends SECURITY MODE REJECT message with a cause.
+    6.  AMF receives SECURITY MODE COMPLETE message, stops timer T3560, and starts using the new security context. The AMF completes the ongoing registration/deregistration/service request procedure.
+    7.  AMF receives SECURITY MODE REJECT message and aborts the ongoing procedure. The AMF apply the 5G NAS security context in use before the initiation of the security mode control procedure if any to protect the SECURITY MODE REJECT message and any other subsequent messages.
+    8.  If timer T3560 expires, AMF retransmits SECURITY MODE COMMAND message up to four times.
+*   **Conditionals:**
+    *   Whether UE accepts the SECURITY MODE COMMAND message based on integrity check and security capabilities.
+    *   Whether the UE has a valid mapped 5G NAS security context.
+    *   Whether a primary authentication and key agreement procedure was completed.
+    *   Whether the UE is in 5GMM-CONNECTED or 5GMM-IDLE mode over the non-current access.
+    *   Whether the UE is registered for emergency services, performing initial registration for emergency services, establishing an emergency PDU session or has an emergency PDU session established;
+    *   Whether the W-AGF acts on behalf of the FN-RG;
+    *   Whether the W-AGF acts on behalf of the N5GC device; or
+    *   Whether the 5G-RG acts on behalf of the AUN3 device
+*   **Metadata:**
+    *   Timer T3560
+    *   Security header type
+    *   5GMM cause values in SECURITY MODE REJECT
+
+**2. Key Information and Description:**
+
+*   **Procedure Name:** NAS Security Mode Control Procedure
+*   **Purpose:** To establish a 5G NAS security context and initialise NAS signalling security between the UE and the AMF. It can also be used to change security algorithms, update uplink NAS COUNT, and provide Selected EPS NAS security algorithms.
+*   **Initiator:** AMF (Access and Mobility Management Function)
+*   **Messages:** SECURITY MODE COMMAND, SECURITY MODE COMPLETE, SECURITY MODE REJECT
+*   **Security Context:** Involves establishing, updating, or switching between native and mapped 5G NAS security contexts.
+*   **Emergency Services:** Specific handling for UEs registered for emergency services or establishing emergency PDU sessions.
+*   **N26 Interface:** The AMF shall initiate another NAS security mode control procedure in order to provide the selected EPS NAS security algorithms to the UE as described in subclause __5.4.2.2__
+*   **Single-Registration Mode:** For a UE operating in single-registration mode in a network supporting N26 interface after an inter-system change from S1 mode to N1 mode in 5GMM-CONNECTED mode the UE shall set the value of the Selected EPS NAS security algorithms IE in the 5G NAS security context to the NAS security algorithms that were received from the source MME when the UE was in S1 mode
+
+**3. Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["AMF: Initiate Security Mode Control (Send SECURITY MODE COMMAND, Start T3560)"] --> B{"UE: Receive SECURITY MODE COMMAND\nAcceptable?"}
+    B -- "Yes" --> C["UE: Take Security Context into Use,\nReset Uplink NAS COUNT (if required),\nDerive K'AMF (if required),\nActivate Security Context on non-current access (if needed)"]
+    C --> D["UE: Send SECURITY MODE COMPLETE"]
+    D --> E["AMF: Receive SECURITY MODE COMPLETE,\nStop T3560,\nUse New Security Context,\nComplete Ongoing Procedure"]
+    B -- "No" --> F["UE: Send SECURITY MODE REJECT"]
+    F --> G["AMF: Receive SECURITY MODE REJECT,\nStop T3560,\nAbort Ongoing Procedure"]
+    A --> H{"T3560 Expired?"}
+    H -- "Yes (<=4 times)" --> A
+    H -- "Yes (>4 times)" --> I["AMF: Abort Procedure"]
+    H -- "No" --> J["Wait for response"]
+    J --> E
+    J --> G
+```

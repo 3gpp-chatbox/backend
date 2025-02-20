@@ -1,0 +1,15 @@
+graph TD
+    A["Network (AMF)"] -- "AUTHENTICATION REQUEST (EAP-Request, ngKSI, ABBA)" --> B("UE");
+    B -- "Handle EAP-Request and ABBA" --> C{{"EAP Message Valid?"}};
+    C -- Yes --> D["UE"];
+    D -- "AUTHENTICATION RESPONSE (EAP-Response)" --> E["Network (AMF)"];
+    E -- "Stop Timer T3560, Handle EAP-Response" --> F{{"Authentication Successful?"}};
+    F -- Yes --> G{{"Security Mode Control Initiated?"}};
+    G -- Yes --> H["Network (AMF)"] -- "SECURITY MODE COMMAND" --> I["UE"];
+    G -- No --> J["Network (AMF)"] -- "AUTHENTICATION RESULT (EAP-Success, ngKSI)" --> K["UE"];
+    F -- No --> L["Network (AMF)"] -- "AUTHENTICATION RESULT/REJECT (EAP-Failure)" --> M["UE"];
+    M -- "Handle EAP-Failure" --> N["Procedure Complete (Failure)"];
+    K -- "Handle EAP-Success" --> O["Procedure Complete (Success)"];
+    I -- "Execute Security Mode Control Procedure" --> O;
+    A -- "Start Timer T3560" --> A;
+    D -- "Start Timer T3520 (if UE fails to authenticate or does not accept server certificate)" --> D;

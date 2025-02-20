@@ -1,0 +1,21 @@
+%%  first procedure: **Registration procedure for initial registration**.
+
+graph TD
+    A["UE: 5GMM-DEREGISTERED"] --> B{"UE initiates REGISTRATION REQUEST"};
+    B -- "Yes" --> C["UE: Sends REGISTRATION REQUEST"];
+    B -- "No" --> Z["Abnormal Case (5.5.1.2.7)"];
+    C --> D["Network: Receives REGISTRATION REQUEST"];
+    D -- "Registration Accepted" --> E["Network: Sends REGISTRATION ACCEPT"];
+    D -- "Registration Rejected" --> F["Network: Sends REGISTRATION REJECT"];
+    E --> G["UE: Receives REGISTRATION ACCEPT"];
+    F --> H["UE: Receives REGISTRATION REJECT"];
+    G --> I["UE: 5GMM-REGISTERED"];
+    H --> J{"5GMM Cause Code Handling (5.5.1.2.5)"};
+    J --> K["UE: Handles 5GMM Cause and State"];
+    K --> L{"Retry?"};
+    L -- "Yes" --> C;
+    L -- "No" --> M["UE: 5GMM-DEREGISTERED.NO-SUPI/PLMN-SEARCH/LIMITED-SERVICE"];
+    Z --> K;
+    I --> Y["UE: Sends REGISTRATION COMPLETE"];
+    Y --> X["Network: 5GMM-REGISTERED"];
+    X --> D;

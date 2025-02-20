@@ -1,0 +1,84 @@
+The main procedure described in the provided text is the **Registration Procedure for Initial Registration and Mobility/Periodic Registration Update**.  However, the bulk of the text focuses on the **initial registration** aspect.  Therefore, we'll analyze both, prioritizing initial registration.
+
+**1. Registration Procedure for Initial Registration**
+
+**Procedure Information:**
+
+| Core Component          | Description                                                                                                                                                                                                                                     |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States (UE)**          | 5GMM-DEREGISTERED, 5GMM-REGISTERED, 5GMM-REGISTERED-INITIATED, 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, 5GMM-DEREGISTERED.PLMN-SEARCH, 5GMM-REGISTERED.LIMITED-SERVICE, 5GMM-REGISTERED.PLMN-SEARCH |
+| **States (Network)**     | 5GMM-COMMON-PROCEDURE-INITIATED, 5GMM-REGISTERED                                                                                                                                                                                        |
+| **Actions (UE)**         | Sends REGISTRATION REQUEST message, starts/stops timers (T3510, T3502, T3511, T3519), handles 5GS mobile identity IE, includes various IEs in REGISTRATION REQUEST, sends REGISTRATION COMPLETE message, performs PLMN/SNPN selection, handles 5GMM parameters, enters different states based on received message and cause codes |
+| **Actions (Network)**    | Sends REGISTRATION ACCEPT/REJECT message, assigns TAI list, stores received information elements, initiates 5GMM common procedures (identification, authentication, security), determines LADN DNNs, negotiates UE paging probability information/Paging subgroup ID, assigns 5G-GUTI, updates CAG information list, initiates UUAA-MM procedure, determines PLMN with disaster condition, applies RAT utilization control, assigns timer values (T3512, T3324, T3447, T3448), handles NSAG, manages network slice information (allowed, configured, rejected, partially rejected, pending NSSAI), handles MPS and MCS indicators  |
+| **Events**               | Timer expiry (T3510, T3502, T3511, T3519, T3447, T3346, T3512, implementation-specific timer for onboarding), UE state changes (5GMM-DEREGISTERED, 5GMM-REGISTERED), Receiving REGISTRATION ACCEPT/REJECT messages, network events (e.g. subscription data change), lower layer failures, access barred indication, change in current TAI,  UDM indication |
+| **Parameters (UE->Network)** | REGISTRATION REQUEST message (including various IEs: 5GS registration type, 5GS mobile identity, UE status, ATTACH REQUEST, Additional GUTI, 5GS update type, MICO indication, T3324, Requested T3512, Requested DRX parameters, Requested NB-N1 mode DRX parameters, Requested extended DRX parameters, LADN indication, requested NSSAI, 5GMM capability, S1 UE network capability, UE security capability, Payload container type, Additional information requested, Requested WUS assistance information, Requested PEIPS assistance information, Service-level-AA container etc.) |
+| **Parameters (Network->UE)**| REGISTRATION ACCEPT/REJECT message (including various IEs: 5GS registration result, TAI list, Service area list, list of equivalent PLMNs/SNPNs, MICO indication, T3324, T3512, non-3GPP de-registration timer value, 5GS network feature support, LADN information, Negotiated WUS assistance information, Negotiated PEIPS assistance information, UE radio capability ID/deletion indication, service-level-AA container, NSSAI inclusion mode, Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list,  Truncated 5G-S-TMSI configuration, Alternative NSSAI, Allowed NSSAI, Configured NSSAI, Partially rejected NSSAI, Rejected NSSAI, Pending NSSAI, NSSRG information, S-NSSAI location/time validity information, On-demand NSSAI,  List of PLMNs to be used in disaster condition, Disaster roaming wait range, Disaster return wait range, Forbidden TAI(s), RAN timing synchronization,  Discontinuous coverage maximum time offset, Unavailability configuration, RAT utilization control, Ciphering key data, NSAG information,  Extended rejected NSSAI  etc.)|
+| **Conditionals**         |  Various conditions based on UE state, registration type, timer status, UE capabilities, network configuration, support for various features (MICO, S1 mode, SMS over NAS, etc.),  subscription data,  operator policies, received message content. |
+| **Metadata**             | Timers (T3510, T3502, T3511, T3519, T3324, T3512, T3447, T3448, T3550, implementation-specific timer for onboarding services, T3245, T3526), 5GMM cause values, message IDs |
+
+
+**2. Registration Procedure for Mobility and Periodic Registration Update**
+
+This procedure is significantly simpler and largely mirrors aspects of the initial registration process. The key differences are:
+
+
+* **UE State:** The UE starts in the 5GMM-REGISTERED state.
+* **Trigger:** Initiated by timer T3512 expiry or UE detecting a tracking area update.
+* **Simplified Message Exchange:**  Focuses on updating registration information, rather than the extensive identity and capability negotiation of initial registration.
+
+
+**Mermaid Flowchart (Initial Registration):**
+
+```mermaid
+graph TD
+    A["UE: 5GMM-DEREGISTERED"] --> B{ "UE initiates REGISTRATION REQUEST" };
+    B -- "Yes" --> C["UE: Sends REGISTRATION REQUEST"];
+    B -- "No" --> Z["Abnormal Case (5.5.1.2.7)"];
+    C --> D["Network: Receives REGISTRATION REQUEST"];
+    D -- "Registration Accepted" --> E["Network: Sends REGISTRATION ACCEPT"];
+    D -- "Registration Rejected" --> F["Network: Sends REGISTRATION REJECT"];
+    E --> G["UE: Receives REGISTRATION ACCEPT"];
+    F --> H["UE: Receives REGISTRATION REJECT"];
+    G --> I["UE: 5GMM-REGISTERED"];
+    H --> J{ "5GMM Cause Code Handling (5.5.1.2.5)" };
+    J --> K["UE: Handles 5GMM Cause and State"];
+    K --> L{ "Retry?" };
+    L -- "Yes" --> C;
+    L -- "No" --> M["UE: 5GMM-DEREGISTERED.NO-SUPI/PLMN-SEARCH/LIMITED-SERVICE"];
+
+    Z --> K;
+    I -->Y["UE: Sends REGISTRATION COMPLETE"];
+    Y -->X["Network: 5GMM-REGISTERED"];
+
+    subgraph "Network Actions"
+        D --> E;
+        D --> F;
+        X --> D;
+
+    end
+
+    subgraph "UE Actions"
+        A --> B;
+        C --> D;
+        G --> I;
+        H --> J;
+        J --> K;
+        K --> L;
+        L -->M;
+    end
+```
+
+**Key Information and Description:**
+
+* **Initial Registration:** The process where a UE initially registers with the 5G network. This involves extensive identity and capability negotiation.
+* **Mobility Registration Update:** The process when the UE changes cells and needs to update the registration information with the new AMF.
+* **Periodic Registration Update:** A regular process to keep the registration active. Performed only in 3GPP access and controlled by timer T3512.
+* **REGISTRATION REQUEST/ACCEPT/REJECT Messages:** The primary messages exchanged during the registration procedure.  Each message carries many Information Elements (IEs) with specific functions.
+* **5GMM Cause Codes:** Error codes that indicate the reasons for registration failures.
+* **Timers:** Various timers control the timing aspects of the registration process (e.g., retry attempts, periodic updates, etc.).
+* **Information Elements (IEs):** Numerous data fields included in the messages, conveying various UE capabilities, security information, network capabilities, etc.
+* **Abnormal Cases:** Error handling routines based on various exceptional events.
+
+
+
+This detailed breakdown provides a comprehensive overview of the registration procedures as described in the provided text.  Remember that this analysis is strictly based on the given text; external knowledge or assumptions were not used.

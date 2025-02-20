@@ -1,0 +1,68 @@
+Okay, I will analyze the provided text, focusing on the primary procedure described, extracting its core components, and representing it in a structured format including key information, description and a Mermaid flowchart.
+
+**Main Procedure: Identification Procedure**
+
+Based on the provided text, the main procedure described is the **Identification Procedure** initiated by the network (AMF).
+
+**Extracted Information:**
+
+*   **Name:** Identification Procedure
+*   **Purpose:** To request a UE to provide specific identification parameters (SUCI, IMEI, IMEISV, EUI-64, MAC address).
+*   **Initiator:** AMF (Network)
+*   **UE State:** 5GMM-CONNECTED mode
+*   **Trigger:** Network needs to identify the UE.
+
+**Procedure Flow:**
+
+1.  **Initiation:** AMF sends IDENTITY REQUEST message to the UE and starts timer T3570.
+2.  **UE Action (Reception of IDENTITY REQUEST):**
+    *   **If** Identity type IE is NOT set to "SUCI": UE sends IDENTITY RESPONSE message containing the requested identification parameters.
+    *   **If** Identity type IE is set to "SUCI":
+        *   **If** timer T3519 is not running: UE generates a fresh SUCI, sends IDENTITY RESPONSE with the SUCI, starts timer T3519, and stores the SUCI value.
+        *   **If** timer T3519 is running: UE sends IDENTITY RESPONSE message with the stored SUCI.
+3.  **Network Action (Reception of IDENTITY RESPONSE):** AMF stops timer T3570.
+4.  **Abnormal Cases (UE):**
+    *   Transmission failure of IDENTITY RESPONSE (triggered by registration): UE re-initiates registration.
+    *   Requested identity is not available: UE encodes identity type as "No identity".
+5.  **Abnormal Cases (Network):**
+    *   Lower layer failure: Network aborts any ongoing 5GMM procedure.
+    *   Expiry of timer T3570: Network retransmits IDENTITY REQUEST (up to 4 times). After 5th expiry, network aborts identification procedure and any ongoing 5GMM procedure.
+    *   Collision with registration procedures (initial/emergency): Network handles based on various conditions (described in detail in the text).
+    *   Collision with registration procedures (mobility/periodic): Network progresses both procedures.
+    *   Collision with UE initiated de-registration procedure: Behavior depends on "switch off" indication.
+
+**Key Information and Description:**
+
+*   **IDENTITY REQUEST:** Message sent by the AMF to request the UE's identity. It includes the Identity type IE.
+*   **IDENTITY RESPONSE:** Message sent by the UE containing the requested identification parameters or an indication that the identity is not available.
+*   **SUCI:** A privacy-preserving identifier containing the concealed SUPI.
+*   **Timer T3570:** Timer used by the network to manage the identification procedure. Retransmission occurs upon expiry, and the procedure is aborted after multiple retries.
+*   **Timer T3519:** Timer used by the UE when SUCI is requested to prevent SUCI generation too frequently.
+*   **5GMM-CONNECTED:** The UE must be in this mode for the procedure to occur.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["AMF: Send IDENTITY REQUEST, Start T3570"] --> B{"UE: Receive IDENTITY REQUEST"};
+    B -- "Identity Type != SUCI" --> C["UE: Send IDENTITY RESPONSE (Parameters)"];
+    B -- "Identity Type == SUCI" --> D{"T3519 Running?"};
+    D -- "No" --> E["UE: Generate Fresh SUCI, Send IDENTITY RESPONSE (SUCI), Start T3519, Store SUCI"];
+    D -- "Yes" --> F["UE: Send IDENTITY RESPONSE (Stored SUCI)"];
+    C --> G["AMF: Receive IDENTITY RESPONSE, Stop T3570"];
+    F --> G
+    G --> H{"Procedure Complete"};
+     subgraph "Abnormal Cases (UE)"
+        I["Transmission Failure of IDENTITY RESPONSE (triggered by Registration)"] --> J["UE: Re-initiate Registration"];
+        K["Requested Identity Not Available"] --> L["UE: Encode Identity Type as 'No Identity'"];
+    end
+    subgraph "Abnormal Cases (Network)"
+        M["Lower Layer Failure"] --> N["Network: Abort any ongoing 5GMM procedure"];
+        O["Expiry of T3570"] --> P{"Retransmission Count < 4?"};
+        P -- "Yes" --> Q["Network: Retransmit IDENTITY REQUEST, Reset and Restart T3570"];
+        P -- "No" --> R["Network: Abort Identification Procedure, Abort any ongoing 5GMM procedure"];
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+```

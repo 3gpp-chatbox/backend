@@ -1,0 +1,22 @@
+graph TD
+    A["AMF: Initiate Generic UE Configuration Update"] --> B{"AMF: Send CONFIGURATION UPDATE COMMAND (Parameters)"};
+    B -- "Acknowledgement Requested" --> C["UE: Receive CONFIGURATION UPDATE COMMAND"];
+    B -- "No Acknowledgement Requested" --> F["UE: Update Configuration"];
+    C --> D["UE: Update Configuration"];
+    D --> E["UE: Send CONFIGURATION UPDATE COMPLETE"];
+    E --> G["AMF: Receive CONFIGURATION UPDATE COMPLETE"];
+    G --> H["AMF: Update UE Context"];
+    F --> H;
+    H -->I["End"];
+    C -- "Registration Requested" --> J["UE: Start Registration Procedure"];
+    J --> I;
+    G -- "T3555 Expiry" --> K["AMF: Retransmit CONFIGURATION UPDATE COMMAND"];
+    K --> B;
+    B -- "Lower Layer Failure" -->L["AMF: Handle Lower Layer Failure"];
+    L -->I;
+    B -- "DEREGISTRATION REQUEST Received" --> M["AMF: Abort Generic UE Configuration Update and Progress De-registration"];
+    M --> I;
+    B -- "REGISTRATION REQUEST Received" --> N["AMF: Abort Generic UE Configuration Update and Progress Registration"];
+    N --> I;
+    B -- "SERVICE REQUEST Received" --> O["AMF: Progress both procedures(if request type is not NAS signalling connection release), otherwise abort generic UE configuration update procedure and progress service request procedure"];
+    O --> I;

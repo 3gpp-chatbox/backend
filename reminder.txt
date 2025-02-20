@@ -8,4 +8,10 @@ The provided description is largely correct and aligns with the 3GPP specificati
 
 
 
+important file
+ prompt2.py
+ doc_processor.py
+document_chunks.db
 
+
+findings:  each procedure always start with  " The purpose of the 5GMM status procedure is to "  or "The purpose of the 5GMM status procedure is to"

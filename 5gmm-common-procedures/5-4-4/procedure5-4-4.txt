@@ -1,0 +1,141 @@
+Okay, I will analyze the provided text to extract information about the main procedure, map it to the requested format, and provide a Mermaid flowchart.
+
+**Analysis:**
+
+The main procedure described in the text is the **Generic UE Configuration Update procedure (5.4.4)**. The text details various aspects of this procedure, including its purpose, initiation, parameters, and behavior of both the AMF (network) and the UE. It also covers abnormal cases and handling of collisions with other procedures.
+
+**Procedure Information Extraction and Mapping:**
+
+**Procedure Name:** Generic UE Configuration Update procedure
+
+**1. Purpose:**
+*   Allow the AMF to update the UE configuration for access and mobility management-related parameters.
+*   Request the UE to perform a registration procedure for mobility and periodic registration update.
+*   Deliver UAV authorization information to the UE.
+*   Update the PEIPS assistance information in the UE.
+*   Assign a new 5G-GUTI to the UE.
+
+**2. States:**
+*   5GMM-CONNECTED mode: Procedure is initiated when the UE is in this mode.
+*   5GMM-IDLE mode: AMF may use paging or notification procedure to initiate.
+*   5GMM-REGISTERED: The UE is registered for service.
+* 5GMM-REGISTERED.LIMITED-SERVICE: The UE enters this state when certain CAG conditions are not met.
+* 5GMM-REGISTERED.PLMN-SEARCH: The UE enters this state when certain CAG conditions are not met.
+
+**3. Initiation Event:**
+
+*   AMF decides to update UE configuration.
+*   Successful service request procedure invoked as a response to a paging request from the network
+*   The AMF receives an indication from the lower layers that it has received the NGAP UE context resume request message
+
+**4. Actions (Network - AMF):**
+
+*   Sends a CONFIGURATION UPDATE COMMAND message to the UE.
+*   Includes parameters in the CONFIGURATION UPDATE COMMAND message (5G-GUTI, TAI list, Allowed NSSAI, etc.).
+*   May request an acknowledgement from the UE.
+*   Starts timer T3555 when acknowledgement is requested.
+*   Handles the "registration requested" indication.
+*   Can retransmit the CONFIGURATION UPDATE COMMAND message on T3555 expiry.
+*   Notify SMF(s) to initiate PDU Session release procedure if active PDU sessions are associated with S-NSSAI(s) not included in the new allowed NSSAI
+
+**5. Actions (UE):**
+
+*   Receives the CONFIGURATION UPDATE COMMAND message.
+*   Updates stored information based on the received parameters.
+*   Sends a CONFIGURATION UPDATE COMPLETE message if acknowledgement is requested.
+*   Handles new 5G-GUTI, TAI list, etc.
+*   Takes actions based on the rejected S-NSSAIs and their rejection causes.
+*   Starts a registration procedure if requested by the network.
+* Enters different states based on CAG information.
+* Deletes network slicing information based on Network slicing indication IE.
+* Performs a local release of PDU sessions under certain conditions.
+* Passes the service-level-AA container IE to the upper layer.
+* Operates as a UE with access identity 1/2 configured for MPS/MCS.
+* Informs the lower layers of the status of MBSR authorization.
+
+**6. Parameters:**
+
+*   5G-GUTI
+*   TAI list
+*   Allowed NSSAI
+*   Configured NSSAI
+*   Rejected NSSAI
+*   NSSRG information
+*   S-NSSAI location validity information
+*   S-NSSAI time validity information
+*   MICO indication
+*   LADN information
+*   Extended LADN information
+*   NITZ information
+*   SMS indication
+*   CAG information list
+*   UE radio capability ID
+*   5GS registration result
+* UE radio capability ID deletion indication
+*   Truncated 5G-S-TMSI configuration
+* T3447 value
+*   Network slicing subscription change indication
+*   Operator-defined access category definitions
+* "list of PLMN(s) to be used in disaster condition"
+* disaster roaming wait range
+* disaster return wait range
+* PEIPS assistance information
+* Priority indicator
+* NSAG information
+* Alternative NSSAI
+* Partially allowed NSSAI
+* Partially rejected NSSAI
+* On-demand NSSAI
+* Feature authorization indication
+* Discontinuous coverage maximum time offset
+* RAT utilization control information
+* Service-level-AA container
+
+**7. Conditionals:**
+
+*   If "acknowledgement requested" is indicated, the UE sends a CONFIGURATION UPDATE COMPLETE message.
+*   If a new 5G-GUTI is received, the UE considers the old one as invalid.
+*   Actions based on different rejection causes for S-NSSAIs.
+*   Actions based on the presence and values in the CAG information list.
+* If an emergency PDU session exists, special handling applies.
+*   If network slicing subscription change indication is received, certain network slicing information is deleted.
+
+**8. Abnormal Cases:**
+
+*   Transmission failure of CONFIGURATION UPDATE COMPLETE message.
+*   Generic UE configuration update and de-registration procedure collision.
+*   Generic UE configuration update and service request procedure collision.
+*   Expiry of timer T3555 on the network side.
+* Lower layer failure.
+*   Generic UE configuration update and registration procedure for mobility and periodic registration update collision.
+
+**Key Information and Description:**
+
+*   **Generic UE Configuration Update:** A network-initiated procedure to update the UE's configuration parameters related to access and mobility management. It can be used to update various parameters, request a registration procedure, deliver UAV authorization information, or update PEIPS assistance information. The procedure uses the CONFIGURATION UPDATE COMMAND and CONFIGURATION UPDATE COMPLETE messages.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["AMF: Initiate Generic UE Configuration Update"] --> B{"AMF: Send CONFIGURATION UPDATE COMMAND (Parameters)"};
+    B -- "Acknowledgement Requested" --> C["UE: Receive CONFIGURATION UPDATE COMMAND"];
+    B -- "No Acknowledgement Requested" --> F["UE: Update Configuration"];
+    C --> D["UE: Update Configuration"];
+    D --> E["UE: Send CONFIGURATION UPDATE COMPLETE"];
+    E --> G["AMF: Receive CONFIGURATION UPDATE COMPLETE"];
+    G --> H["AMF: Update UE Context"];
+    F --> H
+     H -->I["End"];
+    C -- "Registration Requested" --> J["UE: Start Registration Procedure"];
+    J --> I
+        G -- "T3555 Expiry" --> K["AMF: Retransmit CONFIGURATION UPDATE COMMAND"];
+        K --> B
+     B -- "Lower Layer Failure" -->L["AMF: Handle Lower Layer Failure"];
+    L -->I["End"];
+        B -- "DEREGISTRATION REQUEST Received" --> M["AMF: Abort Generic UE Configuration Update and Progress De-registration"];
+    M --> I
+        B -- "REGISTRATION REQUEST Received" --> N["AMF: Abort Generic UE Configuration Update and Progress Registration"];
+    N --> I
+                B -- "SERVICE REQUEST Received" --> O["AMF: Progress both procedures(if request type is not NAS signalling connection release), otherwise abort generic UE configuration update procedure and progress service request procedure"];
+    O --> I
+```

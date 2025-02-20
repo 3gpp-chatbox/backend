@@ -1,0 +1,13 @@
+graph TD
+    A["AMF: Initiate Security Mode Control (Send SECURITY MODE COMMAND, Start T3560)"] --> B{"UE: Receive SECURITY MODE COMMAND\nAcceptable?"};
+    B -- "Yes" --> C["UE: Take Security Context into Use,\nReset Uplink NAS COUNT (if required),\nDerive K'AMF (if required),\nActivate Security Context on non-current access (if needed)"];
+    C --> D["UE: Send SECURITY MODE COMPLETE"];
+    D --> E["AMF: Receive SECURITY MODE COMPLETE,\nStop T3560,\nUse New Security Context,\nComplete Ongoing Procedure"];
+    B -- "No" --> F["UE: Send SECURITY MODE REJECT"];
+    F --> G["AMF: Receive SECURITY MODE REJECT,\nAbort Ongoing Procedure"];
+    A --> H{"T3560 Expired?"};
+    H -- "Yes (<=4 times)" --> A;
+    H -- "Yes (>4 times)" --> I["AMF: Abort Procedure"];
+    H -- "No" --> J["Wait for response"];
+    J --> E;
+    J --> G;

@@ -1,0 +1,159 @@
+Okay, I will analyze the provided text to extract information about the "UE-initiated NAS transport procedure" and represent it using the specified format.
+
+**Main Procedure:** UE-initiated NAS transport procedure
+
+**1. States:**
+
+*   "5GMM-CONNECTED mode"
+*   Implicit: Procedure Started
+*   Implicit: Procedure Aborted
+
+**2. Actions (UE):**
+
+*   Send UL NAS TRANSPORT message to AMF.
+*   Include PDU session information (if available).
+*   Set Payload container type IE.
+*   Set Payload container IE.
+*   Set PDU session ID IE.
+*   Set Old PDU session ID IE (if applicable).
+*   Set Alternative S-NSSAI IE (if applicable).
+*   Set S-NSSAI IE (if applicable).
+*   Set DNN IE (if applicable).
+*   Set Request type IE (if applicable).
+*   Set MA PDU session information IE (if applicable).
+*   Include Non-3GPP access path switching indication IE (if applicable).
+*   Set ME support of SOR-CMCI indicator (if applicable).
+*   Set ME support of SOR-SNPN-SI indicator (if applicable).
+*   Set ME support of SOR-SNPN-SI-LS indicator (if applicable).
+*   Calculate NAS MAC (if indicated by lower layers).
+*   Increase uplink NAS COUNT.
+*   Start Registration procedure for mobility and periodic registration update
+*   Re-run the ongoing procedure that triggered the UE-initiated NAS transport procedure
+
+**3. Actions (AMF):**
+
+*   Receive UL NAS TRANSPORT message.
+*   Route payload based on Payload container type IE.
+*   Look up a PDU session routing context.
+*   Select an SMF.
+*   Store a PDU session routing context.
+*   Send 5GSM message to SMF.
+*   Send content of Payload container IE to SMSF, LMF, UDM, or PCF.
+*   Determine UE presence in LADN service area
+*   Initiate the release of the N1 NAS signalling connection
+*   Provide the Payload container type and the content of the Payload container IE to the location services application
+*   Send back to the UE the 5GSM message which was not forwarded, a back-off timer value and 5GMM cause
+*   Derive the SMF from the emergency DNN or use the statically configured SMF from the AMF emergency configuration data if configured
+*   Ignore the reallocation requested indication
+*   send the 5GSM message the PDU session ID the S-NSSAI the mapped S-NSSAI (in roaming scenarios) the DNN determined by the AMF DNN selected by the network (if different from DNN determined by the AMF) the request type the MA PDU session information the non-3GPP access path switching indication UE presence in LADN service area (if DNN received corresponds to an LADN DNN) the onboarding indication (if the UE is registered for onboarding services in SNPN) and the alternative S-NSSAI associated with the S-NSSAI to be replaced (if available) towards the SMF identified by the SMF ID of the PDU session routing context
+
+**4. Events:**
+
+*   UE initiates data transfer.
+*   AMF receives UL NAS TRANSPORT message.
+*   Lower layers indicate access barring.
+*   Transmission failure.
+*   Timer T3447 is running.
+*   Lower layers indicate RRC connection suspension.
+*   Timer T3346 is running.
+*   Lower layers indicate NAS MAC calculation.
+*   AMF receives 5GSM message from SMF without N1 SM delivery skip allowed indication
+*   AMF receives steering of roaming information from the UDM
+*   AMF receives UE policy container from the PCF
+*   AMF receives UE parameters update data from the UDM
+*   AMF receives from a location services application of a Location services message payload
+*   AMF receives from an LMF of a Location services message payload
+*   AMF receives from an SMF of a user data container payload
+*   The AMF needs to send an event notification indicator for upper layers to the UE which set the "EventNotification" bit of the 5GMM capability IE in the last REGISTRATION REQUEST message to "Event notification supported"
+*   AMF receives from an LMF of a UPP-CMI container
+*   The associated S-NSSAI that the AMF determined is an S-NSSAI for which the AMF is performing NSSAA and the AMF determines to not forward the 5GSM message to the SMF based on local policy
+
+**5. Parameters:**
+
+*   Payload container type IE (N1 SM information, SMS, LPP, SLPP, SOR, UE policy container, UE parameters update container, Location services message container, CIoT user data container, Service-level-AA container, UPP-CMI container, Multiple payloads).
+*   Payload container IE (5GSM message, SMS payload, LPP message, SOR transparent container, UE policy container, UE parameters update container, Location services message payload, CIoT user data container, Service-level-AA container, UPP-CMI container).
+*   PDU session ID IE.
+*   Old PDU session ID IE.
+*   S-NSSAI IE.
+*   Mapped S-NSSAI.
+*   DNN IE.
+*   Request type IE.
+*   Alternative S-NSSAI IE.
+*   MA PDU session information IE.
+*   Non-3GPP access path switching indication.
+*   Additional information IE (routing information).
+*   5GMM cause IE.
+*   Back-off timer value IE.
+*   ME support of SOR-CMCI indicator.
+*   ME support of SOR-SNPN-SI indicator.
+*   ME support of SOR-SNPN-SI-LS indicator.
+*   NAS MAC
+*   Uplink NAS COUNT
+*   Payload container information IE
+
+**6. Conditionals:**
+
+*   Based on Payload container type IE, different actions are taken.
+*   Based on Request type IE (initial request, existing PDU session, modification request).
+*   Based on the AMF having or not having a PDU session routing context.
+*   Based on the UE preferences regarding access selection for mobile originated (MO) transmission of SMS over NAS as described in 3GPP TS 23.501 [8]
+*   If the current TAI is not in the TAI list
+*   if the DNN is not supported in the slice identified by the S-NSSAI used by the AMF
+*   S-NSSAI and DNN based congestion control is activated for the S-NSSAI and DNN included in the UL NAS TRANSPORT message
+*   the AMF determines that the PLMN's maximum number of PDU sessions has already been reached for the UE
+*   the AMF determines that there are user-plane resources established for a number of PDU sessions that is equal to the UE' s maximum number of supported user-plane resources
+*   the S-NSSAI is subject to NS-AoS and the AMF determines that the UE is not in the NS-AoS
+*   the timer T3447 is running and the UE does not support service gap control
+*   the determined DNN S-NSSAI or both DNN and S-NSSAI are identified for UAS services and the UE is marked in the UE's 5GMM context that it is not allowed to request UAS services
+
+**7. Key Information and Description:**
+
+*   **UE-initiated NAS transport procedure:** This procedure allows the UE to send various types of data (5GSM messages, SMS, LPP messages, etc.) to the AMF using the UL NAS TRANSPORT message. The AMF then routes the data to the appropriate network function (SMF, SMSF, LMF, UDM, PCF). The procedure is initiated when the UE has data to send to the network.
+*   **Payload container type IE:** Indicates the type of data being transported.
+*   **Payload container IE:** Contains the actual data.
+*   **AMF routing:** The AMF uses the Payload container type IE and other information (e.g., PDU session ID, routing information) to route the data to the correct destination.
+*   **Congestion control:** The AMF may reject the UL NAS TRANSPORT message due to congestion. In this case, the AMF includes a 5GMM cause and a back-off timer value in the DL NAS TRANSPORT message sent back to the UE.
+*   **Abnormal cases:** Several abnormal cases are defined, which may cause the UE to abort the procedure or the AMF to reject the UL NAS TRANSPORT message.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["UE in 5GMM-CONNECTED mode"] --> B{"UE initiates data transfer"}
+    B --> C[/"Send UL NAS TRANSPORT message to AMF"/]
+    C --> D{"AMF receives UL NAS TRANSPORT message"}
+    D --> E{"Check Payload container type IE"}
+    E -- "N1 SM information" --> F{"Look up PDU session routing context"}
+    E -- "SMS" --> G[/"Send content to SMSF"/]
+    E -- "LPP" --> H[/"Send content to LMF"/]
+    E -- "SLPP" --> I[/"Send content to LMF"/]
+    E -- "SOR" --> J[/"Send content to UDM"/]
+    E -- "UE policy container" --> K[/"Send content to PCF"/]
+    E -- "UE parameters update transparent container" --> L[/"Send content to UDM"/]
+    E -- "Location services message container" --> M[/"Send content to upper layer location services application"/]
+    E -- "CIoT user data container" --> N{"Look up PDU session routing context"}
+    E -- "Service-level-AA container" --> O[/"Send content to UAS-NF"/]
+    E -- "UPP-CMI container" --> P[/"Send content to upper layer location services application"/]
+    E -- "Multiple payloads" --> Q{"Decode content of Payload container IE"}
+    Q --> R{"Handle each payload container entry"}
+    F -- "Context found" --> S[/"Send 5GSM message to SMF"/]
+    F -- "Context not found" --> T{"Select SMF"}
+    T --> U[/"Store PDU session routing context"/]
+    U --> S
+    N -- "Context found" --> V[/"Send content to SMF"/]
+    N -- "Context not found" --> W[/"Send back CIoT user data container"/]
+    D --> X{"Congestion Check?"}
+    X -- "Yes" --> Y[/"Send DL NAS TRANSPORT with 5GMM cause and back-off timer"/]
+    X -- "No" --> Z{"Proceed with routing"}
+    D --> AA{"Access barring?"}
+    AA -- "Yes" --> AB[/"UE stays in the current serving cell"/]
+    AA -- "No" --> BB{"Proceed with transport"}
+    subgraph UE Actions
+    direction LR
+    C
+    end
+    subgraph AMF Actions
+    direction LR
+    D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,BB
+    end
+```
