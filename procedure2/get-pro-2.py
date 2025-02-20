@@ -1,6 +1,5 @@
 
-
-#for Registration procedure for initial registration
+ #for Registration procedure for mobility and periodic registration update
 
 import sqlite3
 import os
@@ -14,7 +13,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 # Load from environment variable
 
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 
 
@@ -27,7 +26,7 @@ def extract_procedural_info_from_text(text):
     {text}
 
  remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. 
-this section is now, list all procedures from the  section and then focus one first procedure ,extract the the first procedure information  and use below pattern to mapping it (below is an example) finally,also Return description , a Mermaid flowchart for the first procedure using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets. below is that example: 
+this secion is mainly about one procedure, analyze text  and fine that main procedure, and then focus on that procedure,extract the procedure information  and use below pattern to mapping it (below is an example) finally,also Return key information and description and  Mermaid flowchart for using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets. below is that example: 
 
 
 Extracting the Model from 3GPP Specification
@@ -94,15 +93,15 @@ def process_section(start_id, end_id, db_path="path_to_your_db.sqlite"):
     return procedural_info
 
 # Example usage: Processing section 5.5.1.2 to 5.5.1.3 (IDs 625 to 765 in your database)
-start_chunk_id = 625  # Start chunk ID (example)
-end_chunk_id = 765    # End chunk ID (example)
+start_chunk_id = 766  # Start chunk ID (example)
+end_chunk_id = 950    # End chunk ID (example)
 db_path = "path_to_your_db.sqlite"  # Path to your SQLite database
 
 # Process the section
-procedural_info = process_section(625, 765, 'document_chunks.db')
+procedural_info = process_section(766, 950, 'document_chunks.db')
 
 # Print the extracted procedural info
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_txt(procedural_info, "procedure1-2.txt")  # For plain text
+save_procedural_info_to_txt(procedural_info, "pro2-output-1.txt")  # For plain text

@@ -1,0 +1,24 @@
+
+%%  first procedure: **Registration procedure for mobility and periodic registration update**.
+
+graph TD
+    A["UE: Initiate Registration (Various triggers)"] --> B{{"UE: Construct REGISTRATION REQUEST message"}}
+    B --> C["UE: Send REGISTRATION REQUEST to AMF"]
+    C --> D["AMF: Receive REGISTRATION REQUEST"]
+    D --> E{{"AMF: Registration Accepted?"}}
+    E -- "Yes" --> F["AMF: Construct REGISTRATION ACCEPT message"]
+    F --> G["AMF: Send REGISTRATION ACCEPT to UE"]
+    G --> H["UE: Receive REGISTRATION ACCEPT"]
+    H --> I["UE: Update parameters (TAI list, 5G-GUTI)"]
+    I --> J["UE: Enter 5GMM-REGISTERED state"]
+    J --> K["UE: Send REGISTRATION COMPLETE to AMF (if needed)"]
+    K --> L["AMF: Receive REGISTRATION COMPLETE"]
+    L --> M["AMF: Enter 5GMM-REGISTERED"]
+    E -- "No" --> N["AMF: Construct REGISTRATION REJECT message (with cause)"]
+    N --> O["AMF: Send REGISTRATION REJECT to UE"]
+    O --> P["UE: Receive REGISTRATION REJECT"]
+    P --> Q["UE: Take actions based on 5GMM cause (e.g., retry, PLMN selection)"]
+    Q --> R["UE: Enter appropriate DEREGISTERED state"]
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style M fill:#ccf,stroke:#333,stroke-width:2px
+    style R fill:#ccf,stroke:#333,stroke-width:2px

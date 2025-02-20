@@ -1,0 +1,139 @@
+Okay, I will analyze the provided text to identify the main procedure, extract its information, and map it according to the specified pattern.
+
+**Analysis:**
+
+The main procedure described in the text is the **Registration procedure for mobility and periodic registration update**. This is evident from the repeated mentions of this procedure throughout the document, along with detailed steps and conditions related to it. The text covers the initiation, acceptance, and rejection scenarios of this procedure, as well as abnormal cases and UE/network behavior during these situations.
+
+**Procedure Information Extraction and Mapping:**
+
+**Procedure Name:** Registration procedure for mobility and periodic registration update
+
+**1. States:**
+
+*   "5GMM-REGISTERED"
+*   "5GMM-IDLE"
+*   "5GMM-CONNECTED"
+*   "5GMM-DEREGISTERED"
+*   "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE"
+*   "5GMM-REGISTERED.NORMAL-SERVICE"
+*   "5GMM-REGISTERED.NON-ALLOWED-SERVICE"
+*   "5GMM-REGISTERED.LIMITED-SERVICE"
+*   "5GMM-REGISTERED.PLMN-SEARCH"
+*   "5GMM-DEREGISTERED.NO-SUPI"
+*   "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+
+**2. Actions (UE):**
+
+*   "Initiate the registration procedure by sending a REGISTRATION REQUEST message"
+*   "Start timer T3510"
+*   "Stop timer T3502"
+*   "Stop timer T3511"
+*   "Include IEs in the REGISTRATION REQUEST message (e.g., 5GS mobile identity, Requested NSSAI, Uplink data status)"
+*   "Handle the 5GS mobile identity IE"
+*    "Return a REGISTRATION COMPLETE message to the AMF"
+*   "Delete its old TAI list and store the received TAI list"
+*   "Reset the registration attempt counter"
+*   "Enter state 5GMM-REGISTERED"
+*   "Send Uplink data status IE"
+
+**3. Actions (AMF):**
+
+*   "Send a REGISTRATION ACCEPT message to the UE"
+*   "Send a REGISTRATION REJECT message to the UE"
+*   "Include IEs in the REGISTRATION ACCEPT message (e.g., new 5G-GUTI, TAI list, MICO indication)"
+*   "Start timer T3550"
+*   "Enter state 5GMM-COMMON-PROCEDURE-INITIATED"
+*   "Store UE capabilities"
+*   "Perform integrity check"
+*   "Initiate a security mode control procedure"
+*   "Initiate the UUAA-MM procedure"
+*   "Release the NAS signalling connection"
+
+**4. Events (Triggers):**
+
+*   "UE detects that the current TAI is not in the list of tracking areas"
+*   "Timer T3512 expires in 5GMM-IDLE mode"
+*   "UE receives a CONFIGURATION UPDATE COMMAND message indicating 'registration requested'"
+*   "Inter-system change from S1 mode to N1 mode"
+*   "UE receives an indication of 'RRC Connection failure' from the lower layers"
+*   "UE changes the 5GMM capability"
+*   "UE's usage setting changes"
+*   "UE needs to change the slice(s) it is currently registered to"
+*   "UE changes the UE specific DRX parameters"
+*   "Reception of a paging message"
+*   "Reception of NOTIFICATION message"
+*   "UE moves from a tracking area for which the TAI is configured for partially rejected NSSAI to another tracking area"
+    "Fallback indication"
+    "RRC Connection failure indication from the lower layers"
+    "Upper layer request to establish an emergency PDU session or perform emergency services fallback"
+    "UE needs to register for SMS over NAS or indicate a change in the requirements to use SMS over NAS or de-register from SMS over NAS"
+    "UE needs to indicate PDU session status to the network after performing a local release of PDU session(s)"
+    "UE in 5GMM-IDLE mode changes the radio capability for NG-RAN or E-UTRAN"
+*   "Reception of a REGISTRATION REJECT message"
+*   "Manual CAG selection"
+*   "Change in WUS assistance information or PEIPS assistance information conditions"
+*    "UE enters a cell in the current registration area belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN"
+*   "UE receives over 3GPP access a SERVICE REJECT message or a DL NAS TRANSPORT message with the 5GMM cause value set to #28 "Restricted service area";"
+*   "RAN timing synchronization status change"
+
+**5. Parameters:**
+
+*   "REGISTRATION REQUEST message (including various IEs)"
+*   "REGISTRATION ACCEPT message (including various IEs)"
+*   "REGISTRATION REJECT message (including 5GMM cause value)"
+*   "5G-GUTI"
+*   "TAI list"
+*   "NSSAI"
+*   "5GS registration type"
+*   "Uplink data status"
+*   "PDU session status"
+*   "Service area restrictions"
+*   "MICO indication"
+*   "T3324 value"
+*   "T3512 value"
+
+**6. Conditionals:**
+
+*   "If the registration update request has been accepted by the network..."
+*   "If timer T3513 is running in the AMF..."
+*   "If the UE has set the CAG bit to 'CAG supported'..."
+*   "If the REGISTRATION ACCEPT message contains a 5G-GUTI..."
+*   "If the registration area contains TAIs belonging to different PLMNs which are equivalent PLMNs..."
+
+**7. Metadata:**
+
+*   "3GPP TS __23.501__"
+*   "3GPP TS __24.501__"
+*   "3GPP TS __23.003__"
+*   "5GMM cause value"
+*   "Timer values (T3510, T3502, T3511, T3346, T3550)"
+
+**Key Information and Description:**
+
+The 5GMM registration procedure for mobility and periodic registration update is crucial for maintaining UE connectivity and updating the network with the UE's current status, capabilities, and preferences. It involves a series of message exchanges between the UE and the AMF, with various conditions and parameters influencing the flow. The procedure can result in the acceptance or rejection of the UE's registration, leading to different state transitions and actions.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["UE: Initiate Registration (Various triggers)"] --> B{{"UE: Construct REGISTRATION REQUEST message"}}
+    B --> C["UE: Send REGISTRATION REQUEST to AMF"]
+    C --> D["AMF: Receive REGISTRATION REQUEST"]
+    D --> E{{"AMF: Registration Accepted?"}}
+    E -- "Yes" --> F["AMF: Construct REGISTRATION ACCEPT message"]
+    F --> G["AMF: Send REGISTRATION ACCEPT to UE"]
+    G --> H["UE: Receive REGISTRATION ACCEPT"]
+    H --> I["UE: Update parameters (TAI list, 5G-GUTI)"]
+    I --> J["UE: Enter 5GMM-REGISTERED state"]
+    J --> K["UE: Send REGISTRATION COMPLETE to AMF (if needed)"]
+    K --> L["AMF: Receive REGISTRATION COMPLETE"]
+    L --> M["AMF: Enter 5GMM-REGISTERED"]
+    E -- "No" --> N["AMF: Construct REGISTRATION REJECT message (with cause)"]
+    N --> O["AMF: Send REGISTRATION REJECT to UE"]
+    O --> P["UE: Receive REGISTRATION REJECT"]
+    P --> Q["UE: Take actions based on 5GMM cause (e.g., retry, PLMN selection)"]
+    Q --> R["UE: Enter appropriate DEREGISTERED state"]
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style M fill:#ccf,stroke:#333,stroke-width:2px
+    style R fill:#ccf,stroke:#333,stroke-width:2px
+```
