@@ -1,0 +1,23 @@
+graph TD
+    A["AMF: Initiate Procedure"] --> B{"AMF: Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (EAP-Request, S-NSSAI)"};
+    B --> C["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    C --> D["UE: Pass EAP-Request and S-NSSAI to Upper Layers"];
+    D --> E{"UE: Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (EAP-Response, S-NSSAI)"};
+    E --> F["AMF: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE"];
+    F --> G{"AMF: Pass EAP-Response to Upper Layers/AAA-S"};
+    G --> H{{"Authentication Successful?"}};
+    H -- Yes --> I{"AMF: Send NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (EAP-Success, S-NSSAI)"};
+    H -- No --> B;
+    I --> J["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT"];
+    J --> K["UE: Pass EAP-Success/Failure and S-NSSAI to Upper Layers"];
+    K --> L["End"];
+    B --> M{"Timer T3575 Expired?"};
+    M -- Yes --> N["AMF: Retransmit NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    N --> B;
+    M -- No --> C;
+    F --> O{{"Conflicting Procedure?"}};
+    O -- Yes --> P["AMF: Abort Procedure"];
+    O -- No --> G;
+    C --> Q{{"Conflicting Procedure?"}};
+    Q -- Yes --> R["UE: Ignore NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    Q -- No --> D;

@@ -1,0 +1,108 @@
+Okay, I will analyze the provided text, identify the main procedure, extract its information, and map it to the specified format.
+
+**Main Procedure:** Network slice-specific authentication and authorization procedure
+
+**Procedure Information Extraction and Mapping:**
+
+**1. Core Components Identification**
+
+*   **States:**
+    *   UE Initial State (e.g., 5GMM-REGISTERED)
+    *   AMF Initial State (e.g., Waiting for NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE)
+    *   Authentication in Progress
+    *   Authentication Successful
+    *   Authentication Failed
+    *   De-registered
+
+*   **Actions:**
+    *   AMF sends NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND
+    *   UE receives NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND
+    *   UE sends NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE
+    *   AMF receives NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE
+    *   AMF retransmits NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND
+    *   AMF sends NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT
+    *   UE receives NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT
+    *   Upper Layers Process EAP messages
+    *   Start/Stop Timers (T3575, T3346)
+    *   Abort procedure
+
+*   **Events:**
+    *   Receipt of NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND
+    *   Receipt of NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE
+    *   Timer expiry (T3575)
+    *   Lower Layer Indication of non-delivered NAS PDU
+    *   Receipt of DEREGISTRATION REQUEST
+    *   Receipt of SERVICE REQUEST
+    *   Receipt of REGISTRATION REQUEST
+    *   Transmission failure of NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE
+
+*   **Parameters:**
+    *   EAP-Request message
+    *   EAP-Response message
+    *   EAP-Success message
+    *   EAP-Failure message
+    *   S-NSSAI (HPLMN S-NSSAI or SNPN S-NSSAI)
+    *   TAI List
+    *   Access Type
+    *   UE Request Type IE
+    *   Unavailability information IE
+
+*   **Flow of Execution:**
+    1.  AMF initiates procedure by sending NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND with EAP-Request and S-NSSAI.
+    2.  UE receives command, passes EAP-Request and S-NSSAI to upper layers.
+    3.  UE sends NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE with EAP-Response and S-NSSAI.
+    4.  AMF receives complete message, passes EAP-Response to upper layers or AAA-S.
+    5.  Steps 1-4 may repeat.
+    6.  AMF sends NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT with EAP-Success/Failure and S-NSSAI.
+    7.  UE receives result message, passes EAP-Success/Failure and S-NSSAI to upper layers.
+
+*   **Conditionals:**
+    *   If timer T3575 expires.
+    *   If handover occurs.
+    *   If conflicting procedure (De-registration, Service Request, Registration) is initiated.
+    *   If access type in de-registration request matches.
+    *   If UE Request Type is "NAS signalling connection release".
+    *   If Unavailability information IE is present in Registration Request.
+    *   If current TAI is in the TAI list.
+
+**2. Key Information and Description**
+
+*   **Purpose:** To enable (re-)authentication and (re-)authorization of the UE's upper layers for a specific network slice.
+*   **Trigger:** Invoked by the AMF for a UE supporting network slice-specific authentication and authorization.
+*   **Messages:**
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (AMF -> UE)
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (UE -> AMF)
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (AMF -> UE)
+*   **Reliability:** Provides a reliable transport of EAP messages.
+*   **EAP Types:** Request, Response, Success, Failure.
+*   **AMF Timer:** T3575 for retransmission.
+*   **UE Timer:** T3346
+*   **References:** IETF RFC 3748 [34], 3GPP TS 23.501 [8], 3GPP TS 23.502 [9]
+
+**3. Mermaid Flowchart**
+
+```mermaid
+graph TD
+    A["AMF: Initiate Procedure"] --> B{"AMF: Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (EAP-Request, S-NSSAI)"};
+    B --> C["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    C --> D["UE: Pass EAP-Request and S-NSSAI to Upper Layers"];
+    D --> E{"UE: Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (EAP-Response, S-NSSAI)"};
+    E --> F["AMF: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE"];
+    F --> G{"AMF: Pass EAP-Response to Upper Layers/AAA-S"};
+    G --> H{{"Authentication Complete?"}};
+    H -- Yes --> I{"AMF: Send NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (EAP-Success/Failure, S-NSSAI)"};
+    H -- No --> B;
+    I --> J["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT"];
+    J --> K["UE: Pass EAP-Success/Failure and S-NSSAI to Upper Layers"];
+    K --> L["End"];
+    B --> M{"Timer T3575 Expired?"};
+    M -- Yes --> N["AMF: Retransmit NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    N --> B;
+    M -- No --> C;
+    F --> O{"Conflicting Procedure?"};
+    O -- Yes --> P["AMF: Abort Procedure"];
+    O -- No --> G;
+    C --> Q{"Conflicting Procedure?"};
+    Q -- Yes --> R["UE: Ignore NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    Q -- No --> D;
+```

@@ -1,0 +1,7 @@
+graph TD
+    A["Start"] --> B{"5GMM STATUS message sent by UE or AMF"};
+    B --> C{"Receipt in UE or AMF"};
+    C --> D{"No state transition (radio interface)"};
+    C --> E{"Implementation-defined local actions"};
+    D --> F["End"];
+    E --> F

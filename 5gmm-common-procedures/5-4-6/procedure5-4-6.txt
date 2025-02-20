@@ -1,0 +1,40 @@
+Okay, I will analyze the provided 3GPP text section, identify the main procedure, extract relevant information, and represent it using the specified format, including the Mermaid flowchart.
+
+**Main Procedure:** 5GMM Status Procedure
+
+**Procedure Information Extraction:**
+
+*   **Purpose:** To report error conditions detected upon receipt of 5GMM protocol data in the AMF or UE.
+*   **Initiation:** The 5GMM STATUS message can be sent by both the AMF and the UE.
+*   **Receipt in UE:**  No state transition or specific action is mandated from the radio interface perspective. Local actions are implementation-dependent.
+*   **Receipt in AMF:** No state transition or specific action is mandated from the radio interface perspective. Local actions are implementation-dependent.
+
+**Key Information and Description:**
+
+| Key Information        | Description                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5GMM STATUS message    | A message used to report error conditions detected upon receipt of 5GMM protocol data.                                                                                                                                                                                                                                                        |
+| Error Conditions       | Conditions detected in the AMF or UE related to received 5GMM protocol data.                                                                                                                                                                                                                                                              |
+| AMF                    | Access and Mobility Management Function; a core network element.                                                                                                                                                                                                                                                                             |
+| UE                     | User Equipment; a mobile device.                                                                                                                                                                                                                                                                                                          |
+| Implementation-defined | The actions taken by the UE or AMF upon receiving a 5GMM STATUS message are not standardized and are left to the implementation of the specific network or device.                                                                                                                                                                           |
+| No State Transition    | Receiving a 5GMM STATUS message does not cause the UE or AMF to change its state from a radio interface perspective.                                                                                                                                                                                                                        |
+| Local Actions          | Actions taken by UE or AMF upon receipt of 5GMM STATUS message. These are implementation specific and not defined in the standard from a radio interface perspective.                                                                                                                                                                      |
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["Start"] --> B{"5GMM STATUS message sent by UE or AMF"};
+    B --> C{{"Receipt of 5GMM STATUS message"}};
+    C --> D{"UE"};
+    C --> E{"AMF"};
+    D --> F{"No state transition (radio interface)"};
+    D --> G{"Implementation-defined local actions"};
+    E --> H{"No state transition (radio interface)"};
+    E --> I{"Implementation-defined local actions"};
+    F --> J["End"];
+    G --> J
+    H --> K["End"];
+    I --> K
+```
