@@ -1,0 +1,36 @@
+```mermaid
+graph TD
+    A["UE in state 5GMM-DEREGISTERED"] --> B{ "UE performs initial registration for:"};
+    B -- "5GS services" --> C["Send REGISTRATION REQUEST (initial registration) to AMF"];
+    B -- "emergency services" --> D["Send REGISTRATION REQUEST (emergency registration) to AMF"];
+    B -- "SMS over NAS" --> C;
+    B -- "GERAN/UTRAN to NG-RAN" --> C;
+    B -- "SNPN onboarding services" --> E["Send REGISTRATION REQUEST (SNPN onboarding registration) to AMF"];
+    B -- "disaster roaming services" --> F["Send REGISTRATION REQUEST (disaster roaming initial registration) to AMF"];
+    B -- "Resume normal services" --> C;
+    D --> G{"UE already registered for emergency services over non-current access?"};
+    G -- "Yes" --> H{ "Initial registration to perform handover?"};
+    H -- "Yes" --> C;
+    H -- "No" --> I["Do not initiate"];
+    G -- "No" --> C;
+    C --> J["Start timer T3510, stop timers T3502 & T3511"];
+    E --> J;
+    F --> J;
+    J --> K["Handle 5GS mobile identity IE"];
+    K --> L{ "Previous S1 registration & 'interworking without N26 interface not supported'?"};
+    L -- "Yes" --> M{"Valid native 4G-GUTI available?"};
+    M -- "Yes" --> N["Create 5G-GUTI, include in 5GS mobile identity IE"];
+    M -- "No" --> O["Include UE status IE & ATTACH REQUEST"];
+    L -- "No" --> P{ "Valid 5G-GUTI available?"};
+    P -- "Yes" --> Q["Include 5G-GUTI in Additional GUTI IE & 5GS mobile identity IE"];
+    P -- "No" --> R{"Initiating emergency services?"};
+    R -- "Yes" --> S["Include PEI in 5GS mobile identity IE"];
+    R -- "No" --> O;
+    O --> T["Include UE status IE"];
+    N --> T;
+    Q --> T;
+    S --> T;
+    T --> U["Include other IEs as needed (5GS update type, MICO indication, etc.)"];
+    U --> V["Send REGISTRATION REQUEST to AMF"];
+
+```
