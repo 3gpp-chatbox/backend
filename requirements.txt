@@ -7,3 +7,4 @@ python-dotenv
 neo4j
 docling
 google-genai
+psycopg2

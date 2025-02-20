@@ -8,7 +8,6 @@ import re
 from typing import Dict, List, Optional
 from docx import Document
 from dataclasses import dataclass
-from collections import defaultdict
 
 @dataclass
 class Section:
@@ -101,7 +100,6 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
     current_sections = [None] * (max_heading_level + 1)  # Track current section at each level
     current_content = []
     top_level_sections = []  # Store all level 1 sections
-    excluded_section = ["scope", "references", "abbreviations" ]
     max_chunk_size = 2000
     
     paragraphs = extract_paragraphs(doc)
@@ -109,11 +107,11 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
     for para in paragraphs:
         level = para.get("level")
         
-        if level is not None and level <= max_heading_level and para["text"][0].isdigit() and all(word not in para["text"].lower() for word in excluded_section):
+        if level is not None and level <= max_heading_level and para["text"][0].isdigit():
             # We found a heading, create a new section
             new_section = Section(
                 level=level,
-                heading=para["text"].strip(),
+                heading=para["text"].strip().replace(" ", "_"),
                 content=[],
                 subsections=[],
                 parent=current_sections[level - 1] if level > 0 else None
@@ -211,15 +209,26 @@ def text_cleaner(text: str) -> str:
     return ' '.join(normalized_words)
 
 
-def remove_paragraphs(doc, excluded_paragraphs):
+def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     """
-    Remove paragraphs from the document based on heading style.
-    This function removes all paragraphs that are part of excluded sections.
+    Remove specified sections from a document and save the stripped version.
+
+    Args:
+        file_path (str): Path to the source document
+        excluded_sections (List[str]): List of section names to remove from the document
+
+    Returns:
+        str: Path to the saved stripped document in the data/stripped directory
+
+    This function removes all paragraphs that are part of the excluded sections and
+    saves the resulting document with the same name in the data/stripped directory.
     """
+    doc = load_document(file_path)
+
     remove = True
     for para in doc.paragraphs:
         para.text = text_cleaner(para.text)
-        if para.style.name.startswith("Heading") and any(word in para.text.lower() for word in excluded_paragraphs):
+        if para.style.name.startswith("Heading") and any(word in para.text.lower() for word in excluded_sections):
             remove = True
 
         elif para.style.name.startswith("Heading") and remove:
@@ -229,6 +238,9 @@ def remove_paragraphs(doc, excluded_paragraphs):
             p = para._element
             p.getparent().remove(p)
 
-    doc.save("data/stripped/24501-j11.docx")
+    # Extract original filename and save stripped version
+    doc_name = Path(file_path).name
+    save_path = f"data/stripped/{doc_name}"
+    doc.save(save_path)
+    return save_path
         
-    
