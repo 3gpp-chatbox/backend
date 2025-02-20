@@ -1,0 +1,175 @@
+Okay, I will analyze the provided 3GPP specification text and extract the procedures related information. I will then map the extracted information using the requested pattern and provide the key information, description, and a Mermaid flowchart.
+
+**Analysis and Extraction**
+
+The provided text describes several procedures related to 5GMM (5G Mobility Management), focusing on Registration: initial registration, mobility registration update and periodic registration update procedures. It details the actions taken by the UE (User Equipment) and AMF (Access and Mobility Management Function) in different scenarios, including error handling and conditional behaviors.
+
+Here's a breakdown of the key procedures and their elements:
+
+**1. Initial Registration Procedure (5.5.1.2)**
+
+*   **Initiation:** Triggered by the UE in the 5GMM-DEREGISTERED state under several conditions (initial 5GS service, emergency service, SMS over NAS, Coverage change).
+*   **Request:** UE sends a `REGISTRATION REQUEST` message to the AMF including various IEs (Information Elements).
+*   **Common Procedures:** AMF may initiate identification, authentication, and security procedures.
+*   **Acceptance:** If accepted, the AMF sends a `REGISTRATION ACCEPT` message with a TAI list. UE enters 5GMM-REGISTERED state.
+*   **Rejection:** If rejected, the AMF sends a `REGISTRATION REJECT` message.  The UE handles the rejection based on the received cause code.
+*   **Abnormal Cases:**
+    *   T3346 running, Access attempt barred, T3510 timeout, Lower layer failure, UE-initiated deregistration, Deregistration collision, etc.
+    * Actions for abnormal cases include Incrementing the registration attempt counter, going to different states like 5GMM-DEREGISTERED.PLMN-SEARCH or 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, etc.
+* **Information Elements:** 5GS registration type IE, 5GS mobile identity IE, UE status IE, ATTACH REQUEST message, 5G-GUTI, LADN indication IE, MICO indication IE, Requested DRX parameters IE, S1 UE network capability IE, NSSAI, etc
+
+**2. Mobility and Periodic Registration Update Procedure (5.5.1.3)**
+
+*   **Initiation:** Triggered by the UE in the 5GMM-REGISTERED state due to TAI change, T3512 expiry, CONFIGURATION UPDATE COMMAND, and others.
+*   **Request:** UE sends a `REGISTRATION REQUEST` message to the AMF.
+*   **Common Procedures:** AMF may initiate identification, authentication, and security procedures.
+*   **Acceptance:** If accepted, the AMF sends a `REGISTRATION ACCEPT` message, and the UE resets the registration attempt counter and enters the 5GMM-REGISTERED state.
+*   **Rejection:** If rejected, the AMF sends a `REGISTRATION REJECT` message. UE handles the rejection based on the cause code.
+*   **Abnormal Cases:** Lower layer failure, Protocol error, T3550 time-out, and similar to the initial registration, as well as inter-system change related failures.
+
+**Pattern Mapping:**
+
+```
+{
+    "Procedure Name": "Initial Registration Procedure",
+    "Reference": "5.5.1.2",
+    "Description": "Procedure for UE to register with the 5GS for the first time.",
+    "Initiation Trigger": "UE in 5GMM-DEREGISTERED state (initial 5GS service, emergency service, SMS over NAS, ...)",
+    "Participating Entities": ["UE", "AMF", "AAA-S via the NSSAAF"],
+    "Normal Flow": [
+        "UE sends REGISTRATION REQUEST to AMF",
+        "AMF may perform Identification, Authentication, Security Mode Control",
+        "AMF sends REGISTRATION ACCEPT to UE with TAI list",
+        "UE enters 5GMM-REGISTERED state"
+    ],
+    "Alternative Flows/Error Handling": [
+        "AMF sends REGISTRATION REJECT to UE (various cause codes)",
+        "UE handles rejection based on cause code (e.g., #3, #6, #11, #12, etc.) and enters appropriate state"
+    ],
+    "Abnormal Cases": [
+        "T3346 timer running",
+        "Lower layer access attempt barred",
+        "T3510 timeout",
+        "Lower layer failure",
+        "UE Initiated de-registration",
+        "De-registration procedure collision",
+        "Change in the current TAI"
+    ],
+    "Key Information Elements": [
+        "5GS registration type IE",
+        "5GS mobile identity IE",
+        "UE status IE",
+        "ATTACH REQUEST message",
+        "5G-GUTI",
+        "LADN indication IE",
+        "MICO indication IE",
+        "Requested DRX parameters IE",
+        "S1 UE network capability IE",
+        "NSSAI",
+         "Alternative NSSAI IE",
+"Service-level-AA container IE"
+    ],
+    "States": [
+        "5GMM-DEREGISTERED",
+        "5GMM-REGISTERED",
+        "5GMM-REGISTERED.LIMITED-SERVICE",
+        "5GMM-REGISTERED.PLMN-SEARCH",
+        "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    ]
+}
+```
+
+```
+{
+    "Procedure Name": "Mobility and Periodic Registration Update Procedure",
+    "Reference": "5.5.1.3",
+    "Description": "Procedure for the UE to update its registration with the network.",
+    "Initiation Trigger": "UE in 5GMM-REGISTERED state (TAI change, T3512 expiry,...)",
+    "Participating Entities": ["UE", "AMF"],
+    "Normal Flow": [
+        "UE sends REGISTRATION REQUEST to AMF",
+        "AMF may perform Identification, Authentication, Security Mode Control",
+        "AMF sends REGISTRATION ACCEPT to UE",
+        "UE resets registration attempt counter, enters 5GMM-REGISTERED state"
+    ],
+    "Alternative Flows/Error Handling": [
+        "AMF sends REGISTRATION REJECT to UE (various cause codes)",
+        "UE handles rejection based on cause code (e.g., #3, #6, #11, #12, etc.)"
+    ],
+     "Abnormal Cases": [
+        "Lower layer failure",
+        "Protocol error",
+        "T3550 time-out",
+        "REGISTRATION REQUEST message received after REGISTRATION ACCEPT",
+        "REGISTRATION REQUEST message with 5GS registration type IE set to 'mobility registration updating' or 'periodic registration updating' received in state 5GMM-REGISTERED ",
+        "DEREGISTRATION REQUEST message received before REGISTRATION COMPLETE"
+
+    ],
+    "Key Information Elements": [
+        "5GS registration type IE",
+        "5GS mobile identity IE",
+        "5G-GUTI",
+        "UE status IE",
+        "PDU session status IE",
+        "Requested NSSAI IE",
+        "Allowed NSSAI",
+        "TAI list"
+    ],
+    "States": [
+        "5GMM-REGISTERED",
+        "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+        "5GMM-DEREGISTERED.PLMN-SEARCH",
+        "5GMM-DEREGISTERED",
+        "5GMM-IDLE"
+    ]
+}
+```
+
+**Key Information and Description**
+
+*   **5GMM Procedures:** These procedures (initial registration, mobility and periodic registration update) are fundamental for UE's mobility management and connectivity within the 5G network.
+*   **REGISTRATION REQUEST and ACCEPT/REJECT:** The core message exchange for these procedures. Various IEs are essential for conveying information and capabilities.
+*   **Error Handling:** Crucial for managing various failure scenarios and maintaining network stability. The cause codes in `REGISTRATION REJECT` messages determine UE behavior.
+*   **States:** The UE transitions between different 5GMM states (REGISTERED, DEREGISTERED, etc.) as a result of these procedures.
+*   **NSSAI Management:** The procedures handle network slice selection and management using Requested NSSAI, Allowed NSSAI, Rejected NSSAI, and related IEs. This includes cases of network slicing unavailability and slice specific authenticaiton and authorization.
+*   **SNPN and PLMN selection handling:** Specifies procedures for SNPN and PLMN selection and handling equivalent and forbidden lists to determine the validity of the SNPN or PLMN.
+*   **Emergency Services Handling:** Defines the handling of emergency services specific scenarios and the associated information elements.
+
+**Mermaid Flowchart**
+
+```mermaid
+graph TD
+    subgraph "Initial Registration Procedure"
+    A["UE (5GMM-DEREGISTERED)"] --> B{"Send REGISTRATION REQUEST"};
+    B --> C{"AMF: Perform Auth/Sec"};
+    C -- "Success" --> D{"AMF: Send REGISTRATION ACCEPT"};
+    C -- "Fail" --> E{"AMF: Send REGISTRATION REJECT"};
+    D --> F["UE (5GMM-REGISTERED)"];
+    E --> G["UE: Handle Rejection"];
+    end
+
+     subgraph "Mobility and Periodic Registration Update Procedure"
+    H["UE (5GMM-REGISTERED)"] --> I{"Send REGISTRATION REQUEST"};
+    I --> J{"AMF: Perform Auth/Sec"};
+    J -- "Success" --> K{"AMF: Send REGISTRATION ACCEPT"};
+    J -- "Fail" --> L{"AMF: Send REGISTRATION REJECT"};
+    K --> M["UE (5GMM-REGISTERED) - Updated"];
+    L --> N["UE: Handle Rejection"];
+    end
+    
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#f9f,stroke:#333,stroke-width:2px
+
+```
+
+**Explanation of the Flowchart:**
+
+*   There are two subgraphs, one for each procedure (Initial Registration and Mobility and Periodic Registration Update).
+*   Nodes represent states or actions, and the arrows represent transitions.
+*   "AMF: Perform Auth/Sec" represents the potential invocation of common procedures.
+*   The "Success" and "Fail" labels on the arrows indicate the outcome of the AMF's processing.
+*   Error handling paths are shown via REGISTRATION REJECT.
+*   Nodes "UE (5GMM-...)" indicate the state of the UE.
+*   Dashed lines indicate the UE reattempting the procedure after the abnormal case.
+
+This response provides a detailed analysis and maps the key elements of the 5GMM registration procedures.

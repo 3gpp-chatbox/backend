@@ -1,0 +1,21 @@
+graph TD
+    subgraph "Initial Registration Procedure"
+    A["UE (5GMM-DEREGISTERED)"] --> B{"Send REGISTRATION REQUEST"};
+    B --> C{"AMF: Perform Auth/Sec"};
+    C -- "Success" --> D{"AMF: Send REGISTRATION ACCEPT"};
+    C -- "Fail" --> E{"AMF: Send REGISTRATION REJECT"};
+    D --> F["UE (5GMM-REGISTERED)"];
+    E --> G["UE: Handle Rejection"];
+    end
+
+    subgraph "Mobility and Periodic Registration Update Procedure"
+    H["UE (5GMM-REGISTERED)"] --> I{"Send REGISTRATION REQUEST"};
+    I --> J{"AMF: Perform Auth/Sec"};
+    J -- "Success" --> K{"AMF: Send REGISTRATION ACCEPT"};
+    J -- "Fail" --> L{"AMF: Send REGISTRATION REJECT"};
+    K --> M["UE (5GMM-REGISTERED) - Updated"];
+    L --> N["UE: Handle Rejection"];
+    end
+
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#f9f,stroke:#333,stroke-width:2px

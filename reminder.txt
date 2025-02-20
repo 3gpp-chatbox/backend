@@ -14,4 +14,18 @@ important file
 document_chunks.db
 
 
-findings:  each procedure always start with  " The purpose of the 5GMM status procedure is to "  or "The purpose of the 5GMM status procedure is to"
+findings:  
+procedure always start with 
+ " The purpose of the 5GMM status procedure is to "  
+ or 
+ "The purpose of the 5GMM status procedure is to"
+or
+ "The purpose of this procedure is to"
+ "The registration procedure is always initiated.."
+ "This procedure can be used by"
+ "This procedure is used by"
+ "The de-registration procedure is used:"
+ "The eCall inactivity procedure is performed only in 3GPP"
+ "The purpose of the authentication and key agreement procedure:"
+ "The paging procedure is performed only in 3GPP access and used by"
+ "The notification procedure is used by the network:"
