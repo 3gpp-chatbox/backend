@@ -1,0 +1,91 @@
+Okay, I will analyze the provided text and extract information about the main procedure discussed, mapping it to the requested format.
+
+**Main Procedure:** UE-initiated de-registration procedure
+
+**Core Components:**
+
+*   **States:**
+    *   5GMM-REGISTERED
+    *   5GMM-REGISTERED-INITIATED
+    *   5GMM-DEREGISTERED-INITIATED
+    *   5GMM-DEREGISTERED
+    *   5GMM-NULL
+    *   5GMM-IDLE
+    *   5GMM-CONNECTED
+*   **Actions:**
+    *   Sending DEREGISTRATION REQUEST message
+    *   Starting/Stopping timers (T3519, T3521)
+    *   Storing SUCI
+    *   Local release of PDU sessions (3GPP, non-3GPP, MA PDU)
+    *   Leaving multicast MBS sessions
+    *   Entering specific 5GMM states
+    *   Aborting de-registration procedure
+    *   Initiating registration procedure
+    *   Disabling N1 mode capability
+*   **Events:**
+    *   UE decides to de-register
+    *   USIM removal
+    *   Switch off
+    *   Lower layer failure
+    *   T3521 timeout
+    *   Reception of DEREGISTRATION ACCEPT message
+    *   Change in TAI
+    *   Transmission failure
+    *   RRC connection suspended
+    *   Indication of disabling 5GS services
+    *   Lower layers indicate access barring
+    *   Receiving DEREGISTRATION REQUEST from network (collision)
+    *   Receiving 5GMM common procedure messages (collision)
+*   **Parameters:**
+    *   De-registration type (switch off, normal de-registration)
+    *   Access type (3GPP, non-3GPP, both)
+    *   5G-GUTI
+    *   SUCI
+    *   PEI
+    *   Unavailability information IE
+    *   5GMM cause (SNPN authorization failures, CAG authorization failures)
+*   **Flow of Execution:** Described in detail in subclauses 5.5.2.2.1, 5.5.2.2.2, 5.5.2.2.3, 5.5.2.2.4 and 5.5.2.2.5
+*   **Conditionals:** Multiple `if` statements based on various conditions like:
+    *   UE having valid 5G-GUTI/SUCI
+    *   Timer T3519 running
+    *   De-registration due to switch off
+    *   UE in specific 5GMM states
+    *   Access type
+    *   Support for N1 mode only
+    *   Change in TAI
+    *   Lower layer indications
+    *   Reception of network messages
+*   **Metadata:**
+    *   Message type: DEREGISTRATION REQUEST, DEREGISTRATION ACCEPT
+    *   Timers: T3519, T3521
+
+**Key Information and Description:**
+
+The UE-initiated de-registration procedure allows the UE to deregister from 5GS services over 3GPP access, non-3GPP access, or both. The procedure involves sending a `DEREGISTRATION REQUEST` message to the AMF, which may respond with a `DEREGISTRATION ACCEPT` message (unless the de-registration type is "switch off"). The procedure includes handling various scenarios such as USIM removal, switch off, timer expirations, lower layer failures, and collisions with other procedures. The UE transitions between different 5GMM states during the procedure.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["UE: Start UE-initiated De-registration"] --> B{"Valid 5G-GUTI?"};
+    B -- "Yes" --> C["Populate 5GS mobile identity IE with 5G-GUTI"];
+    B -- "No" --> D{"Timer T3519 running AND not due to USIM removal?"};
+    D -- "Yes" --> E["Populate 5GS mobile identity IE with stored SUCI"];
+    D -- "No" --> F["Generate fresh SUCI, Populate 5GS mobile identity IE with SUCI, Start Timer T3519, Store SUCI"];
+    C --> G["Send DEREGISTRATION REQUEST"];
+    E --> G
+    F --> G
+    G --> H{"De-registration due to switch off?"};
+    H -- "Yes" --> I["UE: Try to send for 5 seconds, May switch off after sending"];
+    H -- "No" --> J{"UE in 5GMM-REGISTERED or 5GMM-REGISTERED-INITIATED?"};
+    J -- "Yes" --> K["Start Timer T3521, Enter 5GMM-DEREGISTERED-INITIATED"];
+    J -- "No" --> K
+    K --> L{"AMF: Receive DEREGISTRATION REQUEST"};
+    L --> M{"De-registration type 'switch off'?"};
+    M -- "Yes" --> N["AMF: Procedure Completed"];
+    M -- "No" --> O["AMF: Send DEREGISTRATION ACCEPT"];
+    O --> P["UE: Receive DEREGISTRATION ACCEPT"];
+    P --> Q["Stop Timer T3521, Stop Timer T3519 if running, Delete stored SUCI"];
+    Q --> R["UE: De-registration Completed"];
+    I --> L
+```

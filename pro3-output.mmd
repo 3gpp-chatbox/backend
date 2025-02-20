@@ -1,0 +1,22 @@
+graph TD
+    A["UE: Start UE-initiated De-registration"] --> B{"Valid 5G-GUTI?"};
+    B -- "Yes" --> C["Populate 5GS mobile identity IE with 5G-GUTI"];
+    B -- "No" --> D{"Timer T3519 running AND not due to USIM removal?"};
+    D -- "Yes" --> E["Populate 5GS mobile identity IE with stored SUCI"];
+    D -- "No" --> F["Generate fresh SUCI, Populate 5GS mobile identity IE with SUCI, Start Timer T3519, Store SUCI"];
+    C --> G["Send DEREGISTRATION REQUEST"];
+    E --> G;
+    F --> G;
+    G --> H{"De-registration due to switch off?"};
+    H -- "Yes" --> I["UE: Try to send for 5 seconds, May switch off after sending"];
+    H -- "No" --> J{"UE in 5GMM-REGISTERED or 5GMM-REGISTERED-INITIATED?"};
+    J -- "Yes" --> K["Start Timer T3521, Enter 5GMM-DEREGISTERED-INITIATED"];
+    J -- "No" --> K;
+    K --> L["AMF: Receive DEREGISTRATION REQUEST"];
+    L --> M{"De-registration type 'switch off'?"};
+    M -- "Yes" --> N["AMF: Procedure Completed"];
+    M -- "No" --> O["AMF: Send DEREGISTRATION ACCEPT"];
+    O --> P["UE: Receive DEREGISTRATION ACCEPT"];
+    P --> Q["Stop Timer T3521, Stop Timer T3519 if running, Delete stored SUCI"];
+    Q --> R["UE: De-registration Completed"];
+    I --> N;

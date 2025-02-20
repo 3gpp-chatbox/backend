@@ -29,7 +29,8 @@ def extract_procedural_info_from_text(text):
 
     Remember, all your analysis and extraction should be based on the text I provide, and you should not make any assumptions. 
     If the text contains a procedure in Mermaid Flowchart code, please correct any mistakes in the Mermaid code and return only the corrected Mermaid code—no other words. 
-    If the Mermaid flowchart content is incorrect according to the text description, correct it first, then return only the correct Mermaid code.Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets.remember remove ```mermaid and ``` if there are any
+    If the Mermaid flowchart content is incorrect according to the text description, correct it first, then return only the correct Mermaid code.Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets.
+    remember remove ```mermaid and ```  in your response
     """
 
     # Send request to Gemini API to extract procedural information
@@ -66,7 +67,7 @@ input_file_path = "your_text_file.txt"  # Replace with the actual path of your .
 output_file_path = "getpro-from-p2.mmd"  # Output file path
 
 # Process the document
-procedural_info = process_document("procedure1-2.txt")
+procedural_info = process_document("pro3-output.txt")
 
 # Save the extracted procedural info
-save_procedural_info_to_mmd(procedural_info, "getpro-from-p2-1.mmd")
+save_procedural_info_to_mmd(procedural_info, "pro3-output.mmd")
