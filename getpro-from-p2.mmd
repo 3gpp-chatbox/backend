@@ -1,0 +1,16 @@
+
+graph TD
+    A["UE (5GMM-DEREGISTERED)"] --> B{UE initiates registration};
+    B -- "Initial registration for 5GS services, emergency services, SMS over NAS, etc." --> C["UE sends REGISTRATION REQUEST"];
+    B -- "Other conditions" --> D["Abort"];
+    C --> E{AMF processes REGISTRATION REQUEST};
+    E -- "Registration accepted" --> F["AMF sends REGISTRATION ACCEPT"];
+    E -- "Registration rejected" --> G["AMF sends REGISTRATION REJECT"];
+    F --> H["UE receives REGISTRATION ACCEPT"];
+    G --> I["UE receives REGISTRATION REJECT"];
+    H --> J["UE (5GMM-REGISTERED)"];
+    I --> K{UE handles rejection};
+    K -- "Retry" --> C;
+    K -- "Other actions" --> L["UE (5GMM-DEREGISTERED)"];
+    J --> M{UE sends REGISTRATION COMPLETE};
+    M --> N["AMF (5GMM-REGISTERED)"];

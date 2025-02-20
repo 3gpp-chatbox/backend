@@ -1,0 +1,16 @@
+graph TD
+    subgraph "UE"
+        A["5GMM-DEREGISTERED"] --> B{Initiate Registration?};
+        B -- Yes --> C["Send REGISTRATION REQUEST"];
+        C --> D{Network Response?};
+        D -- "REGISTRATION ACCEPT" --> E["5GMM-REGISTERED"];
+        D -- "REGISTRATION REJECT" --> F["5GMM-DEREGISTERED"];
+        F --> B;
+        B -- No --> G["Remain in 5GMM-DEREGISTERED"];
+    end
+    subgraph "Network"
+        C --> H["Process REGISTRATION REQUEST"];
+        H --> I{Accept Registration?};
+        I -- Yes --> J["Send REGISTRATION ACCEPT"];
+        I -- No --> K["Send REGISTRATION REJECT"];
+    end

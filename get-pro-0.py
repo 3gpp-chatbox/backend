@@ -23,8 +23,8 @@ def extract_procedural_info_from_text(text):
     {text}
 
  remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. 
-so now analyze the procedure , then according to it .return me  Mermaid flowchart for the first procedure using graph TD syntax .remember do no return any word except the mermaid code so i can straight copy paste your mermaid code to a file to run. Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets,ensure that the mermaid code is correct and runable. 
-below is that example: 
+this section is now, list all procedures from the  section and then focus one first procedure ,extract the the first procedure information  and use below pattern to mapping it (below is an example) finally,also Return description , a Mermaid flowchart for the first procedure using graph TD syntax (for a vertical layout). Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets. below is that example: 
+
 
 Extracting the Model from 3GPP Specification
 
@@ -74,7 +74,7 @@ def retrieve_chunks_from_db(start_id, end_id, db_path="path_to_your_db.sqlite"):
 
 
 # Function to save extracted procedural info as plain text
-def save_procedural_info_to_mmd(procedural_info, file_path):
+def save_procedural_info_to_txt(procedural_info, file_path):
     with open(file_path, "w") as file:
         file.write(procedural_info)
     print(f"Procedural info saved to {file_path}")
@@ -101,4 +101,4 @@ procedural_info = process_section(625, 765, 'document_chunks.db')
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_mmd(procedural_info, "procedure1-2.mmd")  # For plain text
+save_procedural_info_to_txt(procedural_info, "procedure1-2.mmd")  # For plain text

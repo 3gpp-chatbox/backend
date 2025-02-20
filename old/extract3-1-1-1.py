@@ -3,14 +3,16 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
+
 # Load .env file
 load_dotenv()
 
 # Configure API key
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 # Load from environment variable
 
 model = genai.GenerativeModel('gemini-1.5-flash')
+
 
 # Function to extract procedural flow from the chunk of text using Gemini
 def extract_procedural_info_from_text(text):
@@ -98,4 +100,4 @@ procedural_info = process_section(625, 765, 'document_chunks.db')
 # print("Extracted Procedural Information:\n")
 # print(procedural_info)
 
-save_procedural_info_to_txt(procedural_info, "output3-1-1-1.txt")  # For plain text
+save_procedural_info_to_txt(procedural_info, "0220TEST.txt")  # For plain text

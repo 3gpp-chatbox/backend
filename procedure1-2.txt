@@ -1,0 +1,48 @@
+**All Procedures from the Section:**
+
+1. Registration procedure for initial registration
+2. 5GMM common procedure initiation
+3. Initial registration accepted by the network
+4. Initial registration not accepted by the network
+5. Initial registration for emergency services not accepted by the network
+6. Initial registration for initiating an emergency PDU session not accepted by the network
+7. Abnormal cases in the UE
+8. Abnormal cases on the network side
+9. Registration procedure for mobility and periodic registration update
+
+
+**First Procedure: Registration procedure for initial registration**
+
+**Extracted Information and Mapping:**
+
+| Core Component       | Information                                                                                                                                                                                                    |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **States**            | 5GMM-DEREGISTERED, 5GMM-REGISTERED, 5GMM-REGISTERED-INITIATED, 5GMM-COMMON-PROCEDURE-INITIATED, 5GMM-REGISTERED.LIMITED-SERVICE, 5GMM-REGISTERED.PLMN-SEARCH, EMM-DEREGISTERED                                                                |
+| **Actions (UE)**       | Sends REGISTRATION REQUEST message, Sends REGISTRATION COMPLETE message, Stops timer T3502, Stops timer T3511, Starts timer T3510, Starts timer T3519, Creates 5G-GUTI, Includes UE status IE, Includes ATTACH REQUEST message, Includes Additional GUTI IE, Includes SUCI, Includes PEI, Deletes old TAI list, Stores TAI list, Includes 5GS update type IE, Includes MICO indication IE, Includes active time value, Includes Requested T3512 IE, Includes Requested DRX parameters IE, Includes Requested NB-N1 mode DRX parameters IE, Includes Requested extended DRX parameters IE, Includes LADN indication IE, Includes requested NSSAI, Includes mapped S-NSSAI(s), Includes Payload container IE, Includes UE STATE INDICATION message, Sends REGISTRATION REQUEST message without NAS message container IE, Sends REGISTRATION REQUEST message including NAS message container IE, Includes Additional information requested IE, Includes Requested WUS assistance information IE, Includes Requested PEIPS assistance information IE, Sets various bits in 5GMM capability IE and S1 UE network capability IE.  |
+| **Actions (Network)**  | Sends REGISTRATION ACCEPT message, Sends REGISTRATION REJECT message, Processes REGISTRATION REQUEST message, Assigns TAI list, Includes TAI list, Includes service area restrictions, Includes list of equivalent PLMNs, Includes list of equivalent SNPNs, Determines LADN DNNs, Determines negotiated UE paging probability information, Includes Negotiated WUS assistance information IE, Determines Paging subgroup ID, Includes Negotiated PEIPS assistance information IE, Includes unavailability period, Includes LADN information, Includes extended LADN information, Allocates 5G-GUTI, Includes new assigned 5G-GUTI, Includes CAG information list IE, Includes Extended CAG information list IE, Starts timer T3550, Includes UE radio capability ID IE, Includes UE radio capability ID deletion indication IE, Includes MICO indication IE, Includes active time value, Includes T3512 value IE, Includes non-3GPP de-registration timer value IE, Includes T3447 value IE, Includes T3448 value IE, Includes Truncated 5G-S-TMSI configuration IE, Initiates UUAA-MM procedure, Includes service-level-AA pending indication, Includes service-level-AA response, Includes List of PLMNs to be used in disaster condition IE, Includes Disaster roaming wait range IE, Includes Disaster return wait range IE, Includes Forbidden TAI(s) IE, Includes RAN timing synchronization IE, Includes Feature authorization indication IE, Includes RAT utilization control IE, Sets various bits in 5GS network feature support IE, Includes NSSAI inclusion mode IE, Includes Operator-defined access category definitions IE, Includes ciphering key data IE, Includes Network slicing indication IE, Includes Alternative NSSAI IE, Includes Allowed NSSAI IE, Includes Configured NSSAI IE, Includes Partially rejected NSSAI IE, Includes Partially allowed NSSAI IE, Includes On-demand NSSAI IE, Includes NSAG information IE, Includes Discontinuous coverage maximum time offset IE, Includes Unavailability configuration IE.  |
+| **Events**            | Timer T3510 timeout, Timer T3511 timeout, Timer T3519 running, Timer T3502 running, UE in state EMM-DEREGISTERED, UE in state 5GMM-DEREGISTERED, REGISTRATION REQUEST message received, REGISTRATION ACCEPT message received, REGISTRATION REJECT message received,  Lower layer failure,  Access attempt barred,  TAI change,  REGISTRATION COMPLETE message transmission failure, REGISTRATION REQUEST message transmission failure, Timer T3447 running. |
+| **Parameters**         | 5GS registration type IE, 5GS mobile identity IE, UE status IE, ATTACH REQUEST message, Additional GUTI IE, SUCI, PEI, 5GS update type IE, MICO indication IE, T3324 IE, Requested T3512 IE, Requested DRX parameters IE, Requested NB-N1 mode DRX parameters IE, Requested extended DRX parameters IE, LADN indication IE, requested NSSAI, mapped S-NSSAI(s), Payload container IE, UE STATE INDICATION message, Additional information requested IE,  5GMM capability IE, S1 UE network capability IE,  TAI list, service area restrictions, list of equivalent PLMNs, list of equivalent SNPNs, LADN information, extended LADN information,  5G-GUTI,  CAG information list IE, Extended CAG information list IE, UE radio capability ID IE, UE radio capability ID deletion indication IE, T3512 value IE, non-3GPP de-registration timer value IE, T3447 value IE, T3448 value IE, Truncated 5G-S-TMSI configuration IE, service-level-AA pending indication, service-level-AA response, List of PLMNs to be used in disaster condition IE, Disaster roaming wait range IE, Disaster return wait range IE, Forbidden TAI(s) IE, RAN timing synchronization IE, Feature authorization indication IE, RAT utilization control IE, 5GS network feature support IE, NSSAI inclusion mode IE, Operator-defined access category definitions IE, ciphering key data IE, Network slicing indication IE, Alternative NSSAI IE, Allowed NSSAI IE, Configured NSSAI IE, Partially rejected NSSAI IE, Partially allowed NSSAI IE, On-demand NSSAI IE, NSAG information IE, Discontinuous coverage maximum time offset IE, Unavailability configuration IE, 5GMM cause value,  T3346 value IE,  UE determined PLMN with disaster condition IE,  MBSRAI,  rejected NSSAI,  pending NSSAI,  NSSRG information IE,  S-NSSAI time validity information IE,  S-NSSAI location validity information IE. |
+| **Flow of Execution**   |  UE initiates registration (5GMM-DEREGISTERED -> 5GMM-REGISTERED-INITIATED) -> UE sends REGISTRATION REQUEST -> Network processes request -> Network sends REGISTRATION ACCEPT or REGISTRATION REJECT -> UE processes response (5GMM-REGISTERED or 5GMM-DEREGISTERED).  Various actions and conditionals occur within these steps based on the parameters and events. |
+| **Conditionals**       |  Many conditions based on registration type, UE capabilities, network capabilities,  availability of various IEs, timer status,  emergency status, etc.  |
+
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    subgraph "UE"
+        A[ "5GMM-DEREGISTERED" ] --> B{ "Initiate Registration?" };
+        B -- "Yes" --> C[ "Send REGISTRATION REQUEST" ];
+        C --> D{ "Network Response?" };
+        D -- "REGISTRATION ACCEPT" --> E[ "5GMM-REGISTERED" ];
+        D -- "REGISTRATION REJECT" --> F[ "5GMM-DEREGISTERED" ];
+        F --> B;
+        B -- "No" --> G[ "Remain in 5GMM-DEREGISTERED" ];
+    end
+    subgraph "Network"
+        C --> H[ "Process REGISTRATION REQUEST" ];
+        H --> I{ "Accept Registration?" };
+        I -- "Yes" --> J[ "Send REGISTRATION ACCEPT" ];
+        I -- "No" --> K[ "Send REGISTRATION REJECT" ];
+    end
+```
