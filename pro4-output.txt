@@ -1,0 +1,145 @@
+Okay, I will analyze the provided text to extract the main procedure, its information, and represent it using the specified format.
+
+**Analysis:**
+
+The primary procedure described in the text is the **Network-initiated de-registration procedure**.  The text details the initiation, completion (by both UE and Network), abnormal cases (UE and Network side), and specific actions taken by the UE and Network based on various conditions and 5GMM cause values.
+
+**Procedure Information Mapping:**
+
+**Procedure Name:** Network-initiated de-registration procedure
+
+**Core Components:**
+
+*   **States (UE):**
+    *   "5GMM-REGISTERED" (Implicit starting state)
+    *   "5GMM-DEREGISTERED"
+    *   "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    *   "5GMM-DEREGISTERED.LIMITED-SERVICE"
+    *   "5GMM-DEREGISTERED.PLMN-SEARCH"
+    *   "5GMM-DEREGISTERED.NORMAL-SERVICE"
+    *   "5GMM-DEREGISTERED.NO-SUPI"
+
+*   **States (Network):**
+    *   "5GMM-REGISTERED" (Implicit starting state)
+    *   "5GMM-DEREGISTERED-INITIATED"
+    *   "5GMM-DEREGISTERED"
+
+*   **Events:**
+    *   "Network initiates de-registration"
+    *   "UE receives DEREGISTRATION REQUEST"
+    *   "UE sends DEREGISTRATION ACCEPT"
+    *   "Network receives DEREGISTRATION ACCEPT"
+    *   "Timer T3522 expires"
+    *   "Lower layer failure"
+    *   "De-registration procedure collision"
+    *   "Registration procedure collision (initial, mobility, periodic)"
+    *   "Service request procedure collision"
+
+*   **Actions (Network):**
+    *   "Send DEREGISTRATION REQUEST message"
+    *   "Start timer T3522"
+    *   "Indicate re-registration is needed or not"
+    *   "Indicate access type (3GPP, non-3GPP, or both)"
+    *   "Set 5GMM cause value"
+    *   "Include Rejected NSSAI IE (if applicable)"
+        *   "Include Extended rejected NSSAI IE (if applicable)"
+    *   "Include CAG information list IE or Extended CAG information list IE (if applicable)"
+    *    "Trigger SMF to release PDU session(s)"
+    *   "Stop timer T3522"
+    *   "Retransmit DEREGISTRATION REQUEST"
+    *   "Abort de-registration procedure"
+
+*   **Actions (UE):**
+    *   "Receive DEREGISTRATION REQUEST message"
+    *   "Perform local release of PDU sessions"
+    *   "Stop timers (T3346, T3396, T3584, T3585, 5GSM back-off timers, ESM back-off timers)"
+    *   "Send DEREGISTRATION ACCEPT message"
+    *   "Attempt to obtain service on a higher priority PLMN or initiate initial registration"
+    *   "Re-establish previously established PDU sessions"
+    *   "Store rejected S-NSSAIs (if applicable)"
+    *   "Delete rejected NSSAI"
+    *   "Store Forbidden TAI(s) (if applicable)"
+    *   "Set 5GS update status"
+    *   "Delete parameters (5G-GUTI, TAI list, ngKSI, etc.)"
+    *   "Reset registration attempt counter"
+    *   "Disable N1 mode capability"
+    *   "Store PLMN identity in forbidden PLMN list"
+    *   "Store RAT utilization control information"
+    *   "Store disaster return wait range"
+    *   "Enter various 5GMM states"
+    *   "Search for suitable cell"
+
+*   **Parameters:**
+    *   "5GMM cause value"
+    *   "De-registration type IE (re-registration required/not required)"
+    *   "Access type (3GPP, non-3GPP, both)"
+    *   "Rejected NSSAI IE"
+    *   "Extended rejected NSSAI IE"
+    *   "CAG information list IE"
+    *   "Extended CAG information list IE"
+    *   "T3346 value IE"
+    *   "Forbidden TAI(s) IEs"
+    *   "RAT utilization control IE"
+    *   "Disaster return wait range IE"
+
+*   **Conditionals:**
+    *   "If re-registration is required/not required"
+    *   "If de-registration is for 3GPP, non-3GPP, or both access"
+    *   "Based on 5GMM cause value"
+    *   "If UE supports CAG"
+    *   "If UE supports extended rejected NSSAI"
+    *   "If UE supports MINT"
+    *   "If UE is operating in single-registration mode"
+    *   "If UE is registered for onboarding services in SNPN"
+    *   "If UE is operating in SNPN access operation mode"
+    *   "Based on the rejection cause in the rejected S-NSSAI(s)"
+
+**Key Information and Description:**
+
+*   **Network-initiated de-registration:** A procedure initiated by the network to de-register a UE from the 5G network. This can be triggered for various reasons, including network slice-specific authentication failure, CAG restrictions, PLMN restrictions, UAS service restrictions, MINT restrictions, and other network-related issues.
+*   **DEREGISTRATION REQUEST/ACCEPT:** The key messages exchanged during the procedure. The `DEREGISTRATION REQUEST` message from the network informs the UE about the de-registration and the reason for it. The `DEREGISTRATION ACCEPT` message from the UE confirms the completion of the de-registration.
+*   **5GMM Cause Values:** These values indicate the reason for the de-registration.  The UE takes specific actions based on the received 5GMM cause.
+*   **Re-registration Required:**  An indication in the `DEREGISTRATION REQUEST` that informs the UE whether it should attempt to re-register to the network after de-registration.
+*   **Access Type:**  Indicates for which access type (3GPP, non-3GPP, or both) the de-registration applies.
+*   **UE Behavior:** The UE's behavior varies greatly depending on the 5GMM cause value, whether re-registration is required, and the access type. Actions include releasing PDU sessions, deleting parameters, storing forbidden TAI/PLMN lists, and entering different 5GMM states.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    subgraph UE
+    A["5GMM-REGISTERED"];
+    B["Receive DEREGISTRATION REQUEST"];
+    C{{"De-registration type IE indicates re-registration required"}};
+    D{{"De-registration request for 3GPP access"}};
+    E["Perform local release of the PDU sessions over 3GPP access"];
+    F["Send a DEREGISTRATION ACCEPT message"];
+    G["5GMM-DEREGISTERED"];
+    H{{"De-registration type IE indicates re-registration not required"}};
+    I["Perform local release of the PDU sessions over 3GPP access if any"];
+    subgraph "Re-registration Required"
+    D --> |Yes| E;
+    E --> F;
+    end
+    subgraph "Re-registration not Required"
+    H --> |Yes| I;
+    I --> F;
+    end
+    B --> C;
+    C --> |Yes| D;
+    C --> |No| H;
+    F --> G;
+    end
+    subgraph Network
+    X["5GMM-REGISTERED"];
+    Y["Send DEREGISTRATION REQUEST message"];
+    Z["Start timer T3522"];
+    A1["5GMM-DEREGISTERED"];
+    Y --> Z;
+    end
+    X --> Y;
+    A --> B;
+    Z --> A1;
+    B --> F;
+    A1 --> F;
+```

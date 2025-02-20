@@ -67,7 +67,7 @@ input_file_path = "your_text_file.txt"  # Replace with the actual path of your .
 output_file_path = "getpro-from-p2.mmd"  # Output file path
 
 # Process the document
-procedural_info = process_document("pro3-output.txt")
+procedural_info = process_document("pro4-output.txt")
 
 # Save the extracted procedural info
-save_procedural_info_to_mmd(procedural_info, "pro3-output.mmd")
+save_procedural_info_to_mmd(procedural_info, "pro4-output.mmd")

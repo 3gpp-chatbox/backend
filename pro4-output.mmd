@@ -1,0 +1,30 @@
+graph TD
+    subgraph UE
+    A["5GMM-REGISTERED"];
+    B["Receive DEREGISTRATION REQUEST"];
+    C{{"Re-registration required"}};
+    D["Perform local release of PDU sessions"];
+    E["Send DEREGISTRATION ACCEPT"];
+    F["5GMM-DEREGISTERED"];
+    G["Attempt re-registration"];
+    H["Enter appropriate 5GMM state"];
+    B --> C;
+    C --> |Yes| D;
+    C --> |No| D;
+    D --> E;
+    E --> F;
+    C --> |Yes| G;
+    G --> H;
+    end
+    subgraph Network
+    X["5GMM-REGISTERED"];
+    Y["Send DEREGISTRATION REQUEST"];
+    Z["Start timer T3522"];
+    A1["Receive DEREGISTRATION ACCEPT"];
+    A2["5GMM-DEREGISTERED"];
+    X --> Y;
+    Y --> Z;
+    Z --> A1;
+    A1 --> A2;
+    end
+    A --> B;
