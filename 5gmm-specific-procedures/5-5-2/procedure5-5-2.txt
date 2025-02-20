@@ -1,0 +1,120 @@
+Okay, I will analyze the provided text to identify the main procedure, extract its information, map it to the specified pattern, and provide a Mermaid flowchart.
+
+**Analysis:**
+
+The text primarily focuses on the "De-registration procedure" in 5G networks. It details various scenarios, including UE-initiated and network-initiated de-registration, access types, and error handling. Given the relative length and detail given, the UE-initiated de-registration procedure appears to be a key procedure discussed.
+
+**Procedure: UE-Initiated De-registration Procedure**
+
+**Core Components:**
+
+*   **States:**
+    *   "5GMM-REGISTERED"
+    *   "5GMM-REGISTERED-INITIATED"
+    *   "5GMM-DEREGISTERED-INITIATED"
+    *   "5GMM-DEREGISTERED"
+    *   "5GMM-NULL"
+    *   "5GMM-IDLE"
+    *   "5GMM-CONNECTED"
+
+*   **Actions:**
+    *   "Send DEREGISTRATION REQUEST message"
+    *   "Start timer T3521"
+    *   "Stop timer T3521"
+    *   "Stop timer T3519"
+    *   "Delete stored SUCI"
+    *   "Local release of PDU session(s)"
+    *   "Locally leave associated multicast MBS sessions"
+    *   "Initiate a registration procedure"
+    *    "abort the de-registration procedure"
+    *   "Local de-registration"
+    *   "Enter a specific 5GMM state"
+    *   "Perform a PLMN/SNPN selection"
+    *    "Disable N1 mode capability"
+    *    "Stop timers (T3346, T3396, T3584, T3585, 5GSM back-off timers)"
+    *   "Send DEREGISTRATION ACCEPT message"
+
+*   **Events:**
+    *   "UE decides to switch off"
+    *   "eCall inactivity"
+    *   "USIM removal"
+    *   "Lower layer failure/release of N1 NAS signalling connection"
+    *   "Access attempt barred"
+    *   "T3521 timeout"
+    *   "Reception of DEREGISTRATION ACCEPT message"
+    *   "Change in current TAI"
+    *   "Transmission failure of DEREGISTRATION REQUEST message"
+    *    "lower layers indicate that the RRC connection has been suspended"
+    *   "Emergency PDU session is requested"
+    *   "SOR triggers higher priority PLMN selection"
+    *    "Disaster Roaming Disabled Indication"
+
+*   **Parameters:**
+    *   "De-registration type (switch off/normal de-registration)"
+    *   "Access type (3GPP/non-3GPP/both)"
+    *   "5G-GUTI"
+    *   "SUCI"
+    *   "PEI"
+    *   "Unavailability information IE"
+    *   "5GMM cause"
+    *    "rejected NSSAI"
+    *   "RAT utilization control IE"
+    *   "Disaster return wait range IE"
+
+*   **Flow of Execution:**
+    1.  UE initiates by sending DEREGISTRATION REQUEST.
+    2.  AMF receives and sends DEREGISTRATION ACCEPT (if not switch off).
+    3.  UE performs local release of PDU sessions based on access type.
+    4.  UE enters a specific 5GMM state.
+    5.  Handles abnormal cases (timer expiry, lower layer failures etc.)
+
+*   **Conditionals:**
+    *   "If the UE has a valid 5G-GUTI..."
+    *   "If timer T3519 is running..."
+    *   "If the de-registration request is not due to switch off..."
+    *   "If the network indicated support for unavailability period..."
+    *   "If the DEREGISTRATION REQUEST message is received by the AMF the AMF shall send a DEREGISTRATION ACCEPT message to the UE if the De-registration type IE does not indicate 'switch off'..."
+    *   "If the access type indicates..."
+    *   "If the de-registration procedure was performed due to disabling of 5GS services..."
+    *   "If the lower layers indicate that the access attempt is barred..."
+
+**Key Information and Description:**
+
+The UE-initiated de-registration procedure allows a UE to deregister from 5GS services. The procedure involves sending a DEREGISTRATION REQUEST message to the AMF, releasing PDU sessions, and transitioning to a deregistered state. The procedure handles various scenarios and potential error conditions.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["UE: 5GMM-REGISTERED or 5GMM-REGISTERED-INITIATED"] --> B{"Event: De-registration Triggered"};
+    B --> C{"Check: Switch Off, eCall, USIM Removal, etc."};
+    C -->|Yes| D["Action: Send DEREGISTRATION REQUEST (Type = Switch Off)"];
+    C -->|No| E{"Check: Valid 5G-GUTI?"};
+    E -->|Yes| F["Action: Send DEREGISTRATION REQUEST (5G-GUTI)"];
+    E -->|No| G{"Check: Timer T3519 Running?"};
+    G -->|No| H["Action: Generate Fresh SUCI, Send DEREGISTRATION REQUEST (SUCI), Start T3519"];
+    G -->|Yes| I["Action: Send DEREGISTRATION REQUEST (Stored SUCI)"];
+    H --> J["UE: 5GMM-DEREGISTERED-INITIATED, Timer T3521 Started"];
+    I --> J
+    F --> J
+    D --> K["AMF Receives DEREGISTRATION REQUEST"];
+    K --> L["UE: Switched Off (Attempt for 5 seconds)"];
+    J --> M{"Event: DEREGISTRATION ACCEPT Received"};
+    M -->|Yes| N["Action: Stop T3521, Stop T3519 (if running), Delete Stored SUCI"];
+    N --> O["UE: 5GMM-DEREGISTERED"];
+    M -->|No (T3521 Timeout)| P{"Action: Retransmit DEREGISTRATION REQUEST (Up to 4 times)"};
+    P --> Q{"Event: T3521 Expires (5th time)"};
+    Q --> R["UE: 5GMM-NULL or 5GMM-DEREGISTERED"];
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style O fill:#f9f,stroke:#333,stroke-width:2px
+    style R fill:#f9f,stroke:#333,stroke-width:2px
+
+```
+
+**Important Notes:**
+
+*   This is a simplified representation of the UE-initiated de-registration procedure based on the provided text. The actual procedure involves many more detailed steps and conditional checks.
+*   The Mermaid flowchart is designed to provide a visual overview of the key states, actions, and events involved in the procedure.
+*   Error handling (abnormal cases) is partially represented in the flowchart, but a full depiction would make it overly complex.
+*   All node labels are enclosed in double quotes and there are no extra spaces inside the {} brackets.

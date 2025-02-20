@@ -1,0 +1,65 @@
+Okay, I will analyze the provided text and extract the information about the "eCall inactivity procedure" following the requested format.
+
+**Analysis and Extraction of the eCall Inactivity Procedure**
+
+Based on the provided text, the main procedure is the **eCall inactivity procedure**.
+
+**Model Mapping**
+
+*   **Name:** eCall inactivity procedure
+*   **Description:** This procedure is performed only in 3GPP access and applicable only to a UE configured for eCall only mode.
+*   **States:**
+    *   5GMM-REGISTERED (excluding 5GMM-REGISTERED.PLMN-SEARCH and 5GMM-REGISTERED.NO-CELL-AVAILABLE)
+    *   5GMM-IDLE mode or 5GMM-CONNECTED mode with RRC inactive indication
+    *   5GMM-DEREGISTERED.eCALL-INACTIVE
+*   **Events:**
+    *   Timer T3444 expires or is found to have already expired and timer T3445 is not running.
+    *   Timer T3445 expires or is found to have already expired and timer T3444 is not running.
+    *   Timers T3444 and T3445 expire or are found to have already expired.
+    *   UE moves from GERAN or UTRAN to NG-RAN.
+*   **Actions:**
+    *   Stop all NAS timers and abort associated procedures (except T3245, TF, TG, and the timer instance associated with the entry in the list of "PLMNs not allowed to operate at the present UE location").
+    *   Reset the registration attempt counter and service request attempt counter.
+    *   If currently registered for 5GS services, perform a de-registration procedure.
+    *   Delete any 5G-GUTI, TAI list, last visited registered TAI list of equivalent PLMNs, and ngKSI.
+    *   Enter 5GMM-DEREGISTERED.eCALL-INACTIVE state.
+    *   If moving from GERAN/UTRAN to NG-RAN and T3242 is running, start T3444 with the time left on T3242 and stop T3242.
+    *   If moving from GERAN/UTRAN to NG-RAN and T3243 is running, start T3445 with the time left on T3243 and stop T3243.
+*   **Conditionals:**
+    *   UE configured for eCall only mode.
+    *   UE is in 5GMM-REGISTERED substate (excluding specific substates).
+    *   UE is in 5GMM-IDLE or 5GMM-CONNECTED mode with RRC inactive indication.
+    *   Specific timers expiring.
+    *   UE moves from GERAN/UTRAN to NG-RAN.
+    *   T3242 is running.
+    *   T3243 is running.
+*   **Parameters:**
+    *   Timers: T3444, T3445, T3245, TF, TG, T3242, T3243
+    *   5G-GUTI
+    *   TAI list
+    *   Last visited registered TAI list of equivalent PLMNs
+    *   ngKSI
+
+**Key Information and Description**
+
+*   **Purpose:** To handle inactivity in eCall only UEs within 3GPP networks.
+*   **Trigger:** Expiration of specific timers (T3444, T3445) or movement from GERAN/UTRAN to NG-RAN.
+*   **Outcome:** Transition to 5GMM-DEREGISTERED.eCALL-INACTIVE state after clearing registration information and stopping timers.
+*   **UE Requirement:** The UE must be configured for eCall only mode.
+*   **Applicability:** This procedure is only applicable to 3GPP access.
+
+**Mermaid Flowchart**
+
+```mermaid
+graph TD
+    A["5GMM-REGISTERED or 5GMM-IDLE/CONNECTED"] --> B{"T3444/T3445 Expired or GERAN/UTRAN to NG-RAN"}
+    B -- "Yes" --> C["Stop NAS timers (except T3245, TF, TG)"]
+    C --> D["Reset attempt counters"]
+    D --> E{"Registered for 5GS?"}
+    E -- "Yes" --> F["Perform De-registration"]
+    E -- "No" --> G["Delete Registration Info"]
+    F --> G["Delete Registration Info"]
+    G --> H["Enter 5GMM-DEREGISTERED.eCALL-INACTIVE"]
+    B -- "No" --> I["Procedure Ends"]
+    style I fill:#f9f,stroke:#333,stroke-width:2px
+```

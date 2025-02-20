@@ -1,0 +1,129 @@
+Okay, I will analyze the provided text, identify the main procedure, extract its information, map it to the specified pattern, and provide the key information, description and Mermaid flowchart.
+
+**Analysis:**
+
+The predominant procedure described in the text is the "Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay".  The text details the general purpose, initiation, acceptance, rejection, and abnormal cases related to this procedure.
+
+**Procedure Information Extraction and Mapping:**
+
+**Procedure:** Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+
+**1. General (5.5.4.1):**
+
+*   **Purpose:** Authentication of the 5G ProSe remote/end UE initiated by the relay UE, and agreement on KAUSF_P and KNR_ProSe for secure 5G ProSe communication over control plane.
+*   **Initiation:** Upon receiving ProSe direct link establishment request including SUCI or CP-PRUK ID from the 5G ProSe remote/end UE.
+*   **Initiator:** UE
+*   **Receiver:** Network
+
+**2. ProSe Relay Transaction Identity (PRTI) Allocation (5.5.4.2):**
+
+*   **Action:** UE allocates an available PRTI value.
+*   **Association:** PRTI is associated with the 5G ProSe remote/end UE.
+*   **Release:** PRTI is released upon completion or abortion of the procedure.
+
+**3. UE-Initiated Authentication and Key Agreement Procedure Initiation (5.5.4.3):**
+
+*   **Event:** Receiving a ProSe direct link establishment request including the SUCI or CP-PRUK ID.
+*   **Actions:**
+    *   Allocate a PRTI value.
+    *   Create a RELAY KEY REQUEST message.
+    *   Set the PRTI IE in the RELAY KEY REQUEST message.
+    *   Set the relay key request parameters IE (SUCI/CP-PRUK ID, relay service code, nonce_1).
+    *   Send the RELAY KEY REQUEST message.
+    *   Start timer T3527.
+
+**4. UE-Initiated Authentication and Key Agreement Procedure Accepted by the Network (5.5.4.4):**
+
+*   **Event:** Receiving the RELAY KEY REQUEST message.
+*   **Network Actions:**
+    *   Processes message and interacts with AUSF.
+    *   If EAP-AKA' is initiated, creates a RELAY AUTHENTICATION REQUEST message.
+    *   Sets PRTI IE of the RELAY AUTHENTICATION REQUEST message.
+    *   Sets EAP message IE of the RELAY AUTHENTICATION REQUEST message to EAP request from AUSF.
+    *   Sends the RELAY AUTHENTICATION REQUEST message to the UE.
+*   **UE Actions:**
+    *   Upon receiving the RELAY AUTHENTICATION REQUEST message the UE stops the timer T3527 and forwards the EAP message to the 5G ProSe remote UE or the 5G ProSe end UE
+    *   Upon receiving the EAP response message from the 5G ProSe remote UE or the 5G ProSe end UE
+        *   create a RELAY AUTHENTICATION RESPONSE message;
+        *   set the PRTI IE of the RELAY AUTHENTICATION RESPONSE message to the PRTI value of the received RELAY AUTHENTICATION REQUEST message;
+        *   set the EAP message IE of the RELAY AUTHENTICATION RESPONSE message to EAP response message received from the 5G ProSe remote UE or the 5G ProSe end UE; and
+        *   start a timer T3527 upon sending the RELAY AUTHENTICATION RESPONSE message to the AMF
+    *   After receiving the RELAY AUTHENTICATION RESPONSE message the AMF may send a new RELAY AUTHENTICATION REQUEST message carrying EAP request message according to further handling of EAP-AKA' authentication from the AUSF
+        *   The UE repeats the handling of the RELAY AUTHENTICATION REQUEST message as described above
+    *   Upon receiving the message from the AUSF that the authentication is successful the AMF shall
+        *   create a RELAY KEY ACCEPT message;
+        *   set the PRTI IE of the RELAY KEY ACCEPT message to the PRTI value of the RELAY KEY REQUEST message;
+        *   include the EAP message IE of the RELAY KEY ACCEPT message set to EAP-success message received from the AUSF if any;
+        *   include the relay key response parameters IE of the RELAY KEY ACCEPT message set to KNR_ProSe and nonce_2 received from AUSF; and
+        *   include the CP-PRUK ID in the relay key response parameters IE of the RELAY KEY ACCEPT message
+    *   Upon receiving the RELAY KEY ACCEPT message the UE shall forward the EAP-success message if any and nonce_2 to the 5G ProSe remote UE or the 5G ProSe end UE as specified in 3GPP TS __24.554__ [19E] and consider the authentication as completed successfully
+    *   The UE shall store the CP-PRUK ID to be used in the remote UE report procedure as specified in subclause __6.6.2.2__
+
+**5. UE-Initiated Authentication and Key Agreement Procedure Not Accepted by the Network (5.5.4.5):**
+
+*   **Conditions:** The network decides to reject the RELAY KEY REQUEST message (e.g., CP-PRUK not found) or the AMF receives an EAP-failure message from the AUSF.
+*   **Network Actions:**
+    *   Creates a RELAY KEY REJECT message.
+    *   Sets the PRTI IE.
+    *   Includes the EAP message IE set with EAP-failure message (if applicable).
+    *   Sends the RELAY KEY REJECT message to the UE.
+*   **UE Actions:**
+    *   Considers authentication as failed.
+    *   Performs the PC5 signalling protocol procedure.
+
+**6. Abnormal Cases in the UE (5.5.4.6):**
+
+*   **Transmission failure:** Abort procedure and perform PC5 signalling.
+*   **Expiry of timer T3527:** Retransmit message (up to 4 times), then abort and perform PC5 signalling.
+*   **Collision with de-registration:** Abort procedure, proceed with de-registration, and perform PC5 signalling.
+
+**7. Abnormal Cases on the Network Side (5.5.4.7):**
+
+*   **Lower layer failure:** Abort procedure.
+*   **Collision with de-registration:** Abort procedure and proceed with UE-initiated de-registration.
+*   **Collision with other 5GMM procedures:** Progress both procedures.
+
+**Key Information and Description:**
+
+*   **Name:** Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+*   **Purpose:** To authenticate a 5G ProSe remote/end UE via a relay UE and establish security keys (KAUSF_P and KNR_ProSe) for secure ProSe communication over the control plane.
+*   **Trigger:** Reception of a ProSe direct link establishment request from the 5G ProSe remote/end UE by the relay UE.
+*   **Messages:** RELAY KEY REQUEST, RELAY AUTHENTICATION REQUEST, RELAY AUTHENTICATION RESPONSE, RELAY KEY ACCEPT, RELAY KEY REJECT.
+*   **Timer:** T3527
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["UE: Receive ProSe Direct Link Establishment Request"] --> B{"Allocate PRTI"};
+    B --> C["Create RELAY KEY REQUEST"];
+    C --> D["Set PRTI IE & Key Request Params"];
+    D --> E["UE: Send RELAY KEY REQUEST"];
+    E --> F["Start Timer T3527"];
+    F --> G["Network: Receive RELAY KEY REQUEST"];
+    G --> H{"Network: Process Request & Interact with AUSF"};
+    H -- "EAP-AKA' initiated" --> I["Create RELAY AUTHENTICATION REQUEST"];
+    H -- "EAP-AKA' not initiated" --> J{"Authentication Successful?"};
+    I --> K["Set PRTI IE & EAP Message"];
+    K --> L["Network: Send RELAY AUTHENTICATION REQUEST"];
+    L --> M["UE: Stop T3527, Forward EAP message to remote/end UE"];
+    M --> N["UE: Receive EAP response from remote/end UE"];
+    N --> O["Create RELAY AUTHENTICATION RESPONSE message"];
+    O --> P["Set PRTI IE & EAP Message"];
+    P --> Q["Start Timer T3527"];
+    Q --> R["AMF may send a new RELAY AUTHENTICATION REQUEST message carrying EAP request message"];
+    R --> S["UE repeats the handling of the RELAY AUTHENTICATION REQUEST message as described above"];
+    S --> T{"Authentication Successful?"};
+    T -- Yes --> U["Create RELAY KEY ACCEPT message"];
+    T -- No --> V["Create RELAY KEY REJECT message"];
+    U --> W["Set PRTI IE & include EAP-success message"];
+    W --> X["Include KNR_ProSe, nonce_2 and CP-PRUK ID"];
+    X --> Y["AMF:Send RELAY KEY ACCEPT"];
+    Y --> Z["UE: Forward EAP-success message if any and nonce_2 to the 5G ProSe remote UE or the 5G ProSe end UE ,Consider Authentication Successful, Store CP-PRUK ID"];
+    V --> AA["Set PRTI IE & include EAP-failure message"];
+    AA --> BB["AMF: Send RELAY KEY REJECT"];
+    BB --> CC["UE: Consider Authentication Failed,Perform PC5 Signalling Protocol"];
+     J -- Yes --> U
+     J -- No --> V
+    
+```

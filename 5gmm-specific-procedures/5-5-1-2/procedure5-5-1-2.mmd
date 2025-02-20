@@ -1,0 +1,18 @@
+graph TD
+    A["5GMM-DEREGISTERED"] --> B{"UE sends REGISTRATION REQUEST\n(Initial Registration)"};
+    B --> C{"AMF Receives REGISTRATION REQUEST"};
+    C -- "Valid Request" --> D{"AMF Processes Request\n(Authentication, Authorization,\nTA List Assignment, etc.)"};
+    C -- "Invalid Request" --> E["AMF sends REGISTRATION REJECT"];
+    D -- "Registration Accepted" --> F{"AMF sends REGISTRATION ACCEPT"};
+    D -- "Registration Rejected" --> E["AMF sends REGISTRATION REJECT"];
+    F --> G{"UE Receives REGISTRATION ACCEPT"};
+    G --> H{"UE Stores Network Info\n(TA List, GUTI, NSSAI, etc.)"};
+    H --> I["UE sends REGISTRATION COMPLETE"];
+    I --> J["5GMM-REGISTERED"];
+    E --> K{"UE Receives REGISTRATION REJECT"};
+    K --> L{"UE Handles Rejection Cause\n(e.g., PLMN Search, Backoff)"};
+    L --> M["5GMM-DEREGISTERED. \nATTEMPTING-REGISTRATION \nor other deregistered states"];
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#f9f,stroke:#333,stroke-width:2px
+    style M fill:#f9f,stroke:#333,stroke-width:2px

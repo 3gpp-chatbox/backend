@@ -1,0 +1,24 @@
+graph TD
+    A["UE: 5GMM-REGISTERED or 5GMM-REGISTERED-INITIATED"] --> B{"Event: De-registration Triggered"};
+    B --> C{"Check: Switch Off, eCall, USIM Removal, etc."};
+    C -->|Yes| D["Action: Send DEREGISTRATION REQUEST (Type = Switch Off)"];
+    C -->|No| E{"Check: Valid 5G-GUTI?"};
+    E -->|Yes| F["Action: Send DEREGISTRATION REQUEST (5G-GUTI)"];
+    E -->|No| G{"Check: Timer T3519 Running?"};
+    G -->|No| H["Action: Generate Fresh SUCI, Send DEREGISTRATION REQUEST (SUCI), Start T3519"];
+    G -->|Yes| I["Action: Send DEREGISTRATION REQUEST (Stored SUCI)"];
+    H --> J["UE: 5GMM-DEREGISTERED-INITIATED, Timer T3521 Started"];
+    I --> J
+    F --> J
+    D --> K["AMF Receives DEREGISTRATION REQUEST"];
+    K --> L["UE: Switched Off (Attempt for 5 seconds)"];
+    J --> M{"Event: DEREGISTRATION ACCEPT Received"};
+    M -->|Yes| N["Action: Stop T3521, Stop T3519 (if running), Delete Stored SUCI"];
+    N --> O["UE: 5GMM-DEREGISTERED"];
+    M -->|No(T3521 Timeout)|P{"Action: Retransmit DEREGISTRATION REQUEST (Up to 4 times)"};
+    P --> Q{"Event: T3521 Expires (5th time)"};
+    Q --> R["UE: 5GMM-NULL or 5GMM-DEREGISTERED"];
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style O fill:#f9f,stroke:#333,stroke-width:2px
+    style R fill:#f9f,stroke:#333,stroke-width:2px

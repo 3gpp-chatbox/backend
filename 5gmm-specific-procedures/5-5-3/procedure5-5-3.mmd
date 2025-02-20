@@ -1,0 +1,12 @@
+graph TD
+    A["Start: UE in 5GMM-REGISTERED (excluding substates) or 5GMM-IDLE/CONNECTED"] --> B{T3444/T3445 expired or GERAN/UTRAN to NG-RAN?};
+    B -- Yes --> C["Stop NAS timers (except T3245, TF, TG)"];
+    C --> D["Reset attempt counters"];
+    D --> E{Registered for 5GS?};
+    E -- Yes --> F["Perform de-registration"];
+    F --> G["Delete registration info"];
+    E -- No --> G;
+    G --> H["Enter 5GMM-DEREGISTERED.eCALL-INACTIVE"];
+    H --> I["End"];
+    B -- No --> I;
+    style I fill:#f9f,stroke:#333,stroke-width:2px

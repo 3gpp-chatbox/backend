@@ -1,0 +1,31 @@
+graph TD
+    A["UE: Receive ProSe Direct Link Establishment Request"] --> B{"Allocate PRTI"};
+    B --> C["Create RELAY KEY REQUEST"];
+    C --> D["Set PRTI IE & Key Request Params"];
+    D --> E["UE: Send RELAY KEY REQUEST"];
+    E --> F["Start Timer T3527"];
+    F --> G["Network: Receive RELAY KEY REQUEST"];
+    G --> H{"Network: Process Request & Interact with AUSF"};
+    H -- "EAP-AKA' initiated" --> I["Create RELAY AUTHENTICATION REQUEST"];
+    H -- "EAP-AKA' not initiated" --> J{"Authentication Successful?"};
+    I --> K["Set PRTI IE & EAP Message"];
+    K --> L["Network: Send RELAY AUTHENTICATION REQUEST"];
+    L --> M["UE: Stop T3527, Forward EAP message to remote/end UE"];
+    M --> N["UE: Receive EAP response from remote/end UE"];
+    N --> O["Create RELAY AUTHENTICATION RESPONSE message"];
+    O --> P["Set PRTI IE & EAP Message"];
+    P --> Q["Start Timer T3527"];
+    Q --> R["AMF may send a new RELAY AUTHENTICATION REQUEST message carrying EAP request message"];
+    R --> S["UE repeats the handling of the RELAY AUTHENTICATION REQUEST message as described above"];
+    S --> T{"Authentication Successful?"};
+    T -- Yes --> U["Create RELAY KEY ACCEPT message"];
+    T -- No --> V["Create RELAY KEY REJECT message"];
+    U --> W["Set PRTI IE & include EAP-success message"];
+    W --> X["Include KNR_ProSe, nonce_2 and CP-PRUK ID"];
+    X --> Y["AMF:Send RELAY KEY ACCEPT"];
+    Y --> Z["UE: Forward EAP-success message if any and nonce_2 to the 5G ProSe remote UE or the 5G ProSe end UE ,Consider Authentication Successful, Store CP-PRUK ID"];
+    V --> AA["Set PRTI IE & include EAP-failure message"];
+    AA --> BB["AMF: Send RELAY KEY REJECT"];
+    BB --> CC["UE: Consider Authentication Failed,Perform PC5 Signalling Protocol"];
+     J -- Yes --> U
+     J -- No --> V

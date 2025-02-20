@@ -1,0 +1,137 @@
+Okay, I will analyze the provided text to extract the main procedure, its steps, key information, and then represent it using a Mermaid flowchart.
+
+**Analysis:**
+
+The primary procedure detailed in the text is the "Registration procedure for initial registration" (section 5.5.1.2). The text describes the UE's actions when initiating this procedure, the network's response, and various scenarios that can occur. The procedure also has some differences when involving emergency services or onboarding.
+
+**Procedure Mapping:**
+
+**Procedure Name:** Registration procedure for initial registration
+
+*   **States:**
+    *   "5GMM-DEREGISTERED"
+    *   "5GMM-REGISTERED"
+    *   "5GMM-REGISTERED-INITIATED"
+    *   "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    *   "5GMM-DEREGISTERED.PLMN-SEARCH"
+    *   "5GMM-DEREGISTERED.LIMITED-SERVICE"
+    *    "5GMM-COMMON-PROCEDURE-INITIATED"
+
+*   **Actions (UE):**
+    *   "UE sends REGISTRATION REQUEST message"
+    *   "UE starts timer T3510"
+    *   "UE stops timer T3502/T3511"
+    *   "UE handles 5GS mobile identity IE"
+    *   "UE includes/excludes various IEs in REGISTRATION REQUEST"
+    *   "UE stores received information (TAI list, equivalent PLMNs/SNPNs, etc.)"
+    *   "UE resets attempt counters"
+    *   "UE handles received network slicing information (NSSAI)"
+    *    "UE sends REGISTRATION COMPLETE message"
+    *   "UE enters various 5GMM states"
+    *   "UE follows RAT utilization conttrol IE"
+    *   "UE locally release the N1 NAS signalling connection after sending a REGISTRATION COMPLETE message"
+    *   "UE aborts the registration procedure"
+
+*   **Actions (AMF):**
+    *   "AMF sends REGISTRATION ACCEPT message"
+    *   "AMF sends REGISTRATION REJECT message"
+    *   "AMF assigns TAI list"
+    *   "AMF includes/excludes various IEs in REGISTRATION ACCEPT"
+    *   "AMF determines LADN DNNs"
+    *   "AMF initiates UUAA-MM procedure"
+    *   "AMF starts timer T3550"
+    *   "AMF Enters state 5GMM-REGISTERED"
+
+*   **Events:**
+    *   "UE in 5GMM-DEREGISTERED state"
+    *   "Reception of REGISTRATION ACCEPT message"
+    *   "Reception of REGISTRATION REJECT message"
+    *   "T3510 timeout"
+    *    "T3550 time-out"
+    *   "Lower layer failure"
+    *   "Change in current TAI"
+    *   "UE initiated de-registration required"
+    *   "Reception of DEREGISTRATION REQUEST"
+    *   "Indication from lower layers (access barring, etc.)"
+*   **Parameters:**
+    *   "5GS Registration Type IE"
+    *   "5G-GUTI"
+    *   "SUCI"
+    *   "PEI"
+    *   "TAI List"
+    *   "Allowed NSSAI"
+    *   "Rejected NSSAI"
+    *   "5GMM Cause"
+    *    "RAT utilization control IE"
+    *   "Service-level-AA container IE"
+    *  "NSSAI inclusion mode IE"
+    *   "Extended rejected NSSAI IE"
+    *  "Alternative NSSAI IE"
+    *  "Partially rejected NSSAI IE"
+    *  "Partially allowed NSSAI IE"
+    *   "RAN timing synchronization IE"
+    *   "SOR transparent container IE"
+    *   "Ciphering key data IE"
+    *   "Configured NSSAI IE"
+    *    "NSSRG information IE"
+    *   "S-NSSAI time validity information IE"
+    *   "On-demand NSSAI IE"
+
+*   **Conditionals:**
+    *   "UE already registered for emergency services"
+    *   "UE can't register for emergency services over 3GPP"
+    *   "Various checks on 5G-GUTI validity"
+    *   "Support for MICO mode"
+    *   "Support for eDRX"
+    *   "Requested NSSAI is available"
+    *   "UE supports S1 mode"
+    *   "UUAA procedure needed"
+    *   "AMF supports WUS/PEIPS assistance information"
+    *   "LADN Indication included"
+    *    "CAG Restrictions"
+    *   "Network Slice-Specific Authentication and Authorization"
+
+**Key Information and Description:**
+
+The initial registration procedure is how a UE registers with the 5G network for the first time. The UE sends a `REGISTRATION REQUEST` message, and the network (AMF) responds with a `REGISTRATION ACCEPT` or `REGISTRATION REJECT` message.  The procedure involves several information elements related to UE capabilities, network slicing, security, and mobility management. There are different registration types such as intial, emergency, SNPN onboarding and disaster roaming, and the behaviour varies according to the specific registration type.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["5GMM-DEREGISTERED"] --> B{"UE sends REGISTRATION REQUEST \n(Initial Registration)"};
+    B --> C{"AMF Receives REGISTRATION REQUEST"};
+    C -- "Valid Request" --> D{"AMF Processes Request \n(Authentication, Authorization,\nTA List Assignment, etc.)"};
+    C -- "Invalid Request" --> E["AMF sends REGISTRATION REJECT"];
+    D -- "Registration Accepted" --> F{"AMF sends REGISTRATION ACCEPT"};
+    D -- "Registration Rejected" --> E["AMF sends REGISTRATION REJECT"];
+    F --> G{"UE Receives REGISTRATION ACCEPT"};
+    G --> H{"UE Stores Network Info \n(TA List, GUTI, NSSAI, etc.)"};
+    H --> I{"UE sends REGISTRATION COMPLETE"};
+    I --> J["5GMM-REGISTERED"];
+    E --> K{"UE Receives REGISTRATION REJECT"};
+    K --> L{"UE Handles Rejection Cause\n(e.g., PLMN Search, Backoff)"};
+    L --> M["5GMM-DEREGISTERED. \nATTEMPTING-REGISTRATION \n or other deregistered states"];
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#f9f,stroke:#333,stroke-width:2px
+    style M fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+**Explanation of Flowchart Nodes:**
+
+*   **"5GMM-DEREGISTERED"**: The initial state where the UE is not registered.
+*   **"UE sends REGISTRATION REQUEST (Initial Registration)"**: The UE initiates the registration procedure.
+*   **"AMF Receives REGISTRATION REQUEST"**: The AMF receives the registration request.
+*   **"AMF Processes Request (Authentication, Authorization, TA List Assignment, etc.)"**: The AMF performs necessary checks and assignments.
+*   **"AMF sends REGISTRATION ACCEPT"**: The AMF accepts the registration request.
+*   **"AMF sends REGISTRATION REJECT"**: The AMF rejects the registration request.
+*   **"UE Receives REGISTRATION ACCEPT"**: The UE receives the acceptance message.
+*   **"UE Stores Network Info (TA List, GUTI, NSSAI, etc.)"**: The UE stores the information received from the network.
+*   **"UE sends REGISTRATION COMPLETE"**: The UE acknowledges the registration.
+*   **"5GMM-REGISTERED"**: The UE is now successfully registered.
+*   **"UE Receives REGISTRATION REJECT"**: The UE receives the rejection message.
+*   **"UE Handles Rejection Cause (e.g., PLMN Search, Backoff)"**: The UE takes actions based on the rejection cause.
+*   **"5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or other deregistered states"**: The UE enters a deregistered state and might attempt registration again.
+
+This comprehensive extraction maps the initial registration procedure as described in the provided text, following the requested format and constraints.

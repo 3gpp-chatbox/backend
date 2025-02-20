@@ -1,0 +1,196 @@
+Okay, I will analyze the provided 3GPP specification text, identify the main procedure, extract its information, and present it using the requested format, focusing on states, actions, events, parameters, conditionals, and the overall flow.
+
+**Analysis and Extraction**
+
+The primary procedure detailed in the text is the **Mobility and Periodic Registration Update procedure (5.5.1.3)**. This procedure is used by a UE in the 5GMM-REGISTERED state to update its registration with the network. The text describes both the UE and network (AMF) sides of this procedure, detailing the various triggers, actions, and potential outcomes (acceptance or rejection).
+
+Here's a breakdown of the key elements:
+
+*   **Main Procedure:** Mobility and Periodic Registration Update
+*   **Initiator:** UE in 5GMM-REGISTERED state
+
+**Procedure Information Mapping**
+
+```
+{
+"Procedure Name": "Mobility and Periodic Registration Update",
+"Description": "Used by a UE in 5GMM-REGISTERED to update its registration for 5GS services.",
+"Initiator": "UE",
+"Network Element": "AMF",
+"Triggers": [
+"TAI change (out of registered list)",
+"T3512 expiry in 5GMM-IDLE mode",
+"CONFIGURATION UPDATE COMMAND with 'registration requested'",
+"Paging reception or NOTIFICATION message in 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+"Inter-system change from S1 to N1 mode",
+"RRC Connection failure indication",
+"Change in UE capabilities (5GMM, S1 UE network capability)",
+"Change in UE's usage setting",
+"Need to change registered slices",
+"Change in UE specific DRX parameters",
+"Request from upper layers to establish an emergency PDU session or perform emergency services fallback in 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+"Need to register for SMS over NAS or change SMS over NAS requirements",
+"Need to indicate PDU session status after local release",
+"Change in radio capability for NG-RAN or E-UTRAN in 5GMM-IDLE mode",
+"Reception of SERVICE REJECT or DL NAS TRANSPORT with cause #28",
+"UE needs to request new LADN information",
+"UE needs to request the use of MICO mode",
+"Change the slice(s)",
+"UE connected mode enter new cell",
+"change of CIOT network behaviour",
+"finds a suitable cell after the UE has entered the 5GMM-REGISTERED.NO-CELL-AVAILABLE state"
+"disaster roaming registration request"
+"non-3GPP access path switching"
+"reconnection to the network due to RAN timing synchronization status change"
+],
+"UE Actions": [
+"Sends REGISTRATION REQUEST message",
+"Starts timer T3510",
+"Stops timer T3502 (if running)",
+"Stops timer T3511 (if running)",
+"Includes relevant IEs (5GS mobile identity, Requested NSSAI, UE capabilities, etc.) in REGISTRATION REQUEST",
+"Handles REGISTRATION ACCEPT message (stores TAI list, equivalent PLMNs, etc.)",
+"Handles REGISTRATION REJECT message (stores forbidden TAI, etc.)",
+"Returns a REGISTRATION COMPLETE message upon reception of 5G-GUTI or Network slicing information"
+],
+"AMF Actions": [
+"Receives REGISTRATION REQUEST message",
+"May initiate 5GMM common procedures (authentication, security mode control)",
+"Sends REGISTRATION ACCEPT or REGISTRATION REJECT message",
+"Includes relevant IEs (5G-GUTI, TAI list, equivalent PLMNs, etc.) in REGISTRATION ACCEPT",
+"Starts timer T3550 (in some cases, after sending REGISTRATION ACCEPT)",
+"Stores UE capabilities",
+"Initiates release of the NAS signalling connection in some cases"
+],
+"States": [
+"5GMM-REGISTERED",
+"5GMM-IDLE",
+"5GMM-CONNECTED",
+"5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+"5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+"5GMM-REGISTERED.NORMAL-SERVICE",
+"5GMM-REGISTERED.NON-ALLOWED-SERVICE",
+"5GMM-REGISTERED.LIMITED-SERVICE",
+"5GMM-REGISTERED.PLMN-SEARCH",
+"5GMM-COMMON-PROCEDURE-INITIATED"
+],
+"Parameters": [
+"5GS registration type IE",
+"5GS mobile identity IE (5G-GUTI, SUCI)",
+"TAI list",
+"Equivalent PLMNs list",
+"UE capabilities (5GMM, S1 UE network)",
+"Requested NSSAI IE",
+"Allowed NSSAI IE",
+"Rejected NSSAI IE",
+"Service area restrictions",
+"MICO indication IE",
+"T3324 IE",
+"T3512 value IE",
+"Uplink data status IE",
+"PDU session status IE",
+"Allowed PDU session status IE",
+"UE status IE",
+"EPS bearer context status IE",
+"5GS network feature support IE",
+"5GS registration result IE",
+"Follow-on request indicator",
+"UE request type IE",
+"Ciphering key data IE",
+"DRX parameters IEs",
+"eDRX parameters IEs",
+"LADN Information IE",
+"UE radio capability ID IE",
+"Network Slice-specific Authentication and Authorization (NSSAA) parameters",
+"CAG information"
+"Disaster roaming IE"
+"RAN Timing synchronization IE"
+"unavailability information IE"
+],
+"Conditionals": [
+"If TAI is not in the registered list.",
+"If T3512 expires in 5GMM-IDLE.",
+"If a CONFIGURATION UPDATE COMMAND is received.",
+"If the UE receives a paging message.",
+"If an inter-system change occurs.",
+"If RRC connection fails.",
+"Based on the UE's capabilities and network configuration.",
+"if network slice replacement is to be supported"
+"If UE needs to register for SMS",
+"If UE support V2X"
+"If no network slicing information",
+"if support CIOT optimisation"
+"disaster roaming or not",
+"reconnection request"
+]
+}
+```
+
+**Key Information and Description:**
+
+*   **Purpose:** This procedure updates the UE's registration with the 5G network, ensuring the network knows the UE's location and capabilities, and can deliver services.
+*   **UE-Driven:** The UE initiates the procedure based on various triggers, reflecting changes in location, configuration, or service needs.
+*   **Network Control:** The AMF can use this procedure to update the UE's configuration (TAI list, allowed services), enforce network policies, and manage network resources.
+*   **Mobility and Management:** It supports both mobility (TA changes) and periodic updates (timer-based), ensuring continuous connectivity and reachability.
+*   **NSSAI Update:** It handles network slice-specific aspects, allowing the UE to register for specific slices and enabling network-slice specific Authentication and Authorization.
+*   **CAG Support:** It considers the support of CAG feature, which enables network to provide the UE information to access the correct cell.
+
+**Mermaid Flowchart**
+
+```mermaid
+graph TD
+    subgraph UE
+    A["5GMM-REGISTERED"];
+    B["Send REGISTRATION REQUEST"];
+    C["Start T3510"];
+    D["Receive REGISTRATION ACCEPT"];
+    E["Stop T3510 & T3519"];
+    F["Send REGISTRATION COMPLETE (if needed)"];
+    G["5GMM-REGISTERED (Updated)"];
+    H["Receive REGISTRATION REJECT"];
+    I["Handle Rejection"];
+    J["Stop T3346"];
+    K["Start T3346 timer (if provided) "];
+    L["5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE"];
+    M["Inter-System Change S1 to N1 mode"];
+    N["Store relevant network information"];
+    end
+    
+    subgraph AMF
+    O["Receive REGISTRATION REQUEST"];
+    P["Initiate Authentication & Security (optional)"];
+    Q["Send REGISTRATION ACCEPT/REJECT"];
+    R["Start T3550 (optional)"];
+    S["Receive REGISTRATION COMPLETE"];
+    T["Stop T3550"];
+    U["Enter 5GMM-REGISTERED"];
+    end
+    
+    A --> B;
+    B --> C;
+    C --> D;
+    D --> E;
+    E --> F;
+    F --> G;
+    C --> H;
+    H --> I;
+    I --> J;
+    J --> K;
+    K --> L;
+    B --> O;
+    O --> P;
+    P --> Q;
+    Q --> R;
+    R --> S;
+    S --> T;
+    T --> U;
+    M --> B;
+    D --> N;
+    H --> N;
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+    style L fill:#ccf,stroke:#333,stroke-width:2px
+    style U fill:#f9f,stroke:#333,stroke-width:2px
+
+```

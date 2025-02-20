@@ -1,0 +1,54 @@
+graph TD
+    subgraph UE
+    A["5GMM-REGISTERED"];
+    B["Send REGISTRATION REQUEST"];
+    C["Start T3510"];
+    D["Receive REGISTRATION ACCEPT"];
+    E["Stop T3510"];
+    F["Send REGISTRATION COMPLETE (if needed)"];
+    G["5GMM-REGISTERED (Updated)"];
+    H["Receive REGISTRATION REJECT"];
+    I["Handle Rejection"];
+    J["Stop T3511 (if running)"];
+    K["Start T3346 timer (if provided)"];
+    L["5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE"];
+    M["Inter-System Change S1 to N1 mode"];
+    N["Store relevant network information"];
+    end
+
+    subgraph AMF
+    O["Receive REGISTRATION REQUEST"];
+    P["Initiate Authentication & Security (optional)"];
+    Q["Send REGISTRATION ACCEPT/REJECT"];
+    R["Start T3550 (optional)"];
+    S["Receive REGISTRATION COMPLETE"];
+    T["Stop T3550"];
+    U["5GMM-REGISTERED"];
+    end
+
+    A --> B;
+    B --> C;
+    C --> D;
+    D --> E;
+    E --> F;
+    F --> G;
+    C --> H;
+    H --> I;
+    I --> J;
+    J --> K;
+    K --> L;
+    B --> O;
+    O --> P;
+    P --> Q;
+    Q --> R;
+    R --> S;
+    S --> T;
+    T --> U;
+    M --> B;
+    D --> N;
+    H --> N;
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+    style L fill:#ccf,stroke:#333,stroke-width:2px
+    style U fill:#f9f,stroke:#333,stroke-width:2px
