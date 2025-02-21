@@ -15,3 +15,13 @@ document_chunks.db
 
 
 findings:  each procedure always start with  " The purpose of the 5GMM status procedure is to "  or "The purpose of the 5GMM status procedure is to"
+
+
+
+
+feed table of content to ai ,
+then ask it to extract all section name and sub section name, so we can insert them separately in different tables? then we also has a thunk text table store all chunk text?   
+
+
+ask what sections that include procedures,and also list all section or sub section name ,so 
+
