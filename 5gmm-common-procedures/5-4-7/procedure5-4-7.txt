@@ -1,0 +1,91 @@
+Okay, I will analyze the provided text to identify the main procedure, extract its information, and represent it using the requested format.
+
+**Analysis:**
+
+The primary procedure described in detail within the provided text is the **Network slice-specific authentication and authorization procedure**.  Sections 5.4.7 through 5.4.7.3.1 are dedicated to explaining this procedure, its initiation, message flows, and handling of abnormal cases.  The other procedures mentioned (5GMM Status, Registration) are either shorter or referenced more as collision scenarios within the context of the network slice-specific authentication and authorization.
+
+**Procedure Mapping:**
+
+**Procedure Name:** Network slice-specific authentication and authorization procedure
+
+*   **Purpose:** To enable the authentication, authorization, and accounting server (AAA-S) via the Network Slice Specific and SNPN Authentication and Authorization Function (NSSAAF) to (re-)authenticate or (re-)authorize the upper layers of the UE for a specific S-NSSAI.
+
+*   **Initiation:**  The AMF initiates the procedure.
+
+*   **Messages:**
+
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (AMF to UE): Contains the EAP-request message and the S-NSSAI.
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (UE to AMF): Contains the EAP-response message and the S-NSSAI.
+    *   NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (AMF to UE): Contains the EAP-success or EAP-failure message and the S-NSSAI.
+
+*   **Timers:**
+
+    *   T3575:  AMF timer started upon sending NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message.
+    *   T3346: UE timer stopped when NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND is received.
+
+*   **Conditions/Decision Points:**
+
+    *   Timer T3575 expiry (AMF): Retransmit or abort the procedure.
+    *   Reception of DEREGISTRATION REQUEST/SERVICE REQUEST/REGISTRATION REQUEST messages during the procedure (Network and UE): Decide whether to abort or proceed with both procedures based on specific conditions.
+    *   Transmission failure of NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message with/without TAI change (UE): Abort procedure and initiate registration if TAI change, otherwise implementation-dependent.
+    *   EAP Success/Failure: Determine the outcome of authentication/authorization.
+
+*   **States (Implicit):**
+
+    *   Idle
+    *   Authentication/Authorization in progress
+    *   Authentication/Authorization success
+    *   Authentication/Authorization failure
+
+**Key Information and Description:**
+
+*   **EAP (Extensible Authentication Protocol):** Used for authentication between the UE and the AAA-S.
+*   **S-NSSAI (Single Network Slice Selection Assistance Information):** Identifies the network slice for which authentication/authorization is being performed.
+*   **AAA-S (Authentication, Authorization, and Accounting Server):** The server that performs the actual authentication and authorization.
+*   **NSSAAF (Network Slice Specific and SNPN Authentication and Authorization Function):** A function that acts as an intermediary between the AMF and the AAA-S.
+*   **Reliable Transport:** The procedure aims to provide reliable transport of EAP messages.
+*   **Transparency to 5GMM Layer:** Apart from passing the EAP and S-NSSAI information, the procedure is transparent to the 5GMM layer in the UE.
+*   **Collision Handling:** Specific logic to handle collisions with other procedures (e.g., de-registration, service request, registration).
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["AMF: Initiate Network Slice-Specific Authentication"];
+    B["AMF: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (EAP-Request, S-NSSAI)"];
+    C["AMF: Start Timer T3575"];
+    D["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    E["UE: Stop Timer T3346 (if running)"];
+    F["UE: Pass EAP-Request and S-NSSAI to Upper Layers"];
+    G["UE: Upper Layers Provide EAP-Response"];
+    H["UE: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (EAP-Response, S-NSSAI)"];
+    I["AMF: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE"];
+    J["AMF: Stop Timer T3575"];
+    K["AMF: Pass EAP-Response and S-NSSAI to AAA-S via NSSAAF"];
+    L["AAA-S: Authenticate/Authorize"];
+    M["AAA-S: Provide EAP-Success or EAP-Failure"];
+    N["AMF: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (EAP-Success/Failure, S-NSSAI)"];
+    O["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT"];
+    P["UE: Pass EAP-Success/Failure and S-NSSAI to Upper Layers"];
+    Q["AMF: Retain Authentication Result"];
+
+    A --> B;
+    B --> C;
+    B --> D;
+    D --> E;
+    D --> F;
+    F --> G;
+    G --> H;
+    H --> I;
+    I --> J;
+    I --> K;
+    K --> L;
+    L --> M;
+    M --> N;
+    N --> O;
+    O --> P;
+    N --> Q;
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+```

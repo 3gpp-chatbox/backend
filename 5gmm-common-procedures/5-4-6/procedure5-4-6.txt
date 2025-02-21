@@ -1,0 +1,29 @@
+Okay, let's analyze the provided text and extract the information about the 5GMM status procedure.
+
+**Procedure:** 5GMM Status Procedure
+
+**Core Components:**
+
+*   **Purpose:** To report error conditions detected upon receipt of 5GMM protocol data in the AMF or UE.
+*   **Initiator:** Both AMF and UE can send the 5GMM STATUS message.
+*   **Trigger:** Detection of an error condition related to 5GMM protocol data.
+*   **Message:** 5GMM STATUS.
+*   **Action (UE - Upon Receipt):** No state transition or specific action is mandated from the radio interface perspective. Local actions are implementation-dependent.
+*   **Action (AMF - Upon Receipt):** No state transition or specific action is mandated from the radio interface perspective. Local actions are implementation-dependent.
+
+**Key Information and Description:**
+
+The 5GMM status procedure is a mechanism for the AMF or UE to report errors encountered during the processing of 5GMM messages. The specification emphasizes that the receipt of a 5GMM STATUS message does not trigger any mandatory state transitions or actions from a radio interface perspective. The actions taken are left to the individual implementations.
+
+**Mermaid Flowchart:**
+
+```mermaid
+graph TD
+    A["Start"] --> B{"Error Detected in 5GMM Protocol Data"};
+    B -- "Yes" --> C{{"Send 5GMM STATUS Message (AMF or UE)"}};
+    C --> D{"Receive 5GMM STATUS Message (UE or AMF)"};
+    D --> E{"No mandatory state transition or action at Radio Interface"};
+    E --> F{"Local Actions (Implementation Dependent)"};
+    F --> G["End"];
+    B -- "No" --> G;
+```

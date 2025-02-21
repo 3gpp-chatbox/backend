@@ -1,0 +1,240 @@
+Okay, I will analyze the provided 3GPP specification text and extract the information about the main procedure, the UE-initiated NAS transport procedure, and represent it using the requested JSON format for a property graph, as well as the graph visualization code.
+
+**Analysis and Extraction**
+
+The primary procedure described in this section is the **UE-initiated NAS transport procedure**. This procedure allows the UE to send various types of payload to the AMF.
+
+**Procedure Information**
+
+*   **Purpose:** To provide a transport mechanism for payloads (5GSM messages, SMS, LPP messages, etc.) and associated information from the UE to the AMF.
+
+*   **Initiation:** The UE initiates this procedure by sending a `UL NAS TRANSPORT` message to the AMF in connected mode.
+
+*   **Payload Types:**
+
+    *   Single 5GSM message
+    *   SMS
+    *   LPP message
+    *   SLPP message
+    *   SOR transparent container
+    *   UE policy container
+    *   UE parameters update transparent container
+    *   Location services message
+    *   CIoT user data container
+    *   Service-level-AA container
+    *   UPP-CMI container
+    *   Multiple payloads
+
+*   **Information Elements (IEs) / Parameters:**
+
+    *   `Payload container type IE`: Indicates the type of payload being transported.
+    *   `Payload container IE`: Contains the actual payload.
+    *   `PDU session ID IE`: Identifies the PDU session (when relevant to the payload).
+    *   `Old PDU session ID IE`: Identifies the old PDU session ID (when relevant to the payload).
+    *   `S-NSSAI IE`: Slice information.
+    *   `DNN IE`: Data Network Name.
+    *   `Request type IE`: Type of request (e.g., initial, existing PDU session).
+    *   `Additional information IE`: Routing information for certain payload types (LPP, SLPP, Location services message).
+    *   `Payload container information IE`: Indicates if the payload is related to PRU (for Location services messages).
+    *   `Release assistance indication`: Indicates the UE's expectation of further data transmission (for CIoT user data).
+    *   `Non-3GPP access path switching indication`: Indicates support for non-3GPP access path switching.
+    *   `MA PDU session information`:  MA PDU session related information.
+
+*   **UE Behavior:**
+
+    *   The UE sets the `Payload container type IE` and the `Payload container IE` based on the type of data being sent.
+    *   The UE includes relevant IEs like `PDU session ID`, `S-NSSAI`, `DNN`, etc., as required by the specific payload and procedure.
+    *   The UE handles access barring, timer T3447, and TAI changes.
+
+*   **AMF Behavior (simplified):**
+
+    *   The AMF receives the `UL NAS TRANSPORT` message.
+    *   The AMF determines the routing based on the `Payload container type IE` and other IEs.
+    *   The AMF forwards the payload to the appropriate network function (SMF, SMSF, LMF, PCF, UDM, UAS-NF).
+    *   The AMF may reject the request due to congestion, service area restrictions, etc.
+
+**Key Information and Description**
+
+| Key Information                   | Description                                                                                                                                                                  |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Procedure Name                    | UE-initiated NAS transport procedure                                                                                                                                         |
+| Trigger                           | UE needs to send a payload to the network (e.g., 5GSM message, SMS, LPP message).                                                                                            |
+| Message                           | UL NAS TRANSPORT                                                                                                                                                             |
+| Primary Actor                     | UE, AMF                                                                                                                                                                    |
+| Payload Container Type            | Indicates the type of payload being transported.                                                                                                                             |
+| Payload Container                 | Contains the actual payload.                                                                                                                                                  |
+| Success/Failure                   | Success: Payload delivered to destination. Failure: Error message returned to UE, or procedure aborted.                                                                     |
+
+**JSON Representation for FPG**
+
+```json
+{
+  "nodes": [
+    {
+      "id": "UE_Idle/Connected",
+      "type": "state",
+      "properties": {
+        "mode": "5GMM-IDLE or 5GMM-CONNECTED"
+      }
+    },
+    {
+      "id": "UE_Initiates_NAS_Transport",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UL_NAS_TRANSPORT_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "UL NAS TRANSPORT"
+      },
+      "parameters": [
+        "Payload container type IE",
+        "Payload container IE",
+        "PDU session ID IE (optional)",
+        "S-NSSAI IE (optional)",
+        "DNN IE (optional)",
+        "Request type IE (optional)",
+         "Additional information IE (optional)"
+      ]
+    },
+    {
+      "id": "AMF_Receives_UL_NAS_TRANSPORT",
+      "type": "event",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Forwards_Payload",
+      "type": "action",
+      "properties": {
+        "destination": "SMF/SMSF/LMF/PCF/UDM/UAS-NF based on Payload container type IE"
+      }
+    },
+    {
+      "id": "AMF_Sends_Response",
+      "type": "action",
+      "properties": {
+        "response_type": "5GSM message (if N1 SM information)"
+      }
+    },
+    {
+      "id": "UE_Receives_Response",
+      "type": "event",
+      "properties": {}
+    },
+    {
+      "id": "UE_Processing_Done",
+      "type": "state",
+      "properties": {}
+    },
+        {
+      "id": "AMF_Rejects_Request",
+      "type": "action",
+      "properties": {
+        "reason": "Congestion, service area restrictions, etc."
+      }
+    },
+    {
+      "id": "UE_Receives_Rejection",
+      "type": "event",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Idle/Connected",
+      "to": "UE_Initiates_NAS_Transport",
+      "action": "UE decides to send data",
+      "properties": {}
+    },
+    {
+      "from": "UE_Initiates_NAS_Transport",
+      "to": "UL_NAS_TRANSPORT_Sent",
+      "action": "UE sends UL NAS TRANSPORT",
+      "properties": {}
+    },
+    {
+      "from": "UL_NAS_TRANSPORT_Sent",
+      "to": "AMF_Receives_UL_NAS_TRANSPORT",
+      "event": "UL NAS TRANSPORT received",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Receives_UL_NAS_TRANSPORT",
+      "to": "AMF_Forwards_Payload",
+      "action": "AMF routes payload",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Receives_UL_NAS_TRANSPORT",
+      "to": "AMF_Rejects_Request",
+      "action": "AMF rejects request",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Forwards_Payload",
+      "to": "AMF_Sends_Response",
+      "action": "AMF sends response to UE",
+      "properties": {}
+    },
+        {
+      "from": "AMF_Rejects_Request",
+      "to": "UE_Receives_Rejection",
+      "event": "Rejection received",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Sends_Response",
+      "to": "UE_Receives_Response",
+      "event": "Response received",
+      "properties": {}
+    },
+    {
+      "from": "UE_Receives_Response",
+      "to": "UE_Processing_Done",
+      "action": "UE processes response",
+      "properties": {}
+    },
+    {
+      "from": "UE_Receives_Rejection",
+      "to": "UE_Processing_Done",
+      "action": "UE handles rejection",
+      "properties": {}
+    }
+  ]
+}
+```
+
+**Mermaid FPG Visualization**
+
+```mermaid
+graph LR
+    UE_IdleConnected(UE Idle/Connected) --> UE_InitiatesNASTransport(UE Initiates NAS Transport)
+    UE_InitiatesNASTransport --> UL_NASTRANSPORTSent(UL NAS TRANSPORT Sent)
+    UL_NASTRANSPORTSent --> AMF_ReceivesULNASTRANSPORT(AMF Receives UL NAS TRANSPORT)
+    AMF_ReceivesULNASTRANSPORT --> AMF_ForwardsPayload(AMF Forwards Payload)
+    AMF_ReceivesULNASTRANSPORT --> AMF_RejectsRequest(AMF Rejects Request)
+    AMF_ForwardsPayload --> AMF_SendsResponse(AMF Sends Response to UE)
+    AMF_RejectsRequest --> UE_ReceivesRejection(UE Receives Rejection)
+    AMF_SendsResponse --> UE_ReceivesResponse(UE Receives Response)
+    UE_ReceivesResponse --> UE_ProcessingDone(UE Processing Done)
+    UE_ReceivesRejection --> UE_ProcessingDone(UE Processing Done)
+    style UE_IdleConnected fill:#f9f,stroke:#333,stroke-width:2px
+    style UE_InitiatesNASTransport fill:#ccf,stroke:#333,stroke-width:2px
+    style UL_NASTRANSPORTSent fill:#ccf,stroke:#333,stroke-width:2px
+    style AMF_ReceivesULNASTRANSPORT fill:#ffc,stroke:#333,stroke-width:2px
+    style AMF_ForwardsPayload fill:#ccf,stroke:#333,stroke-width:2px
+    style AMF_RejectsRequest fill:#fcc,stroke:#333,stroke-width:2px
+    style AMF_SendsResponse fill:#ccf,stroke:#333,stroke-width:2px
+    style UE_ReceivesResponse fill:#ffc,stroke:#333,stroke-width:2px
+    style UE_ReceivesRejection fill:#ffc,stroke:#333,stroke-width:2px
+    style UE_ProcessingDone fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+**Explanation of Mermaid Code:**
+
+*   Each node represents a state or action (UE, AMF).
+*   The arrows (-->) represent the flow of the procedure.
+*   `style` attributes are used to color the nodes based on their type.
+
+This representation provides a clear visualization of the UE-initiated NAS transport procedure based on the 3GPP specification text.

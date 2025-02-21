@@ -1,0 +1,138 @@
+Okay, I will analyze the provided text, identify the main procedure, extract relevant information, and represent it in the requested JSON format.
+
+**Main Procedure: 5GMM Status Procedure**
+
+The text focuses primarily on the 5GMM Status procedure (Section 5.4.6). It describes the purpose, initiation, and handling of the 5GMM STATUS message by both the UE and the AMF. The other sections mentioned are either handling of specific information elements within a message or introducing another procedure at the end.
+
+**Extraction and JSON Representation**
+
+```json
+{
+  "nodes": [
+    {
+      "id": "Any_5GMM_State_UE",
+      "type": "state",
+      "properties": {
+        "description": "UE is in any 5GMM state"
+      }
+    },
+    {
+      "id": "Any_5GMM_State_AMF",
+      "type": "state",
+      "properties": {
+        "description": "AMF is in any 5GMM state"
+      }
+    },
+    {
+      "id": "5GMM_STATUS_Sent_UE",
+      "type": "event",
+      "properties": {
+        "message_type": "5GMM STATUS",
+        "sender": "UE",
+        "trigger": "Error condition detected upon receipt of 5GMM protocol data in the UE"
+      },
+      "parameters": ["5GMM Cause"]
+    },
+     {
+      "id": "5GMM_STATUS_Sent_AMF",
+      "type": "event",
+      "properties": {
+        "message_type": "5GMM STATUS",
+        "sender": "AMF",
+        "trigger": "Error condition detected upon receipt of 5GMM protocol data in the AMF"
+      },
+      "parameters": ["5GMM Cause"]
+    },
+    {
+      "id": "5GMM_STATUS_Received_UE",
+      "type": "event",
+      "properties": {
+        "message_type": "5GMM STATUS",
+        "receiver": "UE"
+      },
+      "parameters": ["5GMM Cause"]
+    },
+    {
+      "id": "5GMM_STATUS_Received_AMF",
+      "type": "event",
+      "properties": {
+        "message_type": "5GMM STATUS",
+        "receiver": "AMF"
+      },
+      "parameters": ["5GMM Cause"]
+    },
+    {
+      "id": "Local_Action_UE",
+      "type": "action",
+      "properties": {
+        "description": "Implementation-dependent local actions by UE"
+      }
+    },
+      {
+      "id": "Local_Action_AMF",
+      "type": "action",
+      "properties": {
+        "description": "Implementation-dependent local actions by AMF"
+      }
+    }
+  ],
+  "edges": [
+     {
+      "from": "Any_5GMM_State_UE",
+      "to": "5GMM_STATUS_Sent_UE",
+      "action": "Send 5GMM STATUS",
+      "properties": {
+        "metadata": {
+          "timestamp": "T1"
+        },
+        "trigger": "Error condition detected by UE"
+      }
+    },
+     {
+      "from": "Any_5GMM_State_AMF",
+      "to": "5GMM_STATUS_Sent_AMF",
+      "action": "Send 5GMM STATUS",
+      "properties": {
+        "metadata": {
+          "timestamp": "T1"
+        },
+        "trigger": "Error condition detected by AMF"
+      }
+    },
+    {
+      "from": "Any_5GMM_State_UE",
+      "to": "5GMM_STATUS_Received_UE",
+      "event": "5GMM STATUS Received by UE",
+      "properties": {}
+    },
+     {
+      "from": "Any_5GMM_State_AMF",
+      "to": "5GMM_STATUS_Received_AMF",
+      "event": "5GMM STATUS Received by AMF",
+      "properties": {}
+    },
+    {
+      "from": "5GMM_STATUS_Received_UE",
+      "to": "Any_5GMM_State_UE",
+      "action": "Perform Local Action UE",
+      "properties": {}
+    },
+     {
+      "from": "5GMM_STATUS_Received_AMF",
+      "to": "Any_5GMM_State_AMF",
+      "action": "Perform Local Action AMF",
+      "properties": {}
+    }
+  ]
+}
+```
+
+**Key Information and Descriptions:**
+
+*   **Purpose:** To report error conditions detected upon receipt of 5GMM protocol data in the AMF or the UE.
+*   **Initiation:** Can be sent by both the AMF and the UE.
+*   **Trigger:** Detection of an error related to received 5GMM protocol data.
+*   **Message:** 5GMM STATUS message.
+*   **Action on Receipt (UE & AMF):** No state transition or specific action required from the radio interface perspective. Local, implementation-dependent actions are possible.
+*   **States:** The UE and AMF can be in any 5GMM state when sending or receiving the 5GMM STATUS message.
+*   **Parameters:**The 5GMM cause.

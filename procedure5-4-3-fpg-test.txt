@@ -1,0 +1,193 @@
+Okay, I will analyze the provided text and extract the information about the Identification procedure, mapping it to the specified JSON format.
+
+**Main Procedure: Identification Procedure**
+
+**Analysis and Extraction**
+
+Based on the provided text, the main procedure detailed in the section is the "Identification procedure".
+
+Here's a breakdown of the procedure elements:
+
+*   **Purpose:** To request a UE to provide specific identification parameters (SUCI, IMEI, IMEISV, EUI-64, or MAC address).
+*   **Initiation:** The AMF initiates the procedure by sending an IDENTITY REQUEST message to the UE and starting timer T3570.
+*   **UE Behavior:** Upon receiving the IDENTITY REQUEST:
+    *   If the Identity type is not "SUCI", the UE sends an IDENTITY RESPONSE with the requested parameters.
+    *   If the Identity type is "SUCI":
+        *   If T3519 is not running, the UE generates a fresh SUCI, sends an IDENTITY RESPONSE with the SUCI, starts timer T3519, and stores the SUCI.
+        *   If T3519 is running, the UE sends an IDENTITY RESPONSE with the stored SUCI.
+*   **Network Completion:** Upon receiving the IDENTITY RESPONSE, the network stops timer T3570.
+*   **Abnormal Cases (UE):**
+    *   Transmission failure of IDENTITY RESPONSE (if triggered by registration): Re-initiate registration.
+    *   Requested identity not available: Encode identity type as "No identity".
+*   **Abnormal Cases (Network):**
+    *   Lower layer failure before IDENTITY RESPONSE: Abort ongoing 5GMM procedure.
+    *   Expiry of timer T3570: Retransmit IDENTITY REQUEST (up to 4 times), then abort the identification procedure and any ongoing 5GMM procedure.
+    *   Collision with registration procedure for initial registration: Proceed with the registration procedure for initial registration. If registration procedure for initial registration is pending,  proceed with new registration procedure if information elements in the REGISTRATION REQUEST message differ from the ones received within the previous REGISTRATION REQUEST message; or If the information elements do not differ then the network shall not treat any further this new REGISTRATION REQUEST message.
+    *   Collision with registration procedure for mobility and periodic registration update: progress both procedures.
+    *   Collision with a UE initiated de-registration procedure: If the network receives a DEREGISTRATION REQUEST message with "switch off" indication in the De-registration type IE before the ongoing identification procedure has been completed the network shall abort the identification procedure and shall progress the UE-initiated de-registration procedure; Else the network shall complete the identification procedure and shall respond to the UE-initiated de-registration procedure as described in subclause 5.5.2.2
+
+**JSON Representation**
+
+```json
+{
+  "nodes": [
+    {
+      "id": "AMF_Initiates_Identification",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Receives_Identity_Request",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Sends_Identity_Response",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Receives_Identity_Response",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Timer_T3570_Starts",
+      "type": "action",
+      "properties": {
+        "timer_name": "T3570"
+      }
+    },
+    {
+      "id": "Timer_T3570_Expires",
+      "type": "event",
+      "properties": {
+        "timer_name": "T3570",
+        "expiry_count": "1-5"
+      }
+    },
+    {
+      "id": "Registration_Request_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "Registration Request"
+      }
+    },
+    {
+      "id": "Deregistration_Request_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "Deregistration Request"
+      }
+    },
+        {
+      "id": "Timer_T3519_Starts",
+      "type": "action",
+      "properties": {
+        "timer_name": "T3519"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "from": "AMF_Initiates_Identification",
+      "to": "UE_Receives_Identity_Request",
+      "action": "Send_Identity_Request",
+      "properties": {
+        "parameters": ["Identity Type (SUCI, IMEI, IMEISV, EUI-64, MAC address)"],
+        "metadata": {}
+      }
+    },
+    {
+      "from": "AMF_Initiates_Identification",
+      "to": "Timer_T3570_Starts",
+      "action": "Start_Timer",
+      "properties":{
+        "timer" : "T3570"
+      }
+    },
+    {
+      "from": "UE_Receives_Identity_Request",
+      "to": "UE_Sends_Identity_Response",
+      "action": "Send_Identity_Response",
+      "properties": {
+        "parameters": ["SUCI/IMEI/IMEISV/EUI-64/MAC Address/ No identity"],
+        "metadata": {}
+      },
+      "conditional": "Identity Type in Request is SUCI or not SUCI"
+    },
+    {
+         "from": "UE_Sends_Identity_Response",
+         "to": "Timer_T3519_Starts",
+         "action": "Start_Timer",
+         "properties":{
+           "timer" : "T3519"
+         },
+         "conditional": "Identity Type in Request is SUCI and T3519 is not running"
+       },
+    {
+      "from": "UE_Sends_Identity_Response",
+      "to": "AMF_Receives_Identity_Response",
+      "event": "Identity_Response_Received",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Receives_Identity_Response",
+      "to": "AMF_Initiates_Identification",
+      "event": "Timer_T3570_Expires",
+      "properties": {
+        "expiry_count": "1-4"
+      },
+      "action": "Retransmit_Identity_Request"
+    },
+    {
+      "from": "AMF_Receives_Identity_Response",
+      "to": null,
+      "event": "Timer_T3570_Expires",
+      "properties": {
+        "expiry_count": "5"
+      },
+      "action": "Abort_Identification_Procedure_and_Ongoing_5GMM_Procedure"
+    },
+    {
+      "from": "AMF_Receives_Identity_Response",
+      "to": null,
+      "event": "Registration_Request_Received",
+      "properties": {},
+      "conditional": "Registration is for initial/emergency registration, no registration procedure is pending on the network",
+      "action": "Proceed_with_Registration_Procedure_for_Initial_Registration"
+    },
+        {
+          "from": "AMF_Receives_Identity_Response",
+          "to": null,
+          "event": "Registration_Request_Received",
+          "properties": {},
+          "conditional": "Registration is for mobility/periodic registration updating",
+          "action": "Progress_both_Identification_and_Registration_Procedures"
+        },
+        {
+          "from": "AMF_Receives_Identity_Response",
+          "to": null,
+          "event": "Deregistration_Request_Received",
+          "properties": {},
+          "conditional": "De-registration type IE indicates 'switch off'",
+          "action": "Abort_Identification_Procedure_and_Progress_De-registration_Procedure"
+        }
+  ]
+}
+```
+
+**Key Information and Description**
+
+*   **Procedure Name:** Identification procedure
+*   **Purpose:** To obtain the UE's identity (SUCI, IMEI, IMEISV, EUI-64, or MAC address) for identification and authentication purposes.
+*   **Initiator:** AMF (Access and Mobility Management Function)
+*   **UE State:** UE must be in 5GMM-CONNECTED mode.
+*   **Messages:**
+    *   IDENTITY REQUEST: Sent by the AMF to request the UE's identity.
+    *   IDENTITY RESPONSE: Sent by the UE to provide the requested identity.
+*   **Timers:**
+    *   T3570: Started by the AMF when sending the IDENTITY REQUEST, stopped upon receiving IDENTITY RESPONSE or after 5 retries.
+    *   T3519: Started by the UE when sending the SUCI in the IDENTITY RESPONSE
+*   **Abnormal conditions**: defines when a retransmission, abortion or collision handling should happen.

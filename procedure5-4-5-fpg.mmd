@@ -1,0 +1,11 @@
+graph LR
+    UE_Idle_Connected --> UE_Initiates_NAS_Transport
+    UE_Initiates_NAS_Transport --> UL_NAS_TRANSPORT_Sent
+    UL_NAS_TRANSPORT_Sent --> AMF_Receives_UL_NAS_TRANSPORT
+    AMF_Receives_UL_NAS_TRANSPORT --> AMF_Forwards_Payload
+    AMF_Receives_UL_NAS_TRANSPORT --> AMF_Rejects_Request
+    AMF_Forwards_Payload --> AMF_Sends_Response_to_UE
+    AMF_Rejects_Request --> UE_Receives_Rejection
+    AMF_Sends_Response_to_UE --> UE_Receives_Response
+    UE_Receives_Response --> UE_Processing_Done
+    UE_Receives_Rejection --> UE_Processing_Done

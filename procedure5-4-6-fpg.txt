@@ -1,0 +1,235 @@
+Okay, let's analyze the provided text and extract the information about the 5GMM status procedure and create the Flow Property Graph.
+
+**Analysis:**
+
+The primary procedure discussed in the text is the "5GMM status procedure". This procedure involves the exchange of 5GMM STATUS messages between the UE and the AMF to report error conditions. The key points are:
+
+*   **Purpose:** Report error conditions detected upon receipt of 5GMM protocol data.
+*   **Initiation:** Can be initiated by both the AMF and the UE.
+*   **Action on Receipt (UE):** No state transition or specific action is mandated from the radio interface perspective. Local actions are implementation dependent.
+*   **Action on Receipt (AMF):** Same as UE, no state transition or specific action mandated. Local actions are implementation dependent.
+
+**Key Information and Description:**
+
+*   **Procedure Name:** 5GMM Status Procedure
+*   **Purpose:** To report error conditions detected upon receipt of 5GMM protocol data in the AMF or in the UE.
+*   **Messages Involved:** 5GMM STATUS
+*   **Initiators:** UE, AMF
+*   **Impact on State:** No state transition mandated as seen from the radio interface. Local actions are possible.
+*   **Specific Actions:** Implementation-dependent, no standardized actions defined in this section.
+
+**Flow Property Graph (FPG):**
+
+```mermaid
+graph LR
+    subgraph UE
+        UE_Idle((UE Idle));
+        UE_Receives_Data((UE Receives Data));
+        UE_Detects_Error((UE Detects Error Condition));
+        UE_Sends_Status(UE Sends 5GMM STATUS);
+        UE_Local_Action((UE Local Action - Implementation Dependent));
+    end
+
+    subgraph AMF
+        AMF_Idle((AMF Idle));
+        AMF_Receives_Data((AMF Receives Data));
+        AMF_Detects_Error((AMF Detects Error Condition));
+        AMF_Sends_Status(AMF Sends 5GMM STATUS);
+        AMF_Local_Action((AMF Local Action - Implementation Dependent));
+    end
+
+    UE_Idle --> UE_Receives_Data;
+    UE_Receives_Data -- Detects Error --> UE_Detects_Error;
+    UE_Detects_Error -- Action: Send 5GMM STATUS --> UE_Sends_Status;
+    UE_Sends_Status --> UE_Local_Action;
+    UE_Local_Action --> UE_Idle;
+
+    AMF_Idle --> AMF_Receives_Data;
+    AMF_Receives_Data -- Detects Error --> AMF_Detects_Error;
+    AMF_Detects_Error -- Action: Send 5GMM STATUS --> AMF_Sends_Status;
+    AMF_Sends_Status --> AMF_Local_Action;
+    AMF_Local_Action --> AMF_Idle;
+
+    UE_Sends_Status -- Event: 5GMM STATUS Received --> AMF_Receives_Status((AMF Receives 5GMM STATUS));
+    AMF_Receives_Status --> AMF_Local_Action;
+    AMF_Sends_Status -- Event: 5GMM STATUS Received --> UE_Receives_Status((UE Receives 5GMM STATUS));
+    UE_Receives_Status --> UE_Local_Action;
+```
+
+**JSON Representation:**
+
+```json
+{
+  "nodes": [
+    {
+      "id": "UE_Idle",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Receives_Data",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Detects_Error",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Sends_Status",
+      "type": "action",
+      "properties": {
+        "message": "5GMM STATUS"
+      }
+    },
+    {
+      "id": "UE_Local_Action",
+      "type": "action",
+      "properties": {
+        "description": "Implementation Dependent"
+      }
+    },
+    {
+      "id": "AMF_Idle",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Receives_Data",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Detects_Error",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Sends_Status",
+      "type": "action",
+      "properties": {
+        "message": "5GMM STATUS"
+      }
+    },
+    {
+      "id": "AMF_Local_Action",
+      "type": "action",
+      "properties": {
+        "description": "Implementation Dependent"
+      }
+    },
+        {
+      "id": "UE_Receives_Status",
+      "type": "state",
+      "properties": {
+          "message": "5GMM STATUS"
+      }
+    },
+        {
+      "id": "AMF_Receives_Status",
+      "type": "state",
+      "properties": {
+          "message": "5GMM STATUS"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Idle",
+      "to": "UE_Receives_Data",
+      "action": "Receives Data",
+      "properties": {}
+    },
+    {
+      "from": "UE_Receives_Data",
+      "to": "UE_Detects_Error",
+      "event": "Detects Error",
+      "properties": {}
+    },
+    {
+      "from": "UE_Detects_Error",
+      "to": "UE_Sends_Status",
+      "action": "Send 5GMM STATUS",
+      "properties": {}
+    },
+    {
+      "from": "UE_Sends_Status",
+      "to": "UE_Local_Action",
+      "action": "Local Action",
+      "properties": {}
+    },
+    {
+      "from": "UE_Local_Action",
+      "to": "UE_Idle",
+      "action": "Returns to Idle",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Idle",
+      "to": "AMF_Receives_Data",
+      "action": "Receives Data",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Receives_Data",
+      "to": "AMF_Detects_Error",
+      "event": "Detects Error",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Detects_Error",
+      "to": "AMF_Sends_Status",
+      "action": "Send 5GMM STATUS",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Sends_Status",
+      "to": "AMF_Local_Action",
+      "action": "Local Action",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Local_Action",
+      "to": "AMF_Idle",
+      "action": "Returns to Idle",
+      "properties": {}
+    },
+        {
+      "from": "UE_Sends_Status",
+      "to": "AMF_Receives_Status",
+      "event": "5GMM STATUS Received",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Receives_Status",
+      "to": "AMF_Local_Action",
+      "action": "Local Action",
+      "properties": {}
+    },
+        {
+      "from": "AMF_Sends_Status",
+      "to": "UE_Receives_Status",
+      "event": "5GMM STATUS Received",
+      "properties": {}
+    },
+    {
+      "from": "UE_Receives_Status",
+      "to": "UE_Local_Action",
+      "action": "Local Action",
+      "properties": {}
+    }
+  ]
+}
+```
+
+**Explanation of FPG:**
+
+*   **Nodes:** Represent states (e.g., UE Idle, AMF Idle) and actions (e.g., UE Sends 5GMM STATUS, AMF Local Action).
+*   **Edges:**  Represent transitions between states/actions, triggered by events (e.g., "Detects Error", "5GMM STATUS Received") or actions (e.g., "Receives Data").
+*   **Direction:**  The arrows indicate the flow of the procedure.
+*   **Subgraphs:** Group the UE-related nodes and AMF-related nodes for clarity.
+*   **Conditional Logic:** Error detection is represented as a transition from "Receives Data" to "Detects Error".
+*   **Loops:**  The local action leads back to the idle state, representing the completion of the procedure and a return to a waiting state.
+
+This FPG provides a visual representation of the 5GMM Status procedure as described in the provided text.

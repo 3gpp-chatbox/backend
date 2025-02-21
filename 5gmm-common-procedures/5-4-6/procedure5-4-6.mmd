@@ -1,0 +1,8 @@
+graph TD
+    A["Start"] --> B{"Error Detected in 5GMM Protocol Data"};
+    B -- "Yes" --> C{{"AMF or UE sends 5GMM STATUS Message"}};
+    C --> D{"AMF or UE receives 5GMM STATUS Message"};
+    D --> E{"No mandatory state transition or action at Radio Interface"};
+    E --> F{"Local Actions (Implementation Dependent)"};
+    F --> G["End"];
+    B -- "No" --> G;

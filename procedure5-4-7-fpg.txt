@@ -1,0 +1,193 @@
+```json
+{
+  "procedure_name": "Network Slice-Specific Authentication and Authorization Procedure",
+  "description": "This procedure enables the authentication, authorization, and accounting server (AAA-S) via the Network Slice Specific and SNPN Authentication and Authorization Function (NSSAAF) to (re-)authenticate or (re-)authorize the upper layers of the UE for a specific S-NSSAI.",
+  "initiator": "Network (AMF)",
+  "participants": [
+    "UE",
+    "AMF",
+    "AAA-S via NSSAAF"
+  ],
+  "normal_flow": [
+    {
+      "step": 1,
+      "entity": "AMF",
+      "action": "Initiates network slice-specific EAP message reliable transport procedure by creating a NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message.",
+      "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND",
+      "parameters": [
+        "EAP message IE (EAP-request message)",
+        "S-NSSAI IE (HPLMN S-NSSAI or SNPN S-NSSAI)"
+      ],
+      "timer": "Starts T3575 per S-NSSAI"
+    },
+    {
+      "step": 2,
+      "entity": "UE",
+      "action": "Receives NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message, stops T3346 (if running), and passes the EAP-request message and S-NSSAI to upper layers.",
+      "message": "N/A",
+      "parameters": [
+        "EAP-request message",
+        "HPLMN S-NSSAI or SNPN S-NSSAI"
+      ],
+      "timer": "Stops T3346 (if running)"
+    },
+    {
+      "step": 3,
+      "entity": "UE",
+      "action": "Upper layers provide an EAP-response message. UE creates a NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message.",
+      "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE",
+      "parameters": [
+        "EAP message IE (EAP-response message)",
+        "S-NSSAI IE (HPLMN S-NSSAI or SNPN S-NSSAI)"
+      ],
+      "timer": "N/A"
+    },
+    {
+      "step": 4,
+      "entity": "AMF",
+      "action": "Receives NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message, stops timer T3575 and passes the EAP-response message and S-NSSAI to the upper layers or AAA-S via NSSAAF.",
+      "message": "N/A",
+      "parameters": [
+        "EAP-response message",
+        "HPLMN S-NSSAI or SNPN S-NSSAI"
+      ],
+      "timer": "Stops T3575"
+    },
+    {
+      "step": 5,
+      "entity": "AMF",
+      "action": "Initiates the network slice-specific EAP result message transport procedure and creates a NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message.",
+      "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT",
+      "parameters": [
+        "EAP message IE (EAP-success or EAP-failure message)",
+        "S-NSSAI IE (HPLMN S-NSSAI or SNPN S-NSSAI)"
+      ],
+      "timer": "N/A"
+    },
+    {
+      "step": 6,
+      "entity": "UE",
+      "action": "Receives NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message and passes the EAP-success or EAP-failure message and the S-NSSAI to the upper layers.",
+      "message": "N/A",
+      "parameters": [
+        "EAP-success or EAP-failure message",
+        "HPLMN S-NSSAI or SNPN S-NSSAI"
+      ],
+      "timer": "N/A"
+    }
+  ],
+  "abnormal_cases_network": [
+    {
+      "case": "T3575 expiry",
+      "action": "AMF retransmits the NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message. After five expiry attempts, the procedure is aborted."
+    },
+    {
+      "case": "Non-delivered NAS PDU due to handover",
+      "action": "AMF retransmits the NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND message after successful handover."
+    },
+    {
+      "case": "Network slice-specific authentication and authorization procedure and de-registration procedure collision",
+      "action": "If access type is the same, network aborts network slice-specific authentication and authorization procedure and progresses de-registration. If different, both proceed."
+    },
+    {
+      "case": "Network slice-specific authentication and authorization procedure and service request procedure collision",
+      "action": "If SERVICE REQUEST includes 'NAS signalling connection release', the network slice-specific authentication and authorization procedure is aborted. Otherwise, both proceed."
+    },
+        {
+      "case": "Network slice-specific authentication and authorization procedure and registration procedure for mobility and periodic registration update collision",
+      "action": "If REGISTRATION REQUEST includes Unavailability information IE without start of the unavailability period or request type IE with the Request type value set to 'NAS signalling connection release', the network slice-specific authentication and authorization procedure is aborted. Otherwise, both proceed.If the REGISTRATION REQUEST message includes the Unavailability information IE with the start of the unavailability period both the procedures shall be progressed."
+    }
+  ],
+  "abnormal_cases_ue": [
+    {
+      "case": "Transmission failure of NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message with change in current TAI",
+      "action": "The network slice-specific authentication and authorization procedure shall be aborted and a registration procedure initiated."
+    },
+    {
+      "case": "Transmission failure of NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message indication without change in current TAI",
+      "action": "UE implementation-dependent on how to re-run the triggered procedure."
+    },
+    {
+      "case": "Network slice-specific authentication and authorization procedure and de-registration procedure collision",
+      "action": "If access type is the same, the UE ignores the command message and proceeds with de-registration. Otherwise, both proceed."
+    },
+    {
+      "case": "Network slice-specific authentication and authorization procedure and service request procedure collision",
+      "action": "If SERVICE REQUEST includes 'NAS signalling connection release', UE ignores the command message and proceeds with service request. Otherwise, both proceed."
+    },
+    {
+      "case": "Network slice-specific authentication and authorization procedure and registration procedure for mobility and periodic registration update collision",
+      "action": "If REGISTRATION REQUEST excludes Unavailability information IE without start of the unavailability period, UE ignores the command message and proceeds with registration. Otherwise, both proceed. If REGISTRATION REQUEST includes the Unavailability information IE with the start of the unavailability period both the procedures shall be progressed"
+    }
+  ],
+  "key_information": {
+    "messages": [
+      "NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND",
+      "NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE",
+      "NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT"
+    ],
+    "timers": [
+      "T3575",
+      "T3346"
+    ],
+    "ie": [
+      "EAP message IE",
+      "S-NSSAI IE"
+    ]
+  }
+}
+```
+
+```mermaid
+graph LR
+    subgraph Network Slice-Specific Authentication and Authorization Procedure
+    A[AMF: Initiate Procedure - Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND] --> B(UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND);
+    B --> C{Upper Layers Processing EAP};
+    C -- EAP Response Generated --> D[UE: Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE];
+    D --> E(AMF: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE);
+    E --> F{AMF: Send EAP Response to AAA-S/Upper Layers};
+    F -- EAP Result Recieved --> G[AMF: Send NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT];
+    G --> H(UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT);
+    H --> I{UE: Upper Layers Process EAP Result};
+    subgraph Abnormal Cases - Network
+        J[T3575 Expiry] --> A;
+        K[Handover] --> A;
+        L[De-registration Collision] --> End1((End));
+        M[Service Request Collision] --> End1;
+        N[Registration Collision] --> End1;
+    end
+    subgraph Abnormal Cases - UE
+        O[Transmission Failure with TAI Change] --> End2((End));
+        P[Transmission Failure without TAI Change] --> End2;
+        Q[De-registration Collision] --> End2;
+        R[Service Request Collision] --> End2;
+        S[Registration Collision] --> End2;
+    end
+     style End1 fill:#f9f,stroke:#333,stroke-width:2px
+     style End2 fill:#f9f,stroke:#333,stroke-width:2px
+
+    end
+```
+
+**Explanation and Improvements:**
+
+*   **Procedure Name:**  Clearly states the procedure being modeled.
+*   **Description:** Provides a concise overview of the procedure's purpose.
+*   **Initiator and Participants:** Identifies the network elements involved.
+*   **Normal Flow:** A numbered list of steps describing the typical message exchange and actions.  Timers and Information Elements (IEs) are included for each step.
+*   **Abnormal Cases (Network & UE):** Lists potential error scenarios and the corresponding actions taken by the AMF and UE. This is crucial for a complete picture.
+*   **Key Information:** Summarizes important messages, timers, and IEs used in the procedure.  This serves as a quick reference.
+*   **FPG Visualization:**
+    *   **Clear Nodes:** Each node represents a key action or state of an entity (UE or AMF).  Nodes are labeled descriptively.
+    *   **Directed Edges:** Arrows show the flow of the procedure.
+    *   **Message Labels:** Edges are labeled with the messages exchanged between entities.
+    *   **Subgraphs for Abnormal Cases:** These visually separate error handling flows from the main procedure.  Clearer that these are *interruptions* or alternative paths.
+    *   **Collision handling** collision cases are directed to an End, showing these branches terminates the normal flow
+
+Key improvements in this approach:
+
+*   **Comprehensive Coverage:** Includes both the normal flow and common error scenarios for the UE and Network, based on the provided text.
+*   **Detailed Information:** Incorporates messages, timers, and IEs to create a more technically accurate model.
+*   **Clear Visualization:** The FPG uses subgraphs and labels effectively to communicate the procedure's logic.
+
+This structured approach will allow for a more in-depth understanding of 3GPP specifications, making it easier to implement and test these complex procedures.

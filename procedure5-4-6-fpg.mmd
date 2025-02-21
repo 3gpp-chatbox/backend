@@ -1,0 +1,33 @@
+graph LR
+    subgraph "UE"
+        "UE_Idle"((UE Idle));
+        "UE_Receives_Data"((UE Receives Data));
+        "UE_Detects_Error"((UE Detects Error Condition));
+        "UE_Sends_Status"(UE Sends 5GMM STATUS);
+        "UE_Local_Action"((UE Local Action - Implementation Dependent));
+    end
+
+    subgraph "AMF"
+        "AMF_Idle"((AMF Idle));
+        "AMF_Receives_Data"((AMF Receives Data));
+        "AMF_Detects_Error"((AMF Detects Error Condition));
+        "AMF_Sends_Status"(AMF Sends 5GMM STATUS);
+        "AMF_Local_Action"((AMF Local Action - Implementation Dependent));
+    end
+
+    "UE_Idle" --> "UE_Receives_Data";
+    "UE_Receives_Data" -- "Detects Error" --> "UE_Detects_Error";
+    "UE_Detects_Error" -- "Action: Send 5GMM STATUS" --> "UE_Sends_Status";
+    "UE_Sends_Status" --> "UE_Local_Action";
+    "UE_Local_Action" --> "UE_Idle";
+
+    "AMF_Idle" --> "AMF_Receives_Data";
+    "AMF_Receives_Data" -- "Detects Error" --> "AMF_Detects_Error";
+    "AMF_Detects_Error" -- "Action: Send 5GMM STATUS" --> "AMF_Sends_Status";
+    "AMF_Sends_Status" --> "AMF_Local_Action";
+    "AMF_Local_Action" --> "AMF_Idle";
+
+    "UE_Sends_Status" -- "Event: 5GMM STATUS Received" --> "AMF_Receives_Data";
+    "AMF_Receives_Data" --> "AMF_Local_Action";
+    "AMF_Sends_Status" -- "Event: 5GMM STATUS Received" --> "UE_Receives_Data";
+    "UE_Receives_Data" --> "UE_Local_Action";

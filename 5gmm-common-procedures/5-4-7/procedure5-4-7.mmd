@@ -1,0 +1,38 @@
+graph TD
+    A["AMF: Initiate Network Slice-Specific Authentication"];
+    B["AMF: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND (EAP-Request, S-NSSAI)"];
+    C["AMF: Start Timer T3575"];
+    D["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMMAND"];
+    E["UE: Stop Timer T3346 (if running)"];
+    F["UE: Pass EAP-Request and S-NSSAI to Upper Layers"];
+    G["UE: Upper Layers Provide EAP-Response"];
+    H["UE: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE (EAP-Response, S-NSSAI)"];
+    I["AMF: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE"];
+    J["AMF: Stop Timer T3575"];
+    K["AMF: Pass EAP-Response and S-NSSAI to AAA-S via NSSAAF"];
+    L["AAA-S: Authenticate/Authorize"];
+    M["AAA-S: Provide EAP-Success or EAP-Failure"];
+    N["AMF: Create and Send NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT (EAP-Success/Failure, S-NSSAI)"];
+    O["UE: Receive NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT"];
+    P["UE: Pass EAP-Success/Failure and S-NSSAI to Upper Layers"];
+    Q["AMF: Retain Authentication Result"];
+
+    A --> B;
+    B --> C;
+    B --> D;
+    D --> E;
+    D --> F;
+    F --> G;
+    G --> H;
+    H --> I;
+    I --> J;
+    I --> K;
+    K --> L;
+    L --> M;
+    M --> N;
+    N --> O;
+    O --> P;
+    N --> Q;
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
