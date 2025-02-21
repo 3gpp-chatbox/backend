@@ -261,7 +261,12 @@ class ThreeGPPEntityExtractor:
             'processes': r'(?:processes?|handles?|manages?)'
         }
 
-        return 'relationship_type', properties
+        # Check for matching patterns in the sentence
+        for relationship, pattern in patterns.items():
+            if re.search(pattern, sentence):
+                return relationship, properties
+
+        return 'unknown_relationship', properties  # Return a default if no pattern matches
 
     def extract_relationships(self, text: str, entities: Set[Tuple[str, str]]) -> List[Tuple[str, str, str, Dict]]:
         relationships = []
