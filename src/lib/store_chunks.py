@@ -59,21 +59,22 @@ def store_chunks(sections_tree: List[Section], doc_name: str):
         cur = conn.cursor()
 
         # Check if the document already exists in the database
-        existing_doc = cur.execute("SELECT doc_id FROM documents WHERE doc_name = %s", (doc_name,))
-        # existing_doc = cur.fetchone()
+        cur.execute("SELECT doc_id FROM documents WHERE doc_name = %s", (doc_name,))
+        existing_doc = cur.fetchone()
 
         if existing_doc:
-            doc_id = existing_doc[0]
+            print(f"Document {doc_name} already exists in the database")
+            doc_id = existing_doc.get('doc_id')
             # Delete existing sections for this document
             cur.execute("DELETE FROM sections WHERE doc_id = %s", (doc_id,))
         else:
+            print(f"Storing document {doc_name} in the database")
             # Insert new document
-            doc_id = cur.execute(
+            cur.execute(
                 "INSERT INTO documents (doc_name) VALUES (%s) RETURNING doc_id",
-                (doc_name)
+                (doc_name,)
             )
-            print(doc_id)
-            # doc_id = cur.fetchone()[0]
+            doc_id = cur.fetchone().get('doc_id')
 
         # Store each top-level section and its subsections
         for section in sections_tree:

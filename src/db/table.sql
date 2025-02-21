@@ -12,7 +12,7 @@ CREATE TABLE sections (
   heading TEXT NOT NULL,
   level INT NOT NULL,
   content TEXT NOT NULL,
-  parent TEXT NOT NULL,
+  parent TEXT,
   path LTREE NOT NULL  -- e.g., 'TopSection.SubSection'
 );
 
