@@ -1,0 +1,21 @@
+
+graph LR
+    subgraph "Registration Procedure for Initial Registration"
+        A[5GMM-DEREGISTERED] --> B{Initiate Registration Procedure};
+        B -- UE performs initial registration for 5GS services<br>UE performs initial registration for emergency services<br>UE performs initial registration for SMS over NAS<br>UE moves from GERAN/UTRAN to NG-RAN<br>UE performs initial registration for onboarding services in SNPN<br>UE performs initial registration for disaster roaming services<br>UE performs initial registration to resume normal services --> C[InitialRegistrationInitiation];
+        C --> D((Send REGISTRATION REQUEST));
+        D --> E[RegistrationRequestSent];
+    end
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style E fill:#ccf,stroke:#333,stroke-width:2px
+    
+    
+    
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+
+    
+    
+    
+    
+```
