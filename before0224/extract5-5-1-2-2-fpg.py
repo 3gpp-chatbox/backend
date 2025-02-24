@@ -144,7 +144,7 @@ end_chunk_id = 950    # End chunk ID (example)
 db_path = "path_to_your_db.sqlite"  # Path to your SQLite database
 
 # Process the section
-procedural_info = process_section(625, 647, 'document_chunks.db')
+procedural_info = process_section(625, 646, 'document_chunks.db')
 
 # Print the extracted procedural info
 # print("Extracted Procedural Information:\n")
