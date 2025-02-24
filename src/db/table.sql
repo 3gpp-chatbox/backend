@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS ltree;
 
 CREATE TABLE documents (
   doc_id SERIAL PRIMARY KEY,
-  doc_name TEXT NOT NULL,
+  doc_name TEXT NOT NULL UNIQUE,
   extracted_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -17,3 +17,4 @@ CREATE TABLE sections (
 );
 
 CREATE INDEX idx_sections_path ON sections USING GIST (path);
+

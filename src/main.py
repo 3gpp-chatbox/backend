@@ -1,11 +1,8 @@
 # src/main.py
 import os
-import getpass
 from dotenv import load_dotenv
 from google import genai
-from docling.document_converter import DocumentConverter
 import lib.doc_converter as doc_converter
-import lib.doc_processor as doc_processor
 
 
 flash_model = "gemini-2.0-flash"
@@ -15,22 +12,22 @@ pro_model = "gemini-2.0-pro-exp-02-05"
 load_dotenv(override=True)
 
 # Get API key from environment
-api_key = os.getenv('GOOGLE_API_KEY')
+api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables. Please set it in your .env file.")
+    raise ValueError(
+        "GOOGLE_API_KEY not found in environment variables. Please set it in your .env file."
+    )
 
 client = genai.Client(api_key=api_key)
 
 # ## call the converter function to convert docx to markdown
 result = doc_converter.convert_to_markdown("data/stripped/24501-j11.docx")
 
+
 def token_counter(client, model, contents):
     """Count the number of tokens in the given contents"""
-    response = client.models.count_tokens(
-        model=model,
-        contents=contents
-    )
-    
+    response = client.models.count_tokens(model=model, contents=contents)
+
     return response
 
 
@@ -40,11 +37,9 @@ def token_counter(client, model, contents):
 #     message='Tell me a story in 100 words')
 
 
+file = client.files.upload(file="data/stripped/24501-j11.txt")
 
-
-file = client.files.upload(file='data/stripped/24501-j11.txt')
-
-prompt = f"""
+prompt = """
 The file uploaded is extracted from the 3GPP specification 24.501. Please analyze the content and provide a structured representation of the procedural flow information.
 
 Extract the procedural flow information from the above section and return it in a structured format.below is an example for you to thinking and help you to understand the format:
@@ -196,14 +191,9 @@ Metadata such as timestamps, message identifiers.
 
 
 Based on the above, analyze and extract the information from the given text and provide a structured representation of the procedural flow information.
-""" 
+"""
 
-response = client.models.generate_content(
-    model = pro_model,
-    contents = [ prompt,file]
-)
-
-
+response = client.models.generate_content(model=pro_model, contents=[prompt, file])
 
 
 # doc = doc_processor.load_document("data/24501-j11.docx")
