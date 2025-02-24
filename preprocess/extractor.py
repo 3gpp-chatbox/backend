@@ -1,10 +1,22 @@
 '''
-use LLM-Based Extraction
-- use Gemini API with suitable model, temperature
-- use prompt to extract the information
-- calculate the similarity between the extracted data and the queries by semantic search using embeddings
-- pass the data chunks with embeddings that are "close" (in terms of cosine similarity or other distance metrics) to the query embedding to the LLM to extract the procedures
-- store the procedures in a database
+1.  Purpose: This script is responsible for querying the vector database to retrieve the most relevant text chunks based on a user query and then using an LLM (e.g., Gemini) to extract the 5G NAS procedures from those chunks.
+
+2.  Input:
+    *   A user query (string).
+    *   The vector database collection object (returned from embeddings.py).
+    *   The sentence-transformer model name (same as used in embeddings.py, default is `all-mpnet-base-v2`).
+
+3.  Processing:
+    *   Loads the same sentence-transformer model used in `embeddings.py`.
+    *   Creates an embedding for the user query.
+    *   Queries the vector database for the most similar chunk embeddings (and their metadata, including the text chunks).
+    *   Constructs a prompt for the LLM, including the user query and the retrieved text chunks.
+    *   Calls the Gemini API (or your chosen LLM API) with the prompt.
+    *   use LLM to cluster the response
+    *   Parses the LLM response to extract the procedures.
+
+4.  Output:
+    *   The extracted 5G NAS procedures in json format.
 
 '''
 
@@ -13,8 +25,9 @@ import sqlite3
 import os
 import json
 from typing import List, Dict, Tuple
-from db_handler import ChunkDBHandler
+from db_handler import ChunkDBHandler, DBHandler
 from embeddings import EmbeddingHandler
+import chromadb
 
 class ProcedureExtractor:
     def __init__(self, api_key: str, model_name: str = "gemini-pro"):
@@ -22,7 +35,7 @@ class ProcedureExtractor:
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_name)
         self.generation_config = {
-            "temperature": 0.2,  # Lower temperature for more structured output
+            "temperature": 0.2,
             "top_p": 0.8,
             "top_k": 40,
             "max_output_tokens": 4096,
@@ -164,47 +177,40 @@ class ProcedureDB:
                 ))
             conn.commit()
 
-def extract_and_store_procedures(db_path: str, doc_id: str, api_key: str, query: str, index_path: str):
-    """Main function to extract and store procedures based on semantic search"""
+def extract_and_store_procedures(db_handler: DBHandler, doc_id: str, api_key: str, query: str, collection: chromadb.Collection):
+    """Extract and store procedures"""
     print("\n[4/4] Extracting relevant procedures...")
     try:
-        # Initialize handlers
-        chunk_db = ChunkDBHandler(db_path)
-        procedure_db = ProcedureDB(db_path)
         extractor = ProcedureExtractor(api_key)
-        embedding_handler = EmbeddingHandler()
 
-        # Load the saved index
-        print("→ Loading embeddings index...")
-        embedding_handler.load_index(index_path)
-
-        # Perform semantic search
-        print(f"→ Searching for chunks relevant to: {query}")
-        similar_chunks = embedding_handler.search(query, k=5)  # Get top 5 relevant chunks
+        # Search for relevant chunks
+        results = collection.query(
+            query_texts=[query],
+            n_results=5,
+            include=["documents", "metadatas", "distances"]
+        )
         
-        if not similar_chunks:
+        if not results['documents'][0]:
             print("No relevant chunks found")
             return
 
-        # Get full chunk data for relevant chunks
-        chunks = chunk_db.get_chunks(doc_id)
-        relevant_chunks = [
-            chunks[chunk_id] for chunk_id, similarity in similar_chunks
-            if chunk_id < len(chunks)
-        ]
+        # Process results
+        chunks = [{
+            'title': metadata['title'],
+            'content': doc,
+            'index': metadata['index']
+        } for doc, metadata in zip(results['documents'][0], results['metadatas'][0])]
 
-        # Extract procedures from relevant chunks
-        print("→ Extracting NAS procedures from relevant chunks...")
-        doc_title = f"3GPP TS {doc_id.split('.')[0]}"  # Format document title
-        procedures = extractor.extract_procedures_from_query(query, relevant_chunks, doc_title)
+        # Extract and store procedures
+        doc_title = f"3GPP TS {doc_id.split('.')[0]}"
+        procedures = extractor.extract_procedures_from_query(query, chunks, doc_title)
         
         if procedures:
-            # Store with best similarity score
-            best_similarity = similar_chunks[0][1] if similar_chunks else 0
-            procedure_db.store_nas_procedure(procedures, doc_id, best_similarity)
-            print(f"✓ Extracted and stored {len(procedures)} NAS procedures")
+            similarity_score = 1 - results['distances'][0][0]
+            db_handler.store_procedures(procedures, doc_id, similarity_score)
+            print(f"✓ Extracted and stored {len(procedures)} procedures")
         else:
-            print("No relevant NAS procedures found in the chunks")
+            print("No relevant procedures found")
 
     except Exception as e:
-        print(f"✗ Error during procedure extraction: {e}")
+        print(f"✗ Error during extraction: {e}")

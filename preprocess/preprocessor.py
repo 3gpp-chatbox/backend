@@ -3,6 +3,7 @@ import time
 from docling.document_converter import DocumentConverter
 import re
 from chunker import create_chunks
+from db_handler import DBHandler
 
 def docx_to_markdown_with_docling(docx_file, md_file):
     start_time = time.time()
@@ -21,27 +22,30 @@ def docx_to_markdown_with_docling(docx_file, md_file):
         print(f"\u2717 Error during conversion: {e}")
         return 1
 
-def process_markdown(input_md, output_md, db_path: str = None):
+def process_markdown(input_path: str, output_path: str, db_path: str):
     start_time = time.time()
     print("\n[2/2] Starting Markdown processing...")
     try:
-        if not os.path.exists(input_md):
-            raise FileNotFoundError(f"Input file not found: {input_md}")
+        if not os.path.exists(input_path):
+            raise FileNotFoundError(f"Input file not found: {input_path}")
         
-        with open(input_md, "r", encoding="utf-8") as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             markdown_text = f.read()      
         
         print("→ Filtering content...")
         filtered_markdown = filter_markdown_content(markdown_text)       
         
         # Only write to output file if it's different from input
-        if input_md != output_md:
-            with open(output_md, "w", encoding="utf-8") as f:
+        if input_path != output_path:
+            with open(output_path, "w", encoding="utf-8") as f:
                 f.write(filtered_markdown)
+        
+        # Create DB handler
+        db_handler = DBHandler(db_path)
         
         # Create chunks from the filtered markdown
         print("→ Creating chunks...")
-        chunks = create_chunks(output_md, db_path)
+        chunks = create_chunks(output_path, db_handler, "doc_id")
         
         duration = time.time() - start_time
         print(f"✓ Processing completed in {duration:.2f} seconds")    

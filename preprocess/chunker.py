@@ -7,7 +7,7 @@ import re
 from typing import List, Dict
 import spacy
 from spacy.language import Language
-from db_handler import ChunkDBHandler
+from db_handler import DBHandler
 import os
 
 class DocumentChunker:
@@ -119,7 +119,7 @@ def create_chunks(markdown_file: str, db_path: str = None) -> List[Dict]:
         
         # Store chunks in database
         if db_path:
-            db_handler = ChunkDBHandler(db_path)
+            db_handler = DBHandler(db_path)
             doc_id = os.path.basename(markdown_file)
             stored_count = db_handler.store_chunks(chunks, doc_id)
             print(f"Created and stored {stored_count} chunks from the document")

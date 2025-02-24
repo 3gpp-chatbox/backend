@@ -1,25 +1,45 @@
 import sqlite3
 from typing import List, Dict
 import json
+import chromadb
+from sentence_transformers import SentenceTransformer
 
-class ChunkDBHandler:
-    def __init__(self, db_path="chunks.db"):
+class DBHandler:
+    def __init__(self, db_path: str = "DB/chunks.db", persist_directory: str = "DB/chroma_db"):
+        """Initialize database and ChromaDB connections"""
         self.db_path = db_path
+        self.chroma_client = chromadb.PersistentClient(path=persist_directory)
         self.init_db()
 
     def init_db(self):
-        """Create the procedures table if it doesn't exist"""
+        """Create necessary tables"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
+            # Create chunks table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS chunks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT,
+                    content TEXT,
+                    level INTEGER,
+                    doc_id TEXT,
+                    chunk_index INTEGER,
+                    embedding_collection TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(doc_id, chunk_index)
+                )
+            ''')
+            
+            # Create procedures table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS nas_procedures (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     procedure_name TEXT,
                     description TEXT,
-                    steps JSON,  -- Store steps as JSON array
-                    related_3gpp_spec_sections JSON,  -- Store sections as JSON array
+                    steps JSON,
+                    related_3gpp_spec_sections JSON,
                     source_document_title TEXT,
-                    source_chunk_ids JSON,  -- Store chunk IDs as JSON array
+                    source_chunk_ids JSON,
                     doc_id TEXT,
                     similarity_score REAL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -27,8 +47,48 @@ class ChunkDBHandler:
             ''')
             conn.commit()
 
-    def store_nas_procedure(self, procedures: List[Dict], doc_id: str, similarity_score: float):
-        """Store extracted NAS procedures in the database"""
+    def store_chunks(self, chunks: List[Dict], doc_id: str) -> int:
+        """Store chunks and create embeddings"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM chunks WHERE doc_id = ?", (doc_id,))
+            
+            for i, chunk in enumerate(chunks):
+                cursor.execute('''
+                    INSERT INTO chunks (title, content, level, doc_id, chunk_index, embedding_collection)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (
+                    chunk['title'],
+                    chunk['content'],
+                    chunk['level'],
+                    doc_id,
+                    i,
+                    doc_id
+                ))
+            conn.commit()
+            return cursor.rowcount
+
+    def get_chunks(self, doc_id: str) -> List[Dict]:
+        """Retrieve chunks for a document"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT title, content, level, chunk_index, embedding_collection
+                FROM chunks 
+                WHERE doc_id = ? 
+                ORDER BY chunk_index
+            ''', (doc_id,))
+            
+            return [{
+                'title': row[0],
+                'content': row[1],
+                'level': row[2],
+                'index': row[3],
+                'collection': row[4]
+            } for row in cursor.fetchall()]
+
+    def store_procedures(self, procedures: List[Dict], doc_id: str, similarity_score: float):
+        """Store extracted procedures"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             for procedure in procedures:
@@ -51,70 +111,45 @@ class ChunkDBHandler:
                 ))
             conn.commit()
 
-    def store_chunks(self, chunks: List[Dict], doc_id: str):
-        """Store chunks in the database"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            # Clear existing chunks for this document
-            cursor.execute("DELETE FROM chunks WHERE doc_id = ?", (doc_id,))
-            
-            # Insert new chunks
-            for i, chunk in enumerate(chunks):
-                cursor.execute('''
-                    INSERT INTO chunks (title, content, level, doc_id, chunk_index)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (
-                    chunk['title'],
-                    chunk['content'],
-                    chunk['level'],
-                    doc_id,
-                    i
-                ))
-            conn.commit()
-            return cursor.rowcount
+    def create_embeddings(self, doc_id: str, model_name: str = "all-mpnet-base-v2") -> chromadb.Collection:
+        """Create and store embeddings for chunks"""
+        chunks = self.get_chunks(doc_id)
+        if not chunks:
+            raise ValueError("No chunks found for document")
 
-    def get_chunks(self, doc_id: str) -> List[Dict]:
-        """Retrieve chunks for a specific document"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT title, content, level, chunk_index 
-                FROM chunks 
-                WHERE doc_id = ? 
-                ORDER BY chunk_index
-            ''', (doc_id,))
-            
-            chunks = []
-            for row in cursor.fetchall():
-                chunks.append({
-                    'title': row[0],
-                    'content': row[1],
-                    'level': row[2],
-                    'index': row[3]
-                })
-            return chunks 
+        # Create or get collection
+        try:
+            collection = self.chroma_client.get_collection(doc_id)
+            print(f"Using existing collection: {doc_id}")
+        except:
+            collection = self.chroma_client.create_collection(
+                name=doc_id,
+                metadata={"hnsw:space": "cosine"}
+            )
+            print(f"Created new collection: {doc_id}")
 
-    def store_embedding_metadata(self, doc_id: str, metadata: Dict):
-        """Store embedding metadata in the database"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            # Create metadata table if it doesn't exist
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS embedding_metadata (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    doc_id TEXT,
-                    dimension INTEGER,
-                    index_path TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            
-            cursor.execute('''
-                INSERT INTO embedding_metadata (doc_id, dimension, index_path)
-                VALUES (?, ?, ?)
-            ''', (
-                doc_id,
-                metadata['dimension'],
-                metadata['index_path']
-            ))
-            conn.commit() 
+        # Prepare data for embedding
+        ids = [str(chunk['index']) for chunk in chunks]
+        texts = [f"{chunk['title']} {chunk['content']}".strip() for chunk in chunks]
+        metadatas = [{
+            'title': chunk['title'],
+            'level': chunk['level'],
+            'index': chunk['index']
+        } for chunk in chunks]
+
+        # Add documents in batches
+        batch_size = 32
+        for i in range(0, len(texts), batch_size):
+            batch_end = min(i + batch_size, len(texts))
+            collection.add(
+                ids=ids[i:batch_end],
+                documents=texts[i:batch_end],
+                metadatas=metadatas[i:batch_end]
+            )
+
+        return collection 
+
+# Keep old class for backward compatibility
+class ChunkDBHandler(DBHandler):
+    def __init__(self, db_path="chunks.db"):
+        super().__init__(db_path=db_path) 

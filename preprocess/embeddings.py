@@ -1,155 +1,97 @@
 '''
-1. create embedings for : 
-    1.data chunks
-    2.queries 
-2. use the following models both for data chunks and queries: 
-    i. Sentence Embeddings: 
-    modelst to use: sentence-transformers- all-mpnet-base-v2, all-MiniLM-L6-v2, or all-distilroberta-v1, universal-sentence encoder (USE)- google/universal-sentence-encoder-large
-    ii. Domain-Specific Embeddings: Fine-tuning Sentence-Transformers, Training from Scratch (Advanced): If you have a very large corpus of 3GPP data, you could train a language model (like BERT or RoBERTa)
+1.  Purpose: This script is responsible for creating vector embeddings for text chunks extracted from 3GPP documents and storing these embeddings along with their metadata (including the original text chunks) in a vector database (e.g., Chroma).
 
-3. Embedding Optimization: Dimensionality Reduction, Clustering, and Indexing
-4. Embedding Storage: Vector Database (e.g., FAISS)
-5. Embedding Retrieval: Querying the Vector Database
+2.  Input:
+    *   text chunks from relational database
+
+3.  Processing:
+    *   Loads a sentence-transformer model (specified by the `model_name` parameter, default is `all-mpnet-base-v2`).
+    *   Creates embeddings for the text chunks using batch processing for efficiency.
+    *   Initializes (or connects to an existing) a vector database collection.
+    *   Ingests the embeddings and metadata into the vector database.  Each embedding is stored with its associated metadata.
+    *   Optionally persists the client if you use PersistentClient.
+
+4.  Output:
+    *   The script returns the vector database collection object for use in the extractor script.
+
+5.  Usage:
+    ```bash
+    python embeddings.py  # Or how you run your script
+    ```
+
+6.  Dependencies:
+    *   `sentence-transformers`
+    *   `chromadb` (or your chosen vector database library)
+    *   Other necessary libraries
+
+7.  Model Selection:
+    * The `model_name` parameter allows you to choose different sentence-transformer models.  Valid options include:`all-mpnet-base-v2` 
 '''
 from sentence_transformers import SentenceTransformer
-import numpy as np
-import faiss
+import chromadb
+from chromadb.config import Settings
 import os
-from typing import List, Dict, Tuple
-from db_handler import ChunkDBHandler
+from typing import List, Dict
+from db_handler import ChunkDBHandler, DBHandler
 
 class EmbeddingHandler:
-    def __init__(self, model_name: str = "all-mpnet-base-v2"):  # Using a more powerful model
-        """Initialize with chosen model"""
+    def __init__(self, model_name: str = "all-mpnet-base-v2", persist_directory: str = "chroma_db"):
+        """Initialize with chosen model and ChromaDB"""
         self.model = SentenceTransformer(model_name)
-        self.dimension = self.model.get_sentence_embedding_dimension()
-        self.index = None
-        self.chunk_ids = []  # Store chunk IDs to map back to database
+        self.client = chromadb.PersistentClient(path=persist_directory)
         
-    def create_chunk_embeddings(self, chunks: List[Dict]) -> np.ndarray:
-        """Create embeddings for data chunks"""
-        # Store chunk IDs for later retrieval
-        self.chunk_ids = [chunk['index'] for chunk in chunks]
-        
-        # Combine title and content for better context
-        texts = [f"{chunk['title']} {chunk['content']}" for chunk in chunks]
-        embeddings = self.model.encode(
-            texts, 
-            show_progress_bar=True,
-            normalize_embeddings=True  # Normalize for better similarity search
-        )
-        return embeddings
+    def create_collection(self, collection_name: str):
+        """Create or get existing collection"""
+        try:
+            collection = self.client.get_collection(collection_name)
+            print(f"Using existing collection: {collection_name}")
+        except:
+            collection = self.client.create_collection(
+                name=collection_name,
+                metadata={"hnsw:space": "cosine"}
+            )
+            print(f"Created new collection: {collection_name}")
+        return collection
 
-    def create_query_embedding(self, query: str) -> np.ndarray:
-        """Create embedding for a search query"""
-        query_embedding = self.model.encode(
-            query,
-            normalize_embeddings=True,
-            show_progress_bar=False
-        )
-        return query_embedding
-
-    def build_faiss_index(self, embeddings: np.ndarray):
-        """Build FAISS index with optimizations"""
-        # Using IndexIVFFlat for better search performance
-        quantizer = faiss.IndexFlatL2(self.dimension)
-        nlist = min(int(len(embeddings) / 10), 100)  # number of clusters
-        self.index = faiss.IndexIVFFlat(quantizer, self.dimension, nlist)
+    def process_chunks(self, chunks: List[Dict], collection_name: str):
+        """Process chunks and store in ChromaDB"""
+        if not chunks:
+            raise ValueError("No chunks provided for embedding creation")
         
-        # Train the index
-        if not self.index.is_trained:
-            self.index.train(embeddings.astype('float32'))
+        # Create or get collection
+        collection = self.create_collection(collection_name)
         
-        # Add vectors to the index
-        self.index.add(embeddings.astype('float32'))
+        # Prepare data for batch processing
+        ids = [str(chunk['index']) for chunk in chunks]
+        texts = [
+            f"{chunk.get('title', '')} {chunk.get('content', '')}".strip() 
+            for chunk in chunks
+        ]
+        metadatas = [{
+            'title': chunk.get('title', ''),
+            'level': chunk.get('level', 0),
+            'index': chunk['index']
+        } for chunk in chunks]
         
-        # Set search parameters
-        self.index.nprobe = min(nlist, 10)  # Number of clusters to search
-        return self.index
-
-    def search(self, query: str, k: int = 5) -> List[Tuple[int, float]]:
-        """Search for similar chunks using a query"""
-        if not self.index:
-            raise ValueError("Index not built or loaded")
+        # Add documents in batches
+        batch_size = 32
+        for i in range(0, len(texts), batch_size):
+            batch_end = min(i + batch_size, len(texts))
+            collection.add(
+                ids=ids[i:batch_end],
+                documents=texts[i:batch_end],
+                metadatas=metadatas[i:batch_end]
+            )
             
-        # Create query embedding
-        query_vector = self.create_query_embedding(query)
-        
-        # Search the index
-        distances, indices = self.index.search(
-            query_vector.reshape(1, -1).astype('float32'), 
-            k
-        )
-        
-        # Map results back to chunk IDs
-        results = []
-        for idx, dist in zip(indices[0], distances[0]):
-            if idx != -1:  # FAISS returns -1 for no match
-                chunk_id = self.chunk_ids[idx]
-                results.append((chunk_id, float(dist)))
-                
-        return results
+        return collection
 
-    def save_index(self, index_path: str):
-        """Save FAISS index and chunk mappings"""
-        if self.index is not None:
-            # Save the FAISS index
-            faiss.write_index(self.index, index_path)
-            
-            # Save chunk ID mappings
-            mapping_path = index_path + '.mapping'
-            np.save(mapping_path, np.array(self.chunk_ids))
-
-    def load_index(self, index_path: str):
-        """Load FAISS index and chunk mappings"""
-        if os.path.exists(index_path):
-            self.index = faiss.read_index(index_path)
-            
-            # Load chunk ID mappings
-            mapping_path = index_path + '.mapping'
-            if os.path.exists(mapping_path):
-                self.chunk_ids = np.load(mapping_path).tolist()
-
-def process_embeddings(db_path: str, doc_id: str, index_path: str):
-    """Main function to process embeddings"""
+def process_embeddings(db_handler: DBHandler, doc_id: str) -> chromadb.Collection:
+    """Process document embeddings"""
     print("\n[3/3] Creating embeddings...")
     try:
-        # Initialize handlers
-        db_handler = ChunkDBHandler(db_path)
-        embedding_handler = EmbeddingHandler()
-
-        # Check if embeddings already exist
-        if os.path.exists(index_path) and os.path.exists(index_path + '.mapping'):
-            print("→ Found existing embeddings, loading index...")
-            embedding_handler.load_index(index_path)
-            print("✓ Loaded existing embeddings index")
-            return True
-
-        # Get chunks from database
-        chunks = db_handler.get_chunks(doc_id)
-        if not chunks:
-            print("No chunks found in database")
-            return False
-
-        # Create embeddings
-        print("→ Generating new embeddings...")
-        embeddings = embedding_handler.create_chunk_embeddings(chunks)
-
-        # Build and save index
-        print("→ Building optimized FAISS index...")
-        embedding_handler.build_faiss_index(embeddings)
-        embedding_handler.save_index(index_path)
-
-        # Store embedding metadata in database
-        db_handler.store_embedding_metadata(doc_id, {
-            'dimension': embedding_handler.dimension,
-            'index_path': index_path
-        })
-
-        print(f"✓ Created embeddings for {len(chunks)} chunks")
-        print(f"✓ Saved optimized FAISS index to {index_path}")
-        return True
-
+        collection = db_handler.create_embeddings(doc_id)
+        print(f"✓ Created embeddings for document: {doc_id}")
+        return collection
     except Exception as e:
-        print(f"✗ Error during embedding creation: {e}")
-        return False 
+        print(f"✗ Error creating embeddings: {e}")
+        return None 

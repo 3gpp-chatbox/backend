@@ -1,5 +1,5 @@
 from preprocessor import docx_to_markdown_with_docling, process_markdown
-from db_handler import ChunkDBHandler
+from db_handler import DBHandler
 from embeddings import process_embeddings
 from extractor import extract_and_store_procedures
 import time
@@ -14,18 +14,19 @@ def main():
     total_start_time = time.time()
     print("\n=== Starting Document Processing ===")
     
+    # Setup paths
     root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     docx_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.docx")
     temp_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "temp.md")
     final_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.md")
-    db_path = os.path.join(root_folder, "3GPP_Documents", "chunks.db")
-    index_path = os.path.join(root_folder, "3GPP_Documents", "embeddings.index")
+    db_path = os.path.join(root_folder, "DB", "chunks.db")
+    persist_directory = os.path.join(root_folder, "DB", "chroma_db")
 
     try:
-        # Initialize database
-        db_handler = ChunkDBHandler(db_path)
+        # Initialize database handler
+        db_handler = DBHandler(db_path=db_path, persist_directory=persist_directory)
         
-        # Check if final markdown exists
+        # Process markdown if needed
         if not os.path.exists(final_md_path):
             print("\n[1/2] Converting DOCX to Markdown...")
             return_code = docx_to_markdown_with_docling(docx_path, temp_md_path)
@@ -43,15 +44,15 @@ def main():
             print(f"\nUsing existing markdown file: {final_md_path}")
             process_markdown(final_md_path, final_md_path, db_path)
 
-        # Create or load embeddings
+        # Create embeddings
         doc_id = os.path.basename(final_md_path)
-        embeddings_success = process_embeddings(db_path, doc_id, index_path)
+        collection = process_embeddings(db_handler, doc_id)
         
-        if not embeddings_success:
+        if not collection:
             print("✗ Failed to process embeddings. Stopping.")
             return
 
-        # Extract procedures using API key directly from config
+        # Extract procedures
         if Gemini_API_KEY:
             query = """
 Extract 5G-related Non-Access Stratum (NAS) procedures from the provided context. 
@@ -67,7 +68,7 @@ Look for procedures such as:
 4. Session management procedures
 5. Mobility management procedures
 """
-            extract_and_store_procedures(db_path, doc_id, Gemini_API_KEY, query, index_path)
+            extract_and_store_procedures(db_handler, doc_id, Gemini_API_KEY, query, collection)
         else:
             print("\n✗ Gemini API key not found in config.py")
 

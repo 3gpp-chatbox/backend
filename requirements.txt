@@ -1,29 +1,30 @@
 # backend requirements
 
+
 fastapi 	#or flask Backend framework (choose one)
 uvicorn	 #ASGI server for FastAPI
-gunicorn	 #Production-ready WSGI server for Flask
-requests	 #Handle API requests
-pydantic	 #Define API request/response models
+# gunicorn	 #Production-ready WSGI server for Flask
+# requests	 #Handle API requests
+# pydantic	 #Define API request/response models
 
 # Data Preparation and RAG pipeline
 pandas	 #Handle structured text data
 numpy	 #Numerical operations
 faiss-cpu	 #Vector search for document retrieval
-chromadb	 #Alternative vector database
+# chromadb	 #Alternative vector database
 sentence-transformers	 #Convert text into embeddings
-langchain
-PyMuPDF #for pdf file handling
-markdown-it
-markdownify
+# langchain
+# PyMuPDF #for pdf file handling
+# markdown-it
+# markdownify
 docling
 
 # Knowledge Graph and Visualization
 networkx	#Create knowledge graphs
-matplotlib	 #Generates static graph visualizations
-neo4j	 #Stores and retrieves graph data (optional)
+# matplotlib	 #Generates static graph visualizations
+neo4j	 #Stores and retrieves graph data
 
-google.generativeai>=0.3.0
+google.generativeai
 
 # Add requests package
 requests
