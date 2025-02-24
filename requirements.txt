@@ -7,4 +7,4 @@ python-dotenv
 neo4j
 docling
 google-genai
-psycopg-binary
+psycopg[binary]

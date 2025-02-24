@@ -12,11 +12,12 @@ from dataclasses import dataclass
 @dataclass
 class Section:
     """Represents a document section with its heading and content"""
+
     level: int
     heading: str
     content: List[Dict[str, str]]
-    subsections: List['Section']
-    parent: Optional['Section'] = None
+    subsections: List["Section"]
+    parent: Optional["Section"] = None
 
 def load_document(file_path: str) -> Document:
     """
@@ -31,7 +32,7 @@ def load_document(file_path: str) -> Document:
     try:
         print(f"Loading document from {file_path}")
         doc = Document(file_path)
-        print(f"Document loaded successfully")
+        print("Document loaded successfully")
         return doc
 
     except FileNotFoundError:
@@ -70,17 +71,17 @@ def extract_paragraphs(doc: Document) -> List[Dict[str, any]]:
             except (ValueError, IndexError):
                 pass
 
+        paragraphs.append(
+            {
+                "text": text_cleaner(para.text),
+                "style": text_cleaner(style_name),
+                "level": level,
+            }
+        )
 
-        
-        paragraphs.append({
-            "text": text_cleaner(para.text),
-            "style": text_cleaner(style_name),
-            "level": level
-        })
-    
     return paragraphs
 
-def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Section]:
+def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Section]:
     """
     Extract document content as a tree of sections based on heading hierarchy.
     This allows for processing the document in meaningful chunks based on its structure.
@@ -97,64 +98,80 @@ def extract_section_tree(doc: Document, max_heading_level: int = 4) -> List[Sect
         print("Document is None!")
         return []
 
+    # Initialize variables
     current_sections = [None] * (max_heading_level + 1)  # Track current section at each level
-    current_content = []
+    current_content = []  # Accumulate content for the current deepest section
     top_level_sections = []  # Store all level 1 sections
     max_chunk_size = 2000
-    
+
+    # Extract paragraphs from the document
     paragraphs = extract_paragraphs(doc)
-    
+
     for para in paragraphs:
         level = para.get("level")
-        
+
+        # Check if the paragraph is a heading (level is not None and within max_heading_level)
+        # Also ensure the heading text starts with a number (e.g., "4.1"), which may include decimals
         if level is not None and level <= max_heading_level and para["text"][0].isdigit():
-            # We found a heading, create a new section
+            # Create a new section for the heading
             new_section = Section(
                 level=level,
-                heading=para["text"].strip().replace(" ", "_"),
+                heading=para["text"].strip().replace(" ", "_"),  # Replace spaces with underscores for consistency
                 content=[],
                 subsections=[],
-                parent=current_sections[level - 1] if level > 0 else None
+                parent=current_sections[level - 1] if level > 1 else None,  # Link to parent section if not level 1
             )
-            
-            # Add accumulated content to the previous section at this level if it exists
-            if current_sections[level] is not None:
-                current_sections[level].content.extend(current_content)
-            
+
+            # Find the deepest non-None section (highest level) to assign current_content
+            deepest_section = None
+            for i in range(max_heading_level, 0, -1):
+                if current_sections[i] is not None:
+                    deepest_section = current_sections[i]
+                    break
+            if deepest_section is not None:
+                deepest_section.content.extend(current_content)  # Add content to the deepest section
+
             # Update the section hierarchy
-            if level > 0 and current_sections[level - 1] is not None:
-                current_sections[level - 1].subsections.append(new_section)
-            
-            current_sections[level] = new_section
-            current_content = []
-            
-            # Clear all lower level sections
+            if level > 1 and current_sections[level - 1] is not None:
+                current_sections[level - 1].subsections.append(new_section)  # Link new section to parent
+
+            current_sections[level] = new_section  # Set the new section at its level
+            current_content = []  # Reset content after assigning it
+
+            # Clear all lower-level sections (reset hierarchy below the current level)
             for i in range(level + 1, max_heading_level + 1):
                 current_sections[i] = None
-                
+
+            # If this is a level 1 section, add it to top_level_sections
             if level == 1:
                 top_level_sections.append(new_section)
         else:
-            # Accumulate content for the current lowest-level section
-            if current_content and len(current_content[-1]) + len(para["text"]) < max_chunk_size and para.get("level") is None:
-                # Combine with previous text if conditions are met
+            # Accumulate content for the current deepest section
+            if (
+                current_content
+                and len(current_content[-1]) + len(para["text"]) < max_chunk_size
+                and para.get("level") is None
+            ):
+                # Combine with previous text if conditions are met (within chunk size and not a heading)
                 current_content[-1] = current_content[-1] + " " + para["text"]
             else:
-                current_content.append(para["text"])
-    
-    # Add any remaining content to the last section
-    for level in range(max_heading_level, 0, -1):
-        if current_sections[level] is not None:
-            current_sections[level].content.extend(current_content)
-            break
-    
-    return top_level_sections
+                current_content.append(para["text"])  # Add new content block
 
+    # Find the deepest current section to assign remaining content
+    deepest_section = None
+    for i in range(max_heading_level, 0, -1):
+        if current_sections[i] is not None:
+            deepest_section = current_sections[i]
+            break
+    if deepest_section is not None:
+        deepest_section.content.extend(current_content)  # Add remaining content to the deepest section
+
+    return top_level_sections
 
 def text_cleaner(text: str) -> str:
     """
     Clean and normalize text while preserving specific patterns and cases.
-    
+
     The function performs the following operations:
     1. Replaces non-breaking spaces and tabs with regular spaces
     2. Preserves version numbers (e.g., 1.2, 5.5.1.2)
@@ -165,32 +182,32 @@ def text_cleaner(text: str) -> str:
         - Preserves words with multiple uppercase letters (e.g., "IP", "NSSAI")
         - Preserves words containing special characters (e.g., "S-NSSAI(s)")
         - Converts all other words to lowercase
-    
+
     Args:
         text (str): Input text to clean
-        
+
     Returns:
         str: Cleaned and normalized text with preserved patterns
     """
     if not text:
         return ""
-        
+
     # Replace non-breaking spaces and tabs with regular spaces
     text = text.replace("\xa0", " ").replace("\t", " ")
-    
+
     # Preserve version numbers (e.g., 1.2, 5.5.1.2)
     # This pattern matches two or more numbers separated by dots
-    text = re.sub(r'\b\d+\.\d+(?:\.\d+)*\b', lambda x: f"__{x.group(0)}__", text)
-    
+    text = re.sub(r"\b\d+\.\d+(?:\.\d+)*\b", lambda x: f"__{x.group(0)}__", text)
+
     # Remove punctuation marks only when they appear at the end of words
-    text = re.sub(r'([.,!?:])\s', ' ', text)
-    text = re.sub(r'([.,!?:])$', '', text)
-    
+    text = re.sub(r"([.,!?:])\s", " ", text)
+    text = re.sub(r"([.,!?:])$", "", text)
+
     text = text.replace("__", "")
 
     # Normalize whitespace
-    text = ' '.join(text.split())
-    
+    text = " ".join(text.split())
+
     # Process each word for case normalization
     words = text.split()
     normalized_words = []
@@ -199,15 +216,16 @@ def text_cleaner(text: str) -> str:
         # 1. Contains numbers
         # 2. Contains more than one uppercase letter
         # 3. Contains special characters (excluding common punctuation)
-        if (any(c.isdigit() for c in word) or  # Has numbers
-            sum(1 for c in word if c.isupper()) > 1 or  # Multiple uppercase
-            any(c for c in word if not c.isalnum())):  # Has symbols
+        if (
+            any(c.isdigit() for c in word)  # Has numbers
+            or sum(1 for c in word if c.isupper()) > 1  # Multiple uppercase
+            or any(c for c in word if not c.isalnum())
+        ):  # Has symbols
             normalized_words.append(word)
         else:
             normalized_words.append(word.lower())
-    
-    return ' '.join(normalized_words)
 
+    return " ".join(normalized_words)
 
 def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     """
@@ -228,9 +246,11 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     remove = True
     for para in doc.paragraphs:
         para.text = text_cleaner(para.text)
-        if para.style.name.startswith("Heading") and any(word in para.text.lower() for word in excluded_sections):
+        if para.style.name.startswith("Heading") and (
+            any(word.lower() in para.text.lower() for word in excluded_sections)
+            or not para.text.strip()[0].isdigit()
+        ):
             remove = True
-
         elif para.style.name.startswith("Heading") and remove:
             remove = False
         if remove:
@@ -243,4 +263,3 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     save_path = f"data/stripped/{doc_name}"
     doc.save(save_path)
     return save_path
-        
