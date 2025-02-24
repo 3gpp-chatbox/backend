@@ -1,15 +1,5 @@
 import re
 import sqlite3
-import re
-import sqlite3
-
-# Read the markdown document
-import re
-import sqlite3
-
-# Read the markdown document
-import re
-import sqlite3
 
 # Open the markdown file
 # Open the markdown file with UTF-8 encoding to handle special characters
