@@ -1,0 +1,77 @@
+Okay, I will analyze the provided text focusing on the initial registration procedure initiated by the UE in the 5GMM-DEREGISTERED state, extracting key information and flow properties.
+
+**Description of the Initial Registration Procedure**
+
+The procedure begins when a UE in the 5GMM-DEREGISTERED state needs to register with the network. This is triggered by several events, including:
+
+*   Initial registration for 5GS services.
+*   Initial registration for emergency services.
+*   Initial registration for SMS over NAS.
+*   Moving from GERAN/UTRAN to NG-RAN coverage under specific conditions.
+*   Initial registration for onboarding services in SNPN.
+*   Initial registration for disaster roaming services.
+*   Initial registration to come out of unavailability period and resume normal services
+
+The UE then sends a `REGISTRATION REQUEST` message to the AMF and starts timer T3510. Timers T3502 and T3511, if running, are stopped.
+
+The `REGISTRATION REQUEST` message includes various information elements (IEs), and the inclusion of these IEs is conditional based on the UE's state, capabilities, and the type of registration being performed. The core of the procedure revolves around constructing this `REGISTRATION REQUEST` message.
+
+The 5GS mobile identity IE is populated based on the following priority: the UE's previously assigned 5G-GUTI, SUCI or PEI. The UE also includes information related to network slicing (Requested NSSAI), supported features (5GMM capability IE), and other parameters relevant to the registration.
+If the UE does not have a valid 5G NAS security context, the UE shall send the REGISTRATION REQUEST message without including the NAS message container IE. The UE shall include the entire REGISTRATION REQUEST message (i.e. containing cleartext IEs and non-cleartext IEs, if any) in the NAS message container IE that is sent as part of the SECURITY MODE COMPLETE message.
+
+**Key Information and Parameters**
+
+*   **State:** UE in 5GMM-DEREGISTERED
+*   **Trigger:** Various events requiring initial registration.
+*   **Message:** `REGISTRATION REQUEST`
+*   **Destination:** AMF
+*   **Timers:** T3510 (started), T3502 and T3511 (stopped if running)
+*   **Key IEs in `REGISTRATION REQUEST`:**
+    *   5GS mobile identity (containing 5G-GUTI, SUCI, or PEI)
+    *   Requested NSSAI
+    *   5GMM capability IE
+    *   UE status IE (for dual-registration mode)
+    *   Last visited registered TAI
+    *   5GS update type IE (for SMS over NAS)
+    *   MICO indication IE
+    *   Requested DRX parameters IE
+    *   Requested extended DRX parameters IE
+    *   LADN indication IE
+    *   Payload container IE (for UE policy container)
+    *   NAS message container IE
+    *   Additional information requested IE
+    *   Requested WUS assistance information IE
+    *   Requested PEIPS assistance information IE
+    *   Service-level-AA container IE
+    *   UE determined PLMN with disaster condition IE
+    *   S1 UE network capability IE
+
+**Flow Property Graph (Mermaid Code)**
+
+```mermaid
+graph TD
+    subgraph Initial Registration Procedure
+    A[UE in 5GMM-DEREGISTERED State] --> B{Registration Triggered?};
+    B -- Yes --> C(Construct REGISTRATION REQUEST Message);
+    C --> D{Valid 5G NAS Security Context?};
+    D -- No --> E[Send REGISTRATION REQUEST without NAS message container IE and start Timer T3510, Stop Timer T3502 and T3511 if running];
+    D -- Yes --> F{Needs to send non-cleartext IEs?};
+    F -- Yes --> G[Send REGISTRATION REQUEST including NAS message container IE and start Timer T3510, Stop Timer T3502 and T3511 if running];
+    F -- No --> H[Send REGISTRATION REQUEST without NAS message container IE and start Timer T3510, Stop Timer T3502 and T3511 if running];
+    E --> I(AMF Receives REGISTRATION REQUEST);
+    G --> I;
+    H --> I;
+    I --> J(Process REGISTRATION REQUEST);
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style C fill:#ccf,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+    style E fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+    style H fill:#f9f,stroke:#333,stroke-width:2px
+    style I fill:#f9f,stroke:#333,stroke-width:2px
+    style J fill:#f9f,stroke:#333,stroke-width:2px
+```

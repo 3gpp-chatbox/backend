@@ -43,16 +43,16 @@ def extract_procedural_info_from_text(section_name, text): #added section_name
 
     {text}
 
-remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. 
-this section is named: {section_name}, and it is mainly about one procedure, analyze text  and fine that main procedure, and then focus on that procedure,extract the procedure information  and use below pattern to mapping it (below is an example) finally,also Return key information and description .
-    below is that example: 
+ remember, all you analysis and extract should be based on the thunk text, and you should not make any assumptions. 
+this secion is named :{section_name}, is mainly about one procedure, analyze text  and fine that main procedure, and then focus on that procedure,extract the procedure information  and use below pattern to mapping it (below is an example) and Return description and key information and flow property graph in mermaid format code.
+ below is that example: 
 
 
 Extracting the Model from 3GPP Specification
 
 Core Components to Identify
 
-□ States: Different conditions or statuses of the UE and network  
+□ States: Different conditions or statuses of the UE and network
 
 elements.
 
@@ -122,7 +122,7 @@ def save_procedural_info_to_txt(procedural_info, file_path):
         file.write(procedural_info)
     print(f"Procedural info saved to {file_path}")
 
-def process_section(section_id, db_path="section_content_with_name.db"):
+def process_section(section_id, db_path="section_content_multiple_paragraphs.db"):
     section_name, chunk_text = retrieve_chunks_from_db(section_id, db_path)
     if section_name is None:
         return None #handle no result.
@@ -131,7 +131,7 @@ def process_section(section_id, db_path="section_content_with_name.db"):
 
 # Example usage: Processing section 5.5.1.2.2
 section_id_to_process = "5.5.1.2.2"
-db_path = "section_content_with_name.db"
+db_path = "section_content_multiple_paragraphs.db"
 
 procedural_info = process_section(section_id_to_process, db_path)
 
