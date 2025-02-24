@@ -1,0 +1,199 @@
+Okay, I will analyze the provided text and extract the information about the "Registration procedure for initial registration" as described in the document, mapping it to the requested JSON format.
+
+```json
+{
+  "nodes": [
+    {
+      "id": "5GMM-DEREGISTERED",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Initiate_Registration_Procedure",
+      "type": "action",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity (5G-GUTI, SUCI, or PEI)",
+        "UE status IE (if applicable)",
+        "Last visited registered TAI (if available)",
+        "5GS update type IE (if SMS over NAS is requested)",
+        "MICO indication IE (if MICO mode is requested)",
+        "T3324 IE (if active time value is requested)",
+        "Requested T3512 IE (if specific T3512 value is requested)",
+        "Requested DRX parameters IE (if UE specific DRX parameters are needed)",
+        "Requested NB-N1 mode DRX parameters IE (if UE specific DRX parameters for NB-N1 mode are needed)",
+        "Requested extended DRX parameters IE (if eDRX is requested)",
+        "LADN indication IE (if LADN information is requested)",
+        "Requested NSSAI (containing S-NSSAIs)",
+        "Mapped S-NSSAI(s) for the requested NSSAI (if available)",
+        "Network slicing indication IE (if default configured NSSAI is used)",
+        "5GMM capability IE (containing various capability bits)",
+        "S1 UE network capability IE (if S1 mode is supported)",
+        "Mobile station classmark 2 IE (if 5G-SRVCC is supported)",
+        "Supported codecs IE (if 5G-SRVCC is supported)",
+        "Payload container type IE and UE STATE INDICATION message (if UE policy container is sent)",
+        "NAS message container IE (if non-cleartext IEs need to be sent or no valid 5G NAS security context)",
+        "Additional information requested IE (if ciphered broadcast assistance data keys are requested)",
+        "Requested WUS assistance information IE (if WUS assistance information reception is supported)",
+        "Requested PEIPS assistance information IE (if PEIPS assistance information is supported)",
+        "UE determined PLMN with disaster condition IE (if UE initiates disaster roaming services)"
+      ]
+    },
+     {
+          "id": "Timer_T3510_Started",
+          "type": "action",
+          "properties": {
+            "timer_name": "T3510"
+          }
+        },
+    {
+          "id": "Timer_T3502_Stopped",
+          "type": "action",
+          "properties": {
+            "timer_name": "T3502"
+          }
+        },
+    {
+          "id": "Timer_T3511_Stopped",
+          "type": "action",
+          "properties": {
+            "timer_name": "T3511"
+          }
+        },
+    {
+          "id": "Handling_5GS_Mobile_Identity",
+          "type": "action",
+          "properties": {}
+        },
+        {
+          "id": "Timer_T3519_Started",
+          "type": "action",
+          "properties": {
+            "timer_name": "T3519"
+          }
+        },
+        {
+          "id": "Store_SUCI_Value",
+          "type": "action",
+          "properties": {}
+        },
+        {
+          "id": "Include_SUCI_in_Registration_Request",
+          "type": "action",
+          "properties": {}
+        }
+  ],
+  "edges": [
+    {
+      "from": "5GMM-DEREGISTERED",
+      "to": "Initiate_Registration_Procedure",
+      "action": "Initiate Registration",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Mobility from GERAN/UTRAN to NG-RAN",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to come out of unavailability period and resume normal services"
+        ]
+      }
+    },
+    {
+      "from": "Initiate_Registration_Procedure",
+      "to": "Registration_Request_Sent",
+      "action": "Send_Registration_Request",
+      "properties": {
+        "metadata": {
+          "timestamp": "T1"
+        }
+      }
+    },
+     {
+          "from": "Initiate_Registration_Procedure",
+          "to": "Timer_T3510_Started",
+          "action": "Start Timer T3510",
+          "properties": {}
+        },
+        {
+          "from": "Initiate_Registration_Procedure",
+          "to": "Timer_T3502_Stopped",
+          "action": "Stop Timer T3502",
+          "properties": {
+            "conditional": "If timer T3502 is running"
+          }
+        },
+        {
+          "from": "Initiate_Registration_Procedure",
+          "to": "Timer_T3511_Stopped",
+          "action": "Stop Timer T3511",
+          "properties": {
+            "conditional": "If timer T3511 is running"
+          }
+        },
+        {
+          "from": "Initiate_Registration_Procedure",
+          "to": "Handling_5GS_Mobile_Identity",
+          "action": "Handle 5GS Mobile Identity",
+          "properties": {}
+        },
+        {
+          "from": "Handling_5GS_Mobile_Identity",
+          "to": "Timer_T3519_Started",
+          "action": "Start Timer T3519",
+          "properties": {
+            "conditional": "If SUCI is included in the 5GS mobile identity IE and timer T3519 is not running"
+          }
+        },
+        {
+          "from": "Timer_T3519_Started",
+          "to": "Store_SUCI_Value",
+          "action": "Store SUCI Value",
+          "properties": {}
+        },
+        {
+          "from": "Store_SUCI_Value",
+          "to": "Include_SUCI_in_Registration_Request",
+          "action": "Include SUCI in Registration Request",
+          "properties": {}
+        }
+  ]
+}
+```
+
+**Key Information and Descriptions:**
+
+*   **States:**
+    *   `5GMM-DEREGISTERED`:  The UE is in the 5GMM-DEREGISTERED state, meaning it is not currently registered with the 5G network.
+*   **Actions:**
+    *   `Initiate Registration`:  The UE begins the registration procedure.
+    *   `Send_Registration_Request`: UE sends REGISTRATION REQUEST message to the network.
+    *   `Handling_5GS_Mobile_Identity`: The UE determines which mobile identity (5G-GUTI, SUCI, or PEI) to include in the `5GS mobile identity` IE based on various conditions related to previously assigned identities, PLMN/SNPN, and the type of registration.
+    *    `Start Timer T3510`: The UE starts the timer T3510 upon sending the Registration Request.
+    *   `Stop Timer T3502`: The UE stops the timer T3502 upon sending the Registration Request.
+    *   `Stop Timer T3511`: The UE stops the timer T3511 upon sending the Registration Request.
+    *   `Start Timer T3519`: The UE starts timer T3519 when the SUCI is included in the 5GS mobile identity and the timer is not running.
+    *    `Store SUCI Value`: The UE stores the value of the SUCI sent in the REGISTRATION REQUEST message.
+    *    `Include SUCI in Registration Request`: The UE includes the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running.
+*   **Events:**
+    *   `Registration_Request_Sent`: The Registration Request message has been transmitted. This event triggers further actions from the network side (not described in this excerpt).
+*   **Parameters:** The `REGISTRATION REQUEST` message includes several Information Elements (IEs). The inclusion and values of these IEs depend on the UE's capabilities, configuration, and the reason for registration. The most important parameter is the `5GS mobile identity` which can be a `5G-GUTI`, `SUCI`, or `PEI`, depending on the scenario.  Other parameters include UE capabilities, supported features, and network slice information.
+*   **Flow of Execution:** The procedure starts when the UE is in the `5GMM-DEREGISTERED` state and needs to register for various reasons.  It involves constructing and sending a `REGISTRATION REQUEST` message with appropriate parameters. The UE starts timer T3510 and may stop timers T3502 and T3511 depending on their states.  The UE handles the inclusion of the `5GS mobile identity` IE based on complex logic.
+*   **Conditionals:**  The content of the `REGISTRATION REQUEST` message, especially the included IEs and the chosen mobile identity, depends on a large number of conditional checks.  These conditionals are based on:
+
+    *   The reason for registration (e.g., initial registration, emergency services)
+    *   UE capabilities (e.g., support for MICO mode, eDRX, network slicing)
+    *   Previous registration information (e.g., valid 5G-GUTI, SUCI)
+    *   Network configuration (e.g., configured NSSAI, allowed NSSAI)
+    *   The UE's current state (e.g., dual-registration mode, EMM-REGISTERED state).
+*   **Timers:** The procedure involves the use of timers T3510, T3502, T3511, and T3519 for managing the registration process and handling SUCI values.
+
+This JSON representation and the accompanying descriptions capture the key aspects of the initial registration procedure as described in the provided text. Note that the exact sequence and conditionals can be complex and are driven by the many options and capabilities supported by the UE and the network.
