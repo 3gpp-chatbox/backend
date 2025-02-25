@@ -9,6 +9,7 @@ import hashlib
 from rich.console import Console
 import glob
 from datetime import datetime
+import traceback
 
 console = Console()
 
@@ -101,7 +102,7 @@ def batch_neo4j_operations(session, operations: List[Dict]):
                 s.description = op.description
             """
         elif operation_type == 'relationship':
-            # Use APOC for dynamic relationship type
+            # Use dynamic relationship type based on the verb
             cypher = """
             UNWIND $operations as op
             MATCH (e1:NetworkElement {name: op.element1})
@@ -112,16 +113,14 @@ def batch_neo4j_operations(session, operations: List[Dict]):
             RETURN count(*)
             """
         elif operation_type == 'transition':
-            # Use dynamic relationship type for transitions too
             cypher = """
             UNWIND $operations as op
             MATCH (s1:State {name: op.from_state})
             MATCH (s2:State {name: op.to_state})
-            WITH s1, s2, op
-            CALL apoc.merge.relationship(s1, op.rel_type, {}, 
-                {trigger: op.trigger, condition: op.condition, probability: op.probability}, s2)
-            YIELD rel
-            RETURN count(*)
+            MERGE (s1)-[r:TRANSITIONS_TO]->(s2)
+            SET r.trigger = op.trigger,
+                r.condition = op.condition,
+                r.probability = op.probability
             """
             
         session.run(cypher, operations=operations)
@@ -196,16 +195,13 @@ def process_intermediate_file(file_path: str, driver, processed_files: Set[str])
                 if relationships:
                     batch_neo4j_operations(session, relationships)
 
-                # Process transitions with explicit verb labels
+                # Process transitions
                 transitions = []
                 for transition in result.get('transitions', []):
-                    # Extract verb from trigger if available
-                    rel_type = convert_to_relationship_type(transition.get('trigger', '')) if transition.get('trigger') else 'TRANSITIONS_TO'
                     transitions.append({
                         'type': 'transition',
                         'from_state': transition['from_state'],
                         'to_state': transition['to_state'],
-                        'rel_type': rel_type,  # Add rel_type for dynamic relationship
                         'trigger': transition.get('trigger', ''),
                         'condition': transition.get('condition', ''),
                         'probability': transition.get('probability', '')
@@ -242,13 +238,23 @@ def monitor_and_process():
         console.print(f"[yellow]3. Neo4j is accepting connections on {URI}[/yellow]")
         return False
 
-    console.print("[green]Neo4j connection successful[/green]")
+        console.print("[green]Neo4j connection successful[/green]")
     
     try:
         driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
         
+        # Test APOC availability
+        with driver.session() as session:
+            try:
+                session.run("CALL apoc.help('merge')")
+                console.print("[green]APOC procedures available[/green]")
+            except Exception as e:
+                console.print("[red]Error: APOC procedures not available. Please install APOC in your Neo4j instance.[/red]")
+                console.print(f"[red]Error details: {str(e)}[/red]")
+                return False
+        
         # Clear existing data before starting
-        console.print("[blue]Clearing existing database...[/blue]")
+            console.print("[blue]Clearing existing database...[/blue]")
         with driver.session() as session:
             session.run("MATCH (n) DETACH DELETE n")
         console.print("[green]Database cleared successfully[/green]")
@@ -257,28 +263,52 @@ def monitor_and_process():
         
         console.print("[blue]Monitoring for new intermediate results...[/blue]")
         
+        # Get the directory where the script is running
+        current_dir = os.getcwd()
+        console.print(f"[blue]Looking for files in: {current_dir}[/blue]")
+        
         while True:
-            # Get all intermediate files
-            intermediate_files = glob.glob(INTERMEDIATE_PATTERN)
+            # Get all intermediate files with full path
+            intermediate_files = glob.glob(os.path.join(current_dir, "processed_data", "intermediate_results_*.json"))
             
+            if not intermediate_files:
+                console.print("[yellow]No intermediate files found yet...[/yellow]")
+            else:
+                console.print(f"[blue]Found {len(intermediate_files)} intermediate files[/blue]")
+                
             # Process any new files
             for file_path in intermediate_files:
                 if file_path not in processed_files:
-                    process_intermediate_file(file_path, driver, processed_files)
+                    console.print(f"[blue]Processing new file: {file_path}[/blue]")
+                    success = process_intermediate_file(file_path, driver, processed_files)
+                    if not success:
+                        console.print(f"[red]Failed to process {file_path}[/red]")
             
             # Check if extraction is complete
-            if any(f.startswith("intermediate_results_") and f.endswith("_COMPLETE.json") 
-                  for f in intermediate_files):
+            completion_file = os.path.join(current_dir, "processed_data", "extraction_complete.json")
+            if os.path.exists(completion_file):
+                console.print("[green]Found completion marker, finishing up...[/green]")
                 break
                 
             time.sleep(5)  # Wait before checking for new files
-            
+
         driver.close()
         console.print("[green]✓ All intermediate results have been processed![/green]")
+        
+        # Verify data was saved
+        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+        with driver.session() as session:
+            # Check for nodes
+            node_count = session.run("MATCH (n) RETURN count(n) as count").single()["count"]
+            rel_count = session.run("MATCH ()-[r]->() RETURN count(r) as count").single()["count"]
+            console.print(f"[blue]Verification: Found {node_count} nodes and {rel_count} relationships in Neo4j[/blue]")
+        driver.close()
+        
         return True
 
     except Exception as e:
         console.print(f"[red]Error in monitoring process: {str(e)}[/red]")
+        console.print(traceback.format_exc())  # Add full traceback
         return False
 
 def main():

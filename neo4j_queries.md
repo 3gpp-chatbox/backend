@@ -1,125 +1,158 @@
-# Neo4j Queries for 3GPP NAS Knowledge Graph
+# Neo4j Queries for 3GPP Network Registration Analysis
 
-This document contains useful Cypher queries for exploring the 3GPP NAS knowledge graph in Neo4j Browser.
-
-## Basic Graph Exploration
+## Complete Graph Visualization
 
 ```cypher
-// View all nodes and relationships (limited to 100 for performance)
-MATCH (n)-[r]->(m)
-RETURN n, r, m
-LIMIT 100;
+// View the complete graph with all nodes and relationships
+MATCH (n)
+OPTIONAL MATCH (n)-[r]->(m)
+RETURN *
+```
 
-// View entity types and their counts
-MATCH (n:Entity)
-RETURN n.type as EntityType, count(*) as Count
-ORDER BY Count DESC;
+## Network Element Queries
 
-// View all relationship types and their counts
+### View All Network Elements and Their Relationships
+```cypher
+MATCH (n1:NetworkElement)-[r]->(n2:NetworkElement)
+RETURN n1, r, n2
+```
+
+### View Network Element Dependencies
+```cypher
+MATCH (n1:NetworkElement)-[r]->(n2:NetworkElement)
+WITH n1, collect({target: n2.name, relationship: type(r)}) as dependencies
+RETURN n1.name, dependencies
+```
+
+## State Transition Queries
+
+### View State Transitions Flow
+```cypher
+MATCH (s1:State)-[r:TRANSITIONS_TO]->(s2:State)
+RETURN s1, r, s2
+```
+
+### View Complete Registration Flow with Conditions and Triggers
+```cypher
+MATCH path = (s1:State)-[r:TRANSITIONS_TO]->(s2:State)
+WHERE r.trigger IS NOT NULL OR r.condition IS NOT NULL
+RETURN path
+```
+
+### Find All States for a Specific Network Element
+```cypher
+MATCH (ne:NetworkElement)-[r]-(s:State)
+WHERE ne.name = 'UE'  // or 'AMF', 'SMF', etc.
+RETURN ne, r, s
+```
+
+### View Registration States with Their Properties
+```cypher
+MATCH (s:State)
+RETURN s.name, s.type, s.description
+ORDER BY s.type
+```
+
+## Relationship Analysis
+
+### Find Relationships Between Network Elements with Details
+```cypher
+MATCH (n1:NetworkElement)-[r]->(n2:NetworkElement)
+RETURN n1.name, type(r), r.description, n2.name
+```
+
+### View Complete Network Element Interactions
+```cypher
+MATCH path = (n1:NetworkElement)-[*]->(n2:NetworkElement)
+RETURN path
+```
+
+## State Transitions and Conditions
+
+### Find Specific State Transitions with Conditions
+```cypher
+MATCH (s1:State)-[r:TRANSITIONS_TO]->(s2:State)
+WHERE r.condition IS NOT NULL
+RETURN s1.name, r.trigger, r.condition, s2.name
+```
+
+## Statistics and Counts
+
+### Count Different Types of Nodes and Relationships
+```cypher
+// Count nodes by type
+MATCH (n)
+RETURN labels(n) as Type, count(*) as Count;
+
+// Count relationships by type
 MATCH ()-[r]->()
-RETURN type(r) as RelationType, count(*) as Count
-ORDER BY Count DESC;
+RETURN type(r) as RelationType, count(*) as Count;
 ```
 
-## Message Flows
+## Triggers and Timing
 
+### Find All Triggers and Their Associated States
 ```cypher
-// View NAS message flows between network elements
-MATCH path = (n:Entity)-[r:SENDS|RECEIVES]->(m:Entity)
-WHERE n.type = 'NETWORK_ELEMENT' AND m.type = 'MESSAGE'
+MATCH (t:Trigger)-[r]->(s:State)
+RETURN t.name, type(r), s.name
+```
+
+### View Timing Information for States
+```cypher
+MATCH (t:Timing)-[r]->(s:State)
+RETURN t.description, s.name
+```
+
+## Complex Path Analysis
+
+### Find Complex Paths in Registration Flow
+```cypher
+MATCH path = (start:State)-[*2..5]->(end:State)
+WHERE start.type = 'INITIAL' AND end.type = 'FINAL'
 RETURN path
-LIMIT 50;
-
-// View specific message flows for UE
-MATCH path = (ue:Entity {name: 'UE'})-[r:SENDS|RECEIVES]->(m:Entity)
-WHERE m.type = 'MESSAGE'
-RETURN path;
-
-// View message flows with properties (timing, parameters)
-MATCH (n:Entity)-[r]->(m:Entity)
-WHERE m.type = 'MESSAGE' AND (EXISTS(r.timing) OR EXISTS(r.parameters))
-RETURN n.name, type(r), m.name, r.timing, r.parameters;
 ```
 
-## State Transitions
-
+### Find Critical Path in Registration
 ```cypher
-// View all state transitions
-MATCH path = (s1:Entity)-[r:TRANSITIONS_TO]->(s2:Entity)
-WHERE s1.type = 'STATE' AND s2.type = 'STATE'
-RETURN path;
-
-// View state transitions with conditions
-MATCH (s1:Entity)-[r:TRANSITIONS_TO]->(s2:Entity)
-WHERE s1.type = 'STATE' AND EXISTS(r.conditions)
-RETURN s1.name, s2.name, r.conditions;
-```
-
-## Procedures and Network Elements
-
-```cypher
-// View procedure flows
-MATCH path = (n:Entity)-[r:INITIATES|PERFORMS]->(p:Entity)
-WHERE n.type = 'NETWORK_ELEMENT' AND p.type = 'PROCEDURE'
+MATCH path = (start:State)-[*]->(end:State)
+WHERE start.type = 'INITIAL' AND end.type = 'FINAL'
+WITH path, relationships(path) as rels
 RETURN path
-LIMIT 50;
-
-// View authentication-related patterns
-MATCH path = (n:Entity)-[r:AUTHENTICATES]->(m:Entity)
-RETURN path;
-
-// View procedures with their messages
-MATCH path = (p:Entity)-[r:USES]->(m:Entity)
-WHERE p.type = 'PROCEDURE' AND m.type = 'MESSAGE'
-RETURN path;
+ORDER BY length(rels) ASC
+LIMIT 1
 ```
 
-## Complex Patterns
-
+### View Conditional State Changes
 ```cypher
-// Find complete registration flow
-MATCH path = (ue:Entity {name: 'UE'})-[*1..5]->(m:Entity)
-WHERE m.type = 'MESSAGE' AND any(r IN relationships(path) WHERE type(r) IN ['SENDS', 'RECEIVES'])
-RETURN path;
-
-// Find error handling patterns
-MATCH path = (e:Entity)-[r1]->(a:Entity)-[r2]->(s:Entity)
-WHERE e.type = 'EVENT' AND a.type = 'ACTION'
-RETURN path;
-
-// View protocol stack relationships
-MATCH path = (p1:Entity)-[r]->(p2:Entity)
-WHERE p1.type = 'PROTOCOL' AND p2.type IN ['MESSAGE', 'PROCEDURE']
-RETURN path;
+MATCH (s1:State)-[r]->(s2:State)
+WHERE r.condition IS NOT NULL
+RETURN s1.name, r.condition, s2.name
+ORDER BY s1.name
 ```
 
-## Usage Tips
+## Visualization Styling
 
-1. Access Neo4j Browser at `http://localhost:7474`
-2. Log in with your Neo4j credentials
-3. Copy and paste queries into the command bar
-4. Click the play button or press Ctrl+Enter to run
-5. Use the visualization tools:
-   - Click and drag nodes to rearrange
-   - Double-click nodes to expand relationships
-   - Mouse wheel to zoom
-   - Click nodes/relationships for properties
-   - Use styling panel for customization
-
-## Common Filters
-
-Add these WHERE clauses to any query to filter results:
+Use these commands in Neo4j Browser to enhance visualization:
 
 ```cypher
-// Filter by entity name
-WHERE n.name CONTAINS 'Registration'
+:style
+node.State {
+    color: #58C1B2;
+    diameter: 80px;
+}
+node.NetworkElement {
+    color: #71B37C;
+    diameter: 80px;
+}
+```
 
-// Filter by multiple entity types
-WHERE n.type IN ['MESSAGE', 'PROCEDURE']
-
-// Filter relationships with specific properties
-WHERE EXISTS(r.parameters)
-
-// Limit path length
-WHERE length(path) <= 3
-``` 
+## Tips for Visualization
+1. Use `CALL apoc.meta.graph()` to see the complete graph structure
+2. In Neo4j Browser visualization tools you can:
+   - Color nodes by labels
+   - Size nodes by degree
+   - Show relationship properties
+   - Filter by relationship types
+3. For large graphs, use LIMIT to restrict the number of results
+4. Use WHERE clauses to filter specific nodes or relationships
+5. Use the browser's built-in styling tools to customize the appearance 
