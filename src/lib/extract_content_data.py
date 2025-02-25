@@ -1,6 +1,15 @@
+import logging
 from src.db import db
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 def generate_markdown(doc_id: int, target_heading: str) -> str:
+    logger.info(f"Generating markdown for doc_id={doc_id}, target_heading='{target_heading}'")
     try:
         conn = db.get_db_connection()
         cur = conn.cursor()
@@ -11,9 +20,11 @@ def generate_markdown(doc_id: int, target_heading: str) -> str:
         )
         result = cur.fetchone()
         if not result:
+            logger.warning(f"Heading '{target_heading}' not found in document {doc_id}")
             return f"Heading '{target_heading}' not found in document {doc_id}"
 
         target_path = result.get("path")
+        logger.debug(f"Found target path: {target_path}")
 
         # Step 2: Get all sections under this path
         cur.execute(
@@ -26,6 +37,7 @@ def generate_markdown(doc_id: int, target_heading: str) -> str:
             (target_path, doc_id)
         )
         sections = cur.fetchall()
+        logger.debug(f"Found {len(sections)} sections under path {target_path}")
 
         # Step 3: Generate markdown
         markdown_lines = []
@@ -41,8 +53,13 @@ def generate_markdown(doc_id: int, target_heading: str) -> str:
                 markdown_lines.append(content.strip())
                 markdown_lines.append("")  # Blank line after content
 
-        return "\n".join(markdown_lines).strip()  # Remove trailing newlines
+        result = "\n".join(markdown_lines).strip()  # Remove trailing newlines
+        logger.info(f"Successfully generated markdown with {len(markdown_lines)} lines")
+        return result
 
+    except Exception as e:
+        logger.error(f"Error generating markdown: {str(e)}")
+        raise
     finally:
         cur.close()
         conn.close()

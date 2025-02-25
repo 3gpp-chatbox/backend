@@ -1,5 +1,4 @@
 # src/extract_and_store.py
-from pathlib import Path
 from dotenv import load_dotenv
 import src.lib.doc_processor as doc_processor
 import src.lib.store_chunks as store_chunks
@@ -16,7 +15,7 @@ sections_to_exclude = [
     "abbreviations",
     "scope",
     "references",
-    "foreword",
+    # "foreword", # Contains TOC
 ]
 
 
@@ -32,5 +31,5 @@ doc = doc_processor.load_document(stripped_doc_path)
 section_tree = doc_processor.extract_section_tree(doc)
 
 # Store the sections in the database
-doc_name = Path(stripped_doc_path).name
+doc_name = doc.core_properties.title
 store_chunks.store_chunks(section_tree, doc_name)

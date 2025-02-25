@@ -83,6 +83,8 @@ def store_chunks(sections_tree: List[Section], doc_name: str):
         # Commit the transaction
         conn.commit()
         print(f"Successfully stored document {doc_name} with {len(sections_tree)} top-level sections")
+        for a in sections_tree:
+            print(a.heading)
 
     except Exception as e:
         if conn:
@@ -94,3 +96,4 @@ def store_chunks(sections_tree: List[Section], doc_name: str):
             cur.close()
         if conn:
             conn.close()
+

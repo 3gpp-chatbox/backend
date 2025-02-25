@@ -243,13 +243,14 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     """
     doc = load_document(file_path)
 
-    remove = True
+    remove = False
     for para in doc.paragraphs:
         para.text = text_cleaner(para.text)
         if para.style.name.startswith("Heading") and (
             any(word.lower() in para.text.lower() for word in excluded_sections)
             or not para.text.strip()[0].isdigit()
         ):
+            print(f"Removing section: {para.text}")
             remove = True
         elif para.style.name.startswith("Heading") and remove:
             remove = False
