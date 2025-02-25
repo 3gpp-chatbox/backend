@@ -1,0 +1,106 @@
+```json
+{
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "state": "5GMM-DEREGISTERED"
+      }
+    },
+    {
+      "id": "Registration_Initiated",
+      "type": "event",
+      "properties": {
+        "event_type": "Registration Procedure Triggered"
+      },
+      "parameters": [
+        "Registration Type"
+      ]
+    },
+    {
+      "id": "Send_Registration_Request",
+      "type": "action",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS Mobile Identity",
+        "UE Status",
+        "Last Visited Registered TAI",
+        "5GS Update Type",
+        "MICO Indication",
+        "Requested DRX Parameters",
+        "Requested NB-N1 Mode DRX Parameters",
+        "Requested Extended DRX Parameters",
+        "LADN Indication",
+        "Requested NSSAI",
+        "5GMM Capability",
+        "Payload Container Type",
+        "NAS Message Container",
+        "Additional Information Requested",
+        "Requested WUS Assistance Information",
+        "Requested PEIPS Assistance Information",
+        "UE determined PLMN with disaster condition IE",
+        "Service-level-AA container IE",
+        "AUN3 indication IE",
+        "N5GC indication IE"
+      ]
+    },
+    {
+      "id": "Timer_Started",
+      "type": "action",
+      "properties": {
+        "timer_action": "Start T3510"
+      }
+    },
+    {
+      "id": "Timers_Stopped",
+      "type": "action",
+      "properties": {
+        "timer_action": "Stop T3502 and T3511 (if running)"
+      }
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "state",
+      "properties": {
+        "state": "REGISTRATION REQUEST message sent"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Initiated",
+      "event": "Registration_Initiated",
+      "properties": {
+        "trigger": "Initial registration for 5GS services, emergency services, SMS over NAS, mobility from GERAN/UTRAN to NG-RAN, initial registration for onboarding/disaster roaming services, or resuming normal services"
+      }
+    },
+    {
+      "from": "Registration_Initiated",
+      "to": "Send_Registration_Request",
+      "action": "Send_Registration_Request",
+      "properties": {}
+    },
+    {
+      "from": "Send_Registration_Request",
+      "to": "Timer_Started",
+      "action": "Start_T3510",
+      "properties": {}
+    },
+    {
+      "from": "Timer_Started",
+      "to": "Timers_Stopped",
+      "action": "Stop_T3502_T3511",
+      "properties": {}
+    },
+    {
+      "from": "Timers_Stopped",
+      "to": "Registration_Request_Sent",
+      "properties": {}
+    }
+  ]
+}
+```

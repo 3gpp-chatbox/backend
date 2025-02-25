@@ -1,0 +1,28 @@
+graph LR
+subgraph ""
+    A[5GMM_DEREGISTERED] --> B{Determine_Registration_Cause};
+    B -- Initial registration for 5GS services --> C[Initial_Registration_Initiation];
+    B -- Initial registration for emergency services --> C;
+    B -- Initial registration for SMS over NAS --> C;
+    B -- Mobility from GERAN/UTRAN to NG-RAN --> C;
+    B -- Initial registration for onboarding services in SNPN --> C;
+    B -- Initial registration for disaster roaming services --> C;
+    B -- Initial registration to come out of unavailability period --> C;
+    C --> D[Registration_Request_Sent];
+    C --> E[Timer_T3510_Started];
+    C --> F[Timer_T3502_Stopped];
+    C --> G[Timer_T3511_Stopped];
+
+    D["Registration_Request_Sent"];
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+    
+    E["Timer_T3510_Started"];
+    style E fill:#ccf,stroke:#333,stroke-width:2px
+    
+    F["Timer_T3502_Stopped"];
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+    
+    G["Timer_T3511_Stopped"];
+    style G fill:#ccf,stroke:#333,stroke-width:2px
+    
+end

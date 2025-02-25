@@ -1,0 +1,14 @@
+
+graph LR
+    5GMM_DEREGISTERED((5GMM-DEREGISTERED))
+    Registration_Initiated["Registration Procedure Triggered"]
+    Send_Registration_Request["REGISTRATION REQUEST"]
+    Timer_Started["Start T3510"]
+    Timers_Stopped["Stop T3502 and T3511 (if running)"]
+    Registration_Request_Sent((REGISTRATION REQUEST message sent))
+
+    5GMM_DEREGISTERED -- Registration_Initiated: Registration_Initiated{trigger:"Initial registration for 5GS services, emergency services, SMS over NAS, mobility from GERAN/UTRAN to NG-RAN, initial registration for onboarding/disaster roaming services, or resuming normal services"} --> Registration_Initiated
+    Registration_Initiated -- Send_Registration_Request: Send_Registration_Request --> Send_Registration_Request
+    Send_Registration_Request -- Timer_Started: Start_T3510 --> Timer_Started
+    Timer_Started -- Timers_Stopped: Stop_T3502_T3511 --> Timers_Stopped
+    Timers_Stopped --> Registration_Request_Sent

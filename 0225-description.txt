@@ -1,0 +1,41 @@
+**Procedure Name:** Initial Registration Initiation
+
+**Description:** This section details the procedure initiated by a UE in the 5GMM-DEREGISTERED state to register with the network. The UE sends a REGISTRATION REQUEST message to the AMF, triggering various actions and including specific Information Elements (IEs) depending on the scenario and the UE's capabilities. The procedure covers different registration types, including initial registration for 5GS services, emergency services, SMS over NAS, and others.
+
+**Key Information:**
+
+*   **Initial State:** 5GMM-DEREGISTERED
+*   **Trigger:** The UE initiates the registration procedure under the following conditions:
+    *   Initial registration for 5GS services
+    *   Initial registration for emergency services
+    *   Initial registration for SMS over NAS
+    *   Mobility from GERAN/UTRAN to NG-RAN coverage
+    *   Initial registration for onboarding services in SNPN
+    *   Initial registration for disaster roaming services
+    *   Initial registration to resume normal services after an unavailability period
+*   **Message Sent:** REGISTRATION REQUEST
+*   **Timer Actions:**
+    *   Start timer T3510
+    *   Stop timer T3502 (if running)
+    *   Stop timer T3511 (if running)
+*   **Key Information Elements (IEs) Handling:**
+    *   5GS mobile identity (Mandatory, with complex logic for selection between 5G-GUTI, SUCI, and PEI)
+    *   UE status (Conditional; includes EMM registration status)
+    *   Last visited registered TAI (Conditional)
+    *   5GS update type (Conditional; for SMS over NAS)
+    *   MICO indication (Conditional; for MICO mode)
+    *   Requested DRX parameters (Conditional)
+    *   Requested NB-N1 mode DRX parameters (Conditional)
+    *   Requested extended DRX parameters (Conditional)
+    *   LADN indication (Conditional; for LADN information)
+    *   Requested NSSAI (Conditional; for network slicing)
+    *   5GMM capability (Mandatory; indicates UE capabilities)
+    *   Payload container type (Conditional; for UE policy container)
+    *   NAS message container (Conditional; for sending non-cleartext IEs)
+    *   Additional information requested (Conditional; e.g., for ciphering keys)
+    *   Requested WUS assistance information (Conditional)
+    *   Requested PEIPS assistance information (Conditional)
+	*   UE determined PLMN with disaster condition IE (Conditional; for disaster roaming)
+    *   Service-level-AA container IE (Conditional; for UAS services)
+    *   AUN3 indication IE (Conditional; for AUN3 device registration)
+    *   N5GC indication IE (Conditional; for N5GC device registration)

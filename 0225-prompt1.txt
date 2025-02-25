@@ -1,0 +1,113 @@
+Okay, I will analyze the provided text and extract the information about the initial registration procedure, mapping it into the requested JSON format.
+
+**Procedure Name:** Initial Registration Initiation
+
+**Description:** The procedure is initiated by the UE when in the 5GMM-DEREGISTERED state under various conditions. It involves the UE sending a REGISTRATION REQUEST message to the AMF and handling different IEs based on UE capabilities, network conditions, and service requirements.
+
+**Key Information:**
+
+*   **Initial State:** 5GMM-DEREGISTERED
+*   **Trigger:**  One of the following conditions is met: initial registration for 5GS services, emergency services, SMS over NAS, mobility from GERAN/UTRAN to NG-RAN, initial registration for onboarding/disaster roaming services, or resuming normal services.
+*   **Message Sent:** REGISTRATION REQUEST
+*   **Timer Actions:** Start timer T3510, Stop timer T3502 (if running), Stop timer T3511 (if running).
+*   **Key Information Elements (IEs) Handling:** 5GS mobile identity, UE status, last visited registered TAI, 5GS update type, MICO indication, Requested DRX parameters, Requested NB-N1 mode DRX parameters, Requested extended DRX parameters, LADN indication, requested NSSAI, 5GMM capability, Payload container type, NAS message container, Additional information requested, Requested WUS assistance information, Requested PEIPS assistance information, UE determined PLMN with disaster condition IE, Service-level-AA container IE, AUN3 indication IE, N5GC indication IE
+
+```json
+{
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Initiating_Registration",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity",
+        "UE status",
+        "Last Visited Registered TAI",
+        "5GS Update Type",
+        "MICO Indication",
+        "Requested DRX Parameters",
+        "Requested NB-N1 mode DRX parameters",
+        "Requested Extended DRX Parameters",
+        "LADN Indication",
+        "Requested NSSAI",
+		"5GMM capability IE",
+		"Payload container type IE",
+		"NAS message container IE",
+		"Additional information requested IE",
+		"Requested WUS assistance information IE",
+		"Requested PEIPS assistance information IE",
+		"UE determined PLMN with disaster condition IE",
+		"Service-level-AA container IE",
+        "AUN3 indication IE",
+        "N5GC indication IE"
+
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "UE_Initiating_Registration",
+      "action": "Initiate Registration Procedure",
+      "properties": {
+        "trigger_conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Mobility from GERAN/UTRAN to NG-RAN",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Resuming normal services"
+        ],
+        "metadata": {}
+      }
+    },
+    {
+      "from": "UE_Initiating_Registration",
+      "to": "Registration_Request_Sent",
+      "action": "Send_REGISTRATION_REQUEST",
+      "properties": {
+        "timers": {
+          "start": "T3510",
+          "stop": ["T3502 (if running)", "T3511 (if running)"]
+        },
+        "parameters": [
+           "5GS mobile identity",
+           "UE status",
+           "Last Visited Registered TAI",
+           "5GS Update Type",
+           "MICO Indication",
+           "Requested DRX Parameters",
+           "Requested NB-N1 mode DRX parameters",
+           "Requested Extended DRX Parameters",
+           "LADN Indication",
+           "Requested NSSAI",
+		   "5GMM capability IE",
+		   "Payload container type IE",
+		   "NAS message container IE",
+		   "Additional information requested IE",
+		   "Requested WUS assistance information IE",
+		   "Requested PEIPS assistance information IE",
+		   "UE determined PLMN with disaster condition IE",
+		   "Service-level-AA container IE",
+           "AUN3 indication IE",
+           "N5GC indication IE"
+        ],
+        "metadata": {}
+      }
+    }
+  ]
+}
+```

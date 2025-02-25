@@ -1,0 +1,157 @@
+Okay, let's analyze the provided 3GPP text to extract the procedure information for the "Initial registration initiation" procedure.
+
+**Procedure Name:** Initial Registration Initiation
+
+**Description:** This section describes the actions a UE in the 5GMM-DEREGISTERED state takes to initiate the initial registration procedure by sending a REGISTRATION REQUEST message to the AMF. The text outlines various conditions under which the UE initiates this procedure and specifies which IEs (Information Elements) to include in the REGISTRATION REQUEST message based on different scenarios and UE capabilities.
+
+**JSON Representation:**
+
+```json
+{
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Initial_Registration_Initiation",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+       "parameters": [
+        "5GS mobile identity",
+        "UE status",
+        "Last visited registered TAI",
+        "5GS update type",
+        "MICO indication",
+        "T3324",
+        "Requested T3512",
+        "Requested DRX parameters",
+        "Requested NB-N1 mode DRX parameters",
+        "Requested extended DRX parameters",
+        "LADN indication",
+        "Requested NSSAI",
+        "Network slicing indication",
+        "5GMM capability",
+        "S1 UE network capability",
+        "Mobile station classmark 2",
+        "Supported codecs",
+        "Payload container type",
+        "NAS message container",
+        "Additional information requested",
+        "Requested WUS assistance information",
+        "Requested PEIPS assistance information",
+        "UE determined PLMN with disaster condition",
+        "Service-level-AA container",
+        "N5GC indication",
+        "AUN3 indication"
+      ]
+    },
+    {
+      "id": "Timer_T3510_Started",
+      "type": "action",
+      "properties": {
+        "timer_name": "T3510"
+      }
+    },
+     {
+      "id": "Timer_T3502_Stopped",
+      "type": "action",
+      "properties": {
+        "timer_name": "T3502"
+      }
+    },
+     {
+      "id": "Timer_T3511_Stopped",
+      "type": "action",
+      "properties": {
+        "timer_name": "T3511"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Initial_Registration_Initiation",
+      "action": "Determine_Registration_Cause",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Mobility from GERAN/UTRAN to NG-RAN",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to come out of unavailability period"
+        ]
+      }
+    },
+    {
+      "from": "Initial_Registration_Initiation",
+      "to": "Registration_Request_Sent",
+      "action": "Send_Registration_Request",
+      "properties": {
+        "parameters": [
+          "5GS mobile identity (GUTI, SUCI, or PEI)",
+          "Requested NSSAI",
+          "5GMM Capability IE",
+          "UE Status IE (EMM-REGISTERED if dual registration mode)",
+          "Last Visited Registered TAI",
+          "Follow-on request indicator",
+          "UE Radio Capability ID IE(RACS)",
+           "Payload container IE"
+        ],
+        "metadata": {
+          "timestamp": "T1"
+        }
+      }
+    },
+    {
+      "from": "Initial_Registration_Initiation",
+      "to": "Timer_T3510_Started",
+      "action": "Start_Timer",
+      "properties": {
+        "timer_name": "T3510"
+      }
+    },
+   {
+      "from": "Initial_Registration_Initiation",
+      "to": "Timer_T3502_Stopped",
+      "action": "Stop_Timer",
+      "properties": {
+        "timer_name": "T3502",
+          "condition": "Timer T3502 is running"
+      }
+    },
+    {
+      "from": "Initial_Registration_Initiation",
+      "to": "Timer_T3511_Stopped",
+      "action": "Stop_Timer",
+      "properties": {
+        "timer_name": "T3511",
+         "condition": "Timer T3511 is running"
+      }
+    }
+  ]
+}
+```
+
+**Key Information & Clarifications:**
+
+*   **UE State:** The UE must be in the `5GMM-DEREGISTERED` state to initiate this procedure.
+*   **Registration Causes:**  The procedure is triggered by several reasons, including initial registration for 5GS services, emergency services, SMS over NAS, mobility from GERAN/UTRAN to NG-RAN, onboarding services in SNPN, disaster roaming, or coming out of an unavailability period.
+*   **REGISTRATION REQUEST Message:** The core of the procedure involves constructing and sending the `REGISTRATION REQUEST` message.
+*   **5GS Mobile Identity IE:**  The UE handles the `5GS mobile identity` IE with priority given to GUTIs assigned by the same PLMN/SNPN, followed by equivalent PLMN/SNPN, then any other PLMN/SNPN. If no valid GUTI is available, it may use a SUCI or PEI (for emergency services). The UE may include an onboarding SUCI if initiating the initial registration for onboarding services in SNPN.
+*   **NSSAI Handling:** The UE includes the `Requested NSSAI` IE containing the S-NSSAI(s) it intends to register with, based on configured or allowed NSSAI.
+*   **5GMM Capability IE:** The UE sets various bits in the `5GMM capability IE` to indicate supported features (e.g., NSAG, RACS, V2X, ProSe, etc.)
+*   **Timers:** The UE starts timer T3510 after sending the `REGISTRATION REQUEST` and stops timers T3502 and T3511 if they are running.
+*   **Emergency Services Considerations:** There are specific rules for initiating initial registration for emergency services over different access types (3GPP vs. non-3GPP).
+
+This detailed analysis provides a comprehensive understanding of the initial registration initiation procedure based on the provided 3GPP text.
