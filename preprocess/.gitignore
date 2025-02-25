@@ -1,5 +1,0 @@
-# backend
-__pycache__/
-myenv/
-config.py
-*.db

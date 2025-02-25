@@ -10,8 +10,8 @@ uvicorn	 #ASGI server for FastAPI
 # Data Preparation and RAG pipeline
 pandas	 #Handle structured text data
 numpy	 #Numerical operations
-faiss-cpu	 #Vector search for document retrieval
-# chromadb	 #Alternative vector database
+# faiss-cpu	 #Vector search for document retrieval
+chromadb	 #Alternative vector database
 sentence-transformers	 #Convert text into embeddings
 # langchain
 # PyMuPDF #for pdf file handling
