@@ -1,0 +1,219 @@
+
+{
+  "nodes": [
+    {
+      "id": "UE_Initiates_Initial_Registration_Emergency",
+      "type": "state",
+      "properties": {
+        "5GS_registration_type_IE": "initial registration",
+        "PDU_SESSION_ESTABLISHMENT_REQUEST": "present",
+        "request_type": "initial emergency request"
+      }
+    },
+    {
+      "id": "Network_Rejects_Registration",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REJECT"
+      }
+    },
+    {
+      "id": "UE_Performs_Subclause_5_5_1_2_5",
+      "type": "action",
+      "properties": {
+        "subclause": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "type": "condition",
+      "properties": {}
+    },
+    {
+      "id": "Inform_Upper_Layers_Failure",
+      "type": "action",
+      "properties": {
+        "description": "Inform upper layers of the failure of the procedure"
+      }
+    },
+    {
+      "id": "Attempt_Initial_Registration_Emergency",
+      "type": "action",
+      "properties": {
+        "description": "Attempt initial registration for emergency services"
+      }
+    },
+    {
+      "id": "UE_Initiates_Initial_Registration_Emergency_Handover",
+      "type": "state",
+      "properties": {
+        "5GS_registration_type_IE": "initial registration",
+        "PDU_session_needs_establishment": "Due to handover of existing PDN connection for emergency bearer services"
+      }
+    },
+    {
+      "id": "UE_In_Same_Or_Equivalent_PLMN_or_SNPN",
+      "type": "condition",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Fails_Abnormal_Case_b",
+      "type": "event",
+      "properties": {
+        "abnormal_case": "b",
+        "subclause": "5.5.1.2.7"
+      }
+    },
+    {
+      "id": "UE_Performs_Subclause_5_5_1_2_7",
+      "type": "action",
+      "properties": {
+        "subclause": "5.5.1.2.7"
+      }
+    },
+    {
+      "id": "Inform_Upper_Layers_Failure_Access",
+      "type": "action",
+      "properties": {
+        "description": "Inform upper layers of the failure to access the network"
+      }
+    },
+    {
+      "id": "Registration_Fails_Abnormal_Cases_c_d_e",
+      "type": "event",
+      "properties": {
+        "abnormal_cases": "c, d, or e",
+        "subclause": "5.5.1.2.7"
+      }
+    },
+    {
+      "id": "PDU_Session_Needs_Handover",
+      "type": "condition",
+      "properties": {
+        "description": "PDU session needs to be established due to handover of an existing PDN connection for emergency bearer services"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Initiates_Initial_Registration_Emergency",
+      "to": "Network_Rejects_Registration",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "Network_Rejects_Registration",
+      "to": "UE_Performs_Subclause_5_5_1_2_5",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Performs_Subclause_5_5_1_2_5",
+      "to": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "to": "Inform_Upper_Layers_Failure",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "to": "Attempt_Initial_Registration_Emergency",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Initiates_Initial_Registration_Emergency_Handover",
+      "to": "Network_Rejects_Registration",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "Network_Rejects_Registration",
+      "to": "UE_Performs_Subclause_5_5_1_2_5",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Performs_Subclause_5_5_1_2_5",
+      "to": "UE_In_Same_Or_Equivalent_PLMN_or_SNPN",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_In_Same_Or_Equivalent_PLMN_or_SNPN",
+      "to": "Attempt_Initial_Registration_Emergency",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Initiates_Initial_Registration_Emergency",
+      "to": "Registration_Fails_Abnormal_Case_b",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Fails_Abnormal_Case_b",
+      "to": "UE_Performs_Subclause_5_5_1_2_7",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Performs_Subclause_5_5_1_2_7",
+      "to": "Inform_Upper_Layers_Failure_Access",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Initiates_Initial_Registration_Emergency",
+      "to": "Registration_Fails_Abnormal_Cases_c_d_e",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Fails_Abnormal_Cases_c_d_e",
+      "to": "UE_Performs_Subclause_5_5_1_2_7",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Performs_Subclause_5_5_1_2_7",
+      "to": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_In_Same_Selected_PLMN_or_SNPN",
+      "to": "PDU_Session_Needs_Handover",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "PDU_Session_Needs_Handover",
+      "to": "Inform_Upper_Layers_Failure",
+      "type": "transition",
+      "properties": {}
+    },
+        {
+      "from": "PDU_Session_Needs_Handover",
+      "to": "Attempt_Initial_Registration_Emergency",
+      "type": "transition",
+      "properties": {}
+    },
+    {
+      "from": "UE_Performs_Subclause_5_5_1_2_7",
+      "to": "UE_In_Same_Or_Equivalent_PLMN_or_SNPN",
+      "type": "transition",
+      "properties": {}
+    },
+     {
+      "from": "UE_In_Same_Or_Equivalent_PLMN_or_SNPN",
+      "to": "Attempt_Initial_Registration_Emergency",
+      "type": "transition",
+      "properties": {}
+    }
+  ]
+}

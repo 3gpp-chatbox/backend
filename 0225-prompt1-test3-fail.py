@@ -2,7 +2,7 @@
  #Primary authentication and key agreement procedure
 
 
-#no need description,only json
+#no need description,only json,validate the json format
 import sqlite3
 import os
 from dotenv import load_dotenv
@@ -10,8 +10,8 @@ import google.generativeai as genai
 
 import os
 import json
-from pydantic import ValidationError
-
+from pydantic import BaseModel, Field, ValidationError
+from typing import List, Dict, Optional
 load_dotenv()
 
 # Configure API key
@@ -20,6 +20,38 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 # Initialize Gemini model
 model = genai.GenerativeModel('gemini-2.0-flash')
 
+# Define the Pydantic models
+class Node(BaseModel):
+    id: str
+    type: str
+    properties: Dict[str, Optional[str]] = Field(default_factory=dict)
+    parameters: Optional[List[str]] = None
+
+class Edge(BaseModel):
+    from_: str = Field(..., alias="from")
+    to: str
+    action: Optional[str] = None
+    event: Optional[str] = None
+    properties: Dict[str, Optional[str]] = Field(default_factory=dict)
+
+class ProcedureGraph(BaseModel):
+    nodes: List[Node]
+    edges: List[Edge]
+
+def preprocess_json_data(json_data):
+    """Sanitize and correct the JSON data before validation."""
+    for edge in json_data.get('edges', []):
+        # Ensure parameters is a list of strings in the 'properties' field
+        if "parameters" in edge.get("properties", {}):
+            edge["properties"]["parameters"] = [
+                str(param) for param in edge["properties"]["parameters"]
+            ]
+        # Ensure any missing fields like 'event' or 'action' are handled
+        if "action" not in edge:
+            edge["action"] = None
+        if "event" not in edge:
+            edge["event"] = None
+    return json_data
 
 def extract_procedural_info_from_text(section_name, text):
     """Extracts procedural information from the text and returns separate JSON and description outputs."""
@@ -35,9 +67,8 @@ def extract_procedural_info_from_text(section_name, text):
 
      **flow property graph JSON representation**: Structure the procedure into a JSON format.
 
-    **IMPORTANT: Return the responses in the exact format like below:**,comment out  ```json" and  ``` at the beginning and end of your response !!
-    makesure your response start withstart with left curly bracket "{" and end with right curly bracket "}",no any  ```json" and  ``` in your response
-    below is the example:
+    **IMPORTANT: Return the responses in the exact format like below:**,comment out  ```json" and  ``` at the beginning and end of your response !!makesure your response start with left curly bracket "{" and end with right curly bracket "}"
+  
      {{
       "nodes": [
         {{
@@ -117,18 +148,71 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
     if section_name is None:
         return None #handle no result.
     procedural_info = extract_procedural_info_from_text(section_name, chunk_text) #pass section_name.
+
+        # Preprocess the JSON data before validation
+    try:
+        # Attempt to load the response as JSON
+        json_data = json.loads(procedural_info)
+        
+        # Preprocess to ensure the JSON structure is correct
+        json_data = preprocess_json_data(json_data)
+        
+        # Return the preprocessed data to be saved or validated
+        return json_data
+        
+    except json.JSONDecodeError:
+        print("❌ Failed to decode the JSON data from AI response.")
+        return None
+
+
     return procedural_info
 
+
+def validate_json_file(file_path):
+    """Checks if the JSON file exists and validates it using Pydantic."""
+    if os.path.exists(file_path):
+        print(f"✅ JSON file found: {file_path}")
+        
+        # Open the JSON file and attempt to load and validate it
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                json_data = json.load(file)
+
+                     # Preprocess the data to ensure it's in the correct format
+                json_data = preprocess_json_data(json_data)
+                
+                # Validate using Pydantic models
+                validated_data = ProcedureGraph(**json_data)  # Validate with the Pydantic model
+
+                # If validation passes, print success message
+                print(f"✅ JSON validation successful for {file_path}")
+        
+        except json.JSONDecodeError:
+            print(f"❌ Failed to decode JSON in file: {file_path}")
+        except ValidationError as e:
+            print(f"❌ Pydantic validation failed: {e}")
+    else:
+        print(f"❌ JSON file not found: {file_path}")
+
+
 # Example usage: Processing section 5.5.1.2.2
-section_id_to_process = "5.5.1.2.5"
+section_id_to_process = "5.5.1.2.4"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.5", db_path)
+
+
+procedural_info = process_section(section_id_to_process, db_path)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "0225-json-test2.json")
+    json_file_path = "0225-json-test3.json"
+    save_procedural_info_to_json(json.dumps(procedural_info), json_file_path)
+    validate_json_file(json_file_path)
 else:
     print(f"No content found for section {section_id_to_process}")
+
+
+
+
 
 
 

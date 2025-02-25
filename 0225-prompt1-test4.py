@@ -30,14 +30,12 @@ def extract_procedural_info_from_text(section_name, text):
 
     Remember, all your analysis should be based on the chunk text, and you should not make any assumptions.
     
-    This section is named: {section_name}, it is also the procedure name that this section is about, analyze text and focus on that procedure,extract the procedure information and use below pattern to mapping it:
+    This section is named: {section_name},  this section is about a procedure(section name may be key word of the procedure or procedure name), find the procedure name and analyze and focus on that procedure,extract the procedure information and use below pattern to mapping it:
     
 
-     **flow property graph JSON representation**: Structure the procedure into a JSON format.
+     **flow property graph JSON representation**: Structure the procedure into a JSON format.  comment out  ```json" and  ``` at the beginning and end of your response !! make sure your response start with left curly bracket "{" and end with right curly bracket "}",response  not contain anything but json code,
 
-    **IMPORTANT: Return the responses in the exact format like below:**,comment out  ```json" and  ``` at the beginning and end of your response !!
-    makesure your response start withstart with left curly bracket "{" and end with right curly bracket "}",no any  ```json" and  ``` in your response
-    below is the example:
+    **IMPORTANT: Return the responses in the exact format like below:**,
      {{
       "nodes": [
         {{
@@ -123,10 +121,10 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
 section_id_to_process = "5.5.1.2.5"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.5", db_path)
+procedural_info = process_section("5.5.1.2.6", db_path)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "0225-json-test2.json")
+    save_procedural_info_to_json(procedural_info, "0225-json-test4.json")
 else:
     print(f"No content found for section {section_id_to_process}")
 

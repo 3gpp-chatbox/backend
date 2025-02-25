@@ -1,99 +1,40 @@
+```json
 {
-      "nodes": [
-        {
-          "id": "5GMM-DEREGISTERED",
-          "type": "state",
-          "properties": {
-            "description": "UE in state 5GMM-DEREGISTERED"
-          }
-        },
-        {
-          "id": "Registration_Initiation_Trigger",
-          "type": "event",
-          "properties": {
-            "description": "UE initiates registration procedure for initial registration"
-          },
-          "parameters": [
-            "5GS services",
-            "emergency services",
-            "SMS over NAS",
-            "GERAN to NG-RAN coverage",
-            "UTRAN to NG-RAN coverage",
-            "onboarding services in SNPN",
-            "disaster roaming services",
-            "come out of unavailability period and resume normal services"
-          ]
-        },
-        {
-          "id": "Sending_REGISTRATION_REQUEST",
-          "type": "action",
-          "properties": {
-            "message_type": "REGISTRATION REQUEST"
-          }
-        },
-        {
-          "id": "Timer_Start",
-          "type": "timer",
-          "properties": {
-            "timer_name": "T3510",
-            "action": "start"
-          }
-        },
-        {
-          "id": "Timer_Stop_T3502",
-          "type": "timer",
-          "properties": {
-            "timer_name": "T3502",
-            "action": "stop",
-            "condition": "If timer T3502 is currently running"
-          }
-        },
-        {
-          "id": "Timer_Stop_T3511",
-          "type": "timer",
-          "properties": {
-            "timer_name": "T3511",
-            "action": "stop",
-            "condition": "If timer T3511 is currently running"
-          }
-        }
-      ],
-      "edges": [
-        {
-          "from": "5GMM-DEREGISTERED",
-          "to": "Registration_Initiation_Trigger",
-          "type": "transition",
-          "properties": {
-            "trigger": "Multiple conditions (a-g)"
-          }
-        },
-        {
-          "from": "Registration_Initiation_Trigger",
-          "to": "Sending_REGISTRATION_REQUEST",
-          "type": "transition",
-          "action": "initiate",
-          "properties": {}
-        },
-        {
-          "from": "Sending_REGISTRATION_REQUEST",
-          "to": "Timer_Start",
-          "type": "transition",
-          "action": "start",
-          "properties": {}
-        },
-        {
-          "from": "Sending_REGISTRATION_REQUEST",
-          "to": "Timer_Stop_T3502",
-          "type": "transition",
-          "action": "stop",
-          "properties": {}
-        },
-        {
-          "from": "Sending_REGISTRATION_REQUEST",
-          "to": "Timer_Stop_T3511",
-          "type": "transition",
-          "action": "stop",
-          "properties": {}
-        }
-      ]
+  "nodes": [
+    {
+      "id": "Initial_Registration_Request_Sent",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Reject_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REJECT"
+      },
+      "parameters": ["5GMM cause value"]
+    },
+    {
+      "id": "UE_Action_Based_on_Cause",
+      "type": "state",
+      "properties": {}
     }
+  ],
+  "edges": [
+    {
+      "from": "Initial_Registration_Request_Sent",
+      "to": "Registration_Reject_Received",
+      "event": "Registration_Reject_Received",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Reject_Received",
+      "to": "UE_Action_Based_on_Cause",
+      "action": "Take Action Based on 5GMM Cause Value",
+      "properties": {
+        "conditional": "Different actions based on the received 5GMM cause value."
+      }
+    }
+  ]
+}
+```
