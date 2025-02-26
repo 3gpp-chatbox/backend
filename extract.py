@@ -16,8 +16,6 @@ import sys
 import threading
 import subprocess
 from semantic_chunking import SemanticChunker, save_semantic_chunks
-from preprocess_pdfs import extract_text_from_pdf
-
 # Initialize console for better output
 console = Console()
 
@@ -51,25 +49,29 @@ Extract the following information:
     - Classify as INITIAL, INTERMEDIATE, or FINAL
     - Include descriptions
 
-3. Transitions:
+3. Events:
+    - Identify events in the registration procedure (Registration Request, Authentication Request, etc.)
+    - Include descriptions
+
+4. Transitions:
     - Identify state transitions
     - Include triggers, conditions, and timing
     - Note any prerequisites
 
-4. Network Element Relationships:
+5. Network Element Relationships:
     - Identify dependencies between network elements
     - Include descriptions of how elements interact
     - Include descriptions of the relationships
 
-5. Triggers:
+6. Triggers:
     - Identify triggers for state transitions
     - Include descriptions of what triggers the transition
 
-6. Conditions:
+7. Conditions:
     - Identify conditions that must be met for state transitions
     - Include descriptions of the conditions
 
-7. Timing:
+8. Timing:
     - Identify timing of state transitions
     - Include descriptions of the timing
 
@@ -97,6 +99,12 @@ Return the response in this EXACT JSON structure:
             "name": "another state",
             "type": "INTERMEDIATE",
             "description": "another state description"
+        }
+    ],
+    "events": [
+        {
+            "name": "event name",
+            "description": "Triggers the transition"
         }
     ],
     "transitions": [

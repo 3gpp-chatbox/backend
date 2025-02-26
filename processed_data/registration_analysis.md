@@ -5,37 +5,37 @@
 {
   "name": "UE",
   "type": "User Equipment",
-  "description": "Device used by the end user to access the 5G network."
+  "description": "Device used by the end user to access the 5G network"
 }
 
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization."
+  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization"
 }
 
 {
   "name": "SMF",
   "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment, modification, and release."
+  "description": "Network function responsible for session management, including PDU session establishment, modification, and release"
 }
 
 {
   "name": "UPF",
   "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement."
+  "description": "Network function responsible for user plane traffic forwarding and policy enforcement"
 }
 
 {
   "name": "PCF",
   "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules to other network functions."
+  "description": "Network function responsible for providing policy rules to other network functions"
 }
 
 {
   "name": "NRF",
   "type": "Network Repository Function",
-  "description": "Network function that supports service discovery."
+  "description": "Network function that supports service discovery"
 }
 
 ## States
@@ -43,99 +43,74 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered with the 5G network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network."
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode after registration."
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE has an established connection with the network."
+  "description": "UE is not registered with the network"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
+  "description": "UE is in the process of registering with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered from the network."
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the UE's registration request"
 }
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "REGISTRATION REQUEST",
+  "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts to access the 5G network.",
-  "condition": "UE is powered on and within coverage.",
-  "timing": "Initial step of the registration procedure."
+  "trigger": "UE attempts to access the 5G network",
+  "condition": "UE is within coverage area",
+  "timing": "Initial step of the registration procedure"
 }
 
 {
   "step": 2,
-  "message": "AUTHENTICATION REQUEST",
+  "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates authentication procedure.",
-  "condition": "UE identity needs to be verified.",
-  "timing": "After receiving the REGISTRATION REQUEST message."
+  "trigger": "AMF initiates authentication of the UE",
+  "condition": "UE identity needs to be verified",
+  "timing": "After receiving the Registration Request"
 }
 
 {
   "step": 3,
-  "message": "AUTHENTICATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED",
-  "trigger": "Authentication fails.",
-  "condition": "UE fails to authenticate.",
-  "timing": "After authentication procedure."
-}
-
-{
-  "step": 4,
-  "message": "SECURITY MODE COMMAND",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates security mode control procedure.",
-  "condition": "Secure exchange of NAS messages needs to be established.",
-  "timing": "After successful authentication."
-}
-
-{
-  "step": 5,
-  "message": "REGISTRATION ACCEPT",
+  "message": "Registration Accept",
   "from_element": "AMF",
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF accepts the registration request.",
-  "condition": "Authentication and security mode control are successful.",
-  "timing": "After successful security mode control procedure."
+  "trigger": "AMF successfully authenticates and authorizes the UE",
+  "condition": "Authentication and authorization are successful",
+  "timing": "After successful authentication"
 }
 
 ## Network Element Relationships
@@ -143,106 +118,61 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses."
+  "relationship": "UE sends registration requests to the AMF and receives responses"
 }
 
 {
   "element1": "AMF",
   "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management."
+  "relationship": "AMF interacts with SMF for session management during registration"
 }
 
 {
   "element1": "AMF",
   "element2": "PCF",
-  "relationship": "AMF interacts with PCF to obtain policy rules."
+  "relationship": "AMF interacts with PCF to obtain policy rules for the UE"
 }
 
 {
   "element1": "AMF",
   "element2": "NRF",
-  "relationship": "AMF uses NRF for service discovery."
+  "relationship": "AMF uses NRF for service discovery"
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts to access the 5G network."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates authentication procedure."
-}
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "trigger": "Authentication fails."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates security mode control procedure."
+  "trigger": "UE sends Registration Request"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "trigger": "AMF accepts the registration request."
+  "trigger": "AMF sends Registration Accept"
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE is powered on and within coverage."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE identity needs to be verified."
-}
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "condition": "UE fails to authenticate."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "Secure exchange of NAS messages needs to be established."
+  "condition": "UE is within coverage area"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "condition": "Authentication and security mode control are successful."
+  "condition": "Authentication and authorization are successful"
 }
 
 ## Timing
 
 {
   "state": "5GMM-REGISTERING",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After receiving the REGISTRATION REQUEST message."
-}
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "timing": "After authentication procedure."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After successful authentication."
+  "timing": "Initial step of registration"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "timing": "After successful security mode control procedure."
+  "timing": "After successful authentication"
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 3)
@@ -251,38 +181,14 @@
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
+  "type": "Network Element",
+  "description": "User Equipment; interacts with the AMF over the N1 interface"
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, reachability management, mobility management, authentication and authorization."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Responsible for session management, including session establishment, modification and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Responsible for user plane handling, including packet routing and forwarding."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy rules to control network behavior."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery function."
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function; control plane entity between the UE and the 5G core network"
 }
 
 ## States
@@ -290,19 +196,31 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered with the 5G network."
+  "description": "Initial state of the UE before registration"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network."
+  "description": "State of the UE during the registration procedure"
 }
 
 {
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network."
+  "description": "State of the UE after successful registration"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "Triggers the transition from 5GMM-NULL to 5GMM-REGISTERING"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Triggers the authentication procedure"
 }
 
 ## Transitions
@@ -336,7 +254,7 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE communicates with AMF for registration and mobility management via the N1 interface."
+  "relationship": "The UE communicates with the AMF over the N1 interface for registration and mobility management."
 }
 
 ## Triggers
@@ -411,6 +329,18 @@
   "description": "UE is successfully registered with the 5G network."
 }
 
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
 ## Transitions
 
 {
@@ -420,7 +350,7 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access",
+  "trigger": "User turns on device and attempts network access",
   "condition": "UE must be in coverage area",
   "timing": "Initial step of registration"
 }
@@ -442,14 +372,14 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access"
+  "trigger": "User turns on device and attempts network access"
 }
 
 {
@@ -481,203 +411,6 @@
   "timing": "After UE sends Registration Request"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 6)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Core network element responsible for registration, authentication, and mobility management"
-}
-
-{
-  "name": "AUSF",
-  "type": "Authentication Server Function",
-  "description": "Core network element responsible for authentication"
-}
-
-{
-  "name": "SEAF",
-  "type": "Security Anchor Function",
-  "description": "Core network element responsible for security anchoring"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts to register with the network",
-  "condition": "UE is powered on and attempting network access",
-  "timing": "Initial step of the registration procedure"
-}
-
-{
-  "step": 2,
-  "message": "AUTHENTICATION REQUEST",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates authentication procedure",
-  "condition": "AMF requires authentication of the UE",
-  "timing": "After receiving the REGISTRATION REQUEST"
-}
-
-{
-  "step": 3,
-  "message": "AUTHENTICATION RESPONSE",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE responds to authentication challenge",
-  "condition": "UE successfully calculates authentication response",
-  "timing": "After receiving the AUTHENTICATION REQUEST"
-}
-
-{
-  "step": 4,
-  "message": "SECURITY MODE COMMAND",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates security mode control procedure",
-  "condition": "Authentication is successful and AMF needs to establish secure communication",
-  "timing": "After successful authentication"
-}
-
-{
-  "step": 5,
-  "message": "SECURITY MODE COMPLETE",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "UE completes security mode control procedure",
-  "condition": "UE successfully configures security parameters",
-  "timing": "After receiving the SECURITY MODE COMMAND"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses"
-}
-
-{
-  "element1": "AMF",
-  "element2": "AUSF",
-  "relationship": "AMF interacts with AUSF for authentication purposes"
-}
-
-{
-  "element1": "AUSF",
-  "element2": "SEAF",
-  "relationship": "AUSF interacts with SEAF to obtain security keys"
-}
-
-{
-  "element1": "SEAF",
-  "element2": "AMF",
-  "relationship": "SEAF provides security keys to the AMF"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "AMF sends AUTHENTICATION REQUEST"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "AMF sends SECURITY MODE COMMAND"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "UE sends SECURITY MODE COMPLETE"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE is within network coverage"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE successfully authenticates with the network"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE successfully configures security parameters"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial registration attempt"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After receiving REGISTRATION REQUEST"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After successful authentication"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After successful security mode control"
-}
-
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 7)
 
 ## Network Elements
@@ -685,71 +418,13 @@
 {
   "name": "UE",
   "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
+  "description": "Mobile device attempting to access the 5G network."
 }
 
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization."
-}
-
-## States
-
-## Transitions
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests and other NAS messages to the AMF. AMF authenticates the UE and manages its connection."
-}
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 8)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access 5G services."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access control."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules for session management and charging."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that stores and provides information about available network functions."
+  "description": "Network element responsible for registration, authentication, and mobility management."
 }
 
 ## States
@@ -761,15 +436,157 @@
 }
 
 {
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the network and can access 5G services."
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 8)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment: Initiates the registration procedure and interacts with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function: Manages registration, authentication, and mobility."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function: Manages PDU sessions."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function: Routes user plane traffic."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function: Provides policy rules."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function: Provides service discovery."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration."
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
+  "description": "State of the UE while the registration procedure is in progress."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "State of the UE after successful registration."
 }
 
 {
@@ -787,7 +604,39 @@
 {
   "name": "5GMM-DEREGISTERED",
   "type": "INTERMEDIATE",
-  "description": "UE is deregistered from the network."
+  "description": "UE is in deregistered mode."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication of the UE."
+}
+
+{
+  "name": "Security Mode Command",
+  "description": "Network initiates security setup."
+}
+
+{
+  "name": "Identity Request",
+  "description": "Network requests UE identity."
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request."
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request."
 }
 
 ## Transitions
@@ -799,8 +648,8 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE powers on and attempts to register with the network.",
-  "condition": "UE must be within the coverage area of a 5G network.",
+  "trigger": "UE powers on and attempts to access the network.",
+  "condition": "UE must be within coverage area.",
   "timing": "Initial step of the registration procedure."
 }
 
@@ -812,8 +661,8 @@
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERING",
   "trigger": "AMF initiates authentication of the UE.",
-  "condition": "UE identity needs to be verified by the network.",
-  "timing": "After the AMF receives the Registration Request from the UE."
+  "condition": "UE identity verification is required.",
+  "timing": "After the AMF receives the Registration Request."
 }
 
 {
@@ -823,21 +672,33 @@
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates security mode control procedure.",
+  "trigger": "AMF initiates security setup with the UE.",
   "condition": "Successful authentication.",
   "timing": "After successful authentication."
 }
 
 {
   "step": 4,
-  "message": "Security Mode Complete",
-  "from_element": "UE",
-  "to_element": "AMF",
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERED",
-  "trigger": "UE completes security mode control procedure.",
-  "condition": "Successful security mode setup.",
-  "timing": "After receiving Security Mode Command."
+  "trigger": "AMF accepts the registration request.",
+  "condition": "Successful authentication and security setup.",
+  "timing": "After security setup."
+}
+
+{
+  "step": 5,
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "AMF rejects the registration request.",
+  "condition": "Authentication failure or other reasons for rejection.",
+  "timing": "After authentication or security setup failure."
 }
 
 ## Network Element Relationships
@@ -845,67 +706,82 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests and other NAS messages to the AMF, and receives responses from the AMF."
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 {
   "element1": "AMF",
   "element2": "SMF",
-  "relationship": "AMF interacts with the SMF to manage PDU sessions for the UE."
+  "relationship": "AMF interacts with SMF to manage PDU sessions for the UE."
 }
 
 {
   "element1": "AMF",
   "element2": "UPF",
-  "relationship": "AMF interacts with the UPF to establish user plane connectivity for the UE."
+  "relationship": "AMF controls the UPF for user plane traffic routing."
 }
 
 {
   "element1": "AMF",
   "element2": "PCF",
-  "relationship": "AMF interacts with the PCF to obtain policy rules for the UE's session."
+  "relationship": "AMF retrieves policy rules from the PCF."
 }
 
 {
   "element1": "AMF",
   "element2": "NRF",
-  "relationship": "AMF discovers other network functions (e.g., SMF) through the NRF."
+  "relationship": "AMF discovers other network functions using the NRF."
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE powers on and attempts to register with the network."
+  "trigger": "Reception of Registration Request by AMF."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "trigger": "Successful completion of the registration procedure."
+  "trigger": "Reception of Registration Accept by UE."
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "trigger": "Reception of Registration Reject by UE."
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE must be within the coverage area of a 5G network."
+  "condition": "UE must be within coverage area and have valid credentials."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "condition": "Successful authentication and security mode setup."
+  "condition": "Successful authentication and security setup."
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "condition": "Authentication failure or network rejection."
 }
 
 ## Timing
 
 {
   "state": "5GMM-REGISTERING",
-  "timing": "Initial step of the registration procedure."
+  "timing": "Occurs after the UE sends the Registration Request."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "timing": "Final step of the registration procedure."
+  "timing": "Occurs after successful authentication and security setup."
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "timing": "Occurs after authentication failure or network rejection."
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 10)
@@ -914,34 +790,74 @@
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network."
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration management, connection management, and mobility management."
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration management, connection management, reachability management, mobility management, authentication and authorization"
 }
 
 ## States
 
 {
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state before registration"
+}
+
+{
+  "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN or SNPN."
+  "description": "State while the UE is in the process of registering"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "State after successful registration"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "FINAL",
+  "description": "State after deregistration, initiates PLMN search"
 }
 
 {
   "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and has limited service."
+  "type": "FINAL",
+  "description": "State after deregistration, limited service available"
 }
 
 {
   "name": "5GMM-DEREGISTERED.NO-SUPI",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and has no SUPI."
+  "type": "FINAL",
+  "description": "State after deregistration, no SUPI available"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "Network rejects authentication attempt from the UE"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
 }
 
 ## Transitions
@@ -951,47 +867,71 @@
   "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
-  "from_state": "Unknown",
-  "to_state": "Unknown",
-  "trigger": "UE attempts to register with the network.",
-  "condition": "UE must be in a coverage area.",
-  "timing": "Initial registration attempt."
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
 }
 
 {
   "step": 2,
-  "message": "AUTHENTICATION REJECT",
+  "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "Unknown",
-  "to_state": "5GMM-DEREGISTERED",
-  "trigger": "Network rejects authentication.",
-  "condition": "Authentication fails.",
-  "timing": "After authentication procedure."
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
 }
 
 {
   "step": 3,
-  "message": "REGISTRATION REJECT",
+  "message": "Authentication Reject",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "Unknown",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Network rejects registration.",
-  "condition": "Registration is not allowed.",
-  "timing": "After registration request."
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "Network rejects authentication",
+  "condition": "Authentication fails",
+  "timing": "After Authentication Request"
 }
 
 {
   "step": 4,
-  "message": "REGISTRATION REJECT",
+  "message": "Registration Reject",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "Unknown",
+  "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects registration.",
-  "condition": "Registration is not allowed.",
-  "timing": "After registration request."
+  "trigger": "Network rejects registration",
+  "condition": "Network rejects registration",
+  "timing": "After Registration Request"
+}
+
+{
+  "step": 5,
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Network rejects registration",
+  "condition": "Network rejects registration",
+  "timing": "After Registration Request"
+}
+
+{
+  "step": 6,
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED.NO-SUPI",
+  "trigger": "Network rejects registration",
+  "condition": "Network rejects registration",
+  "timing": "After Registration Request"
 }
 
 ## Network Element Relationships
@@ -999,58 +939,88 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE and manages its registration status."
+  "relationship": "UE sends registration requests to AMF and receives responses"
 }
 
 ## Triggers
 
 {
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "trigger": "Authentication failure"
+}
+
+{
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Registration reject, authentication reject, or other failures."
+  "trigger": "Registration failure"
 }
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Registration reject, authentication reject, or other failures."
+  "trigger": "Registration failure"
 }
 
 {
   "state": "5GMM-DEREGISTERED.NO-SUPI",
-  "trigger": "Authentication failure."
+  "trigger": "Registration failure"
 }
 
 ## Conditions
 
 {
+  "state": "5GMM-REGISTERING",
+  "condition": "UE in coverage area"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "condition": "Authentication fails"
+}
+
+{
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "UE is not allowed to register in the current PLMN/SNPN."
+  "condition": "Registration fails"
 }
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "UE is not allowed to register in the current PLMN/SNPN."
+  "condition": "Registration fails"
 }
 
 {
   "state": "5GMM-DEREGISTERED.NO-SUPI",
-  "condition": "Authentication failure."
+  "condition": "Registration fails"
 }
 
 ## Timing
 
 {
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial registration attempt"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "timing": "After authentication failure"
+}
+
+{
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "Occurs after a registration or authentication failure."
+  "timing": "After registration failure"
 }
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "Occurs after a registration or authentication failure."
+  "timing": "After registration failure"
 }
 
 {
   "state": "5GMM-DEREGISTERED.NO-SUPI",
-  "timing": "Occurs after an authentication failure."
+  "timing": "After registration failure"
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 11)
@@ -1059,38 +1029,38 @@
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Manages access and mobility for the UE"
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, authentication, and mobility management"
 }
 
 {
   "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Manages PDU sessions"
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for session management"
 }
 
 {
   "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Handles user plane traffic"
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for user plane traffic forwarding"
 }
 
 {
   "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy control"
+  "type": "Network Element",
+  "description": "Policy Control Function - responsible for policy control"
 }
 
 {
   "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery"
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
 }
 
 ## States
@@ -1098,43 +1068,43 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered with the 5G network"
+  "description": "Initial state of the UE before registration"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network"
+  "description": "State of the UE during the registration procedure"
 }
 
 {
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network"
+  "description": "State of the UE after successful registration"
 }
 
 {
   "name": "5GMM-DEREGISTERED",
   "type": "FINAL",
-  "description": "UE is deregistered from the 5G network"
+  "description": "State of the UE after deregistration"
 }
 
 {
   "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
   "type": "FINAL",
-  "description": "UE is deregistered and searching for a PLMN"
+  "description": "State of the UE after deregistration, initiating PLMN search"
 }
 
 {
   "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
   "type": "FINAL",
-  "description": "UE is deregistered and in limited service"
+  "description": "State of the UE after deregistration, limited service available"
 }
 
 {
   "name": "5GMM-DEREGISTERED.NO-SUPI",
   "type": "FINAL",
-  "description": "UE is deregistered and has no SUPI"
+  "description": "State of the UE after deregistration, no SUPI available"
 }
 
 {
@@ -1143,54 +1113,113 @@
   "description": "UE is in connected mode"
 }
 
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "Network rejects the authentication attempt"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request"
+}
+
+{
+  "name": "Configuration Update Command",
+  "description": "Network sends configuration update command to the UE"
+}
+
+{
+  "name": "Configuration Update Complete",
+  "description": "UE sends configuration update complete message to the network"
+}
+
+{
+  "name": "Identity Request",
+  "description": "Network requests identity from the UE"
+}
+
+{
+  "name": "Notification",
+  "description": "Network notifies the UE to initiate a service request procedure"
+}
+
 ## Transitions
 
 {
   "step": 1,
-  "message": "REGISTRATION REQUEST",
+  "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE powers on and attempts to register with the network",
-  "condition": "UE must be in a coverage area and select a PLMN or SNPN",
+  "trigger": "UE powers on and attempts to access the network",
+  "condition": "UE must be in a coverage area",
   "timing": "Initial step of the registration procedure"
 }
 
 {
   "step": 2,
-  "message": "AUTHENTICATION REQUEST",
+  "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates authentication of the UE",
-  "condition": "UE identity needs to be verified",
-  "timing": "After receiving the REGISTRATION REQUEST"
+  "trigger": "AMF initiates authentication procedure",
+  "condition": "UE identity verification is required",
+  "timing": "After the AMF receives the Registration Request"
 }
 
 {
   "step": 3,
-  "message": "REGISTRATION ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF successfully authenticates and authorizes the UE",
-  "condition": "Authentication and authorization are successful",
-  "timing": "After successful authentication"
-}
-
-{
-  "step": 4,
-  "message": "REGISTRATION REJECT",
+  "message": "Authentication Reject",
   "from_element": "AMF",
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-DEREGISTERED",
-  "trigger": "AMF rejects the registration request",
-  "condition": "Authentication or authorization fails, or other network policies prevent registration",
-  "timing": "After authentication or authorization failure"
+  "trigger": "Authentication fails",
+  "condition": "UE fails authentication",
+  "timing": "After the UE responds to the Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "Registration is rejected by the network",
+  "condition": "Network policies or UE subscription does not allow registration",
+  "timing": "After authentication or after receiving the Registration Request"
+}
+
+{
+  "step": 5,
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Registration is accepted by the network",
+  "condition": "UE is successfully authenticated and authorized",
+  "timing": "After successful authentication and authorization"
 }
 
 ## Network Element Relationships
@@ -1198,25 +1227,25 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses (accept or reject)"
+  "relationship": "UE sends registration requests to the AMF and receives responses"
 }
 
 {
   "element1": "AMF",
   "element2": "SMF",
-  "relationship": "AMF interacts with SMF to manage PDU sessions and network slices"
+  "relationship": "AMF interacts with SMF for session management during registration"
 }
 
 {
   "element1": "AMF",
   "element2": "UPF",
-  "relationship": "AMF interacts with UPF to manage user plane traffic"
+  "relationship": "AMF interacts with UPF for user plane configuration"
 }
 
 {
   "element1": "AMF",
   "element2": "PCF",
-  "relationship": "AMF interacts with PCF to obtain policy control information"
+  "relationship": "AMF interacts with PCF for policy control during registration"
 }
 
 {
@@ -1229,51 +1258,51 @@
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST"
+  "trigger": "UE sends Registration Request"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "trigger": "AMF sends REGISTRATION ACCEPT"
+  "trigger": "AMF sends Registration Accept"
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "trigger": "AMF sends REGISTRATION REJECT"
+  "trigger": "AMF sends Registration Reject or Authentication Reject"
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE is in coverage and selects a PLMN/SNPN"
+  "condition": "UE is within network coverage"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "condition": "Authentication and authorization are successful"
+  "condition": "UE is successfully authenticated and authorized"
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "condition": "Authentication or authorization fails, or network policies prevent registration"
+  "condition": "Authentication fails or network policies prevent registration"
 }
 
 ## Timing
 
 {
   "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
+  "timing": "Occurs after UE powers on and attempts network access"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "timing": "After successful authentication"
+  "timing": "Occurs after successful authentication and authorization"
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "timing": "After authentication or authorization failure"
+  "timing": "Occurs after authentication failure or network rejection"
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 12)
@@ -1325,6 +1354,12 @@
 }
 
 {
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the 5G network"
+}
+
+{
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
   "description": "UE is successfully registered with the 5G network"
@@ -1336,15 +1371,135 @@
   "description": "UE is deregistered from the 5G network"
 }
 
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request from the UE"
+}
+
+{
+  "name": "DEREGISTRATION REQUEST",
+  "description": "Network initiates deregistration of the UE"
+}
+
+{
+  "name": "CONFIGURATION UPDATE COMMAND",
+  "description": "AMF sends configuration update to the UE"
+}
+
 ## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to register with the network",
+  "condition": "UE is in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Registration Reject",
+  "from_element": "Network",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "Network rejects registration request",
+  "condition": "All S-NSSAIs are rejected or other reasons",
+  "timing": "After Authentication Request or during registration"
+}
 
 ## Network Element Relationships
 
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, AMF authenticates UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF informs SMF to release PDU sessions"
+}
+
 ## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication and registration"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "trigger": "Registration is rejected by the network"
+}
 
 ## Conditions
 
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity is verified"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "condition": "All S-NSSAIs are rejected or other reasons"
+}
+
 ## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After successful authentication"
+}
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "timing": "After registration failure"
+}
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 13)
 
@@ -1359,13 +1514,13 @@
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Manages registration, connection, and mobility"
+  "description": "Manages access and mobility for the UE"
 }
 
 {
   "name": "SMF",
   "type": "Session Management Function",
-  "description": "Manages PDU sessions"
+  "description": "Manages PDU sessions for the UE"
 }
 
 {
@@ -1377,7 +1532,7 @@
 {
   "name": "PCF",
   "type": "Policy Control Function",
-  "description": "Provides policy rules"
+  "description": "Provides policy control for the network"
 }
 
 {
@@ -1391,942 +1546,37 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered"
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 14)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "Network Element",
-  "description": "User Equipment: Mobile device attempting to access the network."
-}
-
-{
-  "name": "AMF",
-  "type": "Network Element",
-  "description": "Access and Mobility Management Function: Manages registration, connection, and mobility."
-}
-
-{
-  "name": "SMF",
-  "type": "Network Element",
-  "description": "Session Management Function: Manages PDU sessions."
-}
-
-{
-  "name": "UPF",
-  "type": "Network Element",
-  "description": "User Plane Function: Routes and forwards user plane data."
-}
-
-{
-  "name": "PCF",
-  "type": "Network Element",
-  "description": "Policy Control Function: Provides policy rules for session management."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Element",
-  "description": "Network Repository Function: Service discovery."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 15)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access 5G services."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access control."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules to the control plane functions."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that supports service discovery."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "Initial state of the UE when it is not registered with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered from the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service state."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts initial registration.",
-  "condition": "UE is powered on and attempting to access the network.",
-  "timing": "First step in the registration procedure."
-}
-
-{
-  "step": 2,
-  "message": "AUTHENTICATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED",
-  "trigger": "Network rejects authentication.",
-  "condition": "Authentication procedure is not accepted by the network.",
-  "timing": "After the UE sends the REGISTRATION REQUEST and the network initiates authentication."
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects registration.",
-  "condition": "PLMN not allowed, tracking area not allowed, etc.",
-  "timing": "After the UE sends the REGISTRATION REQUEST."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management during registration."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-NULL",
-  "trigger": "UE attempts initial registration."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "Network rejects authentication or registration."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-NULL",
-  "condition": "UE is powered on and attempting to access the network."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "Authentication procedure is not accepted by the network or PLMN not allowed, tracking area not allowed, etc."
-}
-
-## Timing
-
-{
-  "state": "5GMM-NULL",
-  "timing": "First step in the registration procedure."
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After the UE sends the REGISTRATION REQUEST and the network initiates authentication."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 16)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, connection management, mobility management, and access control"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management, including PDU session establishment, modification, and release"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane traffic forwarding and policy enforcement"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for providing policy rules to the SMF and other network functions"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element that provides service discovery and selection capabilities"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
   "description": "UE is not registered with the 5G network"
 }
 
+## Events
+
 {
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network"
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
 }
 
 ## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 17)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access control."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules for session management and mobility management."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that provides service discovery and selection capabilities."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is in an initial state, not registered with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is attempting to register after a previous registration attempt failed."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is searching for a PLMN to register with."
-}
-
-{
-  "name": "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
-  "type": "INTERMEDIATE",
-  "description": "UE is attempting to update its registration with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in a state where it can only access limited services."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to resume normal services after unavailability period.",
-  "condition": "UE needs to access 5GS services or emergency services.",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "step": 2,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects the registration request.",
-  "condition": "Various reasons, including PLMN not allowed, N1 mode not allowed, etc.",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network accepts the registration request.",
-  "condition": "UE is authorized to access the network.",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
 
 ## Network Element Relationships
 
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives registration accept or reject messages from the AMF."
+  "relationship": "UE sends registration request to AMF"
 }
 
 {
   "element1": "AMF",
   "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management during the registration procedure."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to resume normal services after unavailability period."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects the registration request."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network accepts the registration request."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "condition": "UE needs to access 5GS services or emergency services."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "Various reasons, including PLMN not allowed, N1 mode not allowed, etc."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE is authorized to access the network."
-}
-
-## Timing
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 18)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, authentication, and mobility management"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for policy control"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function responsible for service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "No 5GMM context has been established"
-}
-
-{
-  "name": "5GMM-DEREGISTERED",
-  "type": "INITIAL",
-  "description": "No 5GMM context has been established and the UE location is unknown to the network"
-}
-
-{
-  "name": "5GMM-DEREGISTERED-INITIATED",
-  "type": "INTERMEDIATE",
-  "description": "UE has requested release of the 5GMM context and is waiting for a response from the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "A 5GMM context has been established"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Initial registration requested",
-  "from_element": "UE",
-  "to_element": "Network",
-  "from_state": "5GMM-DEREGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "UE starts the initial registration procedure",
-  "condition": "UE camps on a suitable cell or an acceptable cell in a PLMN",
-  "timing": "When the UE needs to establish a 5GMM context"
-}
-
-{
-  "step": 2,
-  "message": "UE enters state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "from_element": "UE",
-  "to_element": "Network",
-  "from_state": "5GMM-DEREGISTERED.eCALL-INACTIVE",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "UE receives a request from upper layers to establish an eCall over IMS",
-  "condition": "UE needs to establish an eCall over IMS",
-  "timing": "At the earliest opportunity"
-}
-
-{
-  "step": 3,
-  "message": "UE enters state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "from_element": "UE",
-  "to_element": "Network",
-  "from_state": "5GMM-DEREGISTERED.eCALL-INACTIVE",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "UE receives a request from upper layers to establish a call to an HPLMN designated non-emergency MSISDN or URI for test or terminal reconfiguration service",
-  "condition": "UE needs to establish a non-emergency call",
-  "timing": "Once the registration procedure is completed"
-}
-
-{
-  "step": 4,
-  "message": "UE enters state 5GMM-NULL",
-  "from_element": "UE",
-  "to_element": "Network",
-  "from_state": "5GMM-DEREGISTERED.eCALL-INACTIVE",
-  "to_state": "5GMM-NULL",
-  "trigger": "UE is deactivated (e.g. powered off) by the user",
-  "condition": "UE is powered off",
-  "timing": "When the UE is powered off"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "UE",
-  "relationship": "AMF authenticates the UE"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "trigger": "UE starts the initial registration procedure"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.eCALL-INACTIVE",
-  "trigger": "USIM is removed, coverage is lost, UE is deactivated, UE receives a request from upper layers to establish an eCall over IMS, UE receives a request from upper layers to establish a call to an HPLMN designated non-emergency MSISDN or URI for test or terminal reconfiguration service"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "condition": "UE camps on a suitable cell or an acceptable cell in a PLMN"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.eCALL-INACTIVE",
-  "condition": "Valid subscriber data are available for the UE before it enters the substates, except for the substate 5GMM-DEREGISTERED.NO-SUPI"
-}
-
-## Timing
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "timing": "When the UE needs to establish a 5GMM context"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "timing": "At the earliest opportunity, Once the registration procedure is completed"
-}
-
-{
-  "state": "5GMM-NULL",
-  "timing": "When the UE is powered off"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 19)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "Network Element",
-  "description": "User Equipment - Mobile device attempting to access the network"
-}
-
-{
-  "name": "AMF",
-  "type": "Network Element",
-  "description": "Access and Mobility Management Function - Manages registration, authentication, and mobility"
-}
-
-{
-  "name": "SMF",
-  "type": "Network Element",
-  "description": "Session Management Function - Manages PDU sessions"
-}
-
-{
-  "name": "UPF",
-  "type": "Network Element",
-  "description": "User Plane Function - Routes user data"
-}
-
-{
-  "name": "PCF",
-  "type": "Network Element",
-  "description": "Policy Control Function - Provides policy rules"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Element",
-  "description": "Network Repository Function - Service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "Initial state, UE is not registered"
-}
-
-{
-  "name": "5GMM-DEREGISTERED",
-  "type": "INITIAL",
-  "description": "UE is deregistered from the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is in connected mode"
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.NO-SUPI",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and SUPI is not available"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration"
-}
-
-{
-  "name": "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered and attempting registration update"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and no cell is available"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-DEREGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to resume normal services",
-  "condition": "UE selects a PLMN or SNPN",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request/Response (if needed)",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-{
-  "step": 3,
-  "message": "Registration Accept",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF accepts the registration request",
-  "condition": "Authentication is successful and other network policies are met",
-  "timing": "After authentication (if any)"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF and receives registration responses from AMF. AMF authenticates the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF to manage PDU sessions for the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "UPF",
-  "relationship": "AMF interacts with UPF to route user data for the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "PCF",
-  "relationship": "AMF interacts with PCF to obtain policy rules for the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF uses NRF for service discovery."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to resume normal services"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Successful completion of the initial registration procedure"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "condition": "UE selects a PLMN or SNPN"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "Authentication is successful and other network policies are met"
-}
-
-## Timing
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "timing": "Initial state before registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "Final state after successful registration"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 20)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration management, connection management, and mobility management."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "N/A",
-  "trigger": "UE needs to register to the network",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration request messages to the AMF."
+  "relationship": "AMF selects SMF for PDU session management"
 }
 
 ## Triggers
 
 {
   "state": "5GMM-NULL",
-  "trigger": "UE needs to register to the network"
+  "trigger": "UE attempts to access the network"
 }
 
 ## Conditions
@@ -2343,1254 +1593,7 @@
   "timing": "Initial step of registration"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 21)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane data forwarding and routing."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules for session management and mobility management."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that provides service discovery and selection capabilities."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the 5G network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network."
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is in connected mode."
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered with limited service."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN."
-}
-
-{
-  "name": "5GMM-REGISTERED.NO-CELL-AVAILABLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered but no cell is available."
-}
-
-{
-  "name": "5GMM-REGISTERED.NON-ALLOWED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered but service is not allowed."
-}
-
-{
-  "name": "5GMM-REGISTERED-INITIATED",
-  "type": "INTERMEDIATE",
-  "description": "UE initiated registration."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE powers on and attempts to register to the network.",
-  "condition": "UE must be in a coverage area and have a valid USIM.",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "step": 2,
-  "message": "AUTHENTICATION REQUEST",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "AMF initiates authentication of the UE.",
-  "condition": "UE identity needs to be verified.",
-  "timing": "After receiving the REGISTRATION REQUEST from the UE."
-}
-
-{
-  "step": 3,
-  "message": "AUTHENTICATION RESPONSE",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE responds to the authentication request.",
-  "condition": "UE successfully completes the authentication procedure.",
-  "timing": "After receiving the AUTHENTICATION REQUEST from the AMF."
-}
-
-{
-  "step": 4,
-  "message": "REGISTRATION ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF accepts the registration request.",
-  "condition": "UE is successfully authenticated and authorized.",
-  "timing": "After successful authentication and authorization."
-}
-
-{
-  "step": 5,
-  "message": "REGISTRATION COMPLETE",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "UE confirms the registration acceptance.",
-  "condition": "UE successfully receives the REGISTRATION ACCEPT message.",
-  "timing": "After receiving the REGISTRATION ACCEPT from the AMF."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives registration responses from the AMF. The AMF manages the UE's registration status."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF to establish and manage PDU sessions for the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "UPF",
-  "relationship": "AMF interacts with UPF to manage user plane resources for the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "PCF",
-  "relationship": "AMF interacts with PCF to obtain policy rules for the UE's session and mobility management."
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF uses NRF to discover and select appropriate network functions."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts to register to the network."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Successful completion of the registration procedure."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in a coverage area and have a valid USIM."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE must be successfully authenticated and authorized by the network."
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After successful authentication and authorization."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 22)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules to the SMF and other network functions."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that provides service discovery and selection capabilities."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode."
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is in connected mode."
-}
-
-{
-  "name": "5GMM-DEREGISTERED",
-  "type": "FINAL",
-  "description": "UE is deregistered from the network."
-}
-
-{
-  "name": "5GMM-REGISTERED.NO-CELL-AVAILABLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered but no cell is available."
-}
-
-{
-  "name": "5GMM-REGISTERED.NORMAL-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered and has normal service."
-}
-
-{
-  "name": "5GMM-REGISTERED.NON-ALLOWED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered but has non-allowed service."
-}
-
-{
-  "name": "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered and attempting registration update."
-}
-
-{
-  "name": "5GMM-COMMON-PROCEDURE-INITIATED",
-  "type": "INTERMEDIATE",
-  "description": "A common 5GMM procedure has been initiated."
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 23)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, and mobility management"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Not explicitly mentioned in the provided text, but a core network element responsible for session management"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Not explicitly mentioned in the provided text, but a core network element responsible for user plane handling"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Not explicitly mentioned in the provided text, but a core network element responsible for policy control"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Not explicitly mentioned in the provided text, but a core network element responsible for service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED-INITIATED",
-  "type": "INTERMEDIATE",
-  "description": "UE has initiated registration"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service mode"
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode"
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is in connected mode"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE needs to register with the network (initial registration)",
-  "condition": "UE is powered on and needs to access the network",
-  "timing": "Initial step of registration procedure"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Successful completion of authentication and security procedures",
-  "condition": "UE identity is verified and security context is established",
-  "timing": "After the AMF receives the Registration Request and performs authentication"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE and manages its registration status."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-NULL",
-  "trigger": "UE needs to register with the network (initial registration)"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "Successful completion of authentication and security procedures"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-NULL",
-  "condition": "UE is powered on and needs to access the network"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE identity is verified and security context is established"
-}
-
-## Timing
-
-{
-  "state": "5GMM-NULL",
-  "timing": "Initial step of registration procedure"
-}
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "After the AMF receives the Registration Request and performs authentication"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 26)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "5G Core Network Element",
-  "description": "Access and Mobility Management Function. Responsible for registration, authentication, and mobility management."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 27)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, authentication and authorization."
-}
-
-{
-  "name": "AUSF",
-  "type": "Authentication Server Function",
-  "description": "Network function responsible for authentication of the UE."
-}
-
-{
-  "name": "AAA server",
-  "type": "Authentication, Authorization, and Accounting server",
-  "description": "Server responsible for authentication, authorization, and accounting."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "Initial state of the UE before registration."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "State of the UE during the registration procedure."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "State of the UE after successful registration."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-{
-  "step": 3,
-  "message": "AUTHENTICATION RESULT or AUTHENTICATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF completes authentication procedure",
-  "condition": "Authentication must be successful",
-  "timing": "After UE responds to Authentication Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses."
-}
-
-{
-  "element1": "AMF",
-  "element2": "AUSF",
-  "relationship": "AMF interacts with AUSF for authentication of the UE."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE sends Registration Request"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Successful authentication and registration procedure"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in a coverage area and have valid credentials"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE must successfully authenticate with the network"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Occurs immediately after the UE attempts to access the network"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "Occurs after successful completion of the registration and authentication procedures"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 28)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management"
-}
-
-{
-  "name": "AUSF",
-  "type": "Authentication Server Function",
-  "description": "Network element responsible for authentication"
-}
-
-{
-  "name": "SEAF",
-  "type": "Security Anchor Functionality",
-  "description": "Provides security anchor functionality"
-}
-
-{
-  "name": "AAA server of the CH or the DCS",
-  "type": "Authentication, Authorization, and Accounting Server of the Credentials Holder or the Default Credentials Server",
-  "description": "Network element responsible for authentication, authorization, and accounting"
-}
-
-{
-  "name": "5G-RG",
-  "type": "5G Residential Gateway",
-  "description": "Acts on behalf of an AUN3 device"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "AUTHENTICATION REQUEST",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "AMF initiates authentication procedure",
-  "condition": "UE needs to be authenticated",
-  "timing": "After initial contact"
-}
-
-{
-  "step": 2,
-  "message": "AUTHENTICATION RESPONSE",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "UE responds to authentication request",
-  "condition": "UE successfully processes authentication challenge",
-  "timing": "After receiving AUTHENTICATION REQUEST"
-}
-
-{
-  "step": 3,
-  "message": "AUTHENTICATION RESULT or AUTHENTICATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "AMF provides authentication result",
-  "condition": "Authentication successful or failed",
-  "timing": "After AMF validates authentication response"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests and receives authentication challenges from the AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "AUSF",
-  "relationship": "AMF interacts with AUSF for authentication of the UE"
-}
-
-{
-  "element1": "AUSF",
-  "element2": "SEAF",
-  "relationship": "AUSF provides KSEAF to the SEAF"
-}
-
-{
-  "element1": "SEAF",
-  "element2": "AMF",
-  "relationship": "SEAF provides ngKSI and the KAMF to the AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "AAA server of the CH or the DCS",
-  "relationship": "AMF interacts with AAA server of the CH or the DCS for authentication of the UE"
-}
-
-{
-  "element1": "5G-RG",
-  "element2": "AUN3 device",
-  "relationship": "5G-RG acts on behalf of the AUN3 device"
-}
-
-## Triggers
-
-{
-  "state": "N/A",
-  "trigger": "AMF initiates authentication procedure"
-}
-
-{
-  "state": "N/A",
-  "trigger": "UE responds to authentication request"
-}
-
-{
-  "state": "N/A",
-  "trigger": "AMF provides authentication result"
-}
-
-## Conditions
-
-{
-  "state": "N/A",
-  "condition": "UE needs to be authenticated"
-}
-
-{
-  "state": "N/A",
-  "condition": "UE successfully processes authentication challenge"
-}
-
-{
-  "state": "N/A",
-  "condition": "Authentication successful or failed"
-}
-
-## Timing
-
-{
-  "state": "N/A",
-  "timing": "After initial contact"
-}
-
-{
-  "state": "N/A",
-  "timing": "After receiving AUTHENTICATION REQUEST"
-}
-
-{
-  "state": "N/A",
-  "timing": "After AMF validates authentication response"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 29)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the network."
-}
-
-## States
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "FINAL",
-  "description": "UE is deregistered and needs to perform PLMN/SNPN selection."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Authentication Reject",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "Unknown",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of AUTHENTICATION REJECT message",
-  "condition": "UE is registered for onboarding services in SNPN or performing initial registration for onboarding services in SNPN and the SNPN-specific attempt counter for the SNPN sending the AUTHENTICATION REJECT message has a value greater than or equal to a UE implementation-specific maximum value.",
-  "timing": "After the UE has sent a registration request and the network has initiated authentication."
-}
-
-{
-  "step": 2,
-  "message": "Authentication Reject",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "Unknown",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of AUTHENTICATION REJECT message",
-  "condition": "The AUTHENTICATION REJECT message has been successfully integrity checked by the NAS and the UE is performing initial registration for onboarding services in SNPN.",
-  "timing": "After the UE has sent a registration request and the network has initiated authentication."
-}
-
-## Network Element Relationships
-
-## Triggers
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of AUTHENTICATION REJECT message"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "UE is registered for onboarding services in SNPN or performing initial registration for onboarding services in SNPN and the SNPN-specific attempt counter for the SNPN sending the AUTHENTICATION REJECT message has a value greater than or equal to a UE implementation-specific maximum value."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "The AUTHENTICATION REJECT message has been successfully integrity checked by the NAS and the UE is performing initial registration for onboarding services in SNPN."
-}
-
-## Timing
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After the UE has sent a registration request and the network has initiated authentication."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 30)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management."
-}
-
-{
-  "name": "5G-RG",
-  "type": "5G Residential Gateway",
-  "description": "Acts on behalf of the AUN3 device"
-}
-
-{
-  "name": "W-AGF",
-  "type": "Wireless Access Gateway Function",
-  "description": "Acts on behalf of the N5GC device"
-}
-
-## States
-
-{
-  "name": "5GMM-DEREGISTERED",
-  "type": "FINAL",
-  "description": "UE is not registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "AUTHENTICATION REJECT",
-  "from_element": "Network",
-  "to_element": "W-AGF or 5G-RG",
-  "from_state": "Any",
-  "to_state": "5GMM-DEREGISTERED",
-  "trigger": "Network fails to authenticate the N5GC or AUN3 device",
-  "condition": "EAP-failure message received in an AUTHENTICATION REJECT message",
-  "timing": "After authentication failure"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, AMF authenticates the UE."
-}
-
-{
-  "element1": "5G-RG",
-  "element2": "AMF",
-  "relationship": "5G-RG acts on behalf of AUN3 device and communicates with AMF for authentication"
-}
-
-{
-  "element1": "W-AGF",
-  "element2": "AMF",
-  "relationship": "W-AGF acts on behalf of N5GC device and communicates with AMF for authentication"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "trigger": "Reception of AUTHENTICATION REJECT message by W-AGF or 5G-RG"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "condition": "EAP-failure message received in an AUTHENTICATION REJECT message"
-}
-
-## Timing
-
-{
-  "state": "5GMM-DEREGISTERED",
-  "timing": "Occurs after the network sends an AUTHENTICATION REJECT message to the W-AGF or 5G-RG"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 31)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, authentication, and mobility management"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered"
-}
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-{
-  "step": 3,
-  "message": "Authentication Failure",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-NULL",
-  "trigger": "Authentication fails after timer T3520 expires or after consecutive EAP-based authentication failures",
-  "condition": "Authentication check fails",
-  "timing": "After Authentication Request"
-}
-
-{
-  "step": 4,
-  "message": "Security Mode Command",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF sends Security Mode Command after successful authentication",
-  "condition": "UE has an emergency PDU session established or is establishing one, and receives the SECURITY MODE COMMAND message before the timeout of timer T3520",
-  "timing": "After Authentication Request and Authentication Response"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests and authentication responses to the AMF, and the AMF sends authentication requests and security mode commands to the UE."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access or Network initiates authentication"
-}
-
-{
-  "state": "5GMM-NULL",
-  "trigger": "Authentication fails after timer T3520 expires or after consecutive EAP-based authentication failures"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "AMF sends Security Mode Command after successful authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area or UE identity verification required"
-}
-
-{
-  "state": "5GMM-NULL",
-  "condition": "Authentication check fails"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE has an emergency PDU session established or is establishing one, and receives the SECURITY MODE COMMAND message before the timeout of timer T3520"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration or After UE sends Registration Request"
-}
-
-{
-  "state": "5GMM-NULL",
-  "timing": "After Authentication Request"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After Authentication Request and Authentication Response"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 32)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 14)
 
 ## Network Elements
 
@@ -3632,237 +1635,66 @@
 
 ## States
 
+## Events
+
 {
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered in the 5G network"
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
 }
 
 {
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering to the 5G network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered in the 5G network"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and needs to perform PLMN selection"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and can only access limited services"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration"
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
 }
 
 ## Transitions
 
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts to register to the network",
-  "condition": "UE is powered on and within network coverage",
-  "timing": "Initial registration attempt"
-}
-
-{
-  "step": 2,
-  "message": "REGISTRATION ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF accepts the registration request",
-  "condition": "Authentication and authorization are successful",
-  "timing": "After successful authentication and authorization"
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "AMF rejects the registration request",
-  "condition": "Registration is not allowed due to PLMN restrictions",
-  "timing": "After AMF determines registration is not allowed"
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF rejects the registration request",
-  "condition": "Registration is not allowed due to CAG restrictions",
-  "timing": "After AMF determines registration is not allowed"
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "AMF rejects the registration request",
-  "condition": "Registration is not allowed due to UAS restrictions",
-  "timing": "After AMF determines registration is not allowed"
-}
-
 ## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives registration accept or reject messages from the AMF."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF to manage PDU sessions during registration."
-}
 
 ## Triggers
 
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "AMF sends REGISTRATION ACCEPT"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "AMF sends REGISTRATION REJECT with specific cause values"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF sends REGISTRATION REJECT with specific cause values"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "AMF sends REGISTRATION REJECT with specific cause values"
-}
-
 ## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE is within network coverage and attempts to register"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE is successfully authenticated and authorized"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "Registration is rejected due to PLMN restrictions"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "Registration is rejected due to CAG restrictions"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "condition": "Registration is rejected due to UAS restrictions"
-}
 
 ## Timing
 
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration procedure"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After successful authentication and authorization"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After AMF determines registration is not allowed"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After AMF determines registration is not allowed"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "timing": "After AMF determines registration is not allowed"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 33)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 16)
 
 ## Network Elements
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
+  "type": "Network Element",
+  "description": "User Equipment - device used by the end user to access the network"
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access authentication/authorization."
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, connection management, mobility management, authentication and authorization"
 }
 
 {
   "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Responsible for session management, including session establishment, modification, and release."
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for session management, PDU session establishment, modification and release"
 }
 
 {
   "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Responsible for user plane data transfer and routing."
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for user plane traffic forwarding, policy enforcement and traffic measurement"
 }
 
 {
   "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy rules for session management and mobility management."
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules to the control plane functions"
 }
 
 {
   "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery function."
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
 }
 
 ## States
@@ -3870,19 +1702,43 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered with the network."
+  "description": "Initial state of the UE before registration"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
+  "description": "State of the UE during the registration procedure"
 }
 
 {
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the network."
+  "description": "State of the UE after successful registration"
+}
+
+{
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered but inactive"
+}
+
+{
+  "name": "5GMM-CONNECTED",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered and has an active connection"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
 }
 
 ## Transitions
@@ -3894,9 +1750,369 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access",
-  "condition": "UE must be in coverage area.",
-  "timing": "Initial step of registration."
+  "trigger": "UE attempts to access the network",
+  "condition": "UE is in coverage area and has a valid subscription",
+  "timing": "Initial step of registration"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration request to AMF"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is in coverage area"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 17)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates registration, stores network information, and manages states."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration, authentication, and mobility."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Handles user plane traffic."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Provides service discovery."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE when it is powered off or has no 5GMM context."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "INTERMEDIATE",
+  "description": "UE is attempting to register after a previous registration attempt failed."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "UE is searching for a PLMN to register with."
+}
+
+{
+  "name": "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+  "type": "INTERMEDIATE",
+  "description": "UE is attempting to update its registration with the network."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in a limited service state after a registration failure."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests initial registration or mobility registration update."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request from the UE."
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request from the UE."
+}
+
+{
+  "name": "Deregistration Request",
+  "description": "UE or Network requests deregistration."
+}
+
+{
+  "name": "Service Request",
+  "description": "UE requests a service from the network."
+}
+
+{
+  "name": "Configuration Update Command",
+  "description": "Network sends configuration update to the UE."
+}
+
+{
+  "name": "Identity Request",
+  "description": "Network requests identity information from the UE."
+}
+
+{
+  "name": "Notification",
+  "description": "Network notifies the UE to initiate a service request procedure."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "UE powers on and attempts to register for 5GS services, emergency services, SMS over NAS, or after moving from GERAN/UTRAN to NG-RAN.",
+  "condition": "UE must be in coverage area and select a PLMN/SNPN.",
+  "timing": "Initial step of the registration procedure."
+}
+
+{
+  "step": 2,
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Network rejects the registration request.",
+  "condition": "Various reasons, including PLMN not allowed, N1 mode not allowed, or roaming restrictions.",
+  "timing": "After the AMF receives the Registration Request."
+}
+
+{
+  "step": 3,
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network accepts the registration request.",
+  "condition": "UE successfully authenticates and is authorized for network access.",
+  "timing": "After the AMF authenticates the UE."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates and authorizes the UE."
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF to manage PDU sessions for the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "UE attempts to register after power on or moving to NG-RAN."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Registration is rejected by the network."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Registration is accepted by the network."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "condition": "UE must be in coverage and select a PLMN/SNPN."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "Network rejects registration due to various reasons (e.g., PLMN not allowed)."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE successfully authenticates and is authorized for network access."
+}
+
+## Timing
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "timing": "Initial step of the registration procedure."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "After the AMF rejects the Registration Request."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After the AMF authenticates the UE and accepts the registration."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 18)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - initiates registration and interacts with the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - manages registration and authentication"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - manages PDU sessions"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - forwards user data"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "No 5GMM context has been established"
+}
+
+{
+  "name": "5GMM-DEREGISTERED",
+  "type": "INITIAL",
+  "description": "No 5GMM context has been established and the UE location is unknown to the network"
+}
+
+{
+  "name": "5GMM-DEREGISTERED-INITIATED",
+  "type": "INTERMEDIATE",
+  "description": "UE has requested release of the 5GMM context and is waiting for a response from the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "A 5GMM context has been established"
+}
+
+{
+  "name": "5GMM-SERVICE-REQUEST-INITIATED",
+  "type": "INTERMEDIATE",
+  "description": "Service request initiated"
+}
+
+## Events
+
+{
+  "name": "Initial registration requested",
+  "description": "Triggers the initial registration procedure"
+}
+
+{
+  "name": "Initial registration accepted",
+  "description": "Registration procedure is successful"
+}
+
+{
+  "name": "Initial registration rejected or failed",
+  "description": "Registration procedure is unsuccessful"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Initial Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-DEREGISTERED",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "UE needs to establish a 5GMM context",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
 }
 
 {
@@ -3904,7 +2120,7 @@
   "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
+  "from_state": "5GMM-REGISTERED",
   "to_state": "5GMM-REGISTERED",
   "trigger": "Network initiates authentication",
   "condition": "UE identity verification required",
@@ -3916,89 +2132,65 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests and other NAS messages to the AMF."
+  "relationship": "UE sends registration requests to AMF and receives responses"
 }
 
 {
   "element1": "AMF",
   "element2": "UE",
-  "relationship": "AMF authenticates the UE and manages its mobility."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management."
-}
-
-{
-  "element1": "SMF",
-  "element2": "UPF",
-  "relationship": "SMF controls the UPF for user plane data transfer."
-}
-
-{
-  "element1": "AMF",
-  "element2": "PCF",
-  "relationship": "AMF retrieves policy rules from PCF."
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF uses NRF for service discovery."
+  "relationship": "AMF authenticates the UE and manages its mobility"
 }
 
 ## Triggers
 
 {
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE sends Registration Request to AMF."
+  "state": "5GMM-DEREGISTERED",
+  "trigger": "UE needs to establish a 5GMM context"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "trigger": "Successful authentication and registration procedure."
+  "trigger": "Network initiates authentication"
 }
 
 ## Conditions
 
 {
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in a coverage area and have a valid subscription."
+  "state": "5GMM-DEREGISTERED",
+  "condition": "UE must be in coverage area"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "condition": "UE must successfully authenticate with the network."
+  "condition": "UE identity verification required"
 }
 
 ## Timing
 
 {
-  "state": "5GMM-REGISTERING",
-  "timing": "Occurs immediately after the UE attempts to access the network."
+  "state": "5GMM-DEREGISTERED",
+  "timing": "Initial step of registration"
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "timing": "Occurs after successful completion of the registration procedure."
+  "timing": "After UE sends Registration Request"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 34)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 20)
 
 ## Network Elements
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network."
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure."
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, and mobility management."
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration and authentication."
 }
 
 ## States
@@ -4006,44 +2198,50 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered in the 5G network."
+  "description": "Initial state before registration."
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network."
+  "description": "State during the registration procedure."
 }
 
 {
   "name": "5GMM-REGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE has completed the registration procedure."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
   "type": "FINAL",
-  "description": "UE is deregistered and has limited service."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "type": "FINAL",
-  "description": "UE is deregistered and no cell is available."
+  "description": "State after successful registration."
 }
 
 {
   "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "FINAL",
-  "description": "UE is deregistered and searching for a PLMN."
+  "type": "INTERMEDIATE",
+  "description": "State after deregistration and PLMN search is initiated."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "State after deregistration and limited service is available."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication from the UE."
 }
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "REGISTRATION REQUEST",
+  "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
@@ -4051,6 +2249,18 @@
   "trigger": "UE attempts network access.",
   "condition": "UE must be in coverage area.",
   "timing": "Initial step of registration."
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication.",
+  "condition": "UE identity verification required.",
+  "timing": "After UE sends Registration Request."
 }
 
 ## Network Element Relationships
@@ -4065,163 +2275,34 @@
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST to AMF."
+  "trigger": "Receiving a Registration Request from the UE."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "UE registering for onboarding services in SNPN."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Network rejects registration request."
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area to initiate registration."
+  "condition": "UE must be in a coverage area and the network must accept the registration."
 }
 
 ## Timing
 
 {
   "state": "5GMM-REGISTERING",
-  "timing": "Occurs at the beginning of the registration procedure."
+  "timing": "Occurs after the UE attempts to access the network and sends a Registration Request."
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 35)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, and mobility management."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and performing PLMN selection."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service mode."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-NULL",
-  "trigger": "UE powers on and attempts to register with the network.",
-  "condition": "UE must be within coverage area of a 5G network.",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "step": 2,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects the registration request.",
-  "condition": "Registration is not allowed for the UE in the current PLMN or SNPN.",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Network rejects the registration request.",
-  "condition": "Registration is not allowed for the UE in the current PLMN or SNPN.",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF responds with registration accept or reject messages."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-NULL",
-  "trigger": "UE powers on and attempts to register with the network."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Network rejects the registration request."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Network rejects the registration request."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-NULL",
-  "condition": "UE must be within coverage area of a 5G network."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "Registration is not allowed for the UE in the current PLMN or SNPN."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "Registration is not allowed for the UE in the current PLMN or SNPN."
-}
-
-## Timing
-
-{
-  "state": "5GMM-NULL",
-  "timing": "Initial step of the registration procedure."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After the AMF receives the REGISTRATION REQUEST."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 37)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 22)
 
 ## Network Elements
 
@@ -4238,43 +2319,279 @@
 }
 
 {
-  "name": "AAA-S",
+  "name": "SMF",
   "type": "Network Element",
-  "description": "Authentication, Authorization, and Accounting Server"
+  "description": "Session Management Function - responsible for PDU session establishment, modification, and release"
 }
 
 {
-  "name": "NSSAAF",
+  "name": "UPF",
   "type": "Network Element",
-  "description": "Network Slice-Specific Authentication and Authorization Function"
+  "description": "User Plane Function - responsible for user plane data transfer"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules for session management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
 }
 
 ## States
+
+{
+  "name": "5GMM-REGISTERED.NO-CELL-AVAILABLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered but no cell is available"
+}
+
+{
+  "name": "5GMM-REGISTERED.NORMAL-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered and has normal service"
+}
+
+{
+  "name": "5GMM-REGISTERED.NON-ALLOWED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered but has non-allowed service"
+}
+
+{
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in idle mode"
+}
+
+{
+  "name": "5GMM-CONNECTED",
+  "type": "INTERMEDIATE",
+  "description": "UE is in connected mode"
+}
+
+{
+  "name": "5GMM-DEREGISTERED",
+  "type": "FINAL",
+  "description": "UE is deregistered"
+}
+
+{
+  "name": "5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+  "type": "INTERMEDIATE",
+  "description": "UE is registered and attempting registration update"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network"
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
+}
+
+{
+  "name": "Authentication Response",
+  "description": "UE responds to the authentication request"
+}
+
+{
+  "name": "Service Request",
+  "description": "UE requests a service from the network"
+}
+
+{
+  "name": "Service Accept",
+  "description": "Network accepts the service request"
+}
+
+{
+  "name": "Service Reject",
+  "description": "Network rejects the service request"
+}
+
+{
+  "name": "Deregistration Request",
+  "description": "UE requests deregistration from the network"
+}
+
+{
+  "name": "Notification Message",
+  "description": "Network sends a notification message to the UE"
+}
+
+{
+  "name": "Notification Response",
+  "description": "UE responds to the notification message"
+}
+
+{
+  "name": "Identity Request",
+  "description": "Network requests the identity of the UE"
+}
+
+{
+  "name": "Identity Response",
+  "description": "UE responds with its identity"
+}
+
+{
+  "name": "Network Slice-Specific Authentication Command",
+  "description": "Network initiates network slice-specific authentication"
+}
+
+{
+  "name": "Network Slice-Specific Authentication Complete",
+  "description": "UE completes network slice-specific authentication"
+}
+
+{
+  "name": "Configuration Update Command",
+  "description": "Network sends a configuration update command to the UE"
+}
+
+## Transitions
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, AMF authenticates UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UPF",
+  "relationship": "AMF interacts with UPF for user plane data transfer"
+}
+
+{
+  "element1": "AMF",
+  "element2": "PCF",
+  "relationship": "AMF interacts with PCF for policy control"
+}
+
+{
+  "element1": "AMF",
+  "element2": "NRF",
+  "relationship": "AMF uses NRF for service discovery"
+}
+
+## Triggers
+
+## Conditions
+
+## Timing
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 23)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration and mobility."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state before registration."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "Intermediate state during the registration procedure."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "Final state after successful registration."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "State after deregistration, initiating PLMN search."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "State after deregistration, entering limited service mode."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests initial registration or mobility/periodic registration update."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE."
+}
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE",
+  "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "UE completes network slice-specific authentication",
-  "condition": "UE has performed network slice-specific authentication",
-  "timing": "After network slice-specific authentication is complete"
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE powers on and attempts network access or needs to perform mobility/periodic registration update.",
+  "condition": "UE must be in coverage area.",
+  "timing": "Initial step of registration."
 }
 
 {
   "step": 2,
-  "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT",
+  "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "AMF receives EAP-success or EAP-failure message from AAA-S",
-  "condition": "AMF has received the result of network slice-specific authentication",
-  "timing": "After AMF receives authentication result from AAA-S"
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication.",
+  "condition": "UE identity verification required.",
+  "timing": "After UE sends Registration Request."
 }
 
 ## Network Element Relationships
@@ -4282,64 +2599,56 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE message to AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "AAA-S",
-  "relationship": "AMF provides EAP-response message to AAA-S via NSSAAF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "UE",
-  "relationship": "AMF sends NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message to UE"
-}
-
-{
-  "element1": "AAA-S",
-  "element2": "AMF",
-  "relationship": "AAA-S provides EAP-success or EAP-failure message to AMF via NSSAAF"
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 ## Triggers
 
 {
-  "state": "N/A",
-  "trigger": "UE completes network slice-specific authentication"
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request."
 }
 
 {
-  "state": "N/A",
-  "trigger": "AMF receives EAP-success or EAP-failure message from AAA-S"
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication and registration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Registration request is not for onboarding services in SNPN for 3GPP access."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Registration request is not for onboarding services in SNPN for non-3GPP access."
 }
 
 ## Conditions
 
 {
-  "state": "N/A",
-  "condition": "UE has performed network slice-specific authentication"
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area."
 }
 
 {
-  "state": "N/A",
-  "condition": "AMF has received the result of network slice-specific authentication"
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity must be successfully verified."
 }
 
 ## Timing
 
 {
-  "state": "N/A",
-  "timing": "After network slice-specific authentication is complete"
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration."
 }
 
 {
-  "state": "N/A",
-  "timing": "After AMF receives authentication result from AAA-S"
+  "state": "5GMM-REGISTERED",
+  "timing": "After successful authentication."
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 38)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 25)
 
 ## Network Elements
 
@@ -4355,28 +2664,281 @@
   "description": "Network element responsible for registration, authentication, and mobility management"
 }
 
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered in the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered to the 5G network"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and attempting registration"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and searching for a PLMN"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and in limited service"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and no cell is available"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE and manages its mobility."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "Registration Reject with cause #22 (Congestion)"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Registration Reject with cause #73 (Serving network not authorized)"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Registration Reject with cause #12 (Tracking area not allowed)"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "trigger": "Registration Reject with cause #31 (Redirection to EPC required)"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 26)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, authentication, and mobility management"
+}
+
+## States
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "SERVICE REQUEST",
+  "description": "UE requests a service from the network"
+}
+
+{
+  "name": "SECURITY MODE COMPLETE",
+  "description": "Indicates the completion of the security mode procedure"
+}
+
+{
+  "name": "CONFIGURATION UPDATE COMMAND",
+  "description": "Network sends configuration update to the UE"
+}
+
+{
+  "name": "SERVICE ACCEPT",
+  "description": "Network accepts the service request from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "SERVICE REQUEST",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "Unknown",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "UE requests a service",
+  "condition": "Conditions for service request are met",
+  "timing": "After UE needs to use network services"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration-related messages to the AMF, and the AMF responds with authentication and other control messages."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Reception of SERVICE ACCEPT message or indication from lower layers when UE has changed to S1 mode or E-UTRA connected to 5GCN"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Successful completion of the service request procedure"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After the UE sends a SERVICE REQUEST and receives a SERVICE ACCEPT"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 27)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - manages registration, connection, and mobility"
+}
+
 {
   "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management"
+  "type": "Network Element",
+  "description": "Session Management Function - manages PDU sessions"
 }
 
 {
   "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane traffic forwarding"
+  "type": "Network Element",
+  "description": "User Plane Function - forwards and routes user plane data"
 }
 
 {
   "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for policy control"
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules"
 }
 
 {
   "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element responsible for service discovery"
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+{
+  "name": "AUSF",
+  "type": "Network Element",
+  "description": "Authentication Server Function - authenticates the UE"
+}
+
+{
+  "name": "AAA server",
+  "type": "Network Element",
+  "description": "Authentication, Authorization, and Accounting server - provides authentication services"
 }
 
 ## States
@@ -4400,41 +2962,95 @@
 }
 
 {
-  "name": "5GMM-DEREGISTERED.NO-SUPI",
-  "type": "FINAL",
-  "description": "UE is deregistered and SUPI is not available"
+  "name": "5GMM-CONNECTED",
+  "type": "INTERMEDIATE",
+  "description": "UE is in connected mode"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "FINAL",
-  "description": "UE is deregistered and searching for a PLMN"
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in idle mode"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "FINAL",
-  "description": "UE is deregistered and in limited service"
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "FINAL",
-  "description": "UE is deregistered and attempting registration"
+  "name": "Authentication Result",
+  "description": "Network sends the authentication result to the UE"
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "Network rejects the authentication of the UE"
+}
+
+{
+  "name": "EAP-request message",
+  "description": "Network sends an EAP request message to the UE"
+}
+
+{
+  "name": "EAP-response message",
+  "description": "UE sends an EAP response message to the network"
+}
+
+{
+  "name": "EAP-success message",
+  "description": "Network indicates successful EAP authentication"
+}
+
+{
+  "name": "EAP-failure message",
+  "description": "Network indicates failed EAP authentication"
 }
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "REGISTRATION REQUEST",
+  "message": "Registration Request",
   "from_element": "UE",
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
   "trigger": "UE attempts to register with the network",
-  "condition": "UE needs to access 5GS services",
-  "timing": "Initial step of registration"
+  "condition": "UE is powered on and within network coverage",
+  "timing": "Initial step of the registration procedure"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "AMF initiates authentication procedure",
+  "condition": "UE needs to be authenticated",
+  "timing": "After receiving Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "AUTHENTICATION RESULT or AUTHENTICATION REJECT",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "AMF completes authentication procedure",
+  "condition": "Authentication is successful",
+  "timing": "After authentication exchange"
 }
 
 ## Network Element Relationships
@@ -4442,21 +3058,53 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF"
+  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "AUSF",
+  "relationship": "AMF interacts with AUSF for authentication of the UE"
+}
+
+{
+  "element1": "AUSF",
+  "element2": "AAA server",
+  "relationship": "AUSF interacts with AAA server for authentication of the UE"
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST message"
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "AMF initiates Authentication Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication"
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE needs to access 5GS services"
+  "condition": "UE is within network coverage"
+}
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE needs to be authenticated"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Authentication is successful"
 }
 
 ## Timing
@@ -4466,44 +3114,54 @@
   "timing": "Initial step of registration"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 39)
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "After receiving Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After authentication exchange"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 28)
 
 ## Network Elements
 
 {
   "name": "UE",
   "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network"
+  "description": "Mobile device attempting to access the 5G network"
 }
 
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration management, connection management, and mobility management"
+  "description": "Manages access and mobility for the UE"
 }
 
 {
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management"
+  "name": "AUSF",
+  "type": "Authentication Server Function",
+  "description": "Handles authentication of the UE"
 }
 
 {
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane handling"
+  "name": "SEAF",
+  "type": "Security Anchor Functionality",
+  "description": "Generates the KAMF based on the ABBA and the KSEAF"
 }
 
 {
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for policy control"
+  "name": "AAA server of the CH or the DCS",
+  "type": "Authentication, Authorization, and Accounting Server of the Credentials Holder or the Default Credentials Server",
+  "description": "Acts as EAP server"
 }
 
 {
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element responsible for service discovery"
+  "name": "5G-RG",
+  "type": "5G Residential Gateway",
+  "description": "Acts on behalf of the AUN3 device"
 }
 
 ## States
@@ -4511,110 +3169,77 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered in the 5G network"
+  "description": "UE is not registered with the network"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network"
+  "description": "UE is in the process of registering with the network"
 }
 
 {
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network"
+  "description": "UE is successfully registered with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "name": "5GMM-CONNECTED",
   "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN"
+  "description": "UE is in connected mode"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service mode"
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE powers on and attempts to access the network",
-  "condition": "UE must be within network coverage",
-  "timing": "Initial step of the registration procedure"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF manages the UE's registration status."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE sends REGISTRATION REQUEST to AMF"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be within network coverage to send REGISTRATION REQUEST"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Occurs at the beginning of the registration procedure"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 40)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network"
+  "name": "Authentication Response",
+  "description": "UE sends authentication response to the network"
 }
 
 {
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration management, connection management, and mobility management"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered in the 5G network"
+  "name": "Authentication Result",
+  "description": "Network sends the authentication result to the UE"
 }
 
 {
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network"
+  "name": "Authentication Reject",
+  "description": "Network rejects the authentication attempt"
+}
+
+{
+  "name": "EAP-request message",
+  "description": "Network sends an EAP-request message to the UE"
+}
+
+{
+  "name": "EAP-response message",
+  "description": "UE sends an EAP-response message to the network"
+}
+
+{
+  "name": "EAP-success message",
+  "description": "Network sends an EAP-success message to the UE"
+}
+
+{
+  "name": "EAP-failure message",
+  "description": "Network sends an EAP-failure message to the UE"
+}
+
+{
+  "name": "Authentication Failure",
+  "description": "UE indicates that authentication of the network has failed"
 }
 
 ## Transitions
@@ -4631,26 +3256,784 @@
   "timing": "Initial step of registration"
 }
 
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Authentication Response",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE responds to authentication request",
+  "condition": "UE successfully processes authentication challenge",
+  "timing": "After receiving Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Authentication Result",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network successfully authenticates UE",
+  "condition": "UE provides valid authentication credentials",
+  "timing": "After AMF validates Authentication Response"
+}
+
+{
+  "step": 4,
+  "message": "Authentication Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-NULL",
+  "trigger": "Network fails to authenticate UE",
+  "condition": "UE provides invalid authentication credentials",
+  "timing": "After AMF fails to validate Authentication Response"
+}
+
 ## Network Element Relationships
 
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration request to AMF"
+  "relationship": "UE sends registration requests and authentication responses to the AMF; AMF sends authentication requests and results to the UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "AUSF",
+  "relationship": "AMF interacts with AUSF for UE authentication"
+}
+
+{
+  "element1": "AUSF",
+  "element2": "SEAF",
+  "relationship": "AUSF provides the KSEAF to the SEAF"
+}
+
+{
+  "element1": "SEAF",
+  "element2": "AMF",
+  "relationship": "SEAF provides ngKSI and the KAMF to the AMF"
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access"
+  "trigger": "UE attempts network access or Network initiates authentication"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network successfully authenticates UE"
+}
+
+{
+  "state": "5GMM-NULL",
+  "trigger": "Network fails to authenticate UE"
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
+  "condition": "UE must be in coverage area or UE identity verification required"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE provides valid authentication credentials"
+}
+
+{
+  "state": "5GMM-NULL",
+  "condition": "UE provides invalid authentication credentials"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration or After UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After AMF validates Authentication Response"
+}
+
+{
+  "state": "5GMM-NULL",
+  "timing": "After AMF fails to validate Authentication Response"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 29)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to register with the network."
+}
+
+## States
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "FINAL",
+  "description": "UE is deregistered and searching for a PLMN or SNPN."
+}
+
+## Events
+
+{
+  "name": "AUTHENTICATION REJECT",
+  "description": "Network rejects the UE's authentication attempt."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "AUTHENTICATION REJECT",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Network rejects UE authentication.",
+  "condition": "Authentication fails.",
+  "timing": "After UE sends Registration Request and AMF initiates authentication."
+}
+
+## Network Element Relationships
+
+## Triggers
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Reception of AUTHENTICATION REJECT message."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "Authentication procedure is not accepted by the network."
+}
+
+## Timing
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "Occurs after the UE receives an AUTHENTICATION REJECT message."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 30)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, connection management, and mobility management."
+}
+
+{
+  "name": "5G-RG",
+  "type": "5G Residential Gateway",
+  "description": "Acts on behalf of AUN3 device"
+}
+
+{
+  "name": "W-AGF",
+  "type": "Wireless Access Gateway Function",
+  "description": "Acts on behalf of N5GC device"
+}
+
+## States
+
+{
+  "name": "5GMM-DEREGISTERED",
+  "type": "FINAL",
+  "description": "UE is not registered with the network."
+}
+
+## Events
+
+{
+  "name": "AUTHENTICATION REQUEST",
+  "description": "Network requests authentication information from the UE."
+}
+
+{
+  "name": "AUTHENTICATION RESPONSE",
+  "description": "UE sends authentication response to the network."
+}
+
+{
+  "name": "AUTHENTICATION REJECT",
+  "description": "Network rejects the authentication attempt."
+}
+
+{
+  "name": "EAP-success message",
+  "description": "Network indicates successful authentication via EAP."
+}
+
+{
+  "name": "EAP-failure message",
+  "description": "Network indicates failed authentication via EAP."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "AUTHENTICATION REQUEST",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 2,
+  "message": "AUTHENTICATION REJECT",
+  "from_element": "Network",
+  "to_element": "W-AGF",
+  "from_state": "Unknown",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "Network fails to authenticate the N5GC device",
+  "condition": "SUCI was used for identification or network decides not to retrieve SUCI",
+  "timing": "After Authentication Request/Response exchange"
+}
+
+{
+  "step": 3,
+  "message": "AUTHENTICATION REJECT",
+  "from_element": "Network",
+  "to_element": "5G-RG",
+  "from_state": "Unknown",
+  "to_state": "5GMM-DEREGISTERED",
+  "trigger": "Network fails to authenticate the AUN3 device",
+  "condition": "SUCI was used for identification or network decides not to retrieve SUCI",
+  "timing": "After Authentication Request/Response exchange"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
+}
+
+{
+  "element1": "W-AGF",
+  "element2": "AMF",
+  "relationship": "W-AGF communicates with AMF for authentication on behalf of N5GC device."
+}
+
+{
+  "element1": "5G-RG",
+  "element2": "AMF",
+  "relationship": "5G-RG communicates with AMF for authentication on behalf of AUN3 device."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "trigger": "Reception of AUTHENTICATION REJECT message by W-AGF or 5G-RG"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "condition": "SUCI was used for identification or network decides not to retrieve SUCI after failed authentication."
+}
+
+## Timing
+
+{
+  "state": "5GMM-DEREGISTERED",
+  "timing": "Occurs after the network fails to authenticate the UE/device and sends an AUTHENTICATION REJECT message."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 31)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - manages UE access and mobility"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+{
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in idle mode"
+}
+
+{
+  "name": "5GMM-CONNECTED",
+  "type": "INTERMEDIATE",
+  "description": "UE is in connected mode"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Authentication Response",
+  "description": "UE sends authentication response to the network"
+}
+
+{
+  "name": "Authentication Failure",
+  "description": "UE sends authentication failure to the network"
+}
+
+{
+  "name": "Security Mode Command",
+  "description": "Network sends security mode command to the UE"
+}
+
+{
+  "name": "Authentication Result",
+  "description": "AMF sends the result of the authentication to the UE"
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "AMF rejects the authentication of the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Authentication Response",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE responds to authentication request",
+  "condition": "UE successfully generates authentication response",
+  "timing": "After receiving Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Authentication Failure",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE fails authentication",
+  "condition": "Authentication fails",
+  "timing": "After receiving Authentication Request"
+}
+
+{
+  "step": 5,
+  "message": "Security Mode Command",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates security mode control",
+  "condition": "Authentication is successful",
+  "timing": "After successful authentication"
+}
+
+{
+  "step": 6,
+  "message": "Authentication Result",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "AMF sends the result of the authentication",
+  "condition": "Authentication is successful",
+  "timing": "After successful authentication"
+}
+
+{
+  "step": 7,
+  "message": "Authentication Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-NULL",
+  "trigger": "AMF rejects the authentication",
+  "condition": "Authentication fails",
+  "timing": "After failed authentication"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests and authentication responses to the AMF. AMF authenticates the UE and manages its mobility."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access or network initiates authentication"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication and security mode control"
+}
+
+{
+  "state": "5GMM-NULL",
+  "trigger": "Authentication failure"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE in coverage area, UE identity verification required"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Authentication is successful"
+}
+
+{
+  "state": "5GMM-NULL",
+  "condition": "Authentication fails"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration, after Registration Request, after receiving Authentication Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After successful authentication"
+}
+
+{
+  "state": "5GMM-NULL",
+  "timing": "After failed authentication"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 32)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - device used by the end user to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, connection management, mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for session management (PDU sessions)"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for user plane traffic forwarding"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered to the network"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and needs to perform PLMN selection"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and can only access limited services"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and attempting to register"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request"
+}
+
+{
+  "name": "Registration Complete",
+  "description": "UE confirms successful registration"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
+}
+
+{
+  "name": "CONFIGURATION UPDATE COMMAND",
+  "description": "Network sends configuration update to the UE"
+}
+
+{
+  "name": "CONFIGURATION UPDATE COMPLETE",
+  "description": "UE confirms configuration update"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network authorizes the UE",
+  "condition": "Authentication is successful and network policies are met",
+  "timing": "After successful authentication"
+}
+
+{
+  "step": 4,
+  "message": "Registration Complete",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERED",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "UE confirms registration",
+  "condition": "UE successfully receives Registration Accept",
+  "timing": "After receiving Registration Accept"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF and receives responses"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management during registration"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UPF",
+  "relationship": "AMF interacts with UPF for user plane setup during registration"
+}
+
+{
+  "element1": "AMF",
+  "element2": "PCF",
+  "relationship": "AMF interacts with PCF to retrieve policies during registration"
+}
+
+{
+  "element1": "AMF",
+  "element2": "NRF",
+  "relationship": "AMF uses NRF for service discovery"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "AMF sends Registration Accept"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Authentication is successful and network policies are met"
 }
 
 ## Timing
@@ -4660,7 +4043,12 @@
   "timing": "Initial step of registration"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 41)
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After successful authentication and policy checks"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 33)
 
 ## Network Elements
 
@@ -4673,7 +4061,31 @@
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management"
+  "description": "Manages access and mobility for the UE"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Manages PDU sessions"
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Handles user plane traffic"
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Provides policy control for the network"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Service discovery"
 }
 
 ## States
@@ -4681,37 +4093,31 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered in the 5G network"
+  "description": "UE is not registered with the network"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the 5G network"
+  "description": "UE is in the process of registering with the network"
 }
 
 {
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
-  "description": "UE is successfully registered with the 5G network"
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and attempting registration"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and searching for a PLMN"
-}
-
-{
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and in limited service mode"
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
 }
 
 ## Transitions
@@ -4723,57 +4129,21 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts initial registration",
-  "condition": "UE is powered on and attempting to connect to the network",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
   "timing": "Initial step of registration"
 }
 
 {
   "step": 2,
-  "message": "Registration Reject",
+  "message": "Authentication Request",
   "from_element": "AMF",
   "to_element": "UE",
   "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "AMF rejects the registration request due to congestion",
-  "condition": "General NAS level mobility management congestion control",
-  "timing": "After AMF receives Registration Request"
-}
-
-{
-  "step": 3,
-  "message": "Registration Reject",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "AMF rejects the registration request due to serving network not authorized",
-  "condition": "Serving network not authorized",
-  "timing": "After AMF receives Registration Request"
-}
-
-{
-  "step": 4,
-  "message": "Registration Reject",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF rejects the registration request due to N1 mode not allowed",
-  "condition": "N1 mode not allowed",
-  "timing": "After AMF receives Registration Request"
-}
-
-{
-  "step": 5,
-  "message": "Registration Reject",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF rejects the registration request due to all S-NSSAI(s) in the allowed NSSAI and configured NSSAI are rejected and at least one S-NSSAI is rejected due to S-NSSAI not available in the current registration area",
-  "condition": "all S-NSSAI(s) in the allowed NSSAI and configured NSSAI are rejected and at least one S-NSSAI is rejected due to S-NSSAI not available in the current registration area",
-  "timing": "After AMF receives Registration Request"
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
 }
 
 ## Network Element Relationships
@@ -4781,61 +4151,37 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates and manages the UE's connection to the network."
+  "relationship": "UE sends registration requests to the AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to the UE"
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "UE sends a Registration Request message"
+  "trigger": "User turns on device and attempts network access"
 }
 
 {
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "AMF sends a Registration Reject message due to congestion"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "AMF sends a Registration Reject message due to serving network not authorized"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF sends a Registration Reject message due to N1 mode not allowed"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF sends a Registration Reject message due to all S-NSSAI(s) in the allowed NSSAI and configured NSSAI are rejected and at least one S-NSSAI is rejected due to S-NSSAI not available in the current registration area"
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE is powered on and attempting to connect to the network"
+  "condition": "UE must be in coverage area"
 }
 
 {
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "condition": "General NAS level mobility management congestion control"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "Serving network not authorized"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "N1 mode not allowed"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "all S-NSSAI(s) in the allowed NSSAI and configured NSSAI are rejected and at least one S-NSSAI is rejected due to S-NSSAI not available in the current registration area"
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
 }
 
 ## Timing
@@ -4846,26 +4192,129 @@
 }
 
 {
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "timing": "After AMF receives Registration Request"
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 34)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to register with the network."
 }
 
 {
-  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After AMF receives Registration Request"
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network element responsible for registration management, connection management, mobility management, authentication and authorization."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
 }
 
 {
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After AMF receives Registration Request"
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
 }
 
 {
-  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After AMF receives Registration Request"
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 42)
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 35)
 
 ## Network Elements
 
@@ -4884,77 +4333,77 @@
 ## States
 
 {
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered and has no valid 5GMM context."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+{
   "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
   "type": "FINAL",
-  "description": "UE is deregistered and can only access limited services."
+  "description": "UE is deregistered and in limited service mode."
 }
 
 {
   "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
   "type": "FINAL",
-  "description": "UE is deregistered and needs to perform PLMN selection."
+  "description": "UE is deregistered and performing PLMN search."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
 }
 
 {
-  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "type": "FINAL",
-  "description": "UE is deregistered but attempting registration."
-}
-
-{
-  "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "type": "FINAL",
-  "description": "UE is deregistered and no cell is available."
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request from the UE."
 }
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "Any",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "AMF rejects registration due to tracking area restrictions or SNPN access restrictions.",
-  "condition": "UE is not operating in SNPN access mode and Forbidden TAI(s) for the list of '5GS forbidden tracking areas for regional provision of service' IE is not included in the REGISTRATION REJECT message or UE is operating in SNPN access mode.",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "UE powers on and attempts to access the network.",
+  "condition": "UE is within network coverage.",
+  "timing": "Initial registration attempt."
 }
 
 {
   "step": 2,
-  "message": "REGISTRATION REJECT",
+  "message": "Registration Reject",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "Any",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "AMF rejects registration due to PLMN not allowed or IAB-node operation not authorized.",
-  "condition": "UE is not operating in SNPN access mode.",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "from_state": "5GMM-REGISTERED",
+  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Network rejects registration due to roaming restrictions.",
+  "condition": "UE is in a forbidden tracking area for roaming.",
+  "timing": "After AMF receives Registration Request."
 }
 
 {
   "step": 3,
-  "message": "REGISTRATION REJECT",
+  "message": "Registration Reject",
   "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "Any",
-  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "AMF rejects registration due to congestion or UAS services not allowed or UE does not access 5GCN over non-3GPP access using the TNGF or has not indicated support for slice-based TNGF selection.",
-  "condition": "None specified",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
-}
-
-{
-  "step": 4,
-  "message": "REGISTRATION REJECT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "Any",
-  "to_state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "trigger": "AMF rejects registration due to redirection to EPC required.",
-  "condition": "UE has indicated support for CIoT optimizations or not indicated support for S1 mode or received by a UE over non-3GPP access.",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "from_state": "5GMM-REGISTERED",
+  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Network rejects registration due to SNPN restrictions.",
+  "condition": "UE is not authorized for the SNPN.",
+  "timing": "After AMF receives Registration Request."
 }
 
 ## Network Element Relationships
@@ -4962,76 +4411,773 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF sends registration reject messages to the UE."
+  "relationship": "UE sends registration requests to the AMF, and the AMF responds with registration accept or reject messages."
 }
 
 ## Triggers
 
 {
+  "state": "5GMM-REGISTERED",
+  "trigger": "UE powers on and attempts to access the network."
+}
+
+{
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Reception of REGISTRATION REJECT message with specific cause values and conditions related to tracking area restrictions or SNPN access restrictions."
+  "trigger": "Network rejects registration due to roaming restrictions."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of REGISTRATION REJECT message with specific cause values and conditions related to PLMN not allowed or IAB-node operation not authorized."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "trigger": "Reception of REGISTRATION REJECT message with specific cause values and conditions related to congestion or UAS services not allowed or UE does not access 5GCN over non-3GPP access using the TNGF or has not indicated support for slice-based TNGF selection."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "trigger": "Reception of REGISTRATION REJECT message with specific cause values and conditions related to redirection to EPC required."
+  "trigger": "Network rejects registration due to SNPN restrictions."
 }
 
 ## Conditions
 
 {
+  "state": "5GMM-REGISTERED",
+  "condition": "UE is within network coverage."
+}
+
+{
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "UE is not operating in SNPN access mode and Forbidden TAI(s) for the list of '5GS forbidden tracking areas for regional provision of service' IE is not included in the REGISTRATION REJECT message or UE is operating in SNPN access mode."
+  "condition": "UE is in a forbidden tracking area for roaming."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "UE is not operating in SNPN access mode."
-}
-
-{
-  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "condition": "None specified"
-}
-
-{
-  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "condition": "UE has indicated support for CIoT optimizations or not indicated support for S1 mode or received by a UE over non-3GPP access."
+  "condition": "UE is not authorized for the SNPN."
 }
 
 ## Timing
 
 {
+  "state": "5GMM-REGISTERED",
+  "timing": "Initial registration attempt."
+}
+
+{
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "timing": "After AMF receives Registration Request."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "timing": "After AMF receives Registration Request."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 37)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network element responsible for registration, authentication, and mobility management"
+}
+
+{
+  "name": "AAA-S",
+  "type": "Authentication, Authorization and Accounting Server",
+  "description": "Server responsible for authentication, authorization and accounting"
+}
+
+{
+  "name": "NSSAAF",
+  "type": "Network Slice-Specific Authentication and Authorization Function",
+  "description": "Function that provides network slice-specific authentication and authorization"
+}
+
+## States
+
+## Events
+
+{
+  "name": "NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE",
+  "description": "Message indicating the completion of network slice-specific authentication"
+}
+
+{
+  "name": "NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT",
+  "description": "Message containing the result of network slice-specific authentication"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION COMPLETE",
+  "from_element": "AAA-S",
+  "to_element": "AMF",
+  "from_state": "N/A",
+  "to_state": "N/A",
+  "trigger": "Completion of network slice-specific authentication by AAA-S",
+  "condition": "AAA-S must successfully authenticate the UE for the specific network slice",
+  "timing": "After the AAA-S completes authentication"
+}
+
+{
+  "step": 2,
+  "message": "NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "N/A",
+  "to_state": "N/A",
+  "trigger": "AMF receives the EAP-success or EAP-failure message from AAA-S",
+  "condition": "AMF must receive a valid EAP result from the AAA-S",
+  "timing": "After AMF receives the authentication result from AAA-S"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends and receives authentication messages to/from the AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "AAA-S",
+  "relationship": "AMF communicates with AAA-S via NSSAAF for network slice-specific authentication"
+}
+
+{
+  "element1": "AMF",
+  "element2": "NSSAAF",
+  "relationship": "AMF uses NSSAAF to communicate with AAA-S"
+}
+
+## Triggers
+
+{
+  "state": "N/A",
+  "trigger": "Completion of network slice-specific authentication by AAA-S triggers the AMF to create a NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message."
+}
+
+{
+  "state": "N/A",
+  "trigger": "Receipt of NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message triggers the UE to pass the EAP-success or EAP-failure message to upper layers."
+}
+
+## Conditions
+
+{
+  "state": "N/A",
+  "condition": "AAA-S must successfully authenticate the UE for the specific network slice."
+}
+
+{
+  "state": "N/A",
+  "condition": "AMF must receive a valid EAP result from the AAA-S."
+}
+
+## Timing
+
+{
+  "state": "N/A",
+  "timing": "After the AAA-S completes authentication, the AMF sends the NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message."
+}
+
+{
+  "state": "N/A",
+  "timing": "After AMF receives the authentication result from AAA-S, the AMF sends the NETWORK SLICE-SPECIFIC AUTHENTICATION RESULT message to the UE."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 38)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment: Initiates the registration procedure and interacts with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function: Manages registration, authentication, and mobility."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered in the 5G network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the 5G network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered in the 5G network."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.NO-SUPI",
+  "type": "FINAL",
+  "description": "UE is deregistered and has no SUPI."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "FINAL",
+  "description": "UE is deregistered and needs to perform PLMN search."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "FINAL",
+  "description": "UE is deregistered and has limited service."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "FINAL",
+  "description": "UE is deregistered and attempting registration."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a registration request to the AMF to initiate the registration procedure."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+{
+  "name": "Registration Reject",
+  "description": "AMF rejects the registration request from the UE."
+}
+
+{
+  "name": "DEREGISTRATION REQUEST",
+  "description": "Network or UE requests deregistration."
+}
+
+{
+  "name": "SERVICE REQUEST",
+  "description": "UE requests a service from the network."
+}
+
+{
+  "name": "CONFIGURATION UPDATE COMMAND",
+  "description": "AMF sends configuration update command to the UE."
+}
+
+{
+  "name": "IDENTITY REQUEST",
+  "description": "AMF requests identity from the UE."
+}
+
+{
+  "name": "NOTIFICATION",
+  "description": "AMF sends a notification to the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the 5G network.",
+  "condition": "UE is within the coverage area.",
+  "timing": "Initial step of the registration procedure."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates and manages the UE's registration."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication and registration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-SUPI",
+  "trigger": "Network rejects registration or UE initiates deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Network rejects registration or UE initiates deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Network rejects registration or UE initiates deregistration."
 }
 
 {
   "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "trigger": "Network rejects registration or UE initiates deregistration."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in a coverage area and have valid credentials."
 }
 
 {
-  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
-  "timing": "After UE sends Registration Request and AMF determines registration is not allowed."
+  "state": "5GMM-REGISTERED",
+  "condition": "UE must successfully authenticate with the network."
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 44)
+{
+  "state": "5GMM-DEREGISTERED.NO-SUPI",
+  "condition": "Registration is rejected, or UE initiates deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "Registration is rejected, or UE initiates deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "condition": "Registration is rejected, or UE initiates deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "condition": "Registration is rejected, or UE initiates deregistration."
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Occurs immediately after the UE attempts to access the network."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "Occurs after successful authentication and registration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-SUPI",
+  "timing": "Occurs after registration rejection or UE-initiated deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "Occurs after registration rejection or UE-initiated deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "timing": "Occurs after registration rejection or UE-initiated deregistration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "timing": "Occurs after registration rejection or UE-initiated deregistration."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 39)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure and communicates with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration, authentication, and mobility of the UE."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Routes user plane traffic."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules for session management."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Provides service discovery."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and searching for a PLMN."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and in limited service mode."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and attempting registration."
+}
+
+{
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in idle mode."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests initial registration or mobility registration update."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication of the UE."
+}
+
+{
+  "name": "Security Mode Complete",
+  "description": "UE completes the security mode setup."
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request."
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE powers on and attempts network access.",
+  "condition": "UE must be in a coverage area.",
+  "timing": "Initial step of the registration procedure."
+}
+
+{
+  "step": 2,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-IDLE",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE initiates registration procedure for mobility and periodic registration update.",
+  "condition": "UE needs to update its registration or request SMS over NAS transport.",
+  "timing": "After a period of inactivity or mobility."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates and manages the UE's registration."
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF to manage PDU sessions for the UE."
+}
+
+{
+  "element1": "SMF",
+  "element2": "UPF",
+  "relationship": "SMF controls the UPF to route user plane traffic for PDU sessions."
+}
+
+{
+  "element1": "AMF",
+  "element2": "PCF",
+  "relationship": "AMF retrieves policy information from PCF to manage UE's access and mobility."
+}
+
+{
+  "element1": "AMF",
+  "element2": "NRF",
+  "relationship": "AMF discovers other network functions using NRF."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "Reception of Registration Request by AMF."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful completion of authentication and registration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Registration reject due to roaming not allowed or other PLMN related issues."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Registration reject due to roaming not allowed or other PLMN related issues."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "Registration reject due to incompatibility with allowed NSSAI."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be within network coverage and have valid credentials."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE must successfully authenticate and the network must accept the registration."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "UE is not allowed to roam in the current PLMN."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "condition": "UE is not allowed to roam in the current PLMN."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "condition": "Selected N3IWF is not compatible with the allowed NSSAI."
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Occurs immediately after the UE sends the Registration Request."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "Occurs after successful authentication and registration, typically within seconds."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "Occurs after receiving a registration reject message."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "timing": "Occurs after receiving a registration reject message."
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "timing": "Occurs after receiving a registration reject message."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 40)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure and communicates with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration, authentication, and mobility."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network.",
+  "condition": "UE is within network coverage.",
+  "timing": "Initial step of the registration procedure."
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "AMF initiates authentication of the UE.",
+  "condition": "UE identity needs to be verified.",
+  "timing": "After the AMF receives the Registration Request."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "AMF initiates authentication of the UE."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is within network coverage."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity needs to be verified."
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of the registration procedure."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After the AMF receives the Registration Request."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 41)
 
 ## Network Elements
 
@@ -5041,104 +5187,535 @@
   "description": "Mobile device attempting to access the 5G network"
 }
 
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Manages access control and mobility for the UE"
+}
+
 ## States
 
 {
-  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered in the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered in the 5G network"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "FINAL",
   "description": "UE is deregistered and has limited service"
 }
 
 {
   "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered and needs to perform PLMN selection"
+  "type": "FINAL",
+  "description": "UE is deregistered and searching for a PLMN"
 }
 
 {
-  "name": "EMM-DEREGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered from EPS"
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "FINAL",
+  "description": "UE is deregistered and attempting registration"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests initial registration to the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered from 5GMM"
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request"
+}
+
+{
+  "name": "Registration Complete",
+  "description": "UE confirms successful registration"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
 }
 
 ## Transitions
 
 {
   "step": 1,
-  "message": "Registration Reject with cause #76 from CAG cell",
-  "from_element": "Network",
-  "to_element": "UE",
-  "from_state": "ANY",
-  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Reception of Registration Reject with cause #76 from a CAG cell",
-  "condition": "Entry in CAG information list for current PLMN does not include an indication that the UE is only allowed to access 5GS via CAG cells OR entry includes the indication and one or more CAG-IDs are authorized based on the updated allowed CAG list",
-  "timing": "After UE attempts registration"
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network",
+  "condition": "UE is in coverage area",
+  "timing": "Initial step of registration"
 }
 
 {
   "step": 2,
-  "message": "Registration Reject with cause #76 from CAG cell",
-  "from_element": "Network",
+  "message": "Registration Reject",
+  "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "ANY",
-  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of Registration Reject with cause #76 from a CAG cell",
-  "condition": "Entry in CAG information list for current PLMN includes an indication that the UE is only allowed to access 5GS via CAG cells and no CAG-ID is authorized based on the updated allowed CAG list",
-  "timing": "After UE attempts registration"
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "Network rejects the registration request due to congestion",
+  "condition": "General NAS level mobility management congestion control",
+  "timing": "After UE sends Registration Request"
 }
 
 {
   "step": 3,
-  "message": "Registration Reject with cause #76 from CAG cell",
-  "from_element": "Network",
+  "message": "Registration Reject",
+  "from_element": "AMF",
   "to_element": "UE",
-  "from_state": "ANY",
+  "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Reception of Registration Reject with cause #76 from a CAG cell",
-  "condition": "CAG information list does not include an entry for the current PLMN",
-  "timing": "After UE attempts registration"
+  "trigger": "Network rejects the registration request due to roaming not allowed",
+  "condition": "N1 mode not allowed",
+  "timing": "After UE sends Registration Request"
 }
 
 {
   "step": 4,
-  "message": "Registration Reject with cause #76 from non-CAG cell",
+  "message": "Registration Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Network rejects the registration request due to serving network not authorized",
+  "condition": "Serving network not authorized",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF responds with accept or reject messages."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "AMF sends Registration Reject due to congestion"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "AMF sends Registration Reject due to roaming not allowed"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "AMF sends Registration Reject due to serving network not authorized"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is in coverage area"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "condition": "General NAS level mobility management congestion control"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "condition": "N1 mode not allowed"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "Serving network not authorized"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 42)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, authentication, and mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for PDU session establishment, modification and release"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for user plane traffic forwarding"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules for session management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "State of the UE while the registration procedure is in progress"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "State of the UE after successful registration"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "FINAL",
+  "description": "State of the UE after deregistration with limited service"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "FINAL",
+  "description": "State of the UE after deregistration and PLMN search is required"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "type": "FINAL",
+  "description": "State of the UE after deregistration and attempting registration"
+}
+
+{
+  "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "type": "FINAL",
+  "description": "State of the UE after deregistration and no cell is available"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network"
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE"
+}
+
+{
+  "name": "DEREGISTRATION REQUEST",
+  "description": "Network requests deregistration from the UE"
+}
+
+{
+  "name": "SERVICE REQUEST",
+  "description": "UE requests a service from the network"
+}
+
+{
+  "name": "SERVICE REJECT",
+  "description": "Network rejects the service request"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE powers on and attempts to register to the network",
+  "condition": "UE is within coverage area",
+  "timing": "Initial registration attempt"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and AMF authenticates the UE"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Registration Reject received with specific cause codes (e.g., #12, #13, #15) and conditions"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Registration Reject received with specific cause codes (e.g., #36, #78) and conditions"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "trigger": "Registration Reject received with cause code #22 or #79 and conditions"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "trigger": "Registration Reject received with cause code #31 and conditions"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is within coverage and attempts to register"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "condition": "Registration Reject received with specific cause codes and TAI is stored in forbidden list"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "condition": "Registration Reject received with specific cause codes and PLMN selection is required"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "condition": "Registration Reject received with cause code #22 or #79"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "condition": "Registration Reject received with cause code #31"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Occurs at the beginning of the registration procedure"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "timing": "Occurs after a Registration Reject message is received"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "timing": "Occurs after a Registration Reject message is received"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+  "timing": "Occurs after a Registration Reject message is received"
+}
+
+{
+  "state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+  "timing": "Occurs after a Registration Reject message is received"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 44)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+## States
+
+{
+  "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and has limited service."
+}
+
+{
+  "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "type": "INTERMEDIATE",
+  "description": "UE is deregistered and needs to perform PLMN selection."
+}
+
+{
+  "name": "EMM-DEREGISTERED",
+  "type": "INTERMEDIATE",
+  "description": "UE is EMM deregistered."
+}
+
+{
+  "name": "5GMM-DEREGISTERED",
+  "type": "INTERMEDIATE",
+  "description": "UE is 5GMM deregistered."
+}
+
+## Events
+
+{
+  "name": "REGISTRATION REJECT",
+  "description": "Network rejects the registration request from the UE."
+}
+
+{
+  "name": "DEREGISTRATION REQUEST",
+  "description": "Network requests the UE to deregister."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "REGISTRATION REJECT with 5GMM cause #76 from CAG cell",
   "from_element": "Network",
   "to_element": "UE",
   "from_state": "ANY",
   "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Reception of Registration Reject with cause #76 from a non-CAG cell",
-  "condition": "One or more CAG-IDs are authorized based on the allowed CAG list for the current PLMN",
-  "timing": "After UE attempts registration"
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 from a CAG cell.",
+  "condition": "Entry in the CAG information list for the current PLMN does not include an indication that the UE is only allowed to access 5GS via CAG cells, or if the entry includes such an indication and one or more CAG-ID(s) are authorized based on the updated allowed CAG list.",
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 {
-  "step": 5,
-  "message": "Registration Reject with cause #76 from non-CAG cell",
+  "step": 2,
+  "message": "REGISTRATION REJECT with 5GMM cause #76 from CAG cell",
   "from_element": "Network",
   "to_element": "UE",
   "from_state": "ANY",
   "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of Registration Reject with cause #76 from a non-CAG cell",
-  "condition": "No CAG-ID is authorized based on the allowed CAG list for the current PLMN",
-  "timing": "After UE attempts registration"
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 from a CAG cell.",
+  "condition": "Entry in the CAG information list for the current PLMN includes an indication that the UE is only allowed to access 5GS via CAG cells and no CAG-ID is authorized based on the updated allowed CAG list.",
+  "timing": "After UE sends Registration Request and receives a reject."
+}
+
+{
+  "step": 3,
+  "message": "REGISTRATION REJECT with 5GMM cause #76 from CAG cell",
+  "from_element": "Network",
+  "to_element": "UE",
+  "from_state": "ANY",
+  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 from a CAG cell.",
+  "condition": "CAG information list does not include an entry for the current PLMN.",
+  "timing": "After UE sends Registration Request and receives a reject."
+}
+
+{
+  "step": 4,
+  "message": "REGISTRATION REJECT with 5GMM cause #76 from non-CAG cell",
+  "from_element": "Network",
+  "to_element": "UE",
+  "from_state": "ANY",
+  "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 from a non-CAG cell.",
+  "condition": "One or more CAG-ID(s) are authorized based on the allowed CAG list for the current PLMN.",
+  "timing": "After UE sends Registration Request and receives a reject."
+}
+
+{
+  "step": 5,
+  "message": "REGISTRATION REJECT with 5GMM cause #76 from non-CAG cell",
+  "from_element": "Network",
+  "to_element": "UE",
+  "from_state": "ANY",
+  "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 from a non-CAG cell.",
+  "condition": "No CAG-ID is authorized based on the allowed CAG list for the current PLMN.",
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 {
   "step": 6,
-  "message": "Registration Reject with cause #77 from wireline access",
+  "message": "REGISTRATION REJECT with 5GMM cause #77 from wireline access network",
   "from_element": "Network",
   "to_element": "UE",
   "from_state": "ANY",
   "to_state": "5GMM-DEREGISTERED",
-  "trigger": "Reception of Registration Reject with cause #77 from a wireline access network",
-  "condition": "Message received over wireline access network",
-  "timing": "After UE attempts registration"
+  "trigger": "Reception of REGISTRATION REJECT with cause #77 from a wireline access network.",
+  "condition": "Message received over wireline access network.",
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 ## Network Element Relationships
@@ -5147,51 +5724,51 @@
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "trigger": "Reception of Registration Reject with cause #76 and specific CAG conditions"
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 and specific CAG conditions."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "trigger": "Reception of Registration Reject with cause #76 and specific CAG conditions"
+  "trigger": "Reception of REGISTRATION REJECT with cause #76 and specific CAG conditions."
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "trigger": "Reception of Registration Reject with cause #77 from wireline access"
+  "trigger": "Reception of REGISTRATION REJECT with cause #77 from a wireline access network."
 }
 
 ## Conditions
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "condition": "Specific CAG conditions related to allowed CAG list and CAG information list"
+  "condition": "Specific CAG conditions related to allowed CAG list and CAG information list."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "condition": "Specific CAG conditions related to allowed CAG list and CAG information list"
+  "condition": "Specific CAG conditions related to allowed CAG list and CAG information list."
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "condition": "Message received over wireline access network"
+  "condition": "Message received over wireline access network."
 }
 
 ## Timing
 
 {
   "state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
-  "timing": "After UE attempts registration"
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 {
   "state": "5GMM-DEREGISTERED.PLMN-SEARCH",
-  "timing": "After UE attempts registration"
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 {
   "state": "5GMM-DEREGISTERED",
-  "timing": "After UE attempts registration"
+  "timing": "After UE sends Registration Request and receives a reject."
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 45)
@@ -5201,13 +5778,13 @@
 {
   "name": "UE",
   "type": "User Equipment",
-  "description": "Mobile device attempting to register with the network."
+  "description": "Mobile device attempting to register with the 5G network."
 }
 
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, and mobility management."
+  "description": "Network function responsible for registration management, connection management, mobility management, authentication and authorization."
 }
 
 {
@@ -5248,6 +5825,33 @@
   "description": "UE is successfully registered with the network."
 }
 
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request from the UE."
+}
+
+{
+  "name": "Registration Reject",
+  "description": "Network rejects the registration request from the UE."
+}
+
+{
+  "name": "Deregistration Request",
+  "description": "UE sends a request to deregister from the network."
+}
+
 ## Transitions
 
 {
@@ -5257,9 +5861,21 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERED",
-  "trigger": "UE sends a REGISTRATION REQUEST message with 5GS registration type IE set to 'initial registration'.",
-  "condition": "UE must be in coverage area and attempting initial registration.",
-  "timing": "Initial step of registration."
+  "trigger": "UE attempts initial registration.",
+  "condition": "UE is in coverage and initiates registration.",
+  "timing": "Initial registration attempt."
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERED",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "AMF initiates authentication procedure.",
+  "condition": "UE identity needs to be verified.",
+  "timing": "After receiving Registration Request."
 }
 
 ## Network Element Relationships
@@ -5267,34 +5883,49 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF."
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 {
   "element1": "AMF",
   "element2": "SMF",
-  "relationship": "AMF interacts with SMF to manage sessions."
+  "relationship": "AMF interacts with SMF for session management after successful registration."
 }
 
 ## Triggers
 
 {
+  "state": "5GMM-NULL",
+  "trigger": "UE attempts initial registration."
+}
+
+{
   "state": "5GMM-REGISTERED",
-  "trigger": "UE sends a REGISTRATION REQUEST message with 5GS registration type IE set to 'initial registration'."
+  "trigger": "AMF initiates authentication procedure."
 }
 
 ## Conditions
 
 {
+  "state": "5GMM-NULL",
+  "condition": "UE is in coverage and initiates registration."
+}
+
+{
   "state": "5GMM-REGISTERED",
-  "condition": "UE must be in coverage area and attempting initial registration."
+  "condition": "UE identity needs to be verified."
 }
 
 ## Timing
 
 {
+  "state": "5GMM-NULL",
+  "timing": "Initial registration attempt."
+}
+
+{
   "state": "5GMM-REGISTERED",
-  "timing": "Initial step of registration."
+  "timing": "After receiving Registration Request."
 }
 
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 46)
@@ -5333,1674 +5964,16 @@
   "description": "UE is successfully registered with the network."
 }
 
-## Transitions
+## Events
 
 {
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts initial registration.",
-  "condition": "UE must be in coverage area.",
-  "timing": "Initial step of registration."
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
 }
 
 {
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication.",
-  "condition": "UE identity verification required.",
-  "timing": "After UE sends Registration Request."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts initial registration."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required."
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 47)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, and mobility management."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "N/A",
-  "trigger": "UE attempts initial registration.",
-  "condition": "UE must be in coverage area.",
-  "timing": "Initial step of registration."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-NULL",
-  "trigger": "UE attempts initial registration."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-NULL",
-  "condition": "UE must be in coverage area."
-}
-
-## Timing
-
-{
-  "state": "5GMM-NULL",
-  "timing": "Initial step of registration."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 49)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, and mobility management"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment, modification, and release"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding and policy enforcement"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for providing policy rules to the SMF and other network functions"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function that stores and provides information about available network functions"
-}
-
-## States
-
-{
-  "name": "5GMM-IDLE",
-  "type": "INTERMEDIATE",
-  "description": "UE is in idle mode, not actively communicating with the network"
-}
-
-{
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is in connected mode, actively communicating with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "SERVICE REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-IDLE",
-  "to_state": "5GMM-CONNECTED",
-  "trigger": "UE has uplink signalling or user data pending, receives a paging request, or other triggers as defined in subclause 5.6.1.1",
-  "condition": "5GS update status is 5U1 UPDATED, and the TAI of the current serving cell is included in the TAI list; and no 5GMM specific procedure is ongoing",
-  "timing": "Initiated by the UE when certain conditions are met"
-}
-
-{
-  "step": 2,
-  "message": "SERVICE ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-CONNECTED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "AMF successfully processes the SERVICE REQUEST message",
-  "condition": "AMF accepts the service request",
-  "timing": "After the AMF processes the SERVICE REQUEST message"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends SERVICE REQUEST to AMF and receives SERVICE ACCEPT from AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF to manage PDU sessions and user-plane resources"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-CONNECTED",
-  "trigger": "UE has uplink signalling or user data pending, receives a paging request, or other triggers as defined in subclause 5.6.1.1"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "AMF successfully processes the SERVICE REQUEST message"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-CONNECTED",
-  "condition": "5GS update status is 5U1 UPDATED, and the TAI of the current serving cell is included in the TAI list; and no 5GMM specific procedure is ongoing"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "AMF accepts the service request"
-}
-
-## Timing
-
-{
-  "state": "5GMM-CONNECTED",
-  "timing": "Initiated by the UE when certain conditions are met"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After the AMF processes the SERVICE REQUEST message"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 50)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Manages access and mobility for the UE"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Manages PDU sessions"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Handles user plane traffic"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy control for the network"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "CONTROL PLANE SERVICE REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-REGISTERED",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "UE has uplink CIoT user data, SMS or location services message to be sent",
-  "condition": "UE is in 5GMM-REGISTERED state",
-  "timing": "After UE is registered and needs to send data"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends CONTROL PLANE SERVICE REQUEST to AMF"
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "UE has uplink CIoT user data, SMS or location services message to be sent"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE is in 5GMM-REGISTERED state"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE is registered and needs to send data"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 51)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Responsible for session management, including PDU session establishment, modification, and release."
-}
-
-## States
-
-{
-  "name": "PDU SESSION ACTIVE",
-  "type": "INTERMEDIATE",
-  "description": "PDU session is established and active."
-}
-
-{
-  "name": "PDU SESSION MODIFICATION PENDING",
-  "type": "INTERMEDIATE",
-  "description": "PDU session modification is in progress."
-}
-
-{
-  "name": "PDU SESSION INACTIVE PENDING",
-  "type": "INTERMEDIATE",
-  "description": "PDU session is in the process of being deactivated."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "PDN CONNECTIVITY REQUEST",
-  "from_element": "UE",
-  "to_element": "SMF",
-  "from_state": "S1 Mode",
-  "to_state": "N1 Mode",
-  "trigger": "Inter-system change from S1 mode to N1 mode",
-  "condition": "UE supports interworking to 5GS",
-  "timing": "During inter-system change from S1 to N1"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "SMF",
-  "relationship": "UE sends PDU session related requests to the SMF, and SMF manages the PDU session."
-}
-
-## Triggers
-
-{
-  "state": "PDU SESSION ACTIVE",
-  "trigger": "Inter-system change from S1 mode to N1 mode and default EPS bearer context in state BEARER CONTEXT ACTIVE"
-}
-
-## Conditions
-
-{
-  "state": "PDU SESSION ACTIVE",
-  "condition": "Default EPS bearer context in state BEARER CONTEXT ACTIVE"
-}
-
-## Timing
-
-{
-  "state": "PDU SESSION ACTIVE",
-  "timing": "After inter-system change from S1 mode to N1 mode"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 52)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to connect to the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management, including PDU session establishment, modification, and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane traffic forwarding and QoS enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for providing policy rules for session management and QoS control."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element that stores network function instance profiles and supports service discovery."
-}
-
-## States
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 53)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access authentication/authorization."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including session establishment, modification, and release."
-}
-
-## States
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 54)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management, including PDU session establishment and modification."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane data forwarding and QoS enforcement."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for providing policy rules for session management."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element that stores network function profiles and supports service discovery."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management during registration."
-}
-
-{
-  "element1": "SMF",
-  "element2": "UPF",
-  "relationship": "SMF controls UPF for user plane data forwarding."
-}
-
-{
-  "element1": "SMF",
-  "element2": "PCF",
-  "relationship": "SMF interacts with PCF to obtain policy rules."
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF may interact with NRF to discover other network functions."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 55)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Manages access and mobility for the UE"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Manages PDU sessions"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Handles user plane traffic"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy control for the network"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 56)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Manages access and mobility for the UE"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Manages PDU sessions"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Handles user plane traffic"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy control for the network"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery"
-}
-
-## States
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "PDU SESSION ESTABLISHMENT REQUEST",
-  "from_element": "UE",
-  "to_element": "network",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "UE attempts to establish a PDU session",
-  "condition": "UE needs to access network services",
-  "timing": "Initial step of PDU session establishment"
-}
-
-{
-  "step": 2,
-  "message": "PDU SESSION ESTABLISHMENT REJECT",
-  "from_element": "network",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "Network rejects PDU session establishment",
-  "condition": "Insufficient resources, missing DNN, etc.",
-  "timing": "After network processes PDU SESSION ESTABLISHMENT REQUEST"
-}
-
-{
-  "step": 3,
-  "message": "PDU SESSION MODIFICATION REQUEST",
-  "from_element": "UE",
-  "to_element": "SMF",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "UE attempts to modify a PDU session",
-  "condition": "UE needs to change PDU session parameters",
-  "timing": "UE initiated modification"
-}
-
-{
-  "step": 4,
-  "message": "PDU SESSION MODIFICATION REJECT",
-  "from_element": "SMF",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "SMF rejects PDU session modification",
-  "condition": "Requested service option not subscribed, etc.",
-  "timing": "After SMF processes PDU SESSION MODIFICATION REQUEST"
-}
-
-{
-  "step": 5,
-  "message": "PDU SESSION MODIFICATION COMMAND",
-  "from_element": "SMF",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "SMF commands PDU session modification",
-  "condition": "SMF determines modification is needed",
-  "timing": "SMF initiated modification"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE registers with the AMF for access and mobility management"
-}
-
-{
-  "element1": "UE",
-  "element2": "SMF",
-  "relationship": "UE establishes PDU sessions with the SMF"
-}
-
-{
-  "element1": "SMF",
-  "element2": "UPF",
-  "relationship": "SMF controls the UPF for user plane traffic forwarding"
-}
-
-{
-  "element1": "SMF",
-  "element2": "PCF",
-  "relationship": "SMF interacts with PCF for policy control"
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF discovers SMF via NRF"
-}
-
-## Triggers
-
-{
-  "state": "N/A",
-  "trigger": "UE attempts to establish a PDU session"
-}
-
-{
-  "state": "N/A",
-  "trigger": "Network rejects PDU session establishment"
-}
-
-{
-  "state": "N/A",
-  "trigger": "UE attempts to modify a PDU session"
-}
-
-{
-  "state": "N/A",
-  "trigger": "SMF rejects PDU session modification"
-}
-
-{
-  "state": "N/A",
-  "trigger": "SMF commands PDU session modification"
-}
-
-## Conditions
-
-{
-  "state": "N/A",
-  "condition": "UE needs to access network services"
-}
-
-{
-  "state": "N/A",
-  "condition": "Insufficient resources, missing DNN, etc."
-}
-
-{
-  "state": "N/A",
-  "condition": "UE needs to change PDU session parameters"
-}
-
-{
-  "state": "N/A",
-  "condition": "Requested service option not subscribed, etc."
-}
-
-{
-  "state": "N/A",
-  "condition": "SMF determines modification is needed"
-}
-
-## Timing
-
-{
-  "state": "N/A",
-  "timing": "Initial step of PDU session establishment"
-}
-
-{
-  "state": "N/A",
-  "timing": "After network processes PDU SESSION ESTABLISHMENT REQUEST"
-}
-
-{
-  "state": "N/A",
-  "timing": "UE initiated modification"
-}
-
-{
-  "state": "N/A",
-  "timing": "After SMF processes PDU SESSION MODIFICATION REQUEST"
-}
-
-{
-  "state": "N/A",
-  "timing": "SMF initiated modification"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 57)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, authentication, and mobility management."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including PDU session establishment and modification."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Part of the 5G core network that handles user plane traffic."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy rules for session management."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery in 5G network."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access.",
-  "condition": "UE must be in coverage area.",
-  "timing": "Initial step of registration."
-}
-
-{
-  "step": 2,
-  "message": "REGISTRATION ACCEPT",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Successful registration procedure.",
-  "condition": "Successful authentication and authorization.",
-  "timing": "After successful registration procedure."
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF and receives responses."
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management during registration."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "UE attempts network access."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Successful registration procedure."
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "Successful authentication and authorization."
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration."
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After successful registration procedure."
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 59)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "Network Element",
-  "description": "User Equipment - mobile device"
-}
-
-{
-  "name": "AMF",
-  "type": "Network Element",
-  "description": "Access and Mobility Management Function - manages registration, connection management, mobility"
-}
-
-{
-  "name": "SMF",
-  "type": "Network Element",
-  "description": "Session Management Function - manages PDU sessions"
-}
-
-{
-  "name": "UPF",
-  "type": "Network Element",
-  "description": "User Plane Function - forwards and routes user plane data"
-}
-
-{
-  "name": "PCF",
-  "type": "Network Element",
-  "description": "Policy Control Function - provides policy rules"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Element",
-  "description": "Network Repository Function - service discovery"
-}
-
-## States
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 61)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, reachability management, mobility management, authentication and authorization."
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management, including session establishment, modification and release."
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Part of the 5G core network architecture. The UPF is responsible for packet routing and forwarding, policy enforcement, and QoS handling."
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Provides policy rules to the SMF."
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Service discovery function."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network."
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network."
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network."
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 63)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "Network Element",
-  "description": "User Equipment - device used by the end user to access the network"
-}
-
-{
-  "name": "SMF",
-  "type": "Network Element",
-  "description": "Session Management Function - responsible for session management, including PDU session establishment, modification, and release"
-}
-
-## States
-
-{
-  "name": "PROCEDURE TRANSACTION INACTIVE",
-  "type": "INTERMEDIATE",
-  "description": "State of the UE after a PDU session modification procedure is rejected"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "PDU SESSION MODIFICATION REQUEST",
-  "from_element": "UE",
-  "to_element": "SMF",
-  "from_state": "PROCEDURE TRANSACTION INACTIVE",
-  "to_state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "UE initiates PDU session modification",
-  "condition": "UE wants to modify an existing PDU session",
-  "timing": "UE-initiated procedure"
-}
-
-{
-  "step": 2,
-  "message": "PDU SESSION MODIFICATION REJECT",
-  "from_element": "SMF",
-  "to_element": "UE",
-  "from_state": "PROCEDURE TRANSACTION INACTIVE",
-  "to_state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "SMF rejects PDU session modification request",
-  "condition": "SMF determines the request is not acceptable based on operator policy, subscription information, or other factors",
-  "timing": "After SMF receives PDU SESSION MODIFICATION REQUEST"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "SMF",
-  "relationship": "UE sends PDU SESSION MODIFICATION REQUEST to SMF, and SMF sends PDU SESSION MODIFICATION REJECT to UE"
-}
-
-## Triggers
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "UE initiates PDU session modification or SMF rejects PDU session modification request"
-}
-
-## Conditions
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "condition": "UE wants to modify an existing PDU session or SMF determines the request is not acceptable"
-}
-
-## Timing
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "timing": "UE-initiated procedure or after SMF receives PDU SESSION MODIFICATION REQUEST"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 66)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device used to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Manages access and mobility for the UE"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Manages PDU sessions"
-}
-
-## States
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "PDU SESSION MODIFICATION REQUEST",
-  "from_element": "UE",
-  "to_element": "SMF",
-  "from_state": "PROCEDURE TRANSACTION INACTIVE",
-  "to_state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "UE initiates UE-requested PDU session modification procedure to modify the PDU session transferred from EPS to an MA PDU session",
-  "condition": "UE sends the PDU SESSION MODIFICATION REQUEST message with the Request type IE set to 'MA PDU request'",
-  "timing": "UE-requested PDU session modification procedure"
-}
-
-{
-  "step": 2,
-  "message": "PDU SESSION MODIFICATION REJECT",
-  "from_element": "SMF",
-  "to_element": "UE",
-  "from_state": "N/A",
-  "to_state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "SMF determines, based on operator policy and subscription information, that the PDU SESSION MODIFICATION REQUEST message is to be rejected",
-  "condition": "SMF rejects the PDU SESSION MODIFICATION REQUEST message",
-  "timing": "After SMF receives PDU SESSION MODIFICATION REQUEST"
-}
-
-{
-  "step": 3,
-  "message": "REGISTRATION REQUEST",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "N/A",
-  "to_state": "N/A",
-  "trigger": "Upon receipt of a PDU SESSION MODIFICATION REJECT message with 5GSM cause value #31 'request rejected, unspecified', if the UE had initiated deletion of one or more non-default QoS rules for the PDU session",
-  "condition": "In order to synchronize the PDU session context with the AMF",
-  "timing": "After PDU SESSION MODIFICATION REJECT message"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF"
-}
-
-{
-  "element1": "UE",
-  "element2": "SMF",
-  "relationship": "UE sends PDU session modification requests to SMF"
-}
-
-{
-  "element1": "SMF",
-  "element2": "UE",
-  "relationship": "SMF sends PDU session modification reject messages to UE"
-}
-
-## Triggers
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "UE initiates UE-requested PDU session modification procedure to modify the PDU session transferred from EPS to an MA PDU session"
-}
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "trigger": "SMF determines, based on operator policy and subscription information, that the PDU SESSION MODIFICATION REQUEST message is to be rejected"
-}
-
-{
-  "state": "N/A",
-  "trigger": "Upon receipt of a PDU SESSION MODIFICATION REJECT message with 5GSM cause value #31 'request rejected, unspecified', if the UE had initiated deletion of one or more non-default QoS rules for the PDU session"
-}
-
-## Conditions
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "condition": "UE sends the PDU SESSION MODIFICATION REQUEST message with the Request type IE set to 'MA PDU request'"
-}
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "condition": "SMF rejects the PDU SESSION MODIFICATION REQUEST message"
-}
-
-{
-  "state": "N/A",
-  "condition": "In order to synchronize the PDU session context with the AMF"
-}
-
-## Timing
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "timing": "UE-requested PDU session modification procedure"
-}
-
-{
-  "state": "PROCEDURE TRANSACTION INACTIVE",
-  "timing": "After SMF receives PDU SESSION MODIFICATION REQUEST"
-}
-
-{
-  "state": "N/A",
-  "timing": "After PDU SESSION MODIFICATION REJECT message"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 67)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "Network Element",
-  "description": "User Equipment"
-}
-
-## States
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 68)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 69)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, authentication, and mobility management"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is registered with the network"
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
 }
 
 ## Transitions
@@ -7034,7 +6007,7 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 ## Triggers
@@ -7073,20 +6046,351 @@
   "timing": "After UE sends Registration Request"
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 70)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 47)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure and communicates with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration, authentication, and mobility."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "State of the UE while the registration procedure is in progress."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "State of the UE after successful registration."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a registration request to the AMF to initiate the registration procedure."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access.",
+  "condition": "UE must be in coverage area.",
+  "timing": "Initial step of registration."
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication.",
+  "condition": "UE identity verification required.",
+  "timing": "After UE sends Registration Request."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE sends Registration Request."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Successful authentication."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required."
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 48)
 
 ## Network Elements
 
 {
   "name": "UE",
   "type": "User Equipment",
-  "description": "Mobile device used by the subscriber to access the 5G network."
+  "description": "Mobile device used by the subscriber to access the network"
 }
 
 {
   "name": "AMF",
   "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, mobility management, and access authentication/authorization."
+  "description": "Network function responsible for registration, connection management, and mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Network function responsible for session management, including PDU session establishment, modification, and release"
+}
+
+## States
+
+## Events
+
+{
+  "name": "DEREGISTRATION REQUEST",
+  "description": "Message sent from AMF to UE to initiate deregistration"
+}
+
+{
+  "name": "DEREGISTRATION ACCEPT",
+  "description": "Message sent from UE to AMF to confirm deregistration"
+}
+
+{
+  "name": "SERVICE REQUEST",
+  "description": "Message sent from UE to AMF to request a service"
+}
+
+## Transitions
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration-related messages to AMF, and AMF sends authentication and other control messages to UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for PDU session management, including requesting session release"
+}
+
+## Triggers
+
+## Conditions
+
+## Timing
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 49)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device used to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, connection management, and mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Network function responsible for session management, including PDU session establishment, modification, and release"
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Network function responsible for user plane data forwarding and routing"
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Network function responsible for providing policy rules for session management and mobility management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Network function that stores and provides information about available network functions"
+}
+
+## States
+
+{
+  "name": "5GMM-IDLE",
+  "type": "INTERMEDIATE",
+  "description": "UE is in idle mode"
+}
+
+{
+  "name": "5GMM-CONNECTED",
+  "type": "INTERMEDIATE",
+  "description": "UE is in connected mode"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Service Request",
+  "description": "UE requests a service from the network"
+}
+
+{
+  "name": "Paging",
+  "description": "Network pages the UE"
+}
+
+{
+  "name": "Notification",
+  "description": "Network notifies the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Service Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-IDLE",
+  "to_state": "5GMM-CONNECTED",
+  "trigger": "UE has uplink signalling or user data pending, or receives a paging request",
+  "condition": "5GS update status is 5U1 UPDATED, and the TAI of the current serving cell is included in the TAI list; and no 5GMM specific procedure is ongoing.",
+  "timing": "When UE needs to send data or respond to paging"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends Service Request to AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-CONNECTED",
+  "trigger": "UE has uplink signalling or user data pending, or receives a paging request"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-CONNECTED",
+  "condition": "5GS update status is 5U1 UPDATED, and the TAI of the current serving cell is included in the TAI list; and no 5GMM specific procedure is ongoing."
+}
+
+## Timing
+
+{
+  "state": "5GMM-CONNECTED",
+  "timing": "When UE needs to send data or respond to paging"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 50)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - The mobile device attempting to access the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Responsible for registration, connection management, and mobility."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Responsible for PDU session establishment, modification, and release."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Responsible for user plane data forwarding and routing."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules for session management."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Service discovery."
 }
 
 ## States
@@ -7109,110 +6413,26 @@
   "description": "UE is successfully registered with the network."
 }
 
-## Transitions
+## Events
 
 {
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
 }
 
 {
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
 }
 
 {
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
+  "name": "SERVICE REQUEST",
+  "description": "UE sends a service request to the network."
 }
 
 {
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 74)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, authentication, and mobility management"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
+  "name": "SERVICE ACCEPT",
+  "description": "Network accepts the service request from the UE."
 }
 
 ## Transitions
@@ -7224,21 +6444,33 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
+  "trigger": "UE attempts to access the network.",
+  "condition": "UE must be in coverage area.",
+  "timing": "Initial step of registration."
 }
 
 {
   "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
+  "message": "SERVICE REQUEST",
+  "from_element": "UE",
+  "to_element": "AMF",
   "from_state": "5GMM-REGISTERING",
   "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
+  "trigger": "UE sends a service request to the network.",
+  "condition": "UE needs to send data or signaling.",
+  "timing": "After authentication and authorization."
+}
+
+{
+  "step": 3,
+  "message": "SERVICE ACCEPT",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERED",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network accepts the service request.",
+  "condition": "Network authorizes the service request.",
+  "timing": "After the AMF processes the SERVICE REQUEST."
 }
 
 ## Network Element Relationships
@@ -7246,83 +6478,179 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
+  "relationship": "UE sends registration and service requests to the AMF, and receives responses."
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management."
+}
+
+{
+  "element1": "SMF",
+  "element2": "UPF",
+  "relationship": "SMF controls the UPF for user plane data forwarding."
+}
+
+{
+  "element1": "AMF",
+  "element2": "PCF",
+  "relationship": "AMF interacts with PCF to obtain policy rules."
 }
 
 ## Triggers
 
 {
   "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
+  "trigger": "UE attempts to access the network."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
+  "trigger": "UE sends a service request to the network."
 }
 
 ## Conditions
 
 {
   "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
+  "condition": "UE must be in coverage area."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
+  "condition": "Network authorizes the service request."
 }
 
 ## Timing
 
 {
   "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
+  "timing": "Initial step of registration."
 }
 
 {
   "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
+  "timing": "After the AMF processes the SERVICE REQUEST."
 }
 
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 77)
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 51)
 
 ## Network Elements
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, authentication, and mobility management"
+  "type": "Network Element",
+  "description": "User Equipment - The mobile device attempting to access the network."
 }
 
 {
   "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network function responsible for session management"
+  "type": "Network Element",
+  "description": "Session Management Function - Responsible for session management, including PDU session establishment, modification, and release."
+}
+
+## States
+
+{
+  "name": "PDU SESSION ACTIVE",
+  "type": "INTERMEDIATE",
+  "description": "PDU session is active"
+}
+
+{
+  "name": "PDU SESSION MODIFICATION PENDING",
+  "type": "INTERMEDIATE",
+  "description": "PDU session modification is pending"
+}
+
+{
+  "name": "PDU SESSION INACTIVE PENDING",
+  "type": "INTERMEDIATE",
+  "description": "PDU session is inactive pending"
+}
+
+## Events
+
+## Transitions
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "SMF",
+  "relationship": "The UE communicates with the SMF to establish, modify, and release PDU sessions."
+}
+
+## Triggers
+
+## Conditions
+
+## Timing
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 52)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure and interacts with the network."
+}
+
+## States
+
+## Events
+
+## Transitions
+
+## Network Element Relationships
+
+## Triggers
+
+## Conditions
+
+## Timing
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 53)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - device used by the end user to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, connection management, mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for session management, PDU session establishment, modification, and release"
 }
 
 {
   "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network function responsible for user plane traffic forwarding"
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for user plane traffic forwarding and data handling"
 }
 
 {
   "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network function responsible for policy control"
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules for session management"
 }
 
 {
   "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network function responsible for service discovery"
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
 }
 
 ## States
@@ -7343,6 +6671,18 @@
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
   "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
 }
 
 ## Transitions
@@ -7421,6 +6761,2100 @@
   "timing": "After UE sends Registration Request"
 }
 
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 54)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates the registration procedure and communicates with the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Handles registration, authentication, and mobility management."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions, including IP address allocation."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Forwards user data packets."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules for session management."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Service discovery."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management after successful registration."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 55)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Manages access control and mobility for the UE"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Manages PDU sessions"
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Handles user plane traffic forwarding"
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Provides policy rules for session management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to the UE"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 56)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Handles registration, authentication, and mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Routes user data"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to UE"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 57)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, authentication, and mobility management"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for PDU session establishment, modification, and release"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for forwarding and routing user data"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules for session management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE"
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management during registration"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 59)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - The mobile device used by the subscriber to access the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Responsible for registration, connection management, and mobility management."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Responsible for session management, including PDU session establishment, modification, and release."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Responsible for user plane data forwarding and routing."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules for session management and QoS control."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Provides service discovery and selection."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF."
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 61)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates PDU session establishment and modification procedures."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions, including establishment, modification, and release."
+}
+
+## States
+
+{
+  "name": "PROCEDURE TRANSACTION INACTIVE",
+  "type": "FINAL",
+  "description": "State after a PDU session modification reject message is received."
+}
+
+## Events
+
+{
+  "name": "PDU SESSION ESTABLISHMENT REQUEST",
+  "description": "UE requests the establishment of a new PDU session."
+}
+
+{
+  "name": "PDU SESSION ESTABLISHMENT REJECT",
+  "description": "SMF rejects the PDU session establishment request."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION REQUEST",
+  "description": "UE requests the modification of an existing PDU session."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION REJECT",
+  "description": "SMF rejects the PDU session modification request."
+}
+
+{
+  "name": "PDU SESSION RELEASE REQUEST",
+  "description": "UE requests the release of a PDU session."
+}
+
+{
+  "name": "PDU SESSION RELEASE REJECT",
+  "description": "SMF rejects the PDU session release request."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION COMMAND",
+  "description": "SMF sends a command to the UE to modify a PDU session."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION COMPLETE",
+  "description": "UE sends a message to the SMF to indicate the completion of a PDU session modification."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION COMMAND REJECT",
+  "description": "UE sends a message to the SMF to reject a PDU session modification command."
+}
+
+{
+  "name": "PDU SESSION RELEASE COMMAND",
+  "description": "SMF sends a command to the UE to release a PDU session."
+}
+
+{
+  "name": "PDU SESSION RELEASE COMPLETE",
+  "description": "UE sends a message to the SMF to indicate the completion of a PDU session release."
+}
+
+{
+  "name": "5GSM STATUS",
+  "description": "UE or SMF sends a message to report error conditions."
+}
+
+{
+  "name": "REMOTE UE REPORT",
+  "description": "UE sends a message to report information of newly connected or disconnected 5G ProSe remote UEs to the network."
+}
+
+{
+  "name": "REMOTE UE REPORT RESPONSE",
+  "description": "Network sends a response to the UE after receiving a REMOTE UE REPORT message."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "PDU SESSION MODIFICATION REJECT",
+  "from_element": "SMF",
+  "to_element": "UE",
+  "from_state": "Any",
+  "to_state": "PROCEDURE TRANSACTION INACTIVE",
+  "trigger": "SMF rejects the PDU session modification request.",
+  "condition": "SMF determines that the PDU session modification cannot be accepted.",
+  "timing": "After the SMF receives a PDU SESSION MODIFICATION REQUEST message."
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "SMF",
+  "relationship": "UE sends PDU session related requests to the SMF, and the SMF responds with accept or reject messages."
+}
+
+## Triggers
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "trigger": "Receipt of a PDU SESSION MODIFICATION REJECT message."
+}
+
+## Conditions
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "condition": "The SMF has rejected the PDU session modification request."
+}
+
+## Timing
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "timing": "Occurs after the SMF processes the PDU SESSION MODIFICATION REQUEST and sends the PDU SESSION MODIFICATION REJECT message."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 63)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - Initiates and terminates the registration procedure."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - Manages registration and authentication."
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - Manages PDU sessions."
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - Forwards user plane data."
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - Provides policy rules."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - Provides service discovery."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF."
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 66)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - manages PDU sessions"
+}
+
+## States
+
+{
+  "name": "PROCEDURE TRANSACTION INACTIVE",
+  "type": "FINAL",
+  "description": "UE is in an inactive state regarding the PDU session modification procedure."
+}
+
+## Events
+
+{
+  "name": "PDU SESSION MODIFICATION REQUEST",
+  "description": "UE requests modification of a PDU session."
+}
+
+{
+  "name": "PDU SESSION MODIFICATION REJECT",
+  "description": "SMF rejects the PDU session modification request."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "PDU SESSION MODIFICATION REQUEST",
+  "from_element": "UE",
+  "to_element": "SMF",
+  "from_state": "Any",
+  "to_state": "Any",
+  "trigger": "UE initiates PDU session modification",
+  "condition": "UE wants to modify the PDU session",
+  "timing": "UE-initiated procedure"
+}
+
+{
+  "step": 2,
+  "message": "PDU SESSION MODIFICATION REJECT",
+  "from_element": "SMF",
+  "to_element": "UE",
+  "from_state": "Any",
+  "to_state": "PROCEDURE TRANSACTION INACTIVE",
+  "trigger": "SMF rejects the PDU session modification request",
+  "condition": "Operator policy, subscription information, or resource constraints lead to rejection",
+  "timing": "After SMF processes the PDU SESSION MODIFICATION REQUEST"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "SMF",
+  "relationship": "UE sends PDU SESSION MODIFICATION REQUEST to SMF; SMF sends PDU SESSION MODIFICATION REJECT to UE."
+}
+
+## Triggers
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "trigger": "Receipt of PDU SESSION MODIFICATION REJECT message."
+}
+
+## Conditions
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "condition": "SMF rejects the PDU session modification request."
+}
+
+## Timing
+
+{
+  "state": "PROCEDURE TRANSACTION INACTIVE",
+  "timing": "After the UE receives the PDU SESSION MODIFICATION REJECT message."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 68)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, authentication, and mobility management."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+{
+  "name": "Authentication Response",
+  "description": "UE sends authentication response to the network."
+}
+
+{
+  "name": "Authentication Result",
+  "description": "Network sends the result of the authentication to the UE."
+}
+
+{
+  "name": "Authentication Failure",
+  "description": "UE indicates that authentication of the network has failed."
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "Network indicates that the authentication procedure has failed."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Authentication Response",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE responds to authentication request",
+  "condition": "UE successfully calculates authentication response",
+  "timing": "After receiving Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Authentication Result",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network provides result of EAP authentication",
+  "condition": "EAP authentication of the UE identity is successful",
+  "timing": "After receiving Authentication Response"
+}
+
+{
+  "step": 5,
+  "message": "Authentication Failure",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-NULL",
+  "trigger": "UE indicates that authentication of the network has failed",
+  "condition": "Authentication of the network has failed",
+  "timing": "After receiving Authentication Request"
+}
+
+{
+  "step": 6,
+  "message": "Authentication Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-NULL",
+  "trigger": "Network indicates that the authentication procedure has failed",
+  "condition": "Authentication procedure has failed",
+  "timing": "After receiving Authentication Response"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests and authentication responses to the AMF. AMF sends authentication requests and results to the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access, Network initiates authentication, UE responds to authentication request, Network provides result of EAP authentication, UE indicates that authentication of the network has failed, Network indicates that the authentication procedure has failed"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network provides result of EAP authentication"
+}
+
+{
+  "state": "5GMM-NULL",
+  "trigger": "UE indicates that authentication of the network has failed, Network indicates that the authentication procedure has failed"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area, UE identity verification required, UE successfully calculates authentication response, EAP authentication of the UE identity is successful, Authentication of the network has failed, Authentication procedure has failed"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "EAP authentication of the UE identity is successful"
+}
+
+{
+  "state": "5GMM-NULL",
+  "condition": "Authentication of the network has failed, Authentication procedure has failed"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration, After UE sends Registration Request, After receiving Authentication Request, After receiving Authentication Response"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After receiving Authentication Response"
+}
+
+{
+  "state": "5GMM-NULL",
+  "timing": "After receiving Authentication Request, After receiving Authentication Response"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 69)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network element responsible for registration, authentication, and mobility management"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Authentication Reject",
+  "description": "Network rejects the authentication attempt from the UE"
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Authentication Reject",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-NULL",
+  "trigger": "Network rejects authentication",
+  "condition": "Authentication fails",
+  "timing": "After Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network accepts registration",
+  "condition": "Authentication successful",
+  "timing": "After Authentication Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE and accepts or rejects the registration."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access or Network initiates authentication"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network accepts registration"
+}
+
+{
+  "state": "5GMM-NULL",
+  "trigger": "Network rejects authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area or UE identity verification required"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Authentication successful"
+}
+
+{
+  "state": "5GMM-NULL",
+  "condition": "Authentication fails"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration or After UE sends Registration Request"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After Authentication Request"
+}
+
+{
+  "state": "5GMM-NULL",
+  "timing": "After Authentication Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 70)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device used by the subscriber to access the 5G network."
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, connection management, mobility management, and access authentication/authorization."
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Responsible for session management, including session establishment, modification, and release."
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Responsible for user plane data transfer, packet routing & forwarding, policy enforcement and traffic usage reporting."
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Provides policy rules to the control plane functions."
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Service discovery function that allows network functions to discover each other."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests the UE to authenticate itself."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+{
+  "element1": "AMF",
+  "element2": "SMF",
+  "relationship": "AMF interacts with SMF for session management during registration."
+}
+
+{
+  "element1": "AMF",
+  "element2": "UPF",
+  "relationship": "AMF interacts with UPF for user plane setup during registration."
+}
+
+{
+  "element1": "AMF",
+  "element2": "PCF",
+  "relationship": "AMF interacts with PCF to obtain policy rules during registration."
+}
+
+{
+  "element1": "AMF",
+  "element2": "NRF",
+  "relationship": "AMF discovers other network functions (e.g., SMF) via NRF."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 71)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device used to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, connection management, mobility management, and access authentication/authorization"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Network function responsible for session management, including session establishment, modification, and release"
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Network function responsible for user plane data forwarding and routing"
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Network function responsible for providing policy rules for session management and mobility management"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Network function that provides service discovery functionality"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF sends authentication requests to the UE"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 74)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment: Initiates the registration procedure."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function: Manages registration and authentication."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered in the 5G network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the 5G network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered in the 5G network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration to the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
+}
+
+{
+  "name": "Authentication Response",
+  "description": "UE responds to the authentication request."
+}
+
+{
+  "name": "Registration Accept",
+  "description": "Network accepts the registration request."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+{
+  "step": 3,
+  "message": "Authentication Response",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE responds to authentication request",
+  "condition": "UE successfully authenticates",
+  "timing": "After AMF sends Authentication Request"
+}
+
+{
+  "step": 4,
+  "message": "Registration Accept",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network accepts registration",
+  "condition": "Successful authentication and authorization",
+  "timing": "After successful authentication"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "Registration Request from UE or Authentication Request from AMF"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Registration Accept from AMF"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE in coverage, authentication required"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "Successful authentication and authorization"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "After UE sends Registration Request, before registration is complete"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After successful authentication and authorization"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 75)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+## States
+
+## Events
+
+## Transitions
+
+## Network Element Relationships
+
+## Triggers
+
+## Conditions
+
+## Timing
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 78)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network element responsible for registration, authentication, and mobility management."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
 # Extracted Data from processed_data\semantic_chunks.md (Chunk 80)
 
 ## Network Elements
@@ -7455,6 +8889,18 @@
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
   "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE."
 }
 
 ## Transitions
@@ -7533,42 +8979,14 @@
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to register with the 5G network."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered and has no 5GMM context."
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 102)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
+  "type": "Network Element",
+  "description": "User Equipment - the mobile device attempting to access the network."
 }
 
 {
   "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration, connection management, mobility management, and access authentication/authorization."
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, connection management, and mobility management."
 }
 
 ## States
@@ -7589,6 +9007,136 @@
   "name": "5GMM-REGISTERED",
   "type": "FINAL",
   "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication."
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required."
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration."
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request."
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 95)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment: Mobile device attempting to access the network."
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function: Manages registration, connection management, and mobility."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
 }
 
 ## Transitions
@@ -7622,7 +9170,274 @@
 {
   "element1": "UE",
   "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF, and AMF authenticates the UE."
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 112)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Manages access control and mobility for the UE"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "Initial state of the UE before registration"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "State of the UE during the registration procedure"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "State of the UE after successful registration"
+}
+
+{
+  "name": "5GMM-COMMON-PROCEDURE-INITIATED",
+  "type": "INTERMEDIATE",
+  "description": "State when a common procedure is initiated"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests registration with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+{
+  "name": "Authentication Response",
+  "description": "UE sends authentication response to the network"
+}
+
+{
+  "name": "Authentication Failure",
+  "description": "Authentication process fails"
+}
+
+{
+  "name": "Security Mode Command",
+  "description": "Network initiates security mode setup"
+}
+
+{
+  "name": "Security Mode Complete",
+  "description": "UE completes security mode setup"
+}
+
+{
+  "name": "Security Mode Reject",
+  "description": "UE rejects security mode setup"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-COMMON-PROCEDURE-INITIATED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access"
+}
+
+{
+  "state": "5GMM-COMMON-PROCEDURE-INITIATED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-COMMON-PROCEDURE-INITIATED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-COMMON-PROCEDURE-INITIATED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 113)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network."
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Network function responsible for registration, authentication, and mobility management."
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network."
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network."
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network."
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network."
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE."
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "User turns on device and attempts network access",
+  "condition": "UE must be in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to the AMF, and the AMF authenticates the UE."
 }
 
 ## Triggers
@@ -7667,160 +9482,6 @@
 
 {
   "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network"
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network element responsible for registration, connection management, and mobility management"
-}
-
-{
-  "name": "SMF",
-  "type": "Session Management Function",
-  "description": "Network element responsible for session management"
-}
-
-{
-  "name": "UPF",
-  "type": "User Plane Function",
-  "description": "Network element responsible for user plane traffic handling"
-}
-
-{
-  "name": "PCF",
-  "type": "Policy Control Function",
-  "description": "Network element responsible for policy control"
-}
-
-{
-  "name": "NRF",
-  "type": "Network Repository Function",
-  "description": "Network element that stores network function profiles and supports service discovery"
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered with the network"
-}
-
-{
-  "name": "5GMM-REGISTERING",
-  "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering with the network"
-}
-
-## Transitions
-
-{
-  "step": 1,
-  "message": "Registration Request",
-  "from_element": "UE",
-  "to_element": "AMF",
-  "from_state": "5GMM-NULL",
-  "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
-  "condition": "UE must be in coverage area",
-  "timing": "Initial step of registration"
-}
-
-{
-  "step": 2,
-  "message": "Authentication Request",
-  "from_element": "AMF",
-  "to_element": "UE",
-  "from_state": "5GMM-REGISTERING",
-  "to_state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication",
-  "condition": "UE identity verification required",
-  "timing": "After UE sends Registration Request"
-}
-
-## Network Element Relationships
-
-{
-  "element1": "UE",
-  "element2": "AMF",
-  "relationship": "UE sends registration requests to AMF and receives responses"
-}
-
-{
-  "element1": "AMF",
-  "element2": "SMF",
-  "relationship": "AMF interacts with SMF for session management during registration"
-}
-
-{
-  "element1": "AMF",
-  "element2": "UPF",
-  "relationship": "AMF interacts with UPF for user plane setup during registration"
-}
-
-{
-  "element1": "AMF",
-  "element2": "PCF",
-  "relationship": "AMF interacts with PCF for policy control during registration"
-}
-
-{
-  "element1": "AMF",
-  "element2": "NRF",
-  "relationship": "AMF discovers other network functions via NRF"
-}
-
-## Triggers
-
-{
-  "state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "trigger": "Network initiates authentication"
-}
-
-## Conditions
-
-{
-  "state": "5GMM-REGISTERING",
-  "condition": "UE must be in coverage area"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "condition": "UE identity verification required"
-}
-
-## Timing
-
-{
-  "state": "5GMM-REGISTERING",
-  "timing": "Initial step of registration"
-}
-
-{
-  "state": "5GMM-REGISTERED",
-  "timing": "After UE sends Registration Request"
-}
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 121)
-
-## Network Elements
-
-{
-  "name": "UE",
   "type": "Network Element",
   "description": "User Equipment - mobile device attempting to access the network"
 }
@@ -7860,65 +9521,31 @@
 {
   "name": "5GMM-NULL",
   "type": "INITIAL",
-  "description": "UE is not registered in the network"
-}
-
-{
-  "name": "5GMM-REGISTERED",
-  "type": "FINAL",
-  "description": "UE is successfully registered in the network"
+  "description": "UE is not registered with the network"
 }
 
 {
   "name": "5GMM-REGISTERING",
   "type": "INTERMEDIATE",
-  "description": "UE is in the process of registering to the network"
+  "description": "UE is in the process of registering with the network"
 }
 
 {
-  "name": "5GMM-CONNECTED",
-  "type": "INTERMEDIATE",
-  "description": "UE is connected to the network"
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network"
 }
 
 {
-  "name": "5GMM-DEREGISTERED",
-  "type": "INTERMEDIATE",
-  "description": "UE is deregistered from the network"
-}
-
-## Transitions
-
-## Network Element Relationships
-
-## Triggers
-
-## Conditions
-
-## Timing
-
-# Extracted Data from processed_data\semantic_chunks.md (Chunk 122)
-
-## Network Elements
-
-{
-  "name": "UE",
-  "type": "User Equipment",
-  "description": "Mobile device attempting to access the 5G network."
-}
-
-{
-  "name": "AMF",
-  "type": "Access and Mobility Management Function",
-  "description": "Network function responsible for registration management, connection management, and mobility management."
-}
-
-## States
-
-{
-  "name": "5GMM-NULL",
-  "type": "INITIAL",
-  "description": "UE is not registered in the 5G network."
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
 }
 
 ## Transitions
@@ -7930,31 +9557,354 @@
   "to_element": "AMF",
   "from_state": "5GMM-NULL",
   "to_state": "5GMM-REGISTERING",
-  "trigger": "User turns on device and attempts network access",
+  "trigger": "UE attempts network access",
   "condition": "UE must be in coverage area",
   "timing": "Initial step of registration"
 }
 
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
 ## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF and receives responses"
+}
+
+{
+  "element1": "AMF",
+  "element2": "UE",
+  "relationship": "AMF authenticates the UE and manages its mobility"
+}
 
 ## Triggers
 
 {
-  "state": "5GMM-NULL",
-  "trigger": "User turns on device and attempts network access"
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
 }
 
 ## Conditions
 
 {
-  "state": "5GMM-NULL",
+  "state": "5GMM-REGISTERING",
   "condition": "UE must be in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
 }
 
 ## Timing
 
 {
-  "state": "5GMM-NULL",
+  "state": "5GMM-REGISTERING",
   "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 121)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "User Equipment",
+  "description": "Mobile device attempting to access the 5G network"
+}
+
+{
+  "name": "AMF",
+  "type": "Access and Mobility Management Function",
+  "description": "Manages registration, connection, and mobility"
+}
+
+{
+  "name": "SMF",
+  "type": "Session Management Function",
+  "description": "Manages PDU sessions"
+}
+
+{
+  "name": "UPF",
+  "type": "User Plane Function",
+  "description": "Handles user plane traffic"
+}
+
+{
+  "name": "PCF",
+  "type": "Policy Control Function",
+  "description": "Provides policy rules"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Repository Function",
+  "description": "Service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered in the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering to the 5G network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered in the 5G network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE requests to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "Network requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access",
+  "condition": "UE in coverage area",
+  "timing": "Initial step"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF and receives authentication requests"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts network access"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After Registration Request"
+}
+
+# Extracted Data from processed_data\semantic_chunks.md (Chunk 122)
+
+## Network Elements
+
+{
+  "name": "UE",
+  "type": "Network Element",
+  "description": "User Equipment - mobile device attempting to access the network"
+}
+
+{
+  "name": "AMF",
+  "type": "Network Element",
+  "description": "Access and Mobility Management Function - responsible for registration, connection management, reachability management, mobility management, authentication and authorization"
+}
+
+{
+  "name": "SMF",
+  "type": "Network Element",
+  "description": "Session Management Function - responsible for session management (session establishment, modification and release), UE IP address allocation & management"
+}
+
+{
+  "name": "UPF",
+  "type": "Network Element",
+  "description": "User Plane Function - responsible for packet routing & forwarding, policy enforcement, traffic usage reporting"
+}
+
+{
+  "name": "PCF",
+  "type": "Network Element",
+  "description": "Policy Control Function - provides policy rules to control plane function(s)"
+}
+
+{
+  "name": "NRF",
+  "type": "Network Element",
+  "description": "Network Repository Function - service discovery"
+}
+
+## States
+
+{
+  "name": "5GMM-NULL",
+  "type": "INITIAL",
+  "description": "UE is not registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERED",
+  "type": "FINAL",
+  "description": "UE is successfully registered with the network"
+}
+
+{
+  "name": "5GMM-REGISTERING",
+  "type": "INTERMEDIATE",
+  "description": "UE is in the process of registering with the network"
+}
+
+## Events
+
+{
+  "name": "Registration Request",
+  "description": "UE sends a request to register with the network"
+}
+
+{
+  "name": "Authentication Request",
+  "description": "AMF requests authentication information from the UE"
+}
+
+## Transitions
+
+{
+  "step": 1,
+  "message": "Registration Request",
+  "from_element": "UE",
+  "to_element": "AMF",
+  "from_state": "5GMM-NULL",
+  "to_state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network",
+  "condition": "UE is in coverage area",
+  "timing": "Initial step of registration"
+}
+
+{
+  "step": 2,
+  "message": "Authentication Request",
+  "from_element": "AMF",
+  "to_element": "UE",
+  "from_state": "5GMM-REGISTERING",
+  "to_state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication",
+  "condition": "UE identity verification required",
+  "timing": "After UE sends Registration Request"
+}
+
+## Network Element Relationships
+
+{
+  "element1": "UE",
+  "element2": "AMF",
+  "relationship": "UE sends registration requests to AMF and receives authentication requests from AMF"
+}
+
+## Triggers
+
+{
+  "state": "5GMM-REGISTERING",
+  "trigger": "UE attempts to access the network"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "trigger": "Network initiates authentication"
+}
+
+## Conditions
+
+{
+  "state": "5GMM-REGISTERING",
+  "condition": "UE is in coverage area"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "condition": "UE identity verification required"
+}
+
+## Timing
+
+{
+  "state": "5GMM-REGISTERING",
+  "timing": "Initial step of registration"
+}
+
+{
+  "state": "5GMM-REGISTERED",
+  "timing": "After UE sends Registration Request"
 }
 

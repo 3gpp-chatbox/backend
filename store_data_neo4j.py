@@ -10,10 +10,13 @@ from rich.console import Console
 import glob
 from datetime import datetime
 import traceback
+from dotenv import load_dotenv
 
+# Initialize console and load environment variables
 console = Console()
+load_dotenv()
 
-# Neo4j Configuration (from environment variables)
+# Neo4j Configuration
 URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
 USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
 PASSWORD = os.getenv("NEO4J_PASSWORD")
@@ -41,7 +44,7 @@ def save_processed_files(processed: Set[str]):
     try:
         with open(PROCESSED_FILES_CACHE, 'w') as f:
             json.dump(list(processed), f)
-        except Exception as e:
+    except Exception as e:
         console.print(f"[yellow]Warning: Could not save processed files cache: {e}[/yellow]")
 
 def test_neo4j_connection(uri, username, password):
@@ -191,7 +194,6 @@ def process_intermediate_file(file_path: str, driver, processed_files: Set[str])
                     })
                     if len(relationships) >= BATCH_SIZE:
                         batch_neo4j_operations(session, relationships)
-    relationships = []
                 if relationships:
                     batch_neo4j_operations(session, relationships)
 
@@ -238,7 +240,7 @@ def monitor_and_process():
         console.print(f"[yellow]3. Neo4j is accepting connections on {URI}[/yellow]")
         return False
 
-        console.print("[green]Neo4j connection successful[/green]")
+    console.print("[green]Neo4j connection successful[/green]")
     
     try:
         driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
@@ -254,7 +256,7 @@ def monitor_and_process():
                 return False
         
         # Clear existing data before starting
-            console.print("[blue]Clearing existing database...[/blue]")
+        console.print("[blue]Clearing existing database...[/blue]")
         with driver.session() as session:
             session.run("MATCH (n) DETACH DELETE n")
         console.print("[green]Database cleared successfully[/green]")
@@ -322,5 +324,219 @@ def main():
     except Exception as e:
         console.print(f"[red]Error in main process: {str(e)}[/red]")
 
+def read_registration_data(file_path: str) -> Dict:
+    """Read data from either JSON or Markdown file."""
+    try:
+        if file_path.endswith('.json'):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        elif file_path.endswith('.md'):
+            data = {'results': []}
+            current_section = None
+            current_chunk = {}
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                
+            for line in lines:
+                if line.startswith('# Extracted Data'):
+                    if current_chunk:
+                        data['results'].append(current_chunk)
+                    current_chunk = {}
+                elif line.startswith('## '):
+                    current_section = line.strip('## \n').lower().replace(' ', '_')
+                    current_chunk[current_section] = []
+                elif line.strip() and current_section and line.strip().startswith('{'):
+                    try:
+                        item = json.loads(line.strip())
+                        current_chunk[current_section].append(item)
+                    except json.JSONDecodeError:
+                        continue
+            
+            if current_chunk:
+                data['results'].append(current_chunk)
+                
+            return data
+            
+        raise ValueError(f"Unsupported file format: {file_path}")
+        
+    except Exception as e:
+        console.print(f"[red]Error reading file {file_path}: {str(e)}[/red]")
+        raise
+
+def process_registration_data(file_path: str = "processed_data/registration_analysis.md"):
+    """Process and store registration analysis data."""
+    try:
+        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+        
+        with driver.session() as session:
+            # Clear existing data
+            console.print("[blue]Clearing existing database...[/blue]")
+            clear_database(session)
+            
+            # Create constraints
+            create_unique_constraints(session)
+            
+            # Read and process the data
+            data = read_registration_data(file_path)
+            
+            total_results = len(data.get('results', []))
+            console.print(f"[blue]Processing {total_results} results...[/blue]")
+            
+            for i, result in enumerate(data.get('results', []), 1):
+                console.print(f"[blue]Processing result {i}/{total_results}[/blue]")
+                
+                # Store all types of data
+                store_network_elements(session, result.get('network_elements', []))
+                store_states(session, result.get('states', []))
+                store_events(session, result.get('events', []))
+                store_transitions(session, result.get('transitions', []))
+                store_element_relationships(session, result.get('network_element_relationships', []))
+                store_triggers(session, result.get('triggers', []))
+                store_conditions(session, result.get('conditions', []))
+                store_timing(session, result.get('timing', []))
+            
+            console.print("[green]✓ Data stored successfully in Neo4j[/green]")
+            
+    except Exception as e:
+        console.print(f"[red]Error storing data in Neo4j: {str(e)}[/red]")
+        raise
+    finally:
+        if 'driver' in locals():
+            driver.close()
+
+def clear_database(session):
+    """Clear all nodes and relationships from the database."""
+    try:
+        session.run("MATCH (n) DETACH DELETE n")
+        console.print("[green]✓ Database cleared successfully[/green]")
+    except Exception as e:
+        console.print(f"[red]Error clearing database: {str(e)}[/red]")
+        raise
+
+def create_unique_constraints(session):
+    """Create unique constraints for nodes."""
+    constraints = [
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.name IS UNIQUE",
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Event) REQUIRE n.name IS UNIQUE"
+    ]
+    
+    for constraint in constraints:
+        try:
+            session.run(constraint)
+        except Exception as e:
+            console.print(f"[yellow]Warning creating constraint: {str(e)}[/yellow]")
+
+def store_network_elements(session, elements: List[Dict]):
+    """Store network elements as nodes."""
+    for element in elements:
+        cypher = """
+        MERGE (n:NetworkElement {name: $name})
+        SET n.type = $type,
+            n.description = $description,
+            n.role = $role
+        """
+        session.run(cypher, 
+                   name=element['name'], 
+                   type=element.get('type', ''),
+                   description=element.get('description', ''),
+                   role=element.get('role', ''))
+
+def store_states(session, states: List[Dict]):
+    """Store states as nodes."""
+    for state in states:
+        cypher = """
+        MERGE (s:State {name: $name})
+        SET s.type = $type,
+            s.description = $description,
+            s.classification = $classification
+        """
+        session.run(cypher, 
+                   name=state['name'],
+                   type=state.get('type', ''),
+                   description=state.get('description', ''),
+                   classification=state.get('classification', ''))  # INITIAL, INTERMEDIATE, or FINAL
+
+def store_events(session, events: List[Dict]):
+    """Store events as nodes."""
+    for event in events:
+        cypher = """
+        MERGE (e:Event {name: $name})
+        SET e.description = $description
+        """
+        session.run(cypher, name=event['name'],
+                   description=event['description'])
+
+def store_transitions(session, transitions: List[Dict]):
+    """Store transitions as relationships."""
+    for transition in transitions:
+        cypher = """
+        MATCH (from:State {name: $from_state})
+        MATCH (to:State {name: $to_state})
+        MERGE (from)-[r:TRANSITIONS_TO {
+            trigger: $trigger,
+            condition: $condition,
+            timing: $timing,
+            prerequisites: $prerequisites
+        }]->(to)
+        """
+        session.run(cypher, 
+                   from_state=transition['from_state'],
+                   to_state=transition['to_state'],
+                   trigger=transition.get('trigger', ''),
+                   condition=transition.get('condition', ''),
+                   timing=transition.get('timing', ''),
+                   prerequisites=transition.get('prerequisites', ''))
+
+def store_element_relationships(session, relationships: List[Dict]):
+    """Store relationships between network elements."""
+    for rel in relationships:
+        cypher = """
+        MATCH (e1:NetworkElement {name: $element1})
+        MATCH (e2:NetworkElement {name: $element2})
+        MERGE (e1)-[r:RELATES_TO {description: $description}]->(e2)
+        """
+        session.run(cypher,
+                   element1=rel['element1'],
+                   element2=rel['element2'],
+                   description=rel['relationship'])
+
+def store_triggers(session, triggers: List[Dict]):
+    """Store triggers."""
+    for trigger in triggers:
+        cypher = """
+        MATCH (s:State {name: $state})
+        MERGE (t:Trigger {name: $trigger})
+        MERGE (s)-[r:HAS_TRIGGER]->(t)
+        """
+        session.run(cypher,
+                   state=trigger['state'],
+                   trigger=trigger['trigger'])
+
+def store_conditions(session, conditions: List[Dict]):
+    """Store conditions."""
+    for condition in conditions:
+        cypher = """
+        MATCH (s:State {name: $state})
+        MERGE (c:Condition {description: $condition})
+        MERGE (s)-[r:HAS_CONDITION]->(c)
+        """
+        session.run(cypher,
+                   state=condition['state'],
+                   condition=condition['condition'])
+
+def store_timing(session, timings: List[Dict]):
+    """Store timing information."""
+    for timing in timings:
+        cypher = """
+        MATCH (s:State {name: $state})
+        MERGE (t:Timing {description: $timing})
+        MERGE (s)-[r:HAS_TIMING]->(t)
+        """
+        session.run(cypher,
+                   state=timing['state'],
+                   timing=timing['timing'])
+
 if __name__ == "__main__":
-    main()
+    process_registration_data()
