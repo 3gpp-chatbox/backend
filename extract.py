@@ -34,7 +34,9 @@ RATE_LIMIT_DELAY = 1
 MAX_RETRIES = 3
 
 EXTRACTION_PROMPT = """Analyze the following text and extract information about the 5G network initial registration procedure.
-Return the information in a valid JSON format exactly as shown in the template below. Network elements and states will be the nodes
+Return the information in a valid JSON format exactly as shown in the template below. Focus on capturing the sequential flow
+of the registration procedure, where each step is clearly linked to the next step. Network elements and states will be the nodes,
+and the transitions and events will be the relationships(edges) with clear sequence numbers. Network elements and states will be the nodes
 and the transitions and events will be the relationships(edges).Edges are labeled with the type of relationship (e.g. SENDS_MESSAGES_TO, TRANSITIONS_TO, etc.).
 Do not include any other text or explanations outside the JSON structure. DO NOT INCLUDE ANY OTHER PROCEDURES OR SUBPROCEDURES EXCEPT FOR THE INITIAL REGISTRATION PROCEDURE.
 
@@ -49,31 +51,18 @@ Extract the following information:
     - Classify as INITIAL, INTERMEDIATE, or FINAL
     - Include descriptions
 
-3. Events:
-    - Identify events in the registration procedure (Registration Request, Authentication Request, etc.)
-    - Include descriptions
+3. Registration Flow:
+    - Identify each step in the registration procedure
+    - Include sequence numbers for each step
+    - Identify the source and destination elements for each message
+    - Include the state changes at each step
+    - Include the message being sent
+    - Include the trigger for the message
+    - Include the conditions for the message
+    - Include the timing for the message
+    - Include the type of relationship (e.g. SENDS_MESSAGES_TO, TRANSITIONS_TO, etc.)
+    -
 
-4. Transitions:
-    - Identify state transitions
-    - Include triggers, conditions, and timing
-    - Note any prerequisites
-
-5. Network Element Relationships:
-    - Identify dependencies between network elements
-    - Include descriptions of how elements interact
-    - Include descriptions of the relationships
-
-6. Triggers:
-    - Identify triggers for state transitions
-    - Include descriptions of what triggers the transition
-
-7. Conditions:
-    - Identify conditions that must be met for state transitions
-    - Include descriptions of the conditions
-
-8. Timing:
-    - Identify timing of state transitions
-    - Include descriptions of the timing
 
 Return the response in this EXACT JSON structure:
 {
@@ -82,11 +71,6 @@ Return the response in this EXACT JSON structure:
             "name": "element name",
             "type": "Network Element",
             "description": "description"
-        },
-        {
-          "name": "another element",
-          "type": "Another type",
-          "description": "another description"
         }
     ],
     "states": [
@@ -94,74 +78,54 @@ Return the response in this EXACT JSON structure:
             "name": "state name",
             "type": "INITIAL/INTERMEDIATE/FINAL",
             "description": "description"
-        },
-        {
-            "name": "another state",
-            "type": "INTERMEDIATE",
-            "description": "another state description"
         }
     ],
-    "events": [
+    "registration_flow": [
         {
-            "name": "event name",
-            "description": "Triggers the transition"
-        }
-    ],
-    "transitions": [
-        {
-            "step": 1,
+            "sequence_number": 1,
+            "step_name": "Initial Registration Request",
+            "source_element": "UE",
+            "destination_element": "AMF",
             "message": "Registration Request",
-            "from_element": "UE",
-            "to_element": "AMF",
-            "from_state": "5GMM-NULL",
-            "to_state": "5GMM-REGISTERING",
-            "trigger": "User turns on device and attempts network access",
-            "condition": "UE must be in coverage area",
-            "timing": "Initial step of registration"
+            "source_state": "5GMM-NULL",
+            "destination_state": "5GMM-REGISTERING",
+            "description": "UE initiates registration procedure",
+            "trigger": "UE powers on",
+            "conditions": ["UE in coverage area", "Valid USIM"],
+            "timing": "T3510 starts"
         },
         {
-            "step": 2,
+            "sequence_number": 2,
+            "step_name": "AMF Authentication",
+            "source_element": "AMF",
+            "destination_element": "UE",
             "message": "Authentication Request",
-            "from_element": "AMF",
-            "to_element": "UE",
-            "from_state": "5GMM-REGISTERING",
-            "to_state": "5GMM-REGISTERED",
-            "trigger": "Network initiates authentication",
-            "condition": "UE identity verification required",
-            "timing": "After UE sends Registration Request"
+            "source_state": "5GMM-REGISTERING",
+            "destination_state": "5GMM-REGISTERING-AUTHENTICATING",
+            "description": "AMF initiates authentication procedure",
+            "trigger": "Valid Registration Request received",
+            "conditions": ["UE identity verified"],
+            "timing": "T3560 starts"
         }
     ],
-    "network_element_relationships": [
-        {
-            "element1": "element name",
-            "element2": "element name",
-            "relationship": "description of the relationship"
-        }
-    ],
-    "triggers": [
-        {
-            "state": "state name",
-            "trigger": "what triggers the transition"
-        }
-    ],
-    "conditions": [
-        {
-            "state": "state name",
-            "condition": "conditions that must be met"
-        }
-    ],
-    "timing": [
-        {
-            "state": "state name",
-            "timing": "timing of the transition"
-        }
-    ]
+    "metadata": {
+        "procedure_name": "Initial Registration",
+        "total_steps": 2,
+        "source": "document reference"
+    }
 }
+
+The registration_flow array should contain ALL steps in the registration procedure in sequential order.
+Each step must include:
+- A unique sequence number
+- Clear source and destination elements
+- The message being sent
+- State changes (if any)
+- Triggers, conditions, and timing information
+
 
 Text to analyze:
 """
-
-# Keywords to identify relevant sections
 RELEVANT_KEYWORDS = [
     "registration procedure",
     "5GMM",
