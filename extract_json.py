@@ -71,7 +71,7 @@ def extract_procedural_info_from_text(section_name, text):
         }},
         {{
           "from": "UE_Attaching",
-          "to": "Attach_Request_Received",
+          "to": "MME_Processing",
           "event": "Attach_Request_Received",
           "properties": {{}}
         }}
@@ -118,10 +118,10 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
     return procedural_info
 
 # Example usage: Processing section 5.5.1.2.2
-section_id_to_process = "5.5.1.2.2"
+section_id_to_process = "5.5.1.2.4"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.3", db_path)
+procedural_info = process_section("5.5.1.2.6", db_path)
 
 if procedural_info:
     save_procedural_info_to_json(procedural_info, "data.json")
