@@ -67,7 +67,7 @@ def validate_json_file(file_path):
 
 
 # Manually provide the JSON file path here
-json_file_path = "0225-json-test3.json"
+json_file_path = "0225-json-test4.json"
 
 # Validate the JSON file
 validate_json_file(json_file_path)

@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "id": "Registration_Request_Sent",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Network_Receives_Registration_Request",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "Initiate_5GMM_Common_Procedures",
+      "type": "process",
+      "properties": {
+        "procedure_name": "5GMM common procedures",
+        "examples": ["identification", "authentication", "security procedures"]
+      }
+    },
+    {
+      "id": "Evaluate_Registration_Request_Information",
+      "type": "process",
+      "properties": {}
+    },
+    {
+      "id": "NAS_Security_Mode_Control_Procedures_Needed",
+      "type": "condition",
+      "properties": {}
+    },
+    {
+      "id": "Initiate_Two_NAS_Security_Mode_Control_Procedures",
+      "type": "process",
+      "properties": {
+        "procedure_name": "NAS security mode control procedures"
+      }
+    },
+    {
+      "id": "Emergency_Registration",
+      "type": "condition",
+      "properties": {
+        "5GS_registration_type": "emergency registration"
+      }
+    },
+    {
+      "id": "AMF_Supports_Emergency_Registration_for_Unauthenticated_SUCIs",
+      "type": "condition",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Chooses_To_Skip_Authentication",
+      "type": "decision",
+      "properties": {}
+    },
+    {
+      "id": "Execute_Security_Mode_Control_Procedure",
+      "type": "process",
+      "properties": {
+        "procedure_name": "security mode control procedure"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Network_Receives_Registration_Request",
+      "action": "Receive_Registration_Request",
+      "properties": {}
+    },
+    {
+      "from": "Network_Receives_Registration_Request",
+      "to": "Evaluate_Registration_Request_Information",
+      "action": "Evaluate",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_Registration_Request_Information",
+      "to": "Initiate_5GMM_Common_Procedures",
+      "action": "Initiate",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_5GMM_Common_Procedures",
+      "to": "NAS_Security_Mode_Control_Procedures_Needed",
+      "condition": "NAS Security Required?",
+      "properties": {}
+    },
+    {
+      "from": "NAS_Security_Mode_Control_Procedures_Needed",
+      "to": "Initiate_Two_NAS_Security_Mode_Control_Procedures",
+      "condition": "Yes",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_5GMM_Common_Procedures",
+      "to": "Emergency_Registration",
+      "condition": "Emergency Registration?",
+      "properties": {}
+    },
+    {
+      "from": "Emergency_Registration",
+      "to": "AMF_Supports_Emergency_Registration_for_Unauthenticated_SUCIs",
+      "condition": "Yes",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Supports_Emergency_Registration_for_Unauthenticated_SUCIs",
+      "to": "AMF_Chooses_To_Skip_Authentication",
+      "condition": "Yes",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Chooses_To_Skip_Authentication",
+      "to": "Execute_Security_Mode_Control_Procedure",
+      "action": "Execute",
+      "condition": "AMF chooses to skip authentication",
+      "properties": {}
+    }
+  ]
+}
