@@ -264,3 +264,46 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     save_path = f"data/stripped/{doc_name}"
     doc.save(save_path)
     return save_path
+
+
+def extract_table_of_contents(section_tree: List[Section]) -> str:
+    """
+    Generate a hierarchical table of contents string from a section tree.
+    
+    Args:
+        section_tree (List[Section]): List of top-level sections
+        
+    Returns:
+        str: A formatted string containing the table of contents with proper indentation
+        showing the hierarchical structure of the document.
+        
+    Example output:
+        1. Introduction
+            1.1 Overview
+            1.2 Scope
+                1.2.1 Applications
+        2. Requirements
+            2.1 System Requirements
+            2.2 User Requirements
+    """
+    def _process_section(section: Section, toc_lines: List[str]):
+        """Helper function to recursively process sections and their subsections"""
+        # Calculate indentation based on section level (4 spaces per level)
+        indent = "    " * (section.level - 1)
+        
+        # Add the current section heading with proper indentation
+        # The heading already contains the section number since we preserved it in extract_section_tree
+        toc_lines.append(f"{indent}{section.heading}")
+        
+        # Process all subsections recursively
+        for subsection in section.subsections:
+            _process_section(subsection, toc_lines)
+    
+    toc_lines = []
+    
+    # Process each top-level section
+    for section in section_tree:
+        _process_section(section, toc_lines)
+    
+    # Join all lines with newlines to create the final TOC string
+    return "\n".join(toc_lines)
