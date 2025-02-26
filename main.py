@@ -5,6 +5,7 @@ import os
 
 JSON_FILE = "data.json"
 
+
 def run_extraction():
     print("Running extraction script...")
     subprocess.run(["python", "extract_json.py"])  # Step 1

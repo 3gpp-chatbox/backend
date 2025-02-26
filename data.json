@@ -1,220 +1,96 @@
 {
+  "procedure_name": "Initial Registration",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under specific conditions.",
   "nodes": [
     {
-      "id": "UE_Initial_Registration_Requested",
+      "id": "5GMM-DEREGISTERED",
       "type": "state",
       "properties": {
-        "5GS_registration_type": "initial registration",
-        "PDU_SESSION_ESTABLISHMENT_REQUEST": "initial emergency request"
+        "description": "UE is in 5GMM-DEREGISTERED state"
       }
     },
     {
-      "id": "Network_Rejects_Registration",
+      "id": "Registration_Initiation_Triggers",
       "type": "event",
       "properties": {
-        "message_type": "REGISTRATION REJECT"
-      }
+        "description": "Triggers for initiating the registration procedure"
+      },
+      "conditions": [
+        "Initial registration for 5GS services",
+        "Initial registration for emergency services",
+        "Initial registration for SMS over NAS",
+        "UE moves from GERAN/UTRAN to NG-RAN coverage after GPRS attach/routing area update or 5G-SRVCC without successful EPS attach/tracking area update/registration procedure",
+        "Initial registration for onboarding services in SNPN",
+        "Initial registration for disaster roaming services",
+        "Initial registration to come out of unavailability period and resume normal services"
+      ]
     },
     {
-      "id": "UE_Procedures_Subclause_5_5_1_2_5",
-      "type": "state",
-      "properties": {
-        "action": "Perform procedures as described in subclause 5.5.1.2.5"
-      }
-    },
-    {
-      "id": "UE_Same_PLMN_SNPN_Check",
-      "type": "decision",
-      "properties": {
-        "condition": "UE is in the same selected PLMN or SNPN where the last initial registration request was attempted"
-      }
-    },
-    {
-      "id": "UE_Inform_Upper_Layers_Failure",
+      "id": "UE_Sends_Registration_Request",
       "type": "action",
       "properties": {
-        "action": "Inform the upper layers of the failure of the procedure"
-      }
+        "description": "UE sends REGISTRATION REQUEST message to AMF",
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity IE (5G-GUTI, SUCI, PEI)",
+        "UE status IE (EMM registration status)",
+        "Last visited registered TAI",
+        "5GS update type IE (SMS requested bit)",
+        "MICO indication IE",
+        "T3324 IE (Active time value)",
+        "Requested T3512 IE",
+        "Requested DRX parameters IE",
+        "Requested NB-N1 mode DRX parameters IE",
+        "Requested extended DRX parameters IE",
+        "LADN indication IE",
+        "Requested NSSAI IE",
+        "Network slicing indication IE",
+        "5GMM capability IE",
+        "Follow-on request indicator",
+        "S1 UE network capability IE",
+        "UE radio capability ID IE",
+        "Payload container IE (UE STATE INDICATION message)",
+        "NAS message container IE",
+        "Additional information requested IE",
+        "Requested WUS assistance information IE",
+        "Requested PEIPS assistance information IE",
+        "UE determined PLMN with disaster condition IE",
+        "Service-level-AA container IE",
+	"AUN3 indication IE",
+        "N5GC indication IE"
+      ],
+        "timers": [
+            "T3510",
+            "T3502",
+            "T3511",
+            "T3519"
+        ]
     },
     {
-      "id": "UE_Attempt_Initial_Registration_Emergency",
-      "type": "action",
-      "properties": {
-        "action": "Attempt initial registration for emergency services"
-      }
-    },
-    {
-      "id": "UE_Initial_Registration_Requested_Handover",
-      "type": "state",
-      "properties": {
-        "5GS_registration_type": "initial registration",
-        "emergency_PDU_session": "handover of an existing PDN connection for emergency bearer services"
-      }
-    },
-    {
-      "id": "UE_Same_PLMN_Equivalent_Check",
-      "type": "decision",
-      "properties": {
-        "condition": "UE is in the same selected PLMN or equivalent PLMN or the same selected SNPN or equivalent SNPN where the last initial registration request was attempted"
-      }
-    },
-    {
-      "id": "UE_Procedures_Subclause_5_5_1_2_7",
-      "type": "state",
-      "properties": {
-        "action": "Perform actions as described in subclause 5.5.1.2.7"
-      }
-    },
-    {
-      "id": "Registration_Failed_Abnormal_Case_b",
+      "id": "AMF_Receives_Registration_Request",
       "type": "event",
       "properties": {
-        "condition": "abnormal case b) in subclause 5.5.1.2.7"
-      }
-    },
-    {
-      "id": "UE_Inform_Upper_Layers_Access_Failure",
-      "type": "action",
-      "properties": {
-        "action": "Inform the upper layers of the failure to access the network"
-      }
-    },
-    {
-      "id": "Registration_Failed_Abnormal_Case_cde",
-      "type": "event",
-      "properties": {
-        "condition": "abnormal cases c), d) or e) in subclause 5.5.1.2.7"
-      }
-    },
-    {
-      "id": "PDU_Handover_Needed_Check",
-      "type": "decision",
-      "properties": {
-        "condition": "PDU session needs to be established due to handover of an existing PDN connection for emergency bearer services"
+        "description": "AMF receives REGISTRATION REQUEST message"
       }
     }
   ],
   "edges": [
     {
-      "from": "UE_Initial_Registration_Requested",
-      "to": "Network_Rejects_Registration",
-      "event": "Registration_Request_Sent",
-      "properties": {}
+      "from": "5GMM-DEREGISTERED",
+      "to": "UE_Sends_Registration_Request",
+      "event": "Registration_Initiation_Triggers",
+      "properties": {
+        "description": "UE initiates registration procedure based on triggers",
+        "action": "Send REGISTRATION REQUEST"
+      }
     },
     {
-      "from": "Network_Rejects_Registration",
-      "to": "UE_Procedures_Subclause_5_5_1_2_5",
-      "action": "Perform_Subclause_5_5_1_2_5",
-      "properties": {}
-    },
-    {
-      "from": "UE_Procedures_Subclause_5_5_1_2_5",
-      "to": "UE_Same_PLMN_SNPN_Check",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_SNPN_Check",
-      "to": "UE_Inform_Upper_Layers_Failure",
-      "condition": "true",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_SNPN_Check",
-      "to": "UE_Attempt_Initial_Registration_Emergency",
-      "condition": "false",
-      "properties": {}
-    },
-    {
-      "from": "UE_Initial_Registration_Requested_Handover",
-      "to": "Network_Rejects_Registration",
-      "event": "Registration_Request_Sent",
-      "properties": {}
-    },
-    {
-      "from": "Network_Rejects_Registration",
-      "to": "UE_Procedures_Subclause_5_5_1_2_5",
-      "action": "Perform_Subclause_5_5_1_2_5",
-      "properties": {}
-    },
-    {
-      "from": "UE_Procedures_Subclause_5_5_1_2_5",
-      "to": "UE_Same_PLMN_Equivalent_Check",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_Equivalent_Check",
-      "to": "UE_Attempt_Initial_Registration_Emergency",
-      "condition": "true",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_Equivalent_Check",
-      "to": "UE_Attempt_Initial_Registration_Emergency",
-      "condition": "false",
-      "properties": {}
-    },
-    {
-      "from": "UE_Initial_Registration_Requested",
-      "to": "Registration_Failed_Abnormal_Case_b",
-      "event": "Registration_Request_Failed",
-      "properties": {}
-    },
-    {
-      "from": "Registration_Failed_Abnormal_Case_b",
-      "to": "UE_Procedures_Subclause_5_5_1_2_7",
-      "action": "Perform_Subclause_5_5_1_2_7",
-      "properties": {}
-    },
-    {
-      "from": "UE_Procedures_Subclause_5_5_1_2_7",
-      "to": "UE_Inform_Upper_Layers_Access_Failure",
-      "properties": {}
-    },
-    {
-      "from": "UE_Initial_Registration_Requested",
-      "to": "Registration_Failed_Abnormal_Case_cde",
-      "event": "Registration_Request_Failed",
-      "properties": {}
-    },
-    {
-      "from": "Registration_Failed_Abnormal_Case_cde",
-      "to": "UE_Procedures_Subclause_5_5_1_2_7",
-      "action": "Perform_Subclause_5_5_1_2_7",
-      "properties": {}
-    },
-    {
-      "from": "UE_Procedures_Subclause_5_5_1_2_7",
-      "to": "UE_Same_PLMN_SNPN_Check",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_SNPN_Check",
-      "to": "PDU_Handover_Needed_Check",
-      "properties": {}
-    },
-    {
-      "from": "PDU_Handover_Needed_Check",
-      "to": "UE_Inform_Upper_Layers_Failure",
-      "condition": "false",
-      "properties": {}
-    },
-     {
-      "from": "PDU_Handover_Needed_Check",
-      "to": "UE_Same_PLMN_Equivalent_Check",
-      "condition": "true",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_Equivalent_Check",
-      "to": "UE_Attempt_Initial_Registration_Emergency",
-      "condition": "true",
-      "properties": {}
-    },
-    {
-      "from": "UE_Same_PLMN_Equivalent_Check",
-      "to": "UE_Attempt_Initial_Registration_Emergency",
-      "condition": "false",
-      "properties": {}
+      "from": "UE_Sends_Registration_Request",
+      "to": "AMF_Receives_Registration_Request",
+      "properties": {
+        "description": "REGISTRATION REQUEST message is sent to AMF"
+      }
     }
   ]
 }

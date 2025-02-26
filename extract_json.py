@@ -36,6 +36,27 @@ def extract_procedural_info_from_text(section_name, text):
      **flow property graph JSON representation**: Structure the procedure into a JSON format.  comment out  ```json" and  ``` at the beginning and end of your response !! make sure your response start with left curly bracket "{" and end with right curly bracket "}",response  not contain anything but json code,
 
     **IMPORTANT: Return the responses in the exact format like below:**,
+<this is examplefor you to think and analyze the procedure>: 
+Core Components to Identify
+
+□ States: Different conditions or statuses of the UE and network
+
+elements.
+
+Actions: Operations performed by the UE or network.
+
+Events: Triggers causing transitions between states.
+
+Parameters: Data exchanged or required during the procedure.
+
+Flow of Execution: Sequence of steps in the procedure.
+
+Conditionals: Decisions based on certain criteria or parameters.
+
+Metadata: Additional information like timestamps, message types, or IDs.
+
+(this is an json example of a procedure example):
+
      {{
       "nodes": [
         {{
@@ -118,10 +139,10 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
     return procedural_info
 
 # Example usage: Processing section 5.5.1.2.2
-section_id_to_process = "5.5.1.2.4"
+section_id_to_process = "5.5.1.2.2"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.6", db_path)
+procedural_info = process_section("5.5.1.2.2", db_path)
 
 if procedural_info:
     save_procedural_info_to_json(procedural_info, "data.json")
