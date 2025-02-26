@@ -1,0 +1,17 @@
+{
+  "procedure_name": "Mobility and periodic registration update accepted by the network",
+  "steps": [
+    {
+      "step_number": 1,
+      "description": "When AMF reallocation occurs, the new AMF receives the 5GMM context of the UE."
+    },
+    {
+      "step_number": 2,
+      "description": "If the UE is registered for onboarding services in SNPN, the new AMF may start an implementation-specific timer for onboarding services when the registration procedure is successfully completed."
+    },
+    {
+      "step_number": 3,
+      "description": "If the REGISTRATION ACCEPT message includes the 5GS registration result IE with the NSSAA to be performed indicator set to Network slice-specific authentication and authorization is to be performed, includes a pending NSSAI, does not include an allowed NSSAI and does not include a partially allowed NSSAI, the UE shall not perform the registration procedure for mobility and periodic registration update with the Uplink data status IE except for emergency services and shall not initiate a service request procedure except for emergency services for emergency services fallback procedure for responding to paging or notification over non3GPP access for cases."
+    }
+  ]
+}

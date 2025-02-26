@@ -30,13 +30,13 @@ class DBHandler:
                 )
             ''')
             
-            # Create procedures table
+            # Create procedure metadata table
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS nas_procedures (
+                CREATE TABLE IF NOT EXISTS procedure_metadata (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     procedure_name TEXT,
                     description TEXT,
-                    steps JSON,
+                    steps_file TEXT,
                     related_3gpp_spec_sections JSON,
                     source_document_title TEXT,
                     source_chunk_ids JSON,
@@ -87,30 +87,6 @@ class DBHandler:
                 'collection': row[4]
             } for row in cursor.fetchall()]
 
-    def store_procedures(self, procedures: List[Dict], doc_id: str, similarity_score: float):
-        """Store extracted procedures"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            for procedure in procedures:
-                cursor.execute('''
-                    INSERT INTO nas_procedures (
-                        procedure_name, description, steps, 
-                        related_3gpp_spec_sections, source_document_title,
-                        source_chunk_ids, doc_id, similarity_score
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    procedure['procedure_name'],
-                    procedure['description'],
-                    json.dumps(procedure['steps']),
-                    json.dumps(procedure['related_3gpp_spec_sections']),
-                    procedure['source_document_title'],
-                    json.dumps(procedure['source_chunk_ids']),
-                    doc_id,
-                    similarity_score
-                ))
-            conn.commit()
-
     def create_embeddings(self, doc_id: str, model_name: str = "all-mpnet-base-v2") -> chromadb.Collection:
         """Create and store embeddings for chunks"""
         chunks = self.get_chunks(doc_id)
@@ -148,6 +124,29 @@ class DBHandler:
             )
 
         return collection 
+
+    def store_procedure_metadata(self, metadata: Dict):
+        """Store procedure metadata in database"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO procedure_metadata (
+                    procedure_name, description, steps_file,
+                    related_3gpp_spec_sections, source_document_title,
+                    source_chunk_ids, doc_id, similarity_score
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                metadata['procedure_name'],
+                metadata['description'],
+                metadata['steps_file'],
+                json.dumps(metadata['related_3gpp_spec_sections']),
+                metadata['source_document_title'],
+                json.dumps(metadata['source_chunk_ids']),
+                metadata['doc_id'],
+                metadata['similarity_score']
+            ))
+            conn.commit()
 
 # Keep old class for backward compatibility
 class ChunkDBHandler(DBHandler):

@@ -1,0 +1,21 @@
+{
+  "procedure_name": "Mobility and periodic registration update initiation",
+  "steps": [
+    {
+      "step_number": 1,
+      "description": "UE sets the TempNS bit to SNSSAI time validity information supported in the 5GMM capability IE of the REGISTRATION REQUEST message for all cases except case b."
+    },
+    {
+      "step_number": 2,
+      "description": "UE sets the SLVI bit to SNSSAI location validity information supported in the 5GMM capability IE of the REGISTRATION REQUEST message for all cases except case b."
+    },
+    {
+      "step_number": 3,
+      "description": "UE sets the RATUC bit to RAT utilization control supported in the 5GMM capability IE of the REGISTRATION REQUEST message over 3GPP access for all cases except case b."
+    },
+    {
+      "step_number": 4,
+      "description": "For case zm1 the UE should initiate the registration procedure for mobility and periodic registration update only if the UE can determine based on its implementation that there is enough time to complete the procedure before the start of the unavailability period."
+    }
+  ]
+}

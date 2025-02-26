@@ -4,33 +4,29 @@
 2.  Input:
     *   A user query (string).
     *   The vector database collection object (returned from embeddings.py).
-    *   The sentence-transformer model name (same as used in embeddings.py, default is `all-mpnet-base-v2`).
+    *   The sentence-transformer model name (same as used in embeddings.py).
 
 3.  Processing:
-    *   Loads the same sentence-transformer model used in `embeddings.py`.
-    *   Creates an embedding for the user query.
-    *   Queries the vector database for the most similar chunk embeddings (and their metadata, including the text chunks).
-    *   Constructs a prompt for the LLM, including the user query and the retrieved text chunks.
-    *   Calls the Gemini API (or your chosen LLM API) with the prompt.
-    *   use LLM to cluster the response
-    *   Parses the LLM response to extract the procedures.
+    *   Queries the vector database for the most similar chunk embeddings
+    *   Uses Gemini AI to extract procedures from the chunks
+    *   Stores procedure metadata in database
+    *   Saves procedure steps in JSON files
 
 4.  Output:
-    *   The extracted 5G NAS procedures in json format.
-
+    *   Procedure metadata in database
+    *   Procedure steps in JSON files
 '''
 
 import google.generativeai as genai
-import sqlite3
 import os
 import json
-from typing import List, Dict, Tuple
-from db_handler import ChunkDBHandler, DBHandler
-from embeddings import EmbeddingHandler
+from typing import List, Dict
+from db_handler import DBHandler
 import chromadb
+import time
 
 class ProcedureExtractor:
-    def __init__(self, api_key: str, model_name: str = "gemini-pro"):
+    def __init__(self, api_key: str, model_name: str = "gemini-2.0-flash"):
         """Initialize Gemini API and configure the model"""
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_name)
@@ -66,49 +62,45 @@ class ProcedureExtractor:
             for chunk in chunks
         ])
         
-        return f"""You are a 3GPP specification expert. Extract 5G NAS procedures from the provided context.
-        
-Query: {query}
+        return f"""
+    You are a 3GPP specification expert. Extract 5G NAS procedures from the provided context.
+    Context:
+    {chunks_text}
+    Instructions:
+    1. Analyze the context and identify {query} NAS procedures.
+    2. Format each procedure as a JSON object.
+    3. Return a JSON array of all found procedures.
+    4. Ensure the output is valid JSON format.
 
-Context:
-{chunks_text}
-
-Instructions:
-1. Analyze the context and identify NAS procedures
-2. Format each procedure as a JSON object
-3. Return a JSON array of all found procedures
-4. Ensure the output is valid JSON format
-
-Required JSON structure for each procedure:
-{{
-    "procedure_name": "Name of the NAS procedure",
-    "description": "Brief description of the procedure's purpose",
-    "steps": [
-        {{"step_number": 1, "description": "First step description"}},
-        {{"step_number": 2, "description": "Second step description"}},
-        ....... (more steps can be added)
-    ],
-    "related_3gpp_spec_sections": ["Relevant section references"],
-    "source_document_title": "{doc_title}",
-    "source_chunk_ids": ["List of relevant chunk IDs"]
-}}
-
-Example response:
-[
+    Required JSON structure for each procedure:
     {{
-        "procedure_name": "Initial Registration Procedure",
-        "description": "Procedure used by UE to register with the 5G network for the first time",
+        "procedure_name": "Name of the procedure",
+        "description": "Brief description of procedure's purpose",
         "steps": [
-            {{"step_number": 1, "description": "UE sends Registration Request to AMF"}},
-            {{"step_number": 2, "description": "AMF initiates authentication procedure"}}
+            {{"step_number": 1, "description": "First step description"}},
+            {{"step_number": 2, "description": "Second step description"}},
+            // ... more steps
         ],
-        "related_3gpp_spec_sections": ["TS 24.501 Section 5.5.1.2"],
+        "related_3gpp_spec_sections": ["Relevant section references"],
         "source_document_title": "{doc_title}",
-        "source_chunk_ids": ["0", "1"]
+        "source_chunk_ids": ["List of relevant chunk IDs"]
     }}
-]
-
-Return ONLY the JSON array. Do not include any additional text or explanations."""
+    Example response:
+    [
+        {{
+            "procedure_name": "Tracking Area Update (TAU) Procedure",
+            "description": "Procedure used by UE to update its location information with the network.",
+            "steps": [
+                {{"step_number": 1, "description": "UE sends TAU Request to AMF"}},
+                {{"step_number": 2, "description": "AMF verifies UE's location and updates its context"}}
+            ],
+            "related_3gpp_spec_sections": ["TS 24.501 Section 5.3.2"],
+            "source_document_title": "{doc_title}",
+            "source_chunk_ids": ["0", "1"]
+        }}
+    ]
+    Return ONLY the JSON array. Do not include any additional text or explanations. There can be multiple steps in a procedure.
+    """
 
     def _parse_response(self, response_text: str, doc_title: str) -> List[Dict]:
         """Parse and validate the LLM response"""
@@ -156,63 +148,14 @@ Return ONLY the JSON array. Do not include any additional text or explanations."
             print(f"Error parsing response: {e}")
             return []
 
-class ProcedureDB:
-    def __init__(self, db_path: str):
-        """Initialize the procedures database"""
-        self.db_path = db_path
-        self.init_db()
-
-    def init_db(self):
-        """Create the procedures table if it doesn't exist"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS nas_procedures (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    procedure_name TEXT,
-                    description TEXT,
-                    steps JSON,  -- Store steps as JSON array
-                    related_3gpp_spec_sections JSON,  -- Store sections as JSON array
-                    source_document_title TEXT,
-                    source_chunk_ids JSON,  -- Store chunk IDs as JSON array
-                    doc_id TEXT,
-                    similarity_score REAL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            conn.commit()
-
-    def store_nas_procedure(self, procedures: List[Dict], doc_id: str, similarity_score: float):
-        """Store extracted NAS procedures in the database"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            for procedure in procedures:
-                cursor.execute('''
-                    INSERT INTO nas_procedures (
-                        procedure_name, description, steps, 
-                        related_3gpp_spec_sections, source_document_title,
-                        source_chunk_ids, doc_id, similarity_score
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    procedure['procedure_name'],
-                    procedure['description'],
-                    json.dumps(procedure['steps']),
-                    json.dumps(procedure['related_3gpp_spec_sections']),
-                    procedure['source_document_title'],
-                    json.dumps(procedure['source_chunk_ids']),
-                    doc_id,
-                    similarity_score
-                ))
-            conn.commit()
-
 def extract_and_store_procedures(db_handler: DBHandler, doc_id: str, api_key: str, query: str, collection: chromadb.Collection):
-    """Extract and store procedures"""
+    """Extract procedures, store metadata in DB and steps in JSON"""
     print("\n[4/4] Extracting relevant procedures...")
     try:
         extractor = ProcedureExtractor(api_key)
 
         # Search for relevant chunks
+        print("Searching for relevant chunks...")
         results = collection.query(
             query_texts=[query],
             n_results=5,
@@ -220,8 +163,10 @@ def extract_and_store_procedures(db_handler: DBHandler, doc_id: str, api_key: st
         )
         
         if not results['documents'][0]:
-            print("No relevant chunks found")
+            print("✗ No relevant chunks found")
             return
+
+        print(f"Found {len(results['documents'][0])} relevant chunks")
 
         # Process results
         chunks = [{
@@ -230,16 +175,47 @@ def extract_and_store_procedures(db_handler: DBHandler, doc_id: str, api_key: st
             'index': metadata['index']
         } for doc, metadata in zip(results['documents'][0], results['metadatas'][0])]
 
-        # Extract and store procedures
+        # Extract procedures
+        print("\nExtracting procedures using Gemini AI...")
         doc_title = f"3GPP TS {doc_id.split('.')[0]}"
         procedures = extractor.extract_procedures_from_query(query, chunks, doc_title)
         
         if procedures:
+            # Create output directory for steps
+            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output", "procedures", doc_id)
+            os.makedirs(output_dir, exist_ok=True)
+            
             similarity_score = 1 - results['distances'][0][0]
-            db_handler.store_procedures(procedures, doc_id, similarity_score)
-            print(f"✓ Extracted and stored {len(procedures)} procedures")
+            
+            # Store each procedure's metadata in DB and steps in JSON
+            for i, procedure in enumerate(procedures):
+                # Save steps to JSON file
+                steps_file = os.path.join(output_dir, f"procedure_{i+1}_steps.json")
+                steps_data = {
+                    "procedure_name": procedure['procedure_name'],
+                    "steps": procedure['steps']
+                }
+                
+                with open(steps_file, 'w', encoding='utf-8') as f:
+                    json.dump(steps_data, f, indent=2, ensure_ascii=False)
+                
+                # Store metadata in database
+                db_handler.store_procedure_metadata({
+                    "procedure_name": procedure['procedure_name'],
+                    "description": procedure['description'],
+                    "steps_file": steps_file,
+                    "related_3gpp_spec_sections": procedure['related_3gpp_spec_sections'],
+                    "source_document_title": procedure['source_document_title'],
+                    "source_chunk_ids": procedure['source_chunk_ids'],
+                    "doc_id": doc_id,
+                    "similarity_score": similarity_score
+                })
+            
+            print(f"✓ Successfully processed {len(procedures)} procedures:")
+            print(f"  - Metadata stored in database")
+            print(f"  - Steps saved in: {output_dir}")
         else:
-            print("No relevant procedures found")
+            print("✗ No relevant procedures found")
 
     except Exception as e:
         print(f"✗ Error during extraction: {e}")
