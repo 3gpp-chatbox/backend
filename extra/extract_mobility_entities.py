@@ -104,7 +104,7 @@ def extract_entities_and_relationships(documents):
     return extracted_entities, extracted_relationships
 
 if __name__ == "__main__":
-    from preprocess_pdfs import read_pdfs_from_directory
+    from backend.extra.preprocess_pdfs import read_pdfs_from_directory
 
     data_dir = "data"  # Specify your data directory
     documents = read_pdfs_from_directory(data_dir)

@@ -27,7 +27,7 @@ load_dotenv(override=True)
 # Configuration
 PDF_FOLDER = os.path.join("data")
 PROCESSED_DATA_FOLDER = os.path.join("processed_data")  # New folder for processed data
-CHUNK_SIZE = 4000
+CHUNK_SIZE = 3000
 LLM_MODEL = "gemini-2.0-flash"
 OUTPUT_FILE = os.path.join(PROCESSED_DATA_FOLDER, "registration_analysis.json")
 INTERMEDIATE_BATCH_SIZE = 10  # Save intermediate results every 10 chunks
@@ -246,9 +246,9 @@ def call_llm_with_retry(llm: Any, prompt: str) -> Dict:
                     "transitions": [],
                     "network_element_relationships": [],
                     "triggers": [],
-                    "conditions": [],
-                    "timing": []
-                }
+            "conditions": [],
+            "timing": []
+        }
         
     except Exception as e:
         if "429" in str(e) or "quota" in str(e).lower():
@@ -764,7 +764,7 @@ def main():
             neo4j_process.wait()
             
         console.print("[green]✓ All operations completed successfully![/green]")
-
+        
     except Exception as e:
         console.print(f"[red]Error in main process: {str(e)}[/red]")
         console.print(traceback.format_exc())

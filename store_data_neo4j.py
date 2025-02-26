@@ -41,7 +41,7 @@ def save_processed_files(processed: Set[str]):
     try:
         with open(PROCESSED_FILES_CACHE, 'w') as f:
             json.dump(list(processed), f)
-    except Exception as e:
+        except Exception as e:
         console.print(f"[yellow]Warning: Could not save processed files cache: {e}[/yellow]")
 
 def test_neo4j_connection(uri, username, password):
@@ -191,7 +191,7 @@ def process_intermediate_file(file_path: str, driver, processed_files: Set[str])
                     })
                     if len(relationships) >= BATCH_SIZE:
                         batch_neo4j_operations(session, relationships)
-                        relationships = []
+    relationships = []
                 if relationships:
                     batch_neo4j_operations(session, relationships)
 
