@@ -16,6 +16,7 @@ import sys
 import threading
 import subprocess
 from semantic_chunking import SemanticChunker, save_semantic_chunks
+from preprocess_pdfs import extract_text_from_pdf
 
 # Initialize console for better output
 console = Console()
@@ -384,42 +385,6 @@ def save_results_to_md(results: List[Dict], output_file: str):
         console.print(f"[green]✓ Results saved to {output_file}[/green]")
     except Exception as e:
         console.print(f"[red]Error saving results to markdown: {str(e)}[/red]")
-
-def process_pdf_file(pdf_path: str, llm) -> List[Dict]:
-    """Process a single PDF file with semantic chunking."""
-    try:
-        console.print(f"[blue]Processing {pdf_path}...[/blue]")
-        
-        # Extract text from PDF
-        with open(pdf_path, 'rb') as f:
-            text = extract_text_from_pdf(pdf_path)
-        
-        if not text:
-            return []
-        
-        # Apply semantic chunking
-        chunker = SemanticChunker(chunk_size=CHUNK_SIZE)
-        semantic_chunks = chunker.process_text(text)
-        
-        # Save semantic chunks
-        md_file = save_semantic_chunks(semantic_chunks, PROCESSED_DATA_FOLDER)
-        console.print(f"[green]✓ Semantic chunks saved to {md_file}[/green]")
-        
-        # Process chunks with LLM
-        results = []
-        for i, chunk in enumerate(semantic_chunks):
-            result = process_chunk(Document(
-                page_content=chunk,
-                metadata={"source": pdf_path, "chunk_index": i, "total_chunks": len(semantic_chunks)}
-            ), llm)
-            if result:
-                results.append(result)
-        
-        return results
-        
-    except Exception as e:
-        console.print(f"[red]Error processing PDF {pdf_path}: {str(e)}[/red]")
-        return []
 
 def main():
     try:
