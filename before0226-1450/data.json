@@ -1,0 +1,96 @@
+{
+  "procedure_name": "Initial Registration",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under specific conditions.",
+  "nodes": [
+    {
+      "id": "5GMM-DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "description": "UE is in 5GMM-DEREGISTERED state"
+      }
+    },
+    {
+      "id": "Registration_Initiation_Triggers",
+      "type": "event",
+      "properties": {
+        "description": "Triggers for initiating the registration procedure"
+      },
+      "conditions": [
+        "Initial registration for 5GS services",
+        "Initial registration for emergency services",
+        "Initial registration for SMS over NAS",
+        "UE moves from GERAN/UTRAN to NG-RAN coverage after GPRS attach/routing area update or 5G-SRVCC without successful EPS attach/tracking area update/registration procedure",
+        "Initial registration for onboarding services in SNPN",
+        "Initial registration for disaster roaming services",
+        "Initial registration to come out of unavailability period and resume normal services"
+      ]
+    },
+    {
+      "id": "UE_Sends_Registration_Request",
+      "type": "action",
+      "properties": {
+        "description": "UE sends REGISTRATION REQUEST message to AMF",
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity IE (5G-GUTI, SUCI, PEI)",
+        "UE status IE (EMM registration status)",
+        "Last visited registered TAI",
+        "5GS update type IE (SMS requested bit)",
+        "MICO indication IE",
+        "T3324 IE (Active time value)",
+        "Requested T3512 IE",
+        "Requested DRX parameters IE",
+        "Requested NB-N1 mode DRX parameters IE",
+        "Requested extended DRX parameters IE",
+        "LADN indication IE",
+        "Requested NSSAI IE",
+        "Network slicing indication IE",
+        "5GMM capability IE",
+        "Follow-on request indicator",
+        "S1 UE network capability IE",
+        "UE radio capability ID IE",
+        "Payload container IE (UE STATE INDICATION message)",
+        "NAS message container IE",
+        "Additional information requested IE",
+        "Requested WUS assistance information IE",
+        "Requested PEIPS assistance information IE",
+        "UE determined PLMN with disaster condition IE",
+        "Service-level-AA container IE",
+	"AUN3 indication IE",
+        "N5GC indication IE"
+      ],
+        "timers": [
+            "T3510",
+            "T3502",
+            "T3511",
+            "T3519"
+        ]
+    },
+    {
+      "id": "AMF_Receives_Registration_Request",
+      "type": "event",
+      "properties": {
+        "description": "AMF receives REGISTRATION REQUEST message"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM-DEREGISTERED",
+      "to": "UE_Sends_Registration_Request",
+      "event": "Registration_Initiation_Triggers",
+      "properties": {
+        "description": "UE initiates registration procedure based on triggers",
+        "action": "Send REGISTRATION REQUEST"
+      }
+    },
+    {
+      "from": "UE_Sends_Registration_Request",
+      "to": "AMF_Receives_Registration_Request",
+      "properties": {
+        "description": "REGISTRATION REQUEST message is sent to AMF"
+      }
+    }
+  ]
+}
