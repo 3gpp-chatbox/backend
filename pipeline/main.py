@@ -25,10 +25,11 @@ def main():
     try:
         # Initialize database handler
         db_handler = DBHandler(db_path=db_path, persist_directory=persist_directory)
+        doc_id = os.path.basename(final_md_path)
         
-        # Process markdown if needed
+        # Check if markdown exists and process if needed
         if not os.path.exists(final_md_path):
-            print("\n[1/2] Converting DOCX to Markdown...")
+            print("\n[1/3] Converting DOCX to Markdown...")
             return_code = docx_to_markdown_with_docling(docx_path, temp_md_path)
             
             if return_code != 0:
@@ -42,32 +43,21 @@ def main():
                 print("\n→ Temporary file cleaned up")
         else:
             print(f"\nUsing existing markdown file: {final_md_path}")
-            process_markdown(final_md_path, final_md_path, db_path)
+            # Only process markdown if no chunks exist
+            if not db_handler.get_chunks(doc_id):
+                process_markdown(final_md_path, final_md_path, db_path)
+            else:
+                print("→ Using existing chunks from database")
 
-        # Create embeddings
-        doc_id = os.path.basename(final_md_path)
+        # Process embeddings (will reuse if they exist)
         collection = process_embeddings(db_handler, doc_id)
-        
         if not collection:
             print("✗ Failed to process embeddings. Stopping.")
             return
 
         # Extract procedures
         if Gemini_API_KEY:
-            query = """
-Extract 5G-related Non-Access Stratum (NAS) procedures from the provided context. 
-A 5G NAS procedure is a sequence of steps performed by a User Equipment (UE) and the 5G core network 
-to manage mobility, session management, and other functions related to 5G connectivity. 
-Focus on procedures that involve signaling between the UE and the network. 
-Exclude procedures related to radio access network (RAN) or other access technologies.
-
-Look for procedures such as:
-1. Registration procedures
-2. Authentication procedures
-3. Security procedures
-4. Session management procedures
-5. Mobility management procedures
-"""
+            query = """Mobility Management (MM) Registration"""
             extract_and_store_procedures(db_handler, doc_id, Gemini_API_KEY, query, collection)
         else:
             print("\n✗ Gemini API key not found in config.py")

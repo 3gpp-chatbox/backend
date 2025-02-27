@@ -1,0 +1,60 @@
+1. Mobility Management (MM):  These procedures handle the UE's registration, tracking, and handover as it moves within the network.
+
+Registration: (Initial Registration, Periodic Registration, Mobility Registration) Allows the UE to register with the network and update its location information.
+Deregistration: Allows the UE to deregister from the network.   
+Tracking Area Update (TAU): Updates the UE's location information as it moves between tracking areas.
+Handover: Facilitates the handover of the UE from one cell to another.
+
+2. Session Management (SM):  These procedures manage the establishment, modification, and release of PDU (Protocol Data Unit) sessions, which are used for data communication.
+
+PDU Session Establishment: Establishes a PDU session between the UE and the network.   
+PDU Session Modification: Modifies an existing PDU session (e.g., changes QoS parameters).   
+PDU Session Release: Releases a PDU session.
+
+3. Authentication and Security:  These procedures ensure the secure connection between the UE and the network.
+
+Authentication and Key Agreement (AKA): Authenticates the UE and establishes security keys.   
+5G Security Association Establishment: Sets up security associations between the UE and the network.
+
+4. Other Important Procedures:
+
+Configuration Update: Allows the network to update the UE's configuration.   
+Notification: Used by the network to notify the UE about certain events.
+Emergency Call: Handles emergency calls.
+Location Services: Supports location services.
+------------------------------------------------------------
+1.1 Mobility Management (MM) - Registration:
+1. Initial Registration:
+
+Purpose: This is the first registration a UE performs when it powers on or enters the 5G network for the first time. It's how the UE introduces itself to the network.
+Key Steps (Simplified):
+The UE sends a Registration Request message to the AMF (Access and Mobility Management Function). This message includes the UE's identity, the type of registration (initial), and other relevant information.
+The AMF authenticates the UE, often involving the UDM (Unified Data Management) for verifying the UE's credentials.
+The AMF updates the UDM with the UE's registration details.
+The AMF selects an appropriate SMF (Session Management Function) if the UE requests services requiring a PDU session.
+The AMF sends a Registration Accept message to the UE, confirming the registration and assigning a temporary identifier (GUTI - Globally Unique Temporary Identifier).
+The UE acknowledges the Registration Accept, completing the initial registration.
+
+2. Periodic Registration:
+Purpose: After a successful initial registration, the UE performs periodic registrations to keep its registration active. This tells the network that the UE is still present and reachable. It's like a "heartbeat" signal.
+Key Steps (Simplified):
+The UE sends a Registration Request message (type: periodic) to the AMF at regular intervals.
+The AMF may perform a simplified authentication.
+The AMF updates the UDM (if necessary).
+The AMF sends a Registration Accept message to the UE, renewing the registration period.
+
+3. Mobility Registration:
+Purpose: The UE performs a mobility registration when it moves to a new Tracking Area (TA). A TA is a geographical area within which the UE can move without needing to update its location with the network. When the UE crosses TA boundaries, it performs a mobility registration to inform the network of its new location.
+Key Steps (Simplified):
+The UE detects that it has entered a new TA (based on broadcast information from the network).
+The UE sends a Registration Request message (type: mobility registration) to the AMF.
+The AMF updates the UE's location information in the UDM.
+The AMF sends a Registration Accept message to the UE, confirming the mobility registration.
+Key Information Elements in Registration Messages:
+
+UE Identity: Identifies the UE.
+Registration Type: Indicates the type of registration (initial, periodic, mobility).
+GUTI: Globally Unique Temporary Identifier, a temporary ID assigned to the UE.
+Tracking Area Identity (TAI): Identifies the Tracking Area.
+Requested Network Services: Specifies the services the UE wants to access.
+------------------------------------

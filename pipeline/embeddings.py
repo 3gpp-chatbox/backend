@@ -48,6 +48,8 @@ class EmbeddingHandler:
         if not chunks:
             raise ValueError("No chunks provided for embedding creation")
         
+        print(f"\nProcessing {len(chunks)} chunks for embeddings...")
+        
         # Create or get collection
         collection = self.create_collection(collection_name)
         
@@ -65,23 +67,43 @@ class EmbeddingHandler:
         
         # Add documents in batches
         batch_size = 32
+        total_batches = (len(texts) + batch_size - 1) // batch_size
+        
         for i in range(0, len(texts), batch_size):
             batch_end = min(i + batch_size, len(texts))
+            current_batch = (i // batch_size) + 1
+            print(f"Processing batch {current_batch}/{total_batches} ({batch_end-i} chunks)")
+            
             collection.add(
                 ids=ids[i:batch_end],
                 documents=texts[i:batch_end],
                 metadatas=metadatas[i:batch_end]
             )
-            
+        
+        print(f"✓ Successfully processed all {len(chunks)} chunks")
         return collection
 
 def process_embeddings(db_handler: DBHandler, doc_id: str) -> chromadb.Collection:
     """Process document embeddings"""
-    print("\n[3/3] Creating embeddings...")
+    print("\n[3/3] Processing embeddings...")
     try:
+        # Check if collection already exists
+        try:
+            collection = db_handler.chroma_client.get_collection(doc_id)
+            print("→ Found existing embeddings collection")
+            # Verify collection has content
+            if collection.count() > 0:
+                print(f"✓ Using existing collection with {collection.count()} embeddings")
+                return collection
+        except:
+            pass
+
+        # Create new embeddings if needed
+        print("→ Creating new embeddings...")
         collection = db_handler.create_embeddings(doc_id)
-        print(f"✓ Created embeddings for document: {doc_id}")
+        print(f"✓ Created new embeddings collection: {doc_id}")
         return collection
+
     except Exception as e:
-        print(f"✗ Error creating embeddings: {e}")
+        print(f"✗ Error processing embeddings: {e}")
         return None 

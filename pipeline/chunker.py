@@ -14,8 +14,8 @@ class DocumentChunker:
     def __init__(self, nlp: Language = None):
         # Load spaCy model for semantic analysis
         self.nlp = nlp or spacy.load("en_core_web_sm")
-        self.max_chunk_size = 100  # Maximum characters per chunk
-        self.overlap = 10  # Overlap between chunks
+        self.max_chunk_size = 1000  # Maximum characters per chunk
+        self.overlap = 50  # Overlap between chunks
 
     def process_document(self, markdown_text: str) -> List[Dict]:
         """
@@ -103,28 +103,30 @@ class DocumentChunker:
         return semantic_chunks
 
 def create_chunks(markdown_file: str, db_path: str = None) -> List[Dict]:
-    """
-    Main function to create chunks from a markdown file and store them in DB.
-    """
+    """Main function to create chunks from a markdown file and store them in DB."""
     try:
-        # Read the markdown file
-        with open(markdown_file, 'r', encoding='utf-8') as f:
-            markdown_text = f.read()
-        
-        # Initialize chunker
-        chunker = DocumentChunker()
-        
-        # Process the document
-        chunks = chunker.process_document(markdown_text)
-        
-        # Store chunks in database
+        # Check if chunks already exist
         if db_path:
             db_handler = DBHandler(db_path)
             doc_id = os.path.basename(markdown_file)
+            existing_chunks = db_handler.get_chunks(doc_id)
+            if existing_chunks:
+                print(f"Found {len(existing_chunks)} existing chunks")
+                return existing_chunks
+
+        # Create new chunks if none exist
+        print("Creating new chunks...")
+        with open(markdown_file, 'r', encoding='utf-8') as f:
+            markdown_text = f.read()
+        
+        chunker = DocumentChunker()
+        chunks = chunker.process_document(markdown_text)
+        
+        if db_path:
             stored_count = db_handler.store_chunks(chunks, doc_id)
-            print(f"Created and stored {stored_count} chunks from the document")
+            print(f"Created and stored {stored_count} new chunks")
         else:
-            print(f"Created {len(chunks)} chunks from the document")
+            print(f"Created {len(chunks)} new chunks")
             
         return chunks
         

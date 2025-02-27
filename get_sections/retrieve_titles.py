@@ -12,15 +12,29 @@ Parse the LLM's JSON response.
 import sqlite3
 import json
 import google.generativeai as genai
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set
+from pydantic import BaseModel, Field
+
+class ProcedureCategory(BaseModel):
+    most_relevant_titles: List[str] = Field(default_factory=list)
+    related_titles: List[str] = Field(default_factory=list)
+
+class ProcedureIndicators(BaseModel):
+    registration_keywords: List[str] = Field(default_factory=list)
+    session_keywords: List[str] = Field(default_factory=list)
+
+class TaxonomyResponse(BaseModel):
+    Registration_Procedures: ProcedureCategory
+    Session_Management_Procedures: ProcedureCategory
+    procedure_indicators: ProcedureIndicators
 
 class TitleAnalyzer:
-    def __init__(self, api_key: str, model_name: str = "gemini-pro"):
+    def __init__(self, api_key: str, model_name: str = "gemini-2.0-flash"):
         """Initialize Gemini API and configure the model"""
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_name)
         self.generation_config = {
-            "temperature": 0.2,  # Lower temperature for more focused analysis
+            "temperature": 0.2,
             "top_p": 0.8,
             "top_k": 40,
             "max_output_tokens": 2048,
@@ -40,7 +54,7 @@ class TitleAnalyzer:
             return []
 
     def analyze_titles(self, titles: List[str]) -> Dict:
-        """Analyze titles using LLM to identify relevant 5G NAS procedures"""
+        """Analyze titles using LLM to identify relevant procedures"""
         if not titles:
             return {"error": "No titles provided for analysis"}
 
@@ -64,48 +78,82 @@ class TitleAnalyzer:
         """Create prompt for title analysis"""
         titles_text = "\n".join([f"- {title}" for title in titles])
         
-        return f"""Analyze the following titles and identify those most likely to contain 5G NAS (Non-Access Stratum) procedures.
+        return f"""You are a 3GPP specification expert. Analyze the following titles and categorize them according to the 3GPP 24.501 procedure taxonomy.
+
+Taxonomy Structure:
+1. Top-Level Categories:
+   - Registration Procedures
+   - Session Management Procedures
+
+2. Second-Level: Individual Procedures:
+   - Registration Procedures:
+     - Initial Registration
+     - Periodic Registration
+     - Deregistration
+   - Session Management Procedures:
+     - Session Establishment
+     - Session Modification
+     - Session Release
 
 Titles to analyze:
 {titles_text}
 
 Instructions:
-1. Analyze each title for keywords and terminology related to 5G NAS procedures
-2. Consider terms like: registration, authentication, security, identity, session management
-3. Categorize titles based on their relevance to 5G NAS procedures
-4. Return results in the following JSON format:
+1. Analyze each title and categorize it according to the taxonomy above
+2. Return results in the following JSON format, ensuring it is valid JSON:
 
 {{
-    "most_relevant_titles": [
-        // Titles with highest probability of containing NAS procedures
-        // These should contain clear NAS-related keywords
-    ],
-    "potentially_relevant_titles": [
-        // Titles that might contain NAS procedures
-        // These have some relevant keywords or context
-    ],
-    "related_keywords_found": [
-        // List of NAS-related keywords found in the titles
-    ]
+    "Registration_Procedures": {{
+        "most_relevant_titles": [
+            "title1",
+            "title2"
+        ],
+        "related_titles": [
+            "title3",
+            "title4"
+        ]
+    }},
+    "Session_Management_Procedures": {{
+        "most_relevant_titles": [
+            "title5",
+            "title6"
+        ],
+        "related_titles": [
+            "title7",
+            "title8"
+        ]
+    }},
+    "procedure_indicators": {{
+        "registration_keywords": [
+            "keyword1",
+            "keyword2"
+        ],
+        "session_keywords": [
+            "keyword3",
+            "keyword4"
+        ]
+    }}
 }}
 
-Focus on:
-- Registration procedures
-- Authentication procedures
-- Security procedures
-- Session management procedures
-- Identity management
-- NAS signalling
-- 5G mobility management
+Focus on identifying titles that:
+1. Directly describe procedures (e.g., "Initial registration procedure")
+2. Contain procedure-related content (e.g., "States and state transitions")
+3. Include relevant terminology (e.g., "registration", "session", "PDU")
 
-Return ONLY the JSON object. No additional text.
+Return a valid JSON object only. Do not include code block markers or any additional text.
 """
 
     def _parse_response(self, response_text: str) -> Dict:
-        """Parse and validate LLM response"""
+        """Parse and validate LLM response using Pydantic"""
         try:
             # Clean the response text
             cleaned_text = response_text.strip()
+            
+            # Remove markdown code blocks if present
+            if cleaned_text.startswith('```'):
+                cleaned_text = cleaned_text.replace('```json', '').replace('```', '')
+            
+            # Find and extract JSON content
             if not cleaned_text.startswith('{'):
                 start_idx = cleaned_text.find('{')
                 end_idx = cleaned_text.rfind('}')
@@ -114,21 +162,35 @@ Return ONLY the JSON object. No additional text.
                 else:
                     return {"error": "No valid JSON found in response"}
 
-            # Parse JSON
-            result = json.loads(cleaned_text)
-            
-            # Validate required keys
-            required_keys = {"most_relevant_titles", "potentially_relevant_titles", "related_keywords_found"}
-            if not all(key in result for key in required_keys):
-                return {"error": "Missing required keys in response"}
-                
-            return result
+            # Clean any remaining whitespace
+            cleaned_text = cleaned_text.strip()
+
+            try:
+                # Parse JSON and validate with Pydantic
+                data = json.loads(cleaned_text)
+                validated_data = TaxonomyResponse(**data)
+                return validated_data.dict()
+            except json.JSONDecodeError as e:
+                # If initial parse fails, try to fix common JSON issues
+                cleaned_text = (
+                    cleaned_text
+                    .replace('\n', '')  # Remove newlines
+                    .replace('    ', '')  # Remove indentation
+                    .replace('...', '')   # Remove ellipsis
+                )
+                # Try parsing again
+                data = json.loads(cleaned_text)
+                validated_data = TaxonomyResponse(**data)
+                return validated_data.dict()
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing error: {e}")
+            print(f"Response text: {response_text[:200]}...")
+            print(f"Cleaned text: {cleaned_text[:200]}...")
             return {"error": "Invalid JSON format in response"}
         except Exception as e:
             print(f"Error parsing response: {e}")
+            print(f"Response text: {response_text[:200]}...")
             return {"error": str(e)}
 
 def main(db_path: str, api_key: str):
@@ -144,25 +206,30 @@ def main(db_path: str, api_key: str):
         return
     
     # Analyze titles using LLM
-    print("Analyzing titles for NAS procedures...")
+    print("Analyzing titles according to procedure taxonomy...")
     result = analyzer.analyze_titles(titles)
     
     if "error" in result:
         print(f"Error: {result['error']}")
         return
     
-    # Print results
-    print("\nAnalysis Results:")
-    print(f"\nMost Relevant Titles ({len(result['most_relevant_titles'])}):")
-    for title in result['most_relevant_titles']:
-        print(f"- {title}")
-        
-    print(f"\nPotentially Relevant Titles ({len(result['potentially_relevant_titles'])}):")
-    for title in result['potentially_relevant_titles']:
-        print(f"- {title}")
-        
-    print("\nRelated Keywords Found:")
-    print(", ".join(result['related_keywords_found']))
+    # Print results by category
+    categories = ["Registration_Procedures", "Session_Management_Procedures"]
+    for category in categories:
+        print(f"\n{category.replace('_', ' ')}:")
+        print("\nMost Relevant Titles:")
+        for title in result[category]["most_relevant_titles"]:
+            print(f"- {title}")
+            
+        print("\nRelated Titles:")
+        for title in result[category]["related_titles"]:
+            print(f"- {title}")
+    
+    # Print keywords
+    print("\nProcedure Indicators:")
+    for key, values in result["procedure_indicators"].items():
+        print(f"\n{key.replace('_', ' ').title()}:")
+        print(", ".join(values))
 
 if __name__ == "__main__":
     import os
@@ -172,7 +239,7 @@ if __name__ == "__main__":
     sys.path.append(root_folder)
     from config import Gemini_API_KEY
 
-    API_KEY= Gemini_API_KEY
+    API_KEY = Gemini_API_KEY
     DB_PATH = os.path.join(root_folder, "DB", "chunks.db")
     
     if not API_KEY:
