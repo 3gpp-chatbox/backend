@@ -1,24 +1,19 @@
 
-graph TD
-    5GMM_DEREGISTERED["5GMM_DEREGISTERED (state)"]
-    Registration_Request_Sent["Registration_Request_Sent (event)"]
-    Initial_Registration_for_5GS["Initial_Registration_for_5GS (state)"]
-    Initial_Registration_for_Emergency["Initial_Registration_for_Emergency (state)"]
-    Initial_Registration_for_SMS["Initial_Registration_for_SMS (state)"]
-    Move_from_GERAN_UTRAN_to_NG_RAN["Move_from_GERAN_UTRAN_to_NG_RAN (state)"]
-    Initial_Registration_for_Onboarding_SNPN["Initial_Registration_for_Onboarding_SNPN (state)"]
-    Initial_Registration_for_Disaster_Roaming["Initial_Registration_for_Disaster_Roaming (state)"]
-    Initial_Registration_Resume_Normal_Services["Initial_Registration_Resume_Normal_Services (state)"]
-    Timer_Started["Timer_Started (event)"]
-    Timer_Stopped["Timer_Stopped (event)"]
-    
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration for 5GS services)| Initial_Registration_for_5GS
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration for Emergency services)| Initial_Registration_for_Emergency
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration for SMS over NAS)| Initial_Registration_for_SMS
-    5GMM_DEREGISTERED -->|Initiate_Registration (Move from GERAN/UTRAN to NG-RAN)| Move_from_GERAN_UTRAN_to_NG_RAN
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration for onboarding services in SNPN)| Initial_Registration_for_Onboarding_SNPN
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration for disaster roaming services)| Initial_Registration_for_Disaster_Roaming
-    5GMM_DEREGISTERED -->|Initiate_Registration (Initial Registration to resume normal services)| Initial_Registration_Resume_Normal_Services
-    5GMM_DEREGISTERED -->|Send_Registration_Request (REGISTRATION REQUEST)| Registration_Request_Sent
-    Registration_Request_Sent -->|Start_Timer (T3510)| Timer_Started
-    Registration_Request_Sent -->|Stop_Timer (T3502/T3511, If timers T3502/T3511 are running)| Timer_Stopped
+flowchart TD
+    "5GMM_DEREGISTERED"["5GMM_DEREGISTERED (state)"]
+    "Registration_Request_Sent"["Registration_Request_Sent (event)"]
+    "Initial_Registration_5GS"["Initial_Registration_5GS (state)"]
+    "Initial_Registration_Emergency"["Initial_Registration_Emergency (state)"]
+    "Initial_Registration_SMS_NAS"["Initial_Registration_SMS_NAS (state)"]
+    "Mobility_GERAN_UTRAN_to_NG_RAN"["Mobility_GERAN_UTRAN_to_NG_RAN (state)"]
+    "Initial_Registration_Onboarding_SNPN"["Initial_Registration_Onboarding_SNPN (state)"]
+    "Initial_Registration_Disaster_Roaming"["Initial_Registration_Disaster_Roaming (state)"]
+    "Initial_Registration_Resume_Normal_Services"["Initial_Registration_Resume_Normal_Services (state)"]
+
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for 5GS services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Emergency services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for SMS over NAS,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Mobility from GERAN/UTRAN to NG-RAN,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running,conditions:GPRS attach or routing area updating procedure initiated in A/Gb or Iu mode,5G-SRVCC from NG-RAN to UTRAN performed,No successful EPS attach/TAU in S1 mode or registration in N1 mode since then)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Onboarding services in SNPN,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Disaster Roaming services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration to Resume Normal Services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"

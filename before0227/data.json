@@ -1,0 +1,62 @@
+{
+  "procedure_name": "Initial Registration Procedure",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under specific conditions.",
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "REGISTRATION_REQUEST_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "AMF_Receives_REGISTRATION_REQUEST",
+      "type": "event",
+      "properties": {}
+    },
+    {
+      "id": "Initial_Registration_Started",
+      "type": "state",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "REGISTRATION_REQUEST_Sent",
+      "action": "Initiate Registration",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Mobility from GERAN/UTRAN to NG-RAN",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to resume normal services after unavailability period"
+        ],
+        "message": "REGISTRATION REQUEST"
+      }
+    },
+    {
+      "from": "REGISTRATION_REQUEST_Sent",
+      "to": "AMF_Receives_REGISTRATION_REQUEST",
+      "action": "Send REGISTRATION REQUEST to AMF",
+      "properties": {
+        "timer_started": "T3510",
+        "timers_stopped": ["T3502", "T3511"]
+      }
+    },
+    {
+      "from": "AMF_Receives_REGISTRATION_REQUEST",
+      "to": "Initial_Registration_Started",
+      "action": "Process REGISTRATION REQUEST",
+      "properties": {}
+    }
+  ]
+}

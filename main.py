@@ -47,6 +47,7 @@ def convert_to_mermaid(json_file):
     - **Events** should be labeled edges `--> |Event Name|`.
     - **Metadata & parameters** should be included if relevant.
     - **Ensure valid Mermaid syntax and return only the diagram with no extra text.**
+    - **Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets.**
 
     ```json
     {json.dumps(json_data, indent=2)}
@@ -82,14 +83,19 @@ def main():
             # Generate Mermaid diagram using Gemini LLM
             prompt = f"""
             Convert the following JSON representation of a network procedure into a flow property graph using Mermaid syntax.
-            
+
+
             **Guidelines:**
-            - **State nodes** should be represented as `[label (state)]`.
-            - **Action nodes** should be `[label (action)]`.
-            - **Events** should be labeled edges `--> |Event Name|`.
-            - **Metadata & parameters** should be included if relevant.
-            - **Ensure valid Mermaid syntax and return only the diagram with no extra text.**
-            - **the labels in the edge arrows (such as -->) shouldn't have quotes or spaces around them**
+    - **State nodes** should be represented as `[label (state)]`.
+    - **Action nodes** should be represented as `[label (action)]`.
+    - **Event nodes** should be represented as `[label (event)]`.
+    - **Edges (Transitions)** should be represented as `--> |Event Label|` where **Event Label** should be the description of the event that triggers the transition. Avoid any quotes or spaces around the event label.
+    - **Metadata & parameters** (e.g., "timer types" or "conditions") should be included in the edge label in parentheses where relevant, separated by commas.
+    - Ensure that the generated Mermaid diagram follows **valid Mermaid syntax** and **returns only the diagram with no extra text**.
+    - Ensure **valid syntax** and **clear distinction between state, event, and action nodes**.
+    - **If there are any complex event conditions or parameters** (e.g., timers, messages), **include them inside parentheses** after the event label in a readable way.
+     - **Ensure that All node labels are enclosed in double quotes .There are no extra spaces inside {{}} brackets.**
+
 
             ```json
             {json.dumps(json_data, indent=2)}

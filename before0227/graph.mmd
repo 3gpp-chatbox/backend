@@ -1,0 +1,10 @@
+
+graph LR
+    5GMM_DEREGISTERED["5GMM_DEREGISTERED (state)"]
+    REGISTRATION_REQUEST_Sent["REGISTRATION_REQUEST_Sent (event)"]
+    AMF_Receives_REGISTRATION_REQUEST["AMF_Receives_REGISTRATION_REQUEST (event)"]
+    Initial_Registration_Started["Initial_Registration_Started (state)"]
+
+    5GMM_DEREGISTERED --> |InitiateRegistration(Initial registration for 5GS services,Initial registration for emergency services,Initial registration for SMS over NAS,Mobility from GERAN/UTRAN to NG-RAN,Initial registration for onboarding services in SNPN,Initial registration for disaster roaming services,Initial registration to resume normal services after unavailability period,message:REGISTRATION REQUEST)| REGISTRATION_REQUEST_Sent
+    REGISTRATION_REQUEST_Sent --> |SendREGISTRATIONREQUESTtoAMF(timer_started:T3510,timers_stopped:T3502,T3511)| AMF_Receives_REGISTRATION_REQUEST
+    AMF_Receives_REGISTRATION_REQUEST --> |ProcessREGISTRATIONREQUEST| Initial_Registration_Started

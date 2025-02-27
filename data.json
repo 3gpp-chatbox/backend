@@ -1,6 +1,6 @@
 {
-  "procedure_name": "Initial Registration Procedure",
-  "description": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under various conditions.",
+  "procedure_name": "Initial Registration Initiation",
+  "description": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under specific conditions.",
   "nodes": [
     {
       "id": "5GMM_DEREGISTERED",
@@ -15,149 +15,129 @@
       }
     },
     {
-      "id": "Initial_Registration_for_5GS",
+      "id": "Initial_Registration_5GS",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration for 5GS services"
+        "reason": "initial registration for 5GS services"
       }
     },
     {
-      "id": "Initial_Registration_for_Emergency",
+      "id": "Initial_Registration_Emergency",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration for emergency services"
+        "reason": "initial registration for emergency services"
       }
     },
     {
-      "id": "Initial_Registration_for_SMS",
+      "id": "Initial_Registration_SMS_NAS",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration for SMS over NAS"
+        "reason": "initial registration for SMS over NAS"
       }
     },
     {
-      "id": "Move_from_GERAN_UTRAN_to_NG_RAN",
+      "id": "Mobility_GERAN_UTRAN_to_NG_RAN",
       "type": "state",
       "properties": {
-        "condition": "UE moves from GERAN/UTRAN to NG-RAN coverage and certain conditions apply"
+        "reason": "UE moves from GERAN/UTRAN to NG-RAN"
       }
     },
     {
-      "id": "Initial_Registration_for_Onboarding_SNPN",
+      "id": "Initial_Registration_Onboarding_SNPN",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration for onboarding services in SNPN"
+        "reason": "initial registration for onboarding services in SNPN"
       }
     },
     {
-      "id": "Initial_Registration_for_Disaster_Roaming",
+      "id": "Initial_Registration_Disaster_Roaming",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration for disaster roaming services"
+        "reason": "initial registration for disaster roaming services"
       }
     },
     {
       "id": "Initial_Registration_Resume_Normal_Services",
       "type": "state",
       "properties": {
-        "condition": "UE performs initial registration to come out of unavailability period and resume normal services"
-      }
-    },
-    {
-      "id": "Timer_Started",
-      "type": "event",
-      "properties": {
-        "timer_type": "T3510"
-      }
-    },
-    {
-      "id": "Timer_Stopped",
-      "type": "event",
-      "properties": {
-        "timer_type": "T3502/T3511"
+        "reason": "initial registration to come out of unavailability period and resume normal services"
       }
     }
   ],
   "edges": [
     {
       "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_for_5GS",
-      "action": "Initiate_Registration",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
       "properties": {
-        "trigger": "Initial Registration for 5GS services"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_for_Emergency",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Initial Registration for Emergency services"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_for_SMS",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Initial Registration for SMS over NAS"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Move_from_GERAN_UTRAN_to_NG_RAN",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Move from GERAN/UTRAN to NG-RAN"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_for_Onboarding_SNPN",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Initial Registration for onboarding services in SNPN"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_for_Disaster_Roaming",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Initial Registration for disaster roaming services"
-      }
-    },
-    {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_Resume_Normal_Services",
-      "action": "Initiate_Registration",
-      "properties": {
-        "trigger": "Initial Registration to resume normal services"
+        "trigger": "Initial Registration for 5GS services",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
       }
     },
     {
       "from": "5GMM_DEREGISTERED",
       "to": "Registration_Request_Sent",
-      "action": "Send_Registration_Request",
+      "action": "Initiate Registration Procedure",
       "properties": {
-        "message_type": "REGISTRATION REQUEST"
+        "trigger": "Initial Registration for Emergency services",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
       }
     },
     {
-      "from": "Registration_Request_Sent",
-      "to": "Timer_Started",
-      "action": "Start_Timer",
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
       "properties": {
-        "timer_type": "T3510"
+        "trigger": "Initial Registration for SMS over NAS",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
       }
     },
     {
-      "from": "Registration_Request_Sent",
-      "to": "Timer_Stopped",
-      "action": "Stop_Timer",
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
       "properties": {
-        "timer_type": "T3502/T3511",
-        "condition": "If timers T3502/T3511 are running"
+        "trigger": "Mobility from GERAN/UTRAN to NG-RAN",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running",
+        "conditions": [
+          "GPRS attach or routing area updating procedure initiated in A/Gb or Iu mode",
+          "5G-SRVCC from NG-RAN to UTRAN performed",
+          "No successful EPS attach/TAU in S1 mode or registration in N1 mode since then"
+        ]
+      }
+    },
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
+      "properties": {
+        "trigger": "Initial Registration for Onboarding services in SNPN",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
+      }
+    },
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
+      "properties": {
+        "trigger": "Initial Registration for Disaster Roaming services",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
+      }
+    },
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Initiate Registration Procedure",
+      "properties": {
+        "trigger": "Initial Registration to Resume Normal Services",
+        "timer": "T3510 started",
+        "conditional_timers": "T3502 and T3511 stopped if running"
       }
     }
   ]

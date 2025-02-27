@@ -28,10 +28,13 @@ def extract_procedural_info_from_text(section_name, text):
 
     {text}
 
-    Remember, all your analysis should be based on the chunk text, and you should not make any assumptions.
+    Remember, all your analysis should be based on the chunk text i provided, and you should not make any assumptions.
     
-    This section is named: {section_name},  Identify the procedure name based on the section name and content. If the procedure name is explicitly mentioned, use it. If not, infer it from keywords related to the process described.
-Extract information about the procedure and structure it into the **Flow Property Graph JSON format**.
+
+    This section is named: {section_name},  and it is mainly about one procedure.
+    identifying small procedures (or sub-procedures) rather than the entire high-level procedure. The section name itself is often tied to the procedure or sub-procedure name, or a key term that describes the procedure. focus on extracting the relevant information for a small procedure and format it into a Flow Property Graph JSON format.
+    To clarify, when i say small procedure or sub-procedure,im referring to specific, granular steps or parts of a broader procedure that might occur within a larger flow (for example, Initial Registration Initiation as a sub-procedure within the Initial Registration Procedure).
+     
 
 
      **flow property graph JSON representation**: Structure the procedure into a JSON format. response  not contain anything but json code,
@@ -134,6 +137,9 @@ metadatá.
 (this is an json example of a procedure example):
 
      {{
+      "procedure_name": "procedure name here ",
+  "description": " description here  ",
+ 
       "nodes": [
         {{
           "id": "UE_Powered_On",

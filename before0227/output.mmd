@@ -1,0 +1,15 @@
+```mermaid
+graph LR
+    5GMM_DEREGISTERED((5GMM_DEREGISTERED))
+    REGISTRATION_REQUEST_Sent[REGISTRATION_REQUEST_Sent]
+    AMF_Receives_REGISTRATION_REQUEST[AMF_Receives_REGISTRATION_REQUEST]
+    Initial_Registration_Started((Initial_Registration_Started))
+
+    5GMM_DEREGISTERED -- Initiate Registration: Initial registration for 5GS services, Initial registration for emergency services, Initial registration for SMS over NAS, Mobility from GERAN/UTRAN to NG-RAN, Initial registration for onboarding services in SNPN, Initial registration for disaster roaming services, Initial registration to resume normal services after unavailability period  --> REGISTRATION_REQUEST_Sent
+
+    REGISTRATION_REQUEST_Sent -- Send REGISTRATION REQUEST to AMF: timer_started=T3510, timers_stopped=[T3502, T3511] --> AMF_Receives_REGISTRATION_REQUEST
+
+    AMF_Receives_REGISTRATION_REQUEST -- Process REGISTRATION REQUEST --> Initial_Registration_Started
+    style 5GMM_DEREGISTERED fill:#f9f,stroke:#333,stroke-width:2px
+    style Initial_Registration_Started fill:#f9f,stroke:#333,stroke-width:2px
+```
