@@ -11,14 +11,15 @@ import glob
 from datetime import datetime
 import traceback
 from dotenv import load_dotenv
+from models import RegistrationAnalysis, NetworkElement, State, RegistrationStep, Metadata
 
 # Initialize console and load environment variables
 console = Console()
 load_dotenv()
 
 # Neo4j Configuration
-URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
+URI = os.getenv("NEO4J_URI")
+USERNAME = os.getenv("NEO4J_USERNAME")
 PASSWORD = os.getenv("NEO4J_PASSWORD")
 
 # Cache file for Neo4j state
@@ -327,9 +328,13 @@ def main():
 def read_registration_data(file_path: str) -> Dict:
     """Read data from either JSON or Markdown file."""
     try:
+        console.print(f"[blue]Opening file: {file_path}[/blue]")
+        
         if file_path.endswith('.json'):
             with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                console.print("[green]Successfully loaded JSON file[/green]")
+                return data
         elif file_path.endswith('.md'):
             data = {'results': []}
             current_section = None
@@ -337,89 +342,46 @@ def read_registration_data(file_path: str) -> Dict:
             
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
-                
-            for line in lines:
+            
+            console.print(f"[blue]Processing {len(lines)} lines from markdown file[/blue]")
+            
+            for i, line in enumerate(lines):
                 if line.startswith('# Extracted Data'):
                     if current_chunk:
+                        console.print(f"[blue]Adding chunk with sections: {list(current_chunk.keys())}[/blue]")
                         data['results'].append(current_chunk)
                     current_chunk = {}
                 elif line.startswith('## '):
                     current_section = line.strip('## \n').lower().replace(' ', '_')
                     current_chunk[current_section] = []
+                    console.print(f"[blue]Found section: {current_section}[/blue]")
                 elif line.strip() and current_section and line.strip().startswith('{'):
                     try:
                         item = json.loads(line.strip())
                         current_chunk[current_section].append(item)
-                    except json.JSONDecodeError:
+                    except json.JSONDecodeError as e:
+                        console.print(f"[yellow]Warning: Could not parse JSON at line {i+1}: {e}[/yellow]")
                         continue
             
             if current_chunk:
+                console.print(f"[blue]Adding final chunk with sections: {list(current_chunk.keys())}[/blue]")
                 data['results'].append(current_chunk)
-                
+            
+            console.print(f"[green]Successfully processed markdown file with {len(data['results'])} chunks[/green]")
             return data
             
         raise ValueError(f"Unsupported file format: {file_path}")
         
     except Exception as e:
         console.print(f"[red]Error reading file {file_path}: {str(e)}[/red]")
-        raise
-
-def process_registration_data(file_path: str = "processed_data/registration_analysis.md"):
-    """Process and store registration analysis data."""
-    try:
-        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
-        
-        with driver.session() as session:
-            # Clear existing data
-            console.print("[blue]Clearing existing database...[/blue]")
-            clear_database(session)
-            
-            # Create constraints
-            create_unique_constraints(session)
-            
-            # Read and process the data
-            data = read_registration_data(file_path)
-            
-            total_results = len(data.get('results', []))
-            console.print(f"[blue]Processing {total_results} results...[/blue]")
-            
-            for i, result in enumerate(data.get('results', []), 1):
-                console.print(f"[blue]Processing result {i}/{total_results}[/blue]")
-                
-                # Store all types of data
-                store_network_elements(session, result.get('network_elements', []))
-                store_states(session, result.get('states', []))
-                store_events(session, result.get('events', []))
-                store_transitions(session, result.get('transitions', []))
-                store_element_relationships(session, result.get('network_element_relationships', []))
-                store_triggers(session, result.get('triggers', []))
-                store_conditions(session, result.get('conditions', []))
-                store_timing(session, result.get('timing', []))
-            
-            console.print("[green]✓ Data stored successfully in Neo4j[/green]")
-            
-    except Exception as e:
-        console.print(f"[red]Error storing data in Neo4j: {str(e)}[/red]")
-        raise
-    finally:
-        if 'driver' in locals():
-            driver.close()
-
-def clear_database(session):
-    """Clear all nodes and relationships from the database."""
-    try:
-        session.run("MATCH (n) DETACH DELETE n")
-        console.print("[green]✓ Database cleared successfully[/green]")
-    except Exception as e:
-        console.print(f"[red]Error clearing database: {str(e)}[/red]")
+        console.print(traceback.format_exc())  # Print full traceback
         raise
 
 def create_unique_constraints(session):
     """Create unique constraints for nodes."""
     constraints = [
         "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
-        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.name IS UNIQUE",
-        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Event) REQUIRE n.name IS UNIQUE"
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.name IS UNIQUE"
     ]
     
     for constraint in constraints:
@@ -428,35 +390,36 @@ def create_unique_constraints(session):
         except Exception as e:
             console.print(f"[yellow]Warning creating constraint: {str(e)}[/yellow]")
 
+def generate_content_hash(content: Dict) -> str:
+    """Generate a hash for content to track duplicates."""
+    content_str = json.dumps(content, sort_keys=True)
+    return hashlib.md5(content_str.encode()).hexdigest()
+
 def store_network_elements(session, elements: List[Dict]):
-    """Store network elements as nodes."""
+    """Store network elements with their properties."""
     for element in elements:
         cypher = """
         MERGE (n:NetworkElement {name: $name})
         SET n.type = $type,
-            n.description = $description,
-            n.role = $role
+            n.description = $description
         """
         session.run(cypher, 
-                   name=element['name'], 
+                   name=element['name'],
                    type=element.get('type', ''),
-                   description=element.get('description', ''),
-                   role=element.get('role', ''))
+                   description=element.get('description', ''))
 
 def store_states(session, states: List[Dict]):
-    """Store states as nodes."""
+    """Store states with their properties."""
     for state in states:
         cypher = """
         MERGE (s:State {name: $name})
         SET s.type = $type,
-            s.description = $description,
-            s.classification = $classification
+            s.description = $description
         """
         session.run(cypher, 
                    name=state['name'],
                    type=state.get('type', ''),
-                   description=state.get('description', ''),
-                   classification=state.get('classification', ''))  # INITIAL, INTERMEDIATE, or FINAL
+                   description=state.get('description', ''))
 
 def store_events(session, events: List[Dict]):
     """Store events as nodes."""
@@ -465,42 +428,92 @@ def store_events(session, events: List[Dict]):
         MERGE (e:Event {name: $name})
         SET e.description = $description
         """
-        session.run(cypher, name=event['name'],
-                   description=event['description'])
+        session.run(cypher, 
+                   name=event['name'],
+                   description=event.get('description', ''))
 
 def store_transitions(session, transitions: List[Dict]):
-    """Store transitions as relationships."""
+    """Store transitions as relationships with deduplication."""
+    processed_hashes = set()
     for transition in transitions:
-        cypher = """
-        MATCH (from:State {name: $from_state})
-        MATCH (to:State {name: $to_state})
-        MERGE (from)-[r:TRANSITIONS_TO {
-            trigger: $trigger,
-            condition: $condition,
-            timing: $timing,
-            prerequisites: $prerequisites
+        content_hash = generate_content_hash(transition)
+        if content_hash in processed_hashes:
+            continue
+            
+        # Create relationship between network elements for the message
+        cypher_message = """
+        MATCH (from:NetworkElement {name: $from_element})
+        MATCH (to:NetworkElement {name: $to_element})
+        MERGE (from)-[r:SENDS_MESSAGE {
+            step: $step,
+            message: $message
         }]->(to)
+        SET r.trigger = $trigger,
+            r.condition = $condition,
+            r.timing = $timing,
+            r.content_hash = $content_hash
         """
-        session.run(cypher, 
-                   from_state=transition['from_state'],
-                   to_state=transition['to_state'],
+        session.run(cypher_message,
+                   from_element=transition['from_element'],
+                   to_element=transition['to_element'],
+                   step=transition.get('step', 0),
+                   message=transition['message'],
                    trigger=transition.get('trigger', ''),
                    condition=transition.get('condition', ''),
                    timing=transition.get('timing', ''),
-                   prerequisites=transition.get('prerequisites', ''))
+                   content_hash=content_hash)
+        
+        # Create relationship between states for the transition
+        cypher_state = """
+        MATCH (from:State {name: $from_state})
+        MATCH (to:State {name: $to_state})
+        MERGE (from)-[r:TRANSITIONS_TO {
+            step: $step,
+            message: $message
+        }]->(to)
+        SET r.trigger = $trigger,
+            r.condition = $condition,
+            r.timing = $timing,
+            r.content_hash = $content_hash
+        """
+        session.run(cypher_state,
+                   from_state=transition['from_state'],
+                   to_state=transition['to_state'],
+                   step=transition.get('step', 0),
+                   message=transition['message'],
+                   trigger=transition.get('trigger', ''),
+                   condition=transition.get('condition', ''),
+                   timing=transition.get('timing', ''),
+                   content_hash=content_hash)
+        processed_hashes.add(content_hash)
 
 def store_element_relationships(session, relationships: List[Dict]):
-    """Store relationships between network elements."""
+    """Store relationships between network elements with deduplication."""
+    processed_hashes = set()
     for rel in relationships:
+        content_hash = generate_content_hash(rel)
+        if content_hash in processed_hashes:
+            continue
+            
+        rel_type = convert_to_relationship_type(rel['relationship'])
         cypher = """
         MATCH (e1:NetworkElement {name: $element1})
         MATCH (e2:NetworkElement {name: $element2})
-        MERGE (e1)-[r:RELATES_TO {description: $description}]->(e2)
+        MERGE (e1)-[r:RELATES_TO {
+            element1: $element1,
+            element2: $element2,
+            type: $rel_type
+        }]->(e2)
+        SET r.description = $description,
+            r.content_hash = $content_hash
         """
         session.run(cypher,
                    element1=rel['element1'],
                    element2=rel['element2'],
-                   description=rel['relationship'])
+                   rel_type=rel_type,
+                   description=rel['relationship'],
+                   content_hash=content_hash)
+        processed_hashes.add(content_hash)
 
 def store_triggers(session, triggers: List[Dict]):
     """Store triggers."""
@@ -537,6 +550,130 @@ def store_timing(session, timings: List[Dict]):
         session.run(cypher,
                    state=timing['state'],
                    timing=timing['timing'])
+
+def store_registration_flow(session, flow_items: List[RegistrationStep]):
+    """Store registration flow items with validated data."""
+    for item in flow_items:
+        try:
+            # Create or merge source and destination elements
+            cypher_elements = """
+            MERGE (source:NetworkElement {name: $source_name})
+            MERGE (dest:NetworkElement {name: $dest_name})
+            """
+            session.run(cypher_elements, 
+                    source_name=item.source_element,
+                    dest_name=item.destination_element)
+
+            # Create or merge states
+            cypher_states = """
+            MERGE (source_state:State {name: $source_state})
+            MERGE (dest_state:State {name: $dest_state})
+            """
+            session.run(cypher_states,
+                    source_state=item.source_state,
+                    dest_state=item.destination_state)
+
+            # Create relationships
+            cypher_flow = """
+            MATCH (source:NetworkElement {name: $source_name})
+            MATCH (dest:NetworkElement {name: $dest_name})
+            MATCH (source_state:State {name: $source_state})
+            MATCH (dest_state:State {name: $dest_state})
+            
+            MERGE (source)-[msg:SENDS_MESSAGE]->(dest)
+            SET msg.sequence_number = $seq_num,
+                msg.message = $message,
+                msg.step_name = $step_name,
+                msg.description = $description
+                
+            MERGE (source_state)-[trans:TRANSITIONS_TO]->(dest_state)
+            SET trans.trigger = $trigger,
+                trans.conditions = $conditions,
+                trans.timing = $timing,
+                trans.sequence_number = $seq_num
+            """
+            
+            session.run(cypher_flow,
+                    source_name=item.source_element,
+                    dest_name=item.destination_element,
+                    source_state=item.source_state,
+                    dest_state=item.destination_state,
+                    seq_num=item.sequence_number,
+                    message=item.message,
+                    step_name=item.step_name,
+                    description=item.description,
+                    trigger=item.trigger,
+                    conditions=item.conditions,
+                    timing=item.timing)
+
+        except Exception as e:
+            console.print(f"[yellow]Warning: Error processing flow item {item.sequence_number}: {str(e)}[/yellow]")
+            continue
+
+def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
+    """Process and store registration analysis data with validation."""
+    try:
+        # Test Neo4j connection first
+        console.print("[blue]Testing Neo4j connection...[/blue]")
+        success, message = test_neo4j_connection(URI, USERNAME, PASSWORD)
+        if not success:
+            console.print(f"[red]Neo4j connection failed: {message}[/red]")
+            return
+
+        console.print(f"[blue]Reading data from {file_path}...[/blue]")
+        with open(file_path, 'r') as f:
+            raw_data = json.load(f)
+            
+        for result in raw_data.get('results', []):
+            try:
+                # Validate with Pydantic using model_validate instead of from_json
+                analysis = RegistrationAnalysis.model_validate(result)
+                
+                # Store validated data
+                driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+                with driver.session() as session:
+                    # Clear existing data before storing new data
+                    clear_database(session)
+                    
+                    # Store network elements
+                    store_network_elements(session, [elem.model_dump() for elem in analysis.network_elements])
+                    
+                    # Store states
+                    store_states(session, [state.model_dump() for state in analysis.states])
+                    
+                    # Store registration flow
+                    store_registration_flow(session, analysis.registration_flow)
+                    
+                    # Store metadata
+                    cypher_metadata = """
+                    CREATE (m:Metadata)
+                    SET m += $metadata
+                    """
+                    session.run(cypher_metadata, metadata=analysis.metadata.model_dump())
+                    
+                console.print("[green]✓ Validated and stored data successfully[/green]")
+                
+            except Exception as e:
+                console.print(f"[red]Error processing result: {str(e)}[/red]")
+                console.print(traceback.format_exc())
+                continue
+            
+    except Exception as e:
+        console.print(f"[red]Error processing data: {str(e)}[/red]")
+        console.print(traceback.format_exc())
+        raise
+    finally:
+        if 'driver' in locals():
+            driver.close()
+
+def clear_database(session):
+    """Clear all nodes and relationships from the database."""
+    try:
+        session.run("MATCH (n) DETACH DELETE n")
+        console.print("[green]✓ Database cleared successfully[/green]")
+    except Exception as e:
+        console.print(f"[red]Error clearing database: {str(e)}[/red]")
+        raise
 
 if __name__ == "__main__":
     process_registration_data()

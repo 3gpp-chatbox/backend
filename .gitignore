@@ -1,8 +1,5 @@
 # Environment variables
 .env
-.env.template
-
-ckeckapi.py
 
 # Virtual environment
 .venv/
@@ -18,7 +15,7 @@ __pycache__/
 *$py.class
 
 # Processed data
-processed_chunks.pkl
+processed_data/
 
 # IDE
 .vscode/
