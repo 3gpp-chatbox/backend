@@ -1,106 +1,128 @@
 {
-  "procedure_name": "TAI List Assignment during Initial Registration",
-  "description": "The AMF assigns a TAI list as a registration area to the UE during the initial registration procedure. The UE stores the received TAI list, replacing any old ones.",
+  "procedure_name": "Initial Registration",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under various conditions.",
   "nodes": [
     {
-      "id": "AMF_Receives_Registration_Request",
+      "id": "5GMM_DEREGISTERED",
       "type": "state",
-      "properties": {}
-    },
-    {
-      "id": "AMF_Assigns_TAI_List",
-      "type": "action",
-      "properties": {}
-    },
-    {
-      "id": "AMF_Sends_Registration_Accept",
-      "type": "action",
       "properties": {
-        "message_type": "REGISTRATION ACCEPT",
-        "information_element": "TAI list"
+        "state": "5GMM-DEREGISTERED"
       }
     },
     {
-      "id": "UE_Receives_Registration_Accept",
+      "id": "Registration_Initiation",
+      "type": "action",
+      "properties": {
+        "action": "Initiate Registration Procedure"
+      }
+    },
+    {
+      "id": "Registration_Request_Sent",
       "type": "event",
       "properties": {
-        "message_type": "REGISTRATION ACCEPT",
-        "information_element": "TAI list"
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity IE",
+        "UE status IE",
+        "Additional GUTI IE",
+        "Last visited registered TAI",
+        "5GS update type IE",
+        "MICO indication IE",
+        "T3324 IE",
+        "Requested T3512 IE",
+        "Requested DRX parameters IE",
+        "Requested NB-N1 mode DRX parameters IE",
+        "Requested extended DRX parameters IE",
+        "LADN indication IE",
+        "Requested NSSAI IE",
+        "Network slicing indication IE",
+        "5GMM capability IE",
+        "S1 UE network capability IE",
+        "Mobile station classmark 2 IE",
+        "Supported codecs IE",
+        "UE radio capability ID IE",
+        "Payload container type IE",
+        "NAS message container IE",
+        "Additional information requested IE",
+        "Requested WUS assistance information IE",
+        "Requested PEIPS assistance information IE",
+        "N5GC indication IE",
+        "AUN3 indication IE",
+        "Service-level-AA container IE",
+        "UE determined PLMN with disaster condition IE"
+      ]
+    },
+    {
+      "id": "Timer_Start_T3510",
+      "type": "action",
+      "properties": {
+        "action": "Start timer T3510"
       }
     },
     {
-      "id": "UE_Stores_TAI_List",
+      "id": "Timer_Stop_T3502",
       "type": "action",
-      "properties": {}
-    },
-    {
-      "id": "UE_Old_TAI_List_Deleted",
-      "type": "state",
-      "properties": {}
-    },
-     {
-      "id": "Non_3GPP_Access",
-      "type": "condition",
       "properties": {
-        "access_type": "Non-3GPP"
+        "action": "Stop timer T3502",
+        "conditional": "If timer T3502 is running"
       }
     },
     {
-      "id": "Single_TAI_Included",
+      "id": "Timer_Stop_T3511",
       "type": "action",
       "properties": {
-        "tai_list_count": "single"
+        "action": "Stop timer T3511",
+        "conditional": "If timer T3511 is running"
       }
     }
   ],
   "edges": [
     {
-      "from": "AMF_Receives_Registration_Request",
-      "to": "AMF_Assigns_TAI_List",
-      "action": "Process Registration Request",
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Initiation",
+      "event": "Conditions_Met",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Move from GERAN/UTRAN to NG-RAN coverage",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to come out of unavailability period and resume normal services"
+        ]
+      }
+    },
+    {
+      "from": "Registration_Initiation",
+      "to": "Registration_Request_Sent",
+      "action": "Send REGISTRATION REQUEST message",
       "properties": {}
     },
     {
-      "from": "AMF_Assigns_TAI_List",
-      "to": "AMF_Sends_Registration_Accept",
-      "action": "Include TAI List in Registration Accept",
-      "properties": {}
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Start_T3510",
+      "action": "Start Timer",
+      "properties": {
+        "timer": "T3510"
+      }
     },
     {
-      "from": "AMF_Sends_Registration_Accept",
-      "to": "UE_Receives_Registration_Accept",
-      "event": "Registration Accept Received",
-      "properties": {}
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Stop_T3502",
+      "action": "Stop Timer (if running)",
+      "properties": {
+        "timer": "T3502"
+      }
     },
     {
-      "from": "UE_Receives_Registration_Accept",
-      "to": "UE_Stores_TAI_List",
-      "action": "Store TAI List",
-      "properties": {}
-    },
-    {
-      "from": "UE_Stores_TAI_List",
-      "to": "UE_Old_TAI_List_Deleted",
-      "action": "Delete Old TAI List",
-      "properties": {}
-    },
-     {
-      "from": "AMF_Receives_Registration_Request",
-      "to": "Non_3GPP_Access",
-      "condition": "Registration Request over Non-3GPP access",
-      "properties": {}
-    },
-    {
-      "from": "Non_3GPP_Access",
-      "to": "AMF_Assigns_TAI_List",
-      "action": "AMF includes single TAI",
-      "properties": {}
-    },
-    {
-      "from": "AMF_Assigns_TAI_List",
-      "to": "Single_TAI_Included",
-      "action": "Include single TAI in the Registration Accept message",
-      "properties": {}
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Stop_T3511",
+      "action": "Stop Timer (if running)",
+      "properties": {
+        "timer": "T3511"
+      }
     }
   ]
 }

@@ -1,19 +1,15 @@
+```mermaid
+graph LR
+    "5GMM_DEREGISTERED"["5GMM-DEREGISTERED (state)"]
+    "Registration_Initiation"["Initiate Registration Procedure (action)"]
+    "Registration_Request_Sent"["REGISTRATION REQUEST (event)"]
+    "Timer_Start_T3510"["Start timer T3510 (action)"]
+    "Timer_Stop_T3502"["Stop timer T3502 (action)"]
+    "Timer_Stop_T3511"["Stop timer T3511 (action)"]
 
-flowchart TD
-    "AMF_Receives_Registration_Request"["AMF_Receives_Registration_Request (state)"]
-    "AMF_Assigns_TAI_List"["AMF_Assigns_TAI_List (action)"]
-    "AMF_Sends_Registration_Accept"["AMF_Sends_Registration_Accept (action)"]
-    "UE_Receives_Registration_Accept"["UE_Receives_Registration_Accept (event)"]
-    "UE_Stores_TAI_List"["UE_Stores_TAI_List (action)"]
-    "UE_Old_TAI_List_Deleted"["UE_Old_TAI_List_Deleted (state)"]
-    "Non_3GPP_Access"["Non_3GPP_Access (condition)"]
-    "Single_TAI_Included"["Single_TAI_Included (action)"]
-
-    "AMF_Receives_Registration_Request" --> |Process Registration Request| "AMF_Assigns_TAI_List"
-    "AMF_Assigns_TAI_List" --> |IncludeTAIListinRegistrationAccept| "AMF_Sends_Registration_Accept"
-    "AMF_Sends_Registration_Accept" --> |RegistrationAcceptReceived| "UE_Receives_Registration_Accept"
-    "UE_Receives_Registration_Accept" --> |StoreTAIList| "UE_Stores_TAI_List"
-    "UE_Stores_TAI_List" --> |DeleteOldTAIList| "UE_Old_TAI_List_Deleted"
-    "AMF_Receives_Registration_Request" --> |RegistrationRequestoverNon-3GPPaccess| "Non_3GPP_Access"
-    "Non_3GPP_Access" --> |AMFincludessingleTAI| "AMF_Assigns_TAI_List"
-    "AMF_Assigns_TAI_List" --> |IncludesingleTAIintheRegistrationAcceptmessage| "Single_TAI_Included"
+    "5GMM_DEREGISTERED" --> |Conditions_Met (Initial registration for 5GS services,Initial registration for emergency services,Initial registration for SMS over NAS,Move from GERAN/UTRAN to NG-RAN coverage,Initial registration for onboarding services in SNPN,Initial registration for disaster roaming services,Initial registration to come out of unavailability period and resume normal services)| "Registration_Initiation"
+    "Registration_Initiation" --> |SendREGISTRATIONREQUESTmessage| "Registration_Request_Sent"
+    "Registration_Request_Sent" --> |TimerT3510Started| "Timer_Start_T3510"
+    "Registration_Request_Sent" --> |TimerT3502Stopped(ifrunning)| "Timer_Stop_T3502"
+    "Registration_Request_Sent" --> |TimerT3511Stopped(ifrunning)| "Timer_Stop_T3511"
+```

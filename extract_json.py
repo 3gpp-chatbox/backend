@@ -31,19 +31,11 @@ def extract_procedural_info_from_text(section_name, text):
     Remember, all your analysis should be based on the chunk text i provided, and you should not make any assumptions.
     
 
-    This section is named: {section_name},  and it is mainly about one procedure.
-    identifying small procedures (or sub-procedures) rather than the entire high-level procedure. The section name itself is often tied to the sub-procedure name, or a key term that describes the procedure. focus on extracting the relevant information for a small procedure and format it into a Flow Property Graph JSON format.
-    To clarify, when i say small procedure or sub-procedure,im referring to specific, granular steps or parts of a broader procedure that might occur within a larger flow (for example, Initial Registration Initiation as a sub-procedure within the Initial Registration Procedure).
-     
-     **flow property graph JSON representation**: Structure the procedure into a JSON format. response  not contain anything but json code,
+    This section is named: {section_name},  and it is mainly about one procedure.the section name is also procedure name(or key info for procedure name). analyze the text i provided,focus on that procedure,extract the information about procedure.Structure the procedure into a  **flow property graph JSON representation** using SON format.
+    response  not contain anything but json code,
 
     **IMPORTANT: Return the responses in the exact format like below:**,
-<below is example for you to think of the extraction flow>: 
-Selected Procedure: LTE Attach Procedure
-
-
-Step 1: Extracting the Model from 3GPP Specification
-
+    below is example:
 Core Components to Identify
 
 □ States: Different conditions or statuses of the UE and network
@@ -154,7 +146,7 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
 section_id_to_process = "5.5.1.2.2"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.4", db_path)
+procedural_info = process_section("5.5.1.2.2", db_path)
 
 if procedural_info:
     save_procedural_info_to_json(procedural_info, "data.json")
