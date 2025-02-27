@@ -1,144 +1,106 @@
 {
-  "procedure_name": "Initial Registration Initiation",
-  "description": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under specific conditions.",
+  "procedure_name": "TAI List Assignment during Initial Registration",
+  "description": "The AMF assigns a TAI list as a registration area to the UE during the initial registration procedure. The UE stores the received TAI list, replacing any old ones.",
   "nodes": [
     {
-      "id": "5GMM_DEREGISTERED",
+      "id": "AMF_Receives_Registration_Request",
       "type": "state",
       "properties": {}
     },
     {
-      "id": "Registration_Request_Sent",
+      "id": "AMF_Assigns_TAI_List",
+      "type": "action",
+      "properties": {}
+    },
+    {
+      "id": "AMF_Sends_Registration_Accept",
+      "type": "action",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "information_element": "TAI list"
+      }
+    },
+    {
+      "id": "UE_Receives_Registration_Accept",
       "type": "event",
       "properties": {
-        "message_type": "REGISTRATION REQUEST"
+        "message_type": "REGISTRATION ACCEPT",
+        "information_element": "TAI list"
       }
     },
     {
-      "id": "Initial_Registration_5GS",
+      "id": "UE_Stores_TAI_List",
+      "type": "action",
+      "properties": {}
+    },
+    {
+      "id": "UE_Old_TAI_List_Deleted",
       "type": "state",
+      "properties": {}
+    },
+     {
+      "id": "Non_3GPP_Access",
+      "type": "condition",
       "properties": {
-        "reason": "initial registration for 5GS services"
+        "access_type": "Non-3GPP"
       }
     },
     {
-      "id": "Initial_Registration_Emergency",
-      "type": "state",
+      "id": "Single_TAI_Included",
+      "type": "action",
       "properties": {
-        "reason": "initial registration for emergency services"
-      }
-    },
-    {
-      "id": "Initial_Registration_SMS_NAS",
-      "type": "state",
-      "properties": {
-        "reason": "initial registration for SMS over NAS"
-      }
-    },
-    {
-      "id": "Mobility_GERAN_UTRAN_to_NG_RAN",
-      "type": "state",
-      "properties": {
-        "reason": "UE moves from GERAN/UTRAN to NG-RAN"
-      }
-    },
-    {
-      "id": "Initial_Registration_Onboarding_SNPN",
-      "type": "state",
-      "properties": {
-        "reason": "initial registration for onboarding services in SNPN"
-      }
-    },
-    {
-      "id": "Initial_Registration_Disaster_Roaming",
-      "type": "state",
-      "properties": {
-        "reason": "initial registration for disaster roaming services"
-      }
-    },
-    {
-      "id": "Initial_Registration_Resume_Normal_Services",
-      "type": "state",
-      "properties": {
-        "reason": "initial registration to come out of unavailability period and resume normal services"
+        "tai_list_count": "single"
       }
     }
   ],
   "edges": [
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration for 5GS services",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "AMF_Receives_Registration_Request",
+      "to": "AMF_Assigns_TAI_List",
+      "action": "Process Registration Request",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration for Emergency services",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "AMF_Assigns_TAI_List",
+      "to": "AMF_Sends_Registration_Accept",
+      "action": "Include TAI List in Registration Accept",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration for SMS over NAS",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "AMF_Sends_Registration_Accept",
+      "to": "UE_Receives_Registration_Accept",
+      "event": "Registration Accept Received",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Mobility from GERAN/UTRAN to NG-RAN",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running",
-        "conditions": [
-          "GPRS attach or routing area updating procedure initiated in A/Gb or Iu mode",
-          "5G-SRVCC from NG-RAN to UTRAN performed",
-          "No successful EPS attach/TAU in S1 mode or registration in N1 mode since then"
-        ]
-      }
+      "from": "UE_Receives_Registration_Accept",
+      "to": "UE_Stores_TAI_List",
+      "action": "Store TAI List",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration for Onboarding services in SNPN",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "UE_Stores_TAI_List",
+      "to": "UE_Old_TAI_List_Deleted",
+      "action": "Delete Old TAI List",
+      "properties": {}
+    },
+     {
+      "from": "AMF_Receives_Registration_Request",
+      "to": "Non_3GPP_Access",
+      "condition": "Registration Request over Non-3GPP access",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration for Disaster Roaming services",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "Non_3GPP_Access",
+      "to": "AMF_Assigns_TAI_List",
+      "action": "AMF includes single TAI",
+      "properties": {}
     },
     {
-      "from": "5GMM_DEREGISTERED",
-      "to": "Registration_Request_Sent",
-      "action": "Initiate Registration Procedure",
-      "properties": {
-        "trigger": "Initial Registration to Resume Normal Services",
-        "timer": "T3510 started",
-        "conditional_timers": "T3502 and T3511 stopped if running"
-      }
+      "from": "AMF_Assigns_TAI_List",
+      "to": "Single_TAI_Included",
+      "action": "Include single TAI in the Registration Accept message",
+      "properties": {}
     }
   ]
 }

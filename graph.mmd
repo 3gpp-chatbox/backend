@@ -1,19 +1,19 @@
 
 flowchart TD
-    "5GMM_DEREGISTERED"["5GMM_DEREGISTERED (state)"]
-    "Registration_Request_Sent"["Registration_Request_Sent (event)"]
-    "Initial_Registration_5GS"["Initial_Registration_5GS (state)"]
-    "Initial_Registration_Emergency"["Initial_Registration_Emergency (state)"]
-    "Initial_Registration_SMS_NAS"["Initial_Registration_SMS_NAS (state)"]
-    "Mobility_GERAN_UTRAN_to_NG_RAN"["Mobility_GERAN_UTRAN_to_NG_RAN (state)"]
-    "Initial_Registration_Onboarding_SNPN"["Initial_Registration_Onboarding_SNPN (state)"]
-    "Initial_Registration_Disaster_Roaming"["Initial_Registration_Disaster_Roaming (state)"]
-    "Initial_Registration_Resume_Normal_Services"["Initial_Registration_Resume_Normal_Services (state)"]
+    "AMF_Receives_Registration_Request"["AMF_Receives_Registration_Request (state)"]
+    "AMF_Assigns_TAI_List"["AMF_Assigns_TAI_List (action)"]
+    "AMF_Sends_Registration_Accept"["AMF_Sends_Registration_Accept (action)"]
+    "UE_Receives_Registration_Accept"["UE_Receives_Registration_Accept (event)"]
+    "UE_Stores_TAI_List"["UE_Stores_TAI_List (action)"]
+    "UE_Old_TAI_List_Deleted"["UE_Old_TAI_List_Deleted (state)"]
+    "Non_3GPP_Access"["Non_3GPP_Access (condition)"]
+    "Single_TAI_Included"["Single_TAI_Included (action)"]
 
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for 5GS services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Emergency services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for SMS over NAS,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Mobility from GERAN/UTRAN to NG-RAN,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running,conditions:GPRS attach or routing area updating procedure initiated in A/Gb or Iu mode,5G-SRVCC from NG-RAN to UTRAN performed,No successful EPS attach/TAU in S1 mode or registration in N1 mode since then)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Onboarding services in SNPN,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration for Disaster Roaming services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
-    "5GMM_DEREGISTERED" -->|Initiate Registration Procedure (trigger:Initial Registration to Resume Normal Services,timer:T3510 started,conditional_timers:T3502 and T3511 stopped if running)| "Registration_Request_Sent"
+    "AMF_Receives_Registration_Request" --> |Process Registration Request| "AMF_Assigns_TAI_List"
+    "AMF_Assigns_TAI_List" --> |IncludeTAIListinRegistrationAccept| "AMF_Sends_Registration_Accept"
+    "AMF_Sends_Registration_Accept" --> |RegistrationAcceptReceived| "UE_Receives_Registration_Accept"
+    "UE_Receives_Registration_Accept" --> |StoreTAIList| "UE_Stores_TAI_List"
+    "UE_Stores_TAI_List" --> |DeleteOldTAIList| "UE_Old_TAI_List_Deleted"
+    "AMF_Receives_Registration_Request" --> |RegistrationRequestoverNon-3GPPaccess| "Non_3GPP_Access"
+    "Non_3GPP_Access" --> |AMFincludessingleTAI| "AMF_Assigns_TAI_List"
+    "AMF_Assigns_TAI_List" --> |IncludesingleTAIintheRegistrationAcceptmessage| "Single_TAI_Included"

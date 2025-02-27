@@ -32,14 +32,30 @@ def extract_procedural_info_from_text(section_name, text):
     
 
     This section is named: {section_name},  and it is mainly about one procedure.
-    identifying small procedures (or sub-procedures) rather than the entire high-level procedure. The section name itself is often tied to the sub-procedure name, or a key term that describes the procedure. focus on extracting the relevant information for a small procedure and format it into a Flow Property Graph JSON format.
+    identifying small procedures (or sub-procedures) rather than the entire high-level procedure. The section name itself is often tied to the procedure or sub-procedure name, or a key term that describes the procedure. focus on extracting the relevant information for a small procedure and format it into a Flow Property Graph JSON format.
     To clarify, when i say small procedure or sub-procedure,im referring to specific, granular steps or parts of a broader procedure that might occur within a larger flow (for example, Initial Registration Initiation as a sub-procedure within the Initial Registration Procedure).
      
+
+
      **flow property graph JSON representation**: Structure the procedure into a JSON format. response  not contain anything but json code,
 
     **IMPORTANT: Return the responses in the exact format like below:**,
 <below is example for you to think of the extraction flow>: 
 Selected Procedure: LTE Attach Procedure
+
+The LTE Attach Procedure allows a User Equipment (UE) to register with
+
+the network to receive services.
+
+□ This procedure involves multiple steps and interactions between the UE
+
+and the Mobility Management Entity (MME).
+
+口
+
+Disclaimer: This example is a simplified representation. For detailed and specific implementations, refer to the official 3GPP specifications and consult with telecommunications professionals.
+
+
 
 
 Step 1: Extracting the Model from 3GPP Specification
@@ -63,6 +79,60 @@ Conditionals: Decisions based on certain criteria or parameters.
 Metadata: Additional information like timestamps, message types, or
 
 IDs.
+
+
+
+
+Step1: Key Steps in the LTE Attach Procedure:
+
+·
+
+Initial UE State: UE is powered on and not attached to any network.□ Attach Request: UE sends an Attach Request message to the MME.口 Authentication: MME initiates authentication procedures.
+
+□ Security Mode Command: MME sets up security parameters.Attach Accept: MME sends an Attach Accept message to UE.Attach Complete: UE confirms with an Attach Complete message.Final UE State: UE is attached to the network and can access services.
+
+口
+
+口
+
+
+
+Step 2: Representing the Model as a Flow Property Graph
+
+口
+
+A property graph consists of nodes (vertices) and edges, where both can have properties. This structure is suitable for representing complex relationships and flows.
+
+Creating Nodes and Edges:
+
+Nodes represent States and Events.
+
+口
+
+Edges represent Actions and Transitions, capturing the Flow of
+
+Execution.
+
+□ Properties include Parameters, Conditionals, and Metadata.
+
+
+
+
+Step 2: Attach procedure Nodes and Edges
+
+State Nodes:UE_Powered_On UE_Attaching UE_Authenticating UE_Securing UE_Attached
+
+Event Nodes:
+
+Attach_Request_Received Authentication_Challenge Security_Mode_Command Attach_Accept_Received Attach_Complete_Sent Graph Edges:
+
+Edges connect nodes to represent transitions triggered by
+
+aciions or events.
+
+Edge properties capture parameters, conditionals, and
+
+metadatá.
 
 (this is an json example of a procedure example):
 
@@ -154,7 +224,7 @@ def process_section(section_id, db_path="section_content_multiple_paragraphs.db"
 section_id_to_process = "5.5.1.2.2"
 db_path = "section_content_multiple_paragraphs.db"
 
-procedural_info = process_section("5.5.1.2.4", db_path)
+procedural_info = process_section("5.5.1.2.2", db_path)
 
 if procedural_info:
     save_procedural_info_to_json(procedural_info, "data.json")
