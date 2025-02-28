@@ -1,0 +1,49 @@
+[
+  {
+    "procedure_name": "Mobility and periodic registration update",
+    "trigger": "UE needs to update its registration with the network due to mobility, periodic timer expiry, or disaster roaming requirements.",
+    "state": "UE is registered with the network and needs to update its registration information.",
+    "causes": [
+      "UE supports SNSSAI time validity information.",
+      "UE supports SNSSAI location validity information.",
+      "UE supports RAT utilization control.",
+      "AMF reallocation occurs.",
+      "UE supports S1 mode.",
+      "UE has not disabled its EUTRA capability.",
+      "Periodic registration updating.",
+      "Disaster roaming mobility registration updating.",
+      "UE can determine based on its implementation that there is enough time to complete the procedure before the start of the unavailability period."
+    ],
+    "expected_outcomes": [
+      "UE's registration is updated with the network.",
+      "Network slicespecific authentication and authorization is performed.",
+      "UE is registered for normal service or disaster roaming service.",
+      "AMF reallocation is handled.",
+      "UE considers the previously received allowed NSSAI as valid."
+    ],
+    "error_handling": "If the UE is unable to store its 5GMM and 5GSM contexts, the UE triggers the deregistration procedure.",
+    "related_3gpp_spec_sections": [
+      "5.5.1.3.2",
+      "5.5.1.3.4",
+      "7.5.2"
+    ],
+    "message_types": [
+      "REGISTRATION REQUEST",
+      "REGISTRATION ACCEPT"
+    ],
+    "source_document_title": "24501-j11.md",
+    "source_chunk_ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "similarity_score": 0.95
+  }
+]

@@ -27,7 +27,7 @@ class TaxonomyExtractor:
             "temperature": 0.2,
             "top_p": 0.8,
             "top_k": 40,
-            "max_output_tokens": 4096,
+            "max_output_tokens": 10000,
         }
         
 
@@ -68,7 +68,7 @@ Ensure the output matches the structured JSON schema defined for Mobility Manage
             response = self.model.generate_content(
                 self._create_taxonomy_prompt(),
                 generation_config=self.generation_config,
-                safety_settings=[],  # Add safety settings if needed
+                safety_settings=[], 
             )
              # Log token usage
             if response.usage_metadata:

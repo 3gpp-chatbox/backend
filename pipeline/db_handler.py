@@ -30,21 +30,7 @@ class DBHandler:
                 )
             ''')
             
-            # Create procedure metadata table
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS procedure_metadata (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    procedure_name TEXT,
-                    description TEXT,
-                    steps_file TEXT,
-                    related_3gpp_spec_sections JSON,
-                    source_document_title TEXT,
-                    source_chunk_ids JSON,
-                    doc_id TEXT,
-                    similarity_score REAL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
+
             conn.commit()
 
     def store_chunks(self, chunks: List[Dict], doc_id: str) -> int:
@@ -68,16 +54,25 @@ class DBHandler:
             conn.commit()
             return cursor.rowcount
 
-    def get_chunks(self, doc_id: str) -> List[Dict]:
-        """Retrieve chunks for a document"""
+    def get_chunks(self, doc_id: str, query: str = None) -> List[Dict]:
+        """Retrieve chunks for a document with optional query filter"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
-                SELECT title, content, level, chunk_index, embedding_collection
-                FROM chunks 
-                WHERE doc_id = ? 
-                ORDER BY chunk_index
-            ''', (doc_id,))
+            
+            if query:
+                cursor.execute('''
+                    SELECT title, content, level, chunk_index, embedding_collection
+                    FROM chunks 
+                    WHERE doc_id = ? AND (title LIKE ? OR content LIKE ?)
+                    ORDER BY chunk_index
+                ''', (doc_id, f'%{query}%', f'%{query}%'))
+            else:
+                cursor.execute('''
+                    SELECT title, content, level, chunk_index, embedding_collection
+                    FROM chunks 
+                    WHERE doc_id = ? 
+                    ORDER BY chunk_index
+                ''', (doc_id,))
             
             return [{
                 'title': row[0],
