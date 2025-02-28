@@ -1,0 +1,128 @@
+{
+  "procedure_name": "Initial Registration",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under various conditions.",
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "state": "5GMM-DEREGISTERED"
+      }
+    },
+    {
+      "id": "Registration_Initiation",
+      "type": "action",
+      "properties": {
+        "action": "Initiate Registration Procedure"
+      }
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity IE",
+        "UE status IE",
+        "Additional GUTI IE",
+        "Last visited registered TAI",
+        "5GS update type IE",
+        "MICO indication IE",
+        "T3324 IE",
+        "Requested T3512 IE",
+        "Requested DRX parameters IE",
+        "Requested NB-N1 mode DRX parameters IE",
+        "Requested extended DRX parameters IE",
+        "LADN indication IE",
+        "Requested NSSAI IE",
+        "Network slicing indication IE",
+        "5GMM capability IE",
+        "S1 UE network capability IE",
+        "Mobile station classmark 2 IE",
+        "Supported codecs IE",
+        "UE radio capability ID IE",
+        "Payload container type IE",
+        "NAS message container IE",
+        "Additional information requested IE",
+        "Requested WUS assistance information IE",
+        "Requested PEIPS assistance information IE",
+        "N5GC indication IE",
+        "AUN3 indication IE",
+        "Service-level-AA container IE",
+        "UE determined PLMN with disaster condition IE"
+      ]
+    },
+    {
+      "id": "Timer_Start_T3510",
+      "type": "action",
+      "properties": {
+        "action": "Start timer T3510"
+      }
+    },
+    {
+      "id": "Timer_Stop_T3502",
+      "type": "action",
+      "properties": {
+        "action": "Stop timer T3502",
+        "conditional": "If timer T3502 is running"
+      }
+    },
+    {
+      "id": "Timer_Stop_T3511",
+      "type": "action",
+      "properties": {
+        "action": "Stop timer T3511",
+        "conditional": "If timer T3511 is running"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Initiation",
+      "event": "Conditions_Met",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Move from GERAN/UTRAN to NG-RAN coverage",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to come out of unavailability period and resume normal services"
+        ]
+      }
+    },
+    {
+      "from": "Registration_Initiation",
+      "to": "Registration_Request_Sent",
+      "action": "Send REGISTRATION REQUEST message",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Start_T3510",
+      "action": "Start Timer",
+      "properties": {
+        "timer": "T3510"
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Stop_T3502",
+      "action": "Stop Timer (if running)",
+      "properties": {
+        "timer": "T3502"
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Stop_T3511",
+      "action": "Stop Timer (if running)",
+      "properties": {
+        "timer": "T3511"
+      }
+    }
+  ]
+}
