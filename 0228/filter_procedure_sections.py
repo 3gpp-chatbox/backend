@@ -1,86 +1,78 @@
 import sqlite3
 
-# Step 1: Filter Procedure Sections from DB
-def filter_procedure_sections(cursor):
-    # Query the DB for all sections that contain the word 'Procedure'
-    cursor.execute("""
-        SELECT section_id, section_name, parent_section_id, section_level
-        FROM section
+import sqlite3
+
+def filter_procedure_sections():
+    conn = sqlite3.connect('section_content_0228.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT section_id, section_name, parent_section_id, parent_section_name, section_level 
+        FROM sections 
         WHERE section_name LIKE '%Procedure%'
         ORDER BY section_id;
-    """)
-    
-    # Fetch the filtered rows
-    return cursor.fetchall()
+    ''')
+
+    sections = cursor.fetchall()
+    conn.close()
+
+    return sections
+
+procedure_sections = filter_procedure_sections()
+print(f"Total Procedure Sections Found: {len(procedure_sections)}")
+
 
 # Step 2: Build procedure tree
-def build_procedure_tree(procedure_sections):
-    # Initialize procedure tree dictionary
-    procedure_tree = {}
+def build_recursive_tree(procedure_sections):
+    section_dict = {}
 
-    # Construct the nodes for each section
-    for row in procedure_sections:
-        section_id, section_name, parent_section_id, section_level = row
-        
-        # Add the section as a node in the tree
-        procedure_tree[section_id] = {
+    # Step 1: Store all sections in dictionary
+    for section in procedure_sections:
+        section_id, section_name, parent_section_id, parent_section_name, section_level = section
+        section_dict[section_id] = {
             "section_name": section_name,
             "parent_section_id": parent_section_id,
-            "section_level": section_level,
-            "children": []  # Placeholder for child sections
+            "children": [],
+            "section_level": section_level
         }
 
-    # Assign children to parent sections based on parent_section_id
-    for section_id, section_data in procedure_tree.items():
+    # Step 2: Assign children to parents
+    for section_id, section_data in section_dict.items():
         parent_id = section_data["parent_section_id"]
-        if parent_id and parent_id in procedure_tree:
-            procedure_tree[parent_id]["children"].append(section_id)
-        else:
-            print(f"Warning: Parent section {parent_id} not found for section {section_id}")
+        if parent_id in section_dict:
+            section_dict[parent_id]["children"].append(section_id)
 
-def merge_section_content(cursor, procedure_tree):
-    # Step 1: Gather all section IDs to query content at once
-    all_section_ids = list(procedure_tree.keys())
+    return section_dict
 
-    # Step 2: Fetch all content chunks for these sections
-    all_content = fetch_all_content(cursor, all_section_ids)
+procedure_tree = build_recursive_tree(procedure_sections)
+print(f"Total Parent Sections: {len([k for k, v in procedure_tree.items() if v['children']])}")
 
-    section_content = {}
+def fetch_content(section_id):
+    conn = sqlite3.connect('section_content_0228.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT content_chunk FROM content WHERE section_id = ? ORDER BY content_id
+    ''', (section_id,))
+    chunks = cursor.fetchall()
+    conn.close()
 
-    for section_id, section_data in procedure_tree.items():
-        print(f"Processing section {section_id}...")  # Debugging output
+    content = "\n".join(chunk[0] for chunk in chunks if chunk[0])
+    return content
 
-        # Fetch content for the current section from the pre-fetched content
-        chunks = all_content.get(section_id, [])
+def merge_content(tree, section_id):
+    content = fetch_content(section_id)
 
-        # If there is content for this section, merge it
-        if chunks:
-            full_content = "\n".join(chunks)
-            section_content[section_id] = full_content
-        else:
-            # If no content found, set it to empty string or placeholder
-            section_content[section_id] = ""  # or use: "No content available"
+    # Merge children recursively
+    for child_id in tree[section_id]["children"]:
+        content += "\n\n" + merge_content(tree, child_id)
 
-        # Process children even if the parent has no content
-        if section_data["children"]:
-            missing_children = [child_id for child_id in section_data["children"] if child_id not in procedure_tree]
-            if missing_children:
-                print(f"Warning: Missing children sections for {section_id}: {missing_children}")
+    return content
 
-            # Ensure children exist before recursion
-            child_content = merge_section_content(cursor, {child_id: procedure_tree[child_id] for child_id in section_data["children"] if child_id in procedure_tree})
-            
-            # Merge content of children under the current section, if the section itself had no content
-            if not section_content.get(section_id):  # If no content for the parent
-                section_content[section_id] = ""  # Initialize it as an empty string
+# Example: Merge Content for One Procedure Section
+section_id = procedure_sections[0][0]
+merged_content = merge_content(procedure_tree, section_id)
+print(f"Content Length for Section {section_id}: {len(merged_content)}")
 
-            section_content[section_id] += "\n\n" + "\n\n".join(child_content.values())
-
-        # If no content was found for this section and no children, log a warning
-        if not section_content.get(section_id):
-            print(f"Warning: No content found for section {section_id}, but it may have children.")
-
-    return section_content
 
 
 # Main execution

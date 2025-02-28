@@ -33,27 +33,28 @@ CREATE TABLE IF NOT EXISTS content (
 );
 ''')
 
-# Regex to match headings
+# Regex to match headings like # 5 ..., ## 5.1 ..., ### 5.4.1 ...
 heading_pattern = re.compile(r'^(#{1,6})\s+(\d+(\.\d+)*)\s+(.+)', re.MULTILINE)
 
-# Track parent section relationships
-parent_sections = {}
+# Track Parent Sections
+parent_sections = {}  # Stores {level: section_id}
+parent_section_names = {}  # Stores {level: section_name}
 
-# Iterate over headings
+# Iterate through matched headings
 for match in heading_pattern.finditer(md_content):
-    heading_level = len(match.group(1))  # How many # symbols
-    section_id = match.group(2).strip()  # "5", "5.1", "5.4.1"
-    section_name = match.group(4).strip()  # Heading name like "Overview"
+    heading_level = len(match.group(1))  # Number of # (heading level)
+    section_id = match.group(2).strip()  # Extract section ID (e.g., "5", "5.1")
+    section_name = match.group(4).strip()  # Extract section name
 
     parent_section_id = None
     parent_section_name = None
 
-    # Track Parent Section
+    # If not top-level heading, find parent section
     if heading_level > 1:
         parent_section_id = parent_sections.get(heading_level - 1)
-        parent_section_name = parent_sections.get(heading_level - 1, None)
+        parent_section_name = parent_section_names.get(heading_level - 1)
 
-    # Check if section_id already exists in DB before inserting
+    # Check if the section already exists (to avoid duplicates)
     cursor.execute('SELECT section_id FROM sections WHERE section_id = ?', (section_id,))
     existing_section = cursor.fetchone()
 
@@ -64,17 +65,18 @@ for match in heading_pattern.finditer(md_content):
         VALUES (?, ?, ?, ?, ?)
         ''', (section_id, section_name, parent_section_id, parent_section_name, heading_level))
 
-        # Insert into content table (empty content_chunk)
+        # Insert into content table with empty content_chunk
         cursor.execute('''
         INSERT INTO content (section_id, section_name, parent_section_id, parent_section_name, section_level, content_chunk)
         VALUES (?, ?, ?, ?, ?, ?)
         ''', (section_id, section_name, parent_section_id, parent_section_name, heading_level, ''))
 
-    # Update parent section tracker
+    # Store parent section tracking
     parent_sections[heading_level] = section_id
+    parent_section_names[heading_level] = section_name
 
-# Commit and Close
+# Commit and close connection
 conn.commit()
 conn.close()
 
-print("Data inserted successfully without duplication.")
+print("✅ Data inserted successfully without mistakes.")
