@@ -1,0 +1,28 @@
+[
+  {
+    "procedure_name": "Mobility Registration Update",
+    "procedure_category": "Registration",
+    "sub_category": "Mobility Registration Update",
+    "trigger": "Request of the upper layers to establish an emergency PDU session",
+    "state": "UE is in ATTEMPTING-REGISTRATION-UPDATE state; timers T3502, T3511, or T3346 may be running",
+    "causes": [
+      "Establishment of an emergency PDU session",
+      "UE configured for high priority access in selected PLMN",
+      "Request for MMTEL voice call, MMTEL video call, or MO IMS registration related signalling",
+      "5GS update status is set to 5U2 NOT UPDATED"
+    ],
+    "expected_outcomes": [
+      "Registration with the network for mobility management"
+    ],
+    "error_handling": null,
+    "related_3gpp_spec_sections": [
+      "5.2.3.2.3"
+    ],
+    "message_types": [],
+    "source_document_title": "24501-j11.md",
+    "source_chunk_ids": [
+      "5.2.3.2.3"
+    ],
+    "similarity_score": 0.95
+  }
+]

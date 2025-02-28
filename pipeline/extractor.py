@@ -15,6 +15,8 @@ class ProcedureFeature(BaseModel):
 
 class Procedure(BaseModel):
     procedure_name: str
+    procedure_category: str = Field(..., description="Main category (Registration, Deregistration, TAU, or Handover)")
+    sub_category: Optional[str] = Field(None, description="Specific type under the main category")
     trigger: str
     state: str
     causes: List[str]
@@ -73,7 +75,7 @@ class ProcedureExtractor:
     def _create_query_based_prompt(self, query: str, chunks: List[Dict], doc_title: str) -> str:
         """Create a prompt that incorporates the query and relevant chunks"""
         chunks_text = "\n\n".join([
-            f"Section: {chunk['title']}\nContent: {chunk['content']}"
+            f"Section {chunk['title']}\nContent: {chunk['content']}"
             for chunk in chunks
         ])
         
@@ -83,41 +85,32 @@ Context:
 {chunks_text}
 
 Instructions:
-1. Identify and extract procedure features relevant to the query: {query}
-2. Return the result as a SINGLE JSON OBJECT (not an array) with the following structure:
+{query}
+
+Return each procedure as a JSON object with this structure:
 {{
     "procedure_name": "Name of the procedure",
-    "trigger": "What initiates this procedure?",
+    "procedure_category": "One of: Registration, Deregistration, TAU, or Handover",
+    "sub_category": "Specific type (e.g., 'Initial Registration') or null",
+    "trigger": "What initiates this procedure",
     "state": "State of the UE/network during execution",
     "causes": ["Reasons why this procedure occurs"],
-    "expected_outcomes": ["List of expected outcomes"],
-    "error_handling": "How errors are handled (if applicable)",
-    "related_3gpp_spec_sections": ["Relevant section references"],
-    "message_types": ["Messages involved in this procedure"],
+    "expected_outcomes": ["Expected results"],
+    "error_handling": "How errors are handled",
+    "related_3gpp_spec_sections": ["Relevant section numbers"],
+    "message_types": ["Messages used in this procedure"],
     "source_document_title": "{doc_title}",
-    "source_chunk_ids": ["List of relevant chunk IDs"]
+    "source_chunk_ids": ["Relevant chunk IDs"],
+    "similarity_score": "Similarity score between 0 and 1"
 }}
 
 IMPORTANT:
-- Return ONLY the JSON object
-- Do not wrap it in an array
-- Do not include any additional text or explanations
-- Ensure all fields are present
+- Return ONLY valid JSON
+- Include all fields
 - Use proper JSON formatting with double quotes
-
-Example response:
-{{
-    "procedure_name": "Tracking Area Update (TAU) Procedure",
-    "trigger": "UE detects new tracking area",
-    "state": "UE in RRC-Connected or Idle mode",
-    "causes": ["Periodic TAU timer expired", "UE moved to a new TA"],
-    "expected_outcomes": ["Updated UE location", "Authentication if required"],
-    "error_handling": "UE retries TAU request if failure occurs",
-    "related_3gpp_spec_sections": ["TS 24.501 Section 5.3.2"],
-    "message_types": ["TAU Request", "TAU Accept", "TAU Reject"],
-    "source_document_title": "{doc_title}",
-    "source_chunk_ids": ["0", "1"]
-}}"""
+- Set procedure_category to one of the specified categories
+- Skip procedures that don't fit the categories
+"""
 
     def _parse_response(self, response_text: str, doc_title: str) -> List[Dict]:
         """Parse and validate the LLM response"""
@@ -239,7 +232,7 @@ Example response:
             similarity_threshold = 0.65
             chunks = []
             total_context = 0
-            max_context = 8000
+            max_context = 10000
 
             # Convert distances to similarities and filter
             for chunk in similar_chunks:

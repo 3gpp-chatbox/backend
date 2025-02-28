@@ -56,68 +56,83 @@ def main():
         # Extract procedures using Gemini API
         if Gemini_API_KEY:
             procedure_extractor = ProcedureExtractor(api_key=Gemini_API_KEY)
-            queries = [
-                "Mobility Management (MM) Registration- Initial Registration",
-                "Mobility Management (MM) Registration- Periodic Registration",
-                "Mobility Management (MM) Registration- Mobility Registration",
-            ]
+            
+            # Define the structured query
+            query = """
+            Identify and extract Mobility Management (MM) procedure features relevant to these categories:
+                - Registration
+                - Deregistration
+                - Tracking Area Update (TAU)
+                - Handover
+            
+            For each procedure found:
+            1. Classify it into one of these categories
+            2. Identify any sub-categories (e.g., Initial Registration under Registration)
+            3. Extract all required procedure details
+            4. Skip procedures that don't fit these categories
+            """
             
             os.makedirs(output_directory, exist_ok=True)
+            print(f"\nProcessing MM procedures...")
             
-            for query in queries:
-                print(f"\nProcessing query: {query}")
-                
-                # Use ChromaDB's semantic search
-                results = collection.query(
-                    query_texts=[query],
-                    n_results=10,  # Increased for better coverage
-                    include=["documents", "metadatas", "distances"]
-                )
-                
-                if not results['documents'][0]:
-                    print(f"✗ No relevant chunks found for query: {query}")
-                    continue
+            # Use ChromaDB's semantic search
+            results = collection.query(
+                query_texts=[query],
+                n_results=15,  # Increased for better coverage
+                include=["documents", "metadatas", "distances"]
+            )
+            
+            if not results['documents'][0]:
+                print("✗ No relevant chunks found")
+                return
 
-                # Convert results to chunks format
-                relevant_chunks = []
-                for doc, metadata, distance in zip(
-                    results['documents'][0], 
-                    results['metadatas'][0],
-                    results['distances'][0]
-                ):
-                    # Only include chunks with good similarity
-                    similarity = 1 - distance 
-                    if similarity >= 0.5:  # Adjust threshold as needed
-                        relevant_chunks.append({
-                            'title': metadata['title'],
-                            'content': doc,
-                            'index': metadata['index'],
-                            'similarity': similarity
-                        })
+            # Convert results to chunks format with similarity filtering
+            relevant_chunks = []
+            for doc, metadata, distance in zip(
+                results['documents'][0], 
+                results['metadatas'][0],
+                results['distances'][0]
+            ):
+                similarity = 1 - distance
+                if similarity >= 0.5:  # Similarity threshold
+                    relevant_chunks.append({
+                        'title': metadata['title'],
+                        'content': doc,
+                        'index': metadata['index'],
+                        'similarity': similarity
+                    })
 
-                if not relevant_chunks:
-                    print(f"✗ No chunks met similarity threshold for query: {query}")
-                    continue
+            if not relevant_chunks:
+                print("✗ No chunks met similarity threshold")
+                return
 
-                print(f"→ Found {len(relevant_chunks)} relevant chunks")
-                
-                # Extract procedures from relevant chunks
-                response = procedure_extractor.extract_procedures_from_query(
-                    query, relevant_chunks, doc_id
-                )
-                
-                if response:
-                    # Save results
+            print(f"→ Found {len(relevant_chunks)} relevant chunks")
+            
+            # Extract procedures from relevant chunks
+            procedures = procedure_extractor.extract_procedures_from_query(
+                query, relevant_chunks, doc_id
+            )
+            
+            if procedures:
+                # Organize procedures by category
+                categorized = {}
+                for proc in procedures:
+                    category = proc.procedure_category
+                    if category not in categorized:
+                        categorized[category] = []
+                    categorized[category].append(proc.dict())
+
+                # Save results by category
+                for category, procs in categorized.items():
                     output_path = os.path.join(
                         output_directory, 
-                        f"{query.lower().replace(' ', '_').replace('(', '').replace(')', '')}.json"
+                        f"{category.lower().replace(' ', '_')}_procedures.json"
                     )
                     with open(output_path, 'w', encoding='utf-8') as f:
-                        json.dump([proc.dict() for proc in response], f, indent=2, ensure_ascii=False)
-                    print(f"→ Results saved to {output_path}")
-                    print(f"✓ Found {len(response)} procedures")
-                else:
-                    print(f"✗ No procedures found for query: {query}")
+                        json.dump(procs, f, indent=2, ensure_ascii=False)
+                    print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
+            else:
+                print("✗ No procedures found")
         else:
             print("\n✗ Gemini API key not found in config.py")
 

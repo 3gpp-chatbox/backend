@@ -1,8 +1,8 @@
 [
   {
     "procedure_name": "Mobility and Periodic Registration Update",
-    "trigger": "UE initiates the procedure for mobility and periodic registration update",
-    "state": "UE registered in 5G network",
+    "trigger": "UE initiates the procedure for mobility or periodic registration update.",
+    "state": "UE is registered with the network.",
     "causes": [
       "Mobility registration updating",
       "Periodic registration updating",
@@ -19,10 +19,10 @@
       "UE stores 5GMM and 5GSM contexts",
       "UE considers previously received allowed NSSAI as valid"
     ],
-    "error_handling": "UE triggers the deregistration procedure if unable to store its 5GMM and 5GSM contexts",
+    "error_handling": "UE triggers the deregistration procedure if unable to store its 5GMM and 5GSM contexts.",
     "related_3gpp_spec_sections": [
-      "5.5.1.3.4",
-      "5.5.1.3.2"
+      "5.5.1.3.2",
+      "5.5.1.3.4"
     ],
     "message_types": [
       "REGISTRATION REQUEST",
