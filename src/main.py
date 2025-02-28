@@ -31,13 +31,7 @@ def token_counter(client, model, contents):
     return response
 
 
-# chat = client.chats.create(model=pro_model)
 
-# response = chat.send_message(
-#     message='Tell me a story in 100 words')
-
-
-file = client.files.upload(file="data/stripped/24501-j11.txt")
 
 prompt = """
 The file uploaded is extracted from the 3GPP specification 24.501. Please analyze the content and provide a structured representation of the procedural flow information.
@@ -194,7 +188,3 @@ Based on the above, analyze and extract the information from the given text and 
 """
 
 response = client.models.generate_content(model=pro_model, contents=[prompt, file])
-
-
-# doc = doc_processor.load_document("data/24501-j11.docx")
-# doc_processor.remove_paragraphs(doc, ["annex", "appendix", "abbreviations", "scope", "references", "foreword"])

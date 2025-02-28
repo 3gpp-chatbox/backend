@@ -15,9 +15,9 @@ sections_to_exclude = [
     "abbreviations",
     "scope",
     "references",
-    # "foreword", # Contains TOC
+    "foreword",
+    "void",
 ]
-
 
 stripped_doc_path = doc_processor.remove_sections(
     file_path=docx_file_path, excluded_sections=sections_to_exclude

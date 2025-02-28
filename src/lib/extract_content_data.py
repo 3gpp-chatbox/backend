@@ -3,52 +3,77 @@ from src.db import db
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-def generate_markdown(doc_id: int, target_heading: str) -> str:
-    logger.info(f"Generating markdown for doc_id={doc_id}, target_heading='{target_heading}'")
+
+def generate_markdown(doc_id: int, target_headings: list[str]) -> str:
+    """Generate a markdown document from specified document sections.
+
+    This function retrieves sections from a document based on given headings and their subheadings,
+    and formats them into a markdown string. It maintains the hierarchical structure of the sections
+    using markdown heading syntax.
+
+    Args:
+        doc_id (int): The unique identifier of the document to extract sections from.
+        target_headings (list[str]): A list of heading strings to extract, along with their
+            subsections. Each heading should match exactly with the stored heading in the database.
+
+    Returns:
+        str: A formatted markdown string containing the requested sections with proper heading
+            levels and content. If no matching sections are found, returns an error message.
+
+    Raises:
+        Exception: If there's any database error during the extraction process. The specific
+            exception details are logged before being re-raised.
+
+    """
+    logger.info(
+        f"Generating markdown for doc_id={doc_id}, target_headings={target_headings}"
+    )
     try:
         conn = db.get_db_connection()
         cur = conn.cursor()
-        # Step 1: Get the target path
+
+        # Step 1: Get all target paths for the given headings
         cur.execute(
-            "SELECT path FROM sections WHERE doc_id = %s AND heading = %s",
-            (doc_id, target_heading)
+            "SELECT heading, path FROM sections WHERE doc_id = %s AND heading = ANY (%s)",
+            (doc_id, target_headings),
         )
-        result = cur.fetchone()
-        if not result:
-            logger.warning(f"Heading '{target_heading}' not found in document {doc_id}")
-            return f"Heading '{target_heading}' not found in document {doc_id}"
+        results = cur.fetchall()
 
-        target_path = result.get("path")
-        logger.debug(f"Found target path: {target_path}")
+        if not results:
+            logger.warning(f"No headings {target_headings} found in document {doc_id}")
+            return f"No headings {target_headings} found in document {doc_id}"
 
-        # Step 2: Get all sections under this path
+        target_paths: list[str] = [result.get("path") for result in results]
+        logger.debug(f"Found target paths: {target_paths}")
+
+        # Step 2: Get all sections under these paths
+        # Modify the query to use <@ ANY for multiple paths
         cur.execute(
             """
             SELECT heading, level, content
             FROM sections
-            WHERE path <@ %s AND doc_id = %s
+            WHERE doc_id = %s AND path <@ ANY (%s)
             ORDER BY path
             """,
-            (target_path, doc_id)
+            (doc_id, target_paths),
         )
         sections = cur.fetchall()
-        logger.debug(f"Found {len(sections)} sections under path {target_path}")
+        logger.debug(f"Found {len(sections)} sections under paths {target_paths}")
 
         # Step 3: Generate markdown
-        markdown_lines = []
+        markdown_lines: list[str] = []
         for section in sections:
-            heading = section.get("heading")
-            level = section.get("level")
-            content = section.get("content")
-            # Create markdown heading (e.g., "## 4_1_general")
+            heading: str = section.get("heading")
+            level: int = section.get("level")
+            content: str | None = section.get("content")
+            # Create markdown heading
             heading_md = "#" * level + " " + heading
             markdown_lines.append(heading_md)
-            markdown_lines.append("")  # Blank line after heading
+            # markdown_lines.append("")  # Blank line after heading
             if content:
                 markdown_lines.append(content.strip())
                 markdown_lines.append("")  # Blank line after content
@@ -64,6 +89,15 @@ def generate_markdown(doc_id: int, target_heading: str) -> str:
         cur.close()
         conn.close()
 
+
 # Example usage
-markdown = generate_markdown(doc_id=1, target_heading="4_general")
-print(markdown)
+# markdown = generate_markdown(doc_id=1, target_heading="4_general")
+if __name__ == "__main__":
+    markdown = generate_markdown(
+        doc_id=1,
+        target_headings=[
+            "4_general",
+            "5_elementary_procedures_for_5GS_mobility_management",
+        ],
+    )
+    print(markdown)
