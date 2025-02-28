@@ -1,0 +1,770 @@
+{
+    "5": {
+        "section_name": "Elementary procedures for 5GS mobility management",
+        "parent_section_id": null,
+        "children": [
+            "5.3",
+            "5.4",
+            "5.5",
+            "5.6"
+        ],
+        "section_level": 1
+    },
+    "5.1.2": {
+        "section_name": "Types of 5GMM procedures",
+        "parent_section_id": "5.1",
+        "children": [],
+        "section_level": 3
+    },
+    "5.1.3.2.3.3": {
+        "section_name": "5GMM-COMMON-PROCEDURE-INITIATED",
+        "parent_section_id": "5.1.3.2.3",
+        "children": [],
+        "section_level": 6
+    },
+    "5.3": {
+        "section_name": "General on elementary 5GMM procedures",
+        "parent_section_id": "5",
+        "children": [],
+        "section_level": 2
+    },
+    "5.4": {
+        "section_name": "5GMM common procedures",
+        "parent_section_id": "5",
+        "children": [
+            "5.4.1",
+            "5.4.2",
+            "5.4.3",
+            "5.4.4",
+            "5.4.5",
+            "5.4.6",
+            "5.4.7"
+        ],
+        "section_level": 2
+    },
+    "5.4.1": {
+        "section_name": "Primary authentication and key agreement procedure",
+        "parent_section_id": "5.4",
+        "children": [
+            "5.4.1.2",
+            "5.4.1.3"
+        ],
+        "section_level": 3
+    },
+    "5.4.1.2": {
+        "section_name": "EAP based primary authentication and key agreement procedure",
+        "parent_section_id": "5.4.1",
+        "children": [
+            "5.4.1.2.2",
+            "5.4.1.2.3",
+            "5.4.1.2.4",
+            "5.4.1.2.5"
+        ],
+        "section_level": 4
+    },
+    "5.4.1.2.2": {
+        "section_name": "EAP-AKA' related procedures",
+        "parent_section_id": "5.4.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.1.2.3": {
+        "section_name": "EAP-TLS related procedures",
+        "parent_section_id": "5.4.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.1.2.4": {
+        "section_name": "EAP message reliable transport procedure",
+        "parent_section_id": "5.4.1.2",
+        "children": [
+            "5.4.1.2.4.3"
+        ],
+        "section_level": 5
+    },
+    "5.4.1.2.4.3": {
+        "section_name": "EAP message reliable transport procedure accepted by the UE",
+        "parent_section_id": "5.4.1.2.4",
+        "children": [],
+        "section_level": 6
+    },
+    "5.4.1.2.5": {
+        "section_name": "EAP result message transport procedure",
+        "parent_section_id": "5.4.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.1.3": {
+        "section_name": "5G AKA based primary authentication and key agreement procedure",
+        "parent_section_id": "5.4.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.4.2": {
+        "section_name": "Security mode control procedure",
+        "parent_section_id": "5.4",
+        "children": [],
+        "section_level": 3
+    },
+    "5.4.3": {
+        "section_name": "Identification procedure",
+        "parent_section_id": "5.4",
+        "children": [],
+        "section_level": 3
+    },
+    "5.4.4": {
+        "section_name": "Generic UE configuration update procedure",
+        "parent_section_id": "5.4",
+        "children": [
+            "5.4.4.2"
+        ],
+        "section_level": 3
+    },
+    "5.4.4.2": {
+        "section_name": "Generic UE configuration update procedure initiated by the network",
+        "parent_section_id": "5.4.4",
+        "children": [],
+        "section_level": 4
+    },
+    "5.4.5": {
+        "section_name": "NAS transport procedure(s)",
+        "parent_section_id": "5.4",
+        "children": [
+            "5.4.5.2",
+            "5.4.5.3"
+        ],
+        "section_level": 3
+    },
+    "5.4.5.2": {
+        "section_name": "UE-initiated NAS transport procedure",
+        "parent_section_id": "5.4.5",
+        "children": [
+            "5.4.5.2.2"
+        ],
+        "section_level": 4
+    },
+    "5.4.5.2.2": {
+        "section_name": "UE-initiated NAS transport procedure initiation",
+        "parent_section_id": "5.4.5.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.5.3": {
+        "section_name": "Network-initiated NAS transport procedure",
+        "parent_section_id": "5.4.5",
+        "children": [
+            "5.4.5.3.2"
+        ],
+        "section_level": 4
+    },
+    "5.4.5.3.2": {
+        "section_name": "Network-initiated NAS transport procedure initiation",
+        "parent_section_id": "5.4.5.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.6": {
+        "section_name": "5GMM status procedure",
+        "parent_section_id": "5.4",
+        "children": [],
+        "section_level": 3
+    },
+    "5.4.7": {
+        "section_name": "Network slice-specific authentication and authorization procedure",
+        "parent_section_id": "5.4",
+        "children": [
+            "5.4.7.2",
+            "5.4.7.3"
+        ],
+        "section_level": 3
+    },
+    "5.4.7.2": {
+        "section_name": "Network slice-specific EAP message reliable transport procedure",
+        "parent_section_id": "5.4.7",
+        "children": [
+            "5.4.7.2.1",
+            "5.4.7.2.2"
+        ],
+        "section_level": 4
+    },
+    "5.4.7.2.1": {
+        "section_name": "Network slice-specific EAP message reliable transport procedure initiation",
+        "parent_section_id": "5.4.7.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.7.2.2": {
+        "section_name": "Network slice-specific EAP message reliable transport procedure accepted by the UE",
+        "parent_section_id": "5.4.7.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.4.7.3": {
+        "section_name": "Network slice-specific EAP result message transport procedure",
+        "parent_section_id": "5.4.7",
+        "children": [
+            "5.4.7.3.1"
+        ],
+        "section_level": 4
+    },
+    "5.4.7.3.1": {
+        "section_name": "Network slice-specific EAP result message transport procedure initiation",
+        "parent_section_id": "5.4.7.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5": {
+        "section_name": "5GMM specific procedures",
+        "parent_section_id": "5",
+        "children": [
+            "5.5.1",
+            "5.5.2",
+            "5.5.3",
+            "5.5.4"
+        ],
+        "section_level": 2
+    },
+    "5.5.1": {
+        "section_name": "Registration procedure",
+        "parent_section_id": "5.5",
+        "children": [
+            "5.5.1.2",
+            "5.5.1.3"
+        ],
+        "section_level": 3
+    },
+    "5.5.1.2": {
+        "section_name": "Registration procedure for initial registration",
+        "parent_section_id": "5.5.1",
+        "children": [
+            "5.5.1.2.3"
+        ],
+        "section_level": 4
+    },
+    "5.5.1.2.3": {
+        "section_name": "5GMM common procedure initiation",
+        "parent_section_id": "5.5.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.1.3": {
+        "section_name": "Registration procedure for mobility and periodic registration update",
+        "parent_section_id": "5.5.1",
+        "children": [
+            "5.5.1.3.3"
+        ],
+        "section_level": 4
+    },
+    "5.5.1.3.3": {
+        "section_name": "5GMM common procedure initiation",
+        "parent_section_id": "5.5.1.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2": {
+        "section_name": "De-registration procedure",
+        "parent_section_id": "5.5",
+        "children": [
+            "5.5.2.2",
+            "5.5.2.3"
+        ],
+        "section_level": 3
+    },
+    "5.5.2.2": {
+        "section_name": "UE-initiated de-registration procedure",
+        "parent_section_id": "5.5.2",
+        "children": [
+            "5.5.2.2.1",
+            "5.5.2.2.2",
+            "5.5.2.2.3",
+            "5.5.2.2.4",
+            "5.5.2.2.5"
+        ],
+        "section_level": 4
+    },
+    "5.5.2.2.1": {
+        "section_name": "UE-initiated de-registration procedure initiation",
+        "parent_section_id": "5.5.2.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.2.2": {
+        "section_name": "UE-initiated de-registration procedure completion",
+        "parent_section_id": "5.5.2.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.2.3": {
+        "section_name": "UE-initiated de-registration procedure completion for 5GS services over 3GPP access",
+        "parent_section_id": "5.5.2.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.2.4": {
+        "section_name": "UE-initiated de-registration procedure completion for 5GS services over non-3GPP access",
+        "parent_section_id": "5.5.2.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.2.5": {
+        "section_name": "UE-initiated de-registration procedure completion for 5GS services over both 3GPP access and non-3GPP access",
+        "parent_section_id": "5.5.2.2",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.3": {
+        "section_name": "Network-initiated de-registration procedure",
+        "parent_section_id": "5.5.2",
+        "children": [
+            "5.5.2.3.1",
+            "5.5.2.3.2",
+            "5.5.2.3.3"
+        ],
+        "section_level": 4
+    },
+    "5.5.2.3.1": {
+        "section_name": "Network-initiated de-registration procedure initiation",
+        "parent_section_id": "5.5.2.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.3.2": {
+        "section_name": "Network-initiated de-registration procedure completion by the UE",
+        "parent_section_id": "5.5.2.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.2.3.3": {
+        "section_name": "Network-initiated de-registration procedure completion by the network",
+        "parent_section_id": "5.5.2.3",
+        "children": [],
+        "section_level": 5
+    },
+    "5.5.3": {
+        "section_name": "eCall inactivity procedure",
+        "parent_section_id": "5.5",
+        "children": [],
+        "section_level": 3
+    },
+    "5.5.4": {
+        "section_name": "Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay",
+        "parent_section_id": "5.5",
+        "children": [
+            "5.5.4.3",
+            "5.5.4.4",
+            "5.5.4.5"
+        ],
+        "section_level": 3
+    },
+    "5.5.4.3": {
+        "section_name": "UE-initiated authentication and key agreement procedure initiation",
+        "parent_section_id": "5.5.4",
+        "children": [],
+        "section_level": 4
+    },
+    "5.5.4.4": {
+        "section_name": "UE-initiated authentication and key agreement procedure accepted by the network",
+        "parent_section_id": "5.5.4",
+        "children": [],
+        "section_level": 4
+    },
+    "5.5.4.5": {
+        "section_name": "UE-initiated authentication and key agreement procedure not accepted by the network",
+        "parent_section_id": "5.5.4",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6": {
+        "section_name": "5GMM connection management procedures",
+        "parent_section_id": "5",
+        "children": [
+            "5.6.1",
+            "5.6.2",
+            "5.6.3"
+        ],
+        "section_level": 2
+    },
+    "5.6.1": {
+        "section_name": "Service request procedure",
+        "parent_section_id": "5.6",
+        "children": [
+            "5.6.1.2",
+            "5.6.1.3",
+            "5.6.1.4",
+            "5.6.1.5",
+            "5.6.1.6"
+        ],
+        "section_level": 3
+    },
+    "5.6.1.2": {
+        "section_name": "Service request procedure initiation",
+        "parent_section_id": "5.6.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.1.3": {
+        "section_name": "Common procedure initiation",
+        "parent_section_id": "5.6.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.1.4": {
+        "section_name": "Service request procedure accepted by the network",
+        "parent_section_id": "5.6.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.1.5": {
+        "section_name": "Service request procedure not accepted by the network",
+        "parent_section_id": "5.6.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.1.6": {
+        "section_name": "Service request procedure for initiating an emergency PDU session not accepted by the network",
+        "parent_section_id": "5.6.1",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.2": {
+        "section_name": "Paging procedure",
+        "parent_section_id": "5.6",
+        "children": [],
+        "section_level": 3
+    },
+    "5.6.3": {
+        "section_name": "Notification procedure",
+        "parent_section_id": "5.6",
+        "children": [
+            "5.6.3.2",
+            "5.6.3.3"
+        ],
+        "section_level": 3
+    },
+    "5.6.3.2": {
+        "section_name": "Notification procedure initiation",
+        "parent_section_id": "5.6.3",
+        "children": [],
+        "section_level": 4
+    },
+    "5.6.3.3": {
+        "section_name": "Notification procedure completion",
+        "parent_section_id": "5.6.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6": {
+        "section_name": "Elementary procedures for 5GS session management",
+        "parent_section_id": null,
+        "children": [
+            "6.2",
+            "6.3",
+            "6.4",
+            "6.5",
+            "6.6"
+        ],
+        "section_level": 1
+    },
+    "6.1.2": {
+        "section_name": "Types of 5GSM procedures",
+        "parent_section_id": "6.1",
+        "children": [],
+        "section_level": 3
+    },
+    "6.1.3.2.7": {
+        "section_name": "PROCEDURE TRANSACTION INACTIVE",
+        "parent_section_id": "6.1.3.2",
+        "children": [],
+        "section_level": 5
+    },
+    "6.1.3.2.8": {
+        "section_name": "PROCEDURE TRANSACTION PENDING",
+        "parent_section_id": "6.1.3.2",
+        "children": [],
+        "section_level": 5
+    },
+    "6.1.3.3.6": {
+        "section_name": "PROCEDURE TRANSACTION INACTIVE",
+        "parent_section_id": "6.1.3.3",
+        "children": [],
+        "section_level": 5
+    },
+    "6.1.3.3.7": {
+        "section_name": "PROCEDURE TRANSACTION PENDING",
+        "parent_section_id": "6.1.3.3",
+        "children": [],
+        "section_level": 5
+    },
+    "6.2": {
+        "section_name": "General on elementary 5GSM procedures",
+        "parent_section_id": "6",
+        "children": [
+            "6.2.1"
+        ],
+        "section_level": 2
+    },
+    "6.2.1": {
+        "section_name": "Principles of PTI handling for 5GSM procedures",
+        "parent_section_id": "6.2",
+        "children": [],
+        "section_level": 3
+    },
+    "6.3": {
+        "section_name": "Network-requested 5GSM procedures",
+        "parent_section_id": "6",
+        "children": [
+            "6.3.1",
+            "6.3.2",
+            "6.3.3"
+        ],
+        "section_level": 2
+    },
+    "6.3.1": {
+        "section_name": "PDU session authentication and authorization procedure",
+        "parent_section_id": "6.3",
+        "children": [
+            "6.3.1.2",
+            "6.3.1.3"
+        ],
+        "section_level": 3
+    },
+    "6.3.1.2": {
+        "section_name": "PDU EAP message reliable transport procedure",
+        "parent_section_id": "6.3.1",
+        "children": [
+            "6.3.1.2.1",
+            "6.3.1.2.2"
+        ],
+        "section_level": 4
+    },
+    "6.3.1.2.1": {
+        "section_name": "PDU EAP message reliable transport procedure initiation",
+        "parent_section_id": "6.3.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "6.3.1.2.2": {
+        "section_name": "PDU EAP message reliable transport procedure accepted by the UE",
+        "parent_section_id": "6.3.1.2",
+        "children": [],
+        "section_level": 5
+    },
+    "6.3.1.3": {
+        "section_name": "PDU EAP result message transport procedure",
+        "parent_section_id": "6.3.1",
+        "children": [
+            "6.3.1.3.1"
+        ],
+        "section_level": 4
+    },
+    "6.3.1.3.1": {
+        "section_name": "PDU EAP result message transport procedure initiation",
+        "parent_section_id": "6.3.1.3",
+        "children": [],
+        "section_level": 5
+    },
+    "6.3.2": {
+        "section_name": "Network-requested PDU session modification procedure",
+        "parent_section_id": "6.3",
+        "children": [
+            "6.3.2.2",
+            "6.3.2.3",
+            "6.3.2.4"
+        ],
+        "section_level": 3
+    },
+    "6.3.2.2": {
+        "section_name": "Network-requested PDU session modification procedure initiation",
+        "parent_section_id": "6.3.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.3.2.3": {
+        "section_name": "Network-requested PDU session modification procedure accepted by the UE",
+        "parent_section_id": "6.3.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.3.2.4": {
+        "section_name": "Network-requested PDU session modification procedure not accepted by the UE",
+        "parent_section_id": "6.3.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.3.3": {
+        "section_name": "Network-requested PDU session release procedure",
+        "parent_section_id": "6.3",
+        "children": [
+            "6.3.3.2",
+            "6.3.3.3"
+        ],
+        "section_level": 3
+    },
+    "6.3.3.2": {
+        "section_name": "Network-requested PDU session release procedure initiation",
+        "parent_section_id": "6.3.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6.3.3.3": {
+        "section_name": "Network-requested PDU session release procedure accepted by the UE",
+        "parent_section_id": "6.3.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4": {
+        "section_name": "UE-requested 5GSM procedures",
+        "parent_section_id": "6",
+        "children": [
+            "6.4.1",
+            "6.4.2",
+            "6.4.3"
+        ],
+        "section_level": 2
+    },
+    "6.4.1": {
+        "section_name": "UE-requested PDU session establishment procedure",
+        "parent_section_id": "6.4",
+        "children": [
+            "6.4.1.2",
+            "6.4.1.3",
+            "6.4.1.4"
+        ],
+        "section_level": 3
+    },
+    "6.4.1.2": {
+        "section_name": "UE-requested PDU session establishment procedure initiation",
+        "parent_section_id": "6.4.1",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.1.3": {
+        "section_name": "UE-requested PDU session establishment procedure accepted by the network",
+        "parent_section_id": "6.4.1",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.1.4": {
+        "section_name": "UE-requested PDU session establishment procedure not accepted by the network",
+        "parent_section_id": "6.4.1",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.2": {
+        "section_name": "UE-requested PDU session modification procedure",
+        "parent_section_id": "6.4",
+        "children": [
+            "6.4.2.2",
+            "6.4.2.3",
+            "6.4.2.4"
+        ],
+        "section_level": 3
+    },
+    "6.4.2.2": {
+        "section_name": "UE-requested PDU session modification procedure initiation",
+        "parent_section_id": "6.4.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.2.3": {
+        "section_name": "UE-requested PDU session modification procedure accepted by the network",
+        "parent_section_id": "6.4.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.2.4": {
+        "section_name": "UE-requested PDU session modification procedure not accepted by the network",
+        "parent_section_id": "6.4.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.3": {
+        "section_name": "UE-requested PDU session release procedure",
+        "parent_section_id": "6.4",
+        "children": [
+            "6.4.3.2",
+            "6.4.3.3",
+            "6.4.3.4"
+        ],
+        "section_level": 3
+    },
+    "6.4.3.2": {
+        "section_name": "UE-requested PDU session release procedure initiation",
+        "parent_section_id": "6.4.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.3.3": {
+        "section_name": "UE-requested PDU session release procedure accepted by the network",
+        "parent_section_id": "6.4.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6.4.3.4": {
+        "section_name": "UE-requested PDU session release procedure not accepted by the network",
+        "parent_section_id": "6.4.3",
+        "children": [],
+        "section_level": 4
+    },
+    "6.5": {
+        "section_name": "5GSM status procedure",
+        "parent_section_id": "6",
+        "children": [],
+        "section_level": 2
+    },
+    "6.6": {
+        "section_name": "Miscellaneous procedures",
+        "parent_section_id": "6",
+        "children": [
+            "6.6.2"
+        ],
+        "section_level": 2
+    },
+    "6.6.2": {
+        "section_name": "Remote UE report procedure",
+        "parent_section_id": "6.6",
+        "children": [
+            "6.6.2.2",
+            "6.6.2.3"
+        ],
+        "section_level": 3
+    },
+    "6.6.2.2": {
+        "section_name": "Remote UE report procedure initiation",
+        "parent_section_id": "6.6.2",
+        "children": [],
+        "section_level": 4
+    },
+    "6.6.2.3": {
+        "section_name": "Remote UE report procedure accepted by the network",
+        "parent_section_id": "6.6.2",
+        "children": [],
+        "section_level": 4
+    },
+    "7.3": {
+        "section_name": "Unknown or unforeseen procedure transaction identity or PDU Session identity",
+        "parent_section_id": "7",
+        "children": [
+            "7.3.1"
+        ],
+        "section_level": 2
+    },
+    "7.3.1": {
+        "section_name": "Procedure transaction identity",
+        "parent_section_id": "7.3",
+        "children": [],
+        "section_level": 3
+    },
+    "7.5.1": {
+        "section_name": "Common procedures",
+        "parent_section_id": "7.5",
+        "children": [],
+        "section_level": 3
+    },
+    "9.6": {
+        "section_name": "Procedure transaction identity",
+        "parent_section_id": "9",
+        "children": [],
+        "section_level": 2
+    }
+}

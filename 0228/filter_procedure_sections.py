@@ -53,6 +53,13 @@ def build_recursive_tree(procedure_sections):
     return section_dict
 
 
+
+# Step 3: Store the Recursive Tree in a File
+def store_tree_in_file(output_filename, tree):
+    with open(output_filename, 'w') as f:
+        json.dump(tree, f, indent=4)
+
+
 # Step 3: Fetch Content
 def fetch_content(section_id):
     with sqlite3.connect('section_content_0228.db') as conn:
@@ -65,14 +72,14 @@ def fetch_content(section_id):
 
 
 # Step 4: Merge Parent + Children Content 🌶️
-def merge_content(tree, section_id):
-    content = fetch_content(section_id)
+#def merge_content(tree, section_id):
+ #   content = fetch_content(section_id)
 
     # Merge Children Content 🔥 Recursively
-    for child_id in tree[section_id]["children"]:
-        content += "\n\n" + merge_content(tree, child_id)
+  #  for child_id in tree[section_id]["children"]:
+ #       content += "\n\n" + merge_content(tree, child_id)
 
-    return content
+ #   return content
 
 
 
@@ -224,19 +231,26 @@ if __name__ == '__main__':
     procedure_tree = build_recursive_tree(procedure_sections)
     print(f"Total Parent Sections: {len([k for k, v in procedure_tree.items() if v['children']])}")
 
+
+    # Step 3: Save the Tree to a File (before any LLM processing)
+    output_filename = "procedure_tree.json"
+    store_tree_in_file(output_filename, procedure_tree)
+    print(f"Recursive Tree saved to {output_filename}")
+
+
     # Step 3: Merge Content for All Sections
-    for section in procedure_sections:
-        section_id = section[0]
-        merged_content = merge_content(procedure_tree, section_id)
-        print(f"✅ Merged Content Length for Section {section_id}: {len(merged_content)}")
+    # for section in procedure_sections:
+      #   section_id = section[0]
+      #   merged_content = merge_content(procedure_tree, section_id)
+      #   print(f"✅ Merged Content Length for Section {section_id}: {len(merged_content)}")
 
         # Step 4: Extract Procedural Information from Merged Content using Gemini
-        json_response = extract_procedural_info_from_text(section[1], merged_content)
+      #   json_response = extract_procedural_info_from_text(section[1], merged_content)
         
-        if json_response:
+       #  if json_response:
             #print(f"Flow Graph JSON for Section {section_id}:")
             #print(json_response)  # Print or store the flow graph JSON
-               # Step 5: Store the Result in the File
-            store_results_in_file(output_filename, section_id, json_response)
-        else:
-            print(f"❌ No flow graph generated for Section {section_id}")
+       #         # Step 5: Store the Result in the File
+       #      store_results_in_file(output_filename, section_id, json_response)
+       #  else:
+       #      print(f"❌ No flow graph generated for Section {section_id}")
