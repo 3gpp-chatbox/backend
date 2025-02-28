@@ -9,7 +9,7 @@ with open('24501-j11.md', 'r', encoding='utf-8') as file:
 section_pattern = r'^(#+)\s+([\d\.]+)\s+(.+)$'
 lines = md_content.splitlines()
 
-conn = sqlite3.connect('newdb_0228.db')
+conn = sqlite3.connect('section_content_0228.db')
 cursor = conn.cursor()
 
 # Create tables
