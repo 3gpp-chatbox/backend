@@ -25,6 +25,7 @@ networkx	#Create knowledge graphs
 neo4j	 #Stores and retrieves graph data
 
 google.generativeai
+google-genai
 
 # Add requests package
 requests
@@ -41,5 +42,7 @@ sentencepiece  # Required for BART model
 
 pytesseract
 Pillow
+
+tiktoken
 
 

@@ -1,52 +1,110 @@
-'''
-1.  Purpose: This script is responsible for querying the vector database to retrieve the most relevant text chunks based on a user query and then using an LLM (e.g., Gemini) to extract the 5G NAS procedures from those chunks.
-
-2.  Input:
-    *   A user query (string).
-    *   The vector database collection object (returned from embeddings.py).
-    *   The sentence-transformer model name (same as used in embeddings.py).
-
-3.  Processing:
-    *   Queries the vector database for the most similar chunk embeddings
-    *   Uses Gemini AI to extract procedures from the chunks
-    *   Stores procedure metadata in database
-    *   Saves procedure steps in JSON files
-
-4.  Output:
-    *   Procedure metadata in database
-    *   Procedure steps in JSON files
-'''
-
 import google.generativeai as genai
 import os
 import json
-from typing import List, Dict
-from db_handler import DBHandler
+from typing import List, Dict, Optional, Any
 import chromadb
-import time
+from pydantic import BaseModel, Field, ValidationError
+
+# Define Pydantic models
+class SubFeatures(BaseModel):
+    Triggers: List[str] = Field(
+        ...,
+        description="Triggers causing transitions between states."
+    )
+    States: List[str] = Field(
+        ...,
+        description="Different conditions or statuses of the UE and network elements."
+    )
+    Actions: List[str] = Field(
+        ...,
+        description="Actions taken by the UE and network elements."
+    )
+    Flow_of_execution: List[str] = Field(
+        ...,
+        description="Sequence of steps in the procedure"
+    )
+    Cause: str = Field(
+        ...,
+        description="Cause of the procedure"
+    )   
+    Expected_Outcomes: str = Field(
+        ...,
+        description="Expected outcomes of the procedure"
+    )
+    Error_Handling: str = Field(
+        ...,
+        description="Error handling for the procedure"
+    )
+    Feedback_Loops: str = Field(
+        ...,
+        description="Feedback loops for the procedure"
+    )
+
+class Metadata(BaseModel):
+    Constraints_Requirements: Optional[str] = Field(
+        None, 
+        description="Network availability, resource allocation"
+    )
+    Message_Types: Optional[str] = Field(
+        None,
+        description="Types of messages exchanged during the procedure"
+    )
+    References: Optional[str] = Field(
+        None,
+        description="relevant document name and section titles of the given context"
+    )
+    Excerpts: Optional[str] = Field(
+        None,
+        description="Direct quotes from the given context"
+    )
+    Identifiers: Optional[str] = Field(
+        None,
+        description="Unique procedure IDs"
+    )
+
+class Procedure(BaseModel):
+    procedure_name: str 
+    sub_features: SubFeatures
+    metadata: Metadata
+
+class ProcedureCategory(BaseModel):
+    category_name: str 
+    procedures: List[Procedure]
+
+class ProceduresSchema(BaseModel):
+    level_1_procedures: List[ProcedureCategory]
+
+class ExtractionResponse(BaseModel):
+    procedures: List[Procedure]
+    metadata: Dict[str, Any]
 
 class ProcedureExtractor:
     def __init__(self, api_key: str, model_name: str = "gemini-2.0-flash"):
         """Initialize Gemini API and configure the model"""
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(model_name)
+        genai.configure(api_key=api_key) 
+        self.client = genai.GenerativeModel(model_name)
         self.generation_config = {
             "temperature": 0.2,
             "top_p": 0.8,
             "top_k": 40,
-            "max_output_tokens": 4096,
+            # "max_output_tokens": 8000
         }
 
-    def extract_procedures_from_query(self, query: str, relevant_chunks: List[Dict], doc_title: str) -> List[Dict]:
+    def extract_procedures_from_query(self, query: str, relevant_chunks: List[Dict], doc_title: str) -> List[Procedure]:
         """Extract procedures based on query and relevant chunks"""
         prompt = self._create_query_based_prompt(query, relevant_chunks, doc_title)
         
         try:
-            response = self.model.generate_content(
-                prompt,
+            response = self.client.generate_content(
+                contents=prompt,
                 generation_config=self.generation_config
             )
-            
+
+        # Log token usage
+            if hasattr(response, 'candidates'):
+                print(f"\nToken usage:")
+                print(f"Total tokens: {response.candidates[0].token_count}")
+                
             if response.text:
                 return self._parse_response(response.text, doc_title)
             return []
@@ -58,164 +116,145 @@ class ProcedureExtractor:
     def _create_query_based_prompt(self, query: str, chunks: List[Dict], doc_title: str) -> str:
         """Create a prompt that incorporates the query and relevant chunks"""
         chunks_text = "\n\n".join([
-            f"Section: {chunk['title']}\nContent: {chunk['content']}"
+            f"Section {chunk['title']}\nContent: {chunk['content']}"
             for chunk in chunks
         ])
         
+        # Use model_json_schema 
+        schema = json.dumps(ProceduresSchema.model_json_schema(), indent=2)
+        
         return f"""
-    You are a 3GPP specification expert. Extract 5G NAS procedures from the provided context.
-    Context:
-    {chunks_text}
-    Instructions:
-    1. Analyze the context and identify {query} NAS procedures.
-    2. Format each procedure as a JSON object.
-    3. Return a JSON array of all found procedures.
-    4. Ensure the output is valid JSON format.
-
-    Required JSON structure for each procedure:
-    {{
-        "procedure_name": "Name of the procedure",
-        "description": "Brief description of procedure's purpose",
-        "steps": [
-            {{"step_number": 1, "description": "First step description"}},
-            {{"step_number": 2, "description": "Second step description"}},
-            // ... more steps
-        ],
-        "related_3gpp_spec_sections": ["Relevant section references"],
-        "source_document_title": "{doc_title}",
-        "source_chunk_ids": ["List of relevant chunk IDs"]
-    }}
-    Example response:
-    [
-        {{
-            "procedure_name": "Tracking Area Update (TAU) Procedure",
-            "description": "Procedure used by UE to update its location information with the network.",
-            "steps": [
-                {{"step_number": 1, "description": "UE sends TAU Request to AMF"}},
-                {{"step_number": 2, "description": "AMF verifies UE's location and updates its context"}}
-            ],
-            "related_3gpp_spec_sections": ["TS 24.501 Section 5.3.2"],
-            "source_document_title": "{doc_title}",
-            "source_chunk_ids": ["0", "1"]
-        }}
-    ]
-    Return ONLY the JSON array. Do not include any additional text or explanations. There can be multiple steps in a procedure.
-    """
+        You are a 3GPP specification expert. Your task is to analyze the provided 
+        {query} procedure taxonomy and metadata structure and generate a JSON representation of it.  
+        The JSON should capture the hierarchical relationships between categories, procedures, and their sub-features,
+        as well as incorporate the metadata elements.
+        Context: {chunks_text}
+        document: {doc_title}
+        **Output Format (Valid JSON Schema)**:
+        {schema}
+        1. Ensure the output is valid JSON and follows the above schema.
+        2. **All information must be derived exclusively from the provided context.**
+        3. Ensure all references point to **only** the given context.
+        4. For the `sub_features` section, provide short content of the triggers, states, causes, expected outcomes, error handling, and feedback loops.
+        5. Don't include excessive direct references to specific sections within `sub_features` section.
+        **Do not generate information from your pre-existing knowledge.**
+        """
 
     def _parse_response(self, response_text: str, doc_title: str) -> List[Dict]:
-        """Parse and validate the LLM response"""
         try:
-            # Clean the response text
             cleaned_text = response_text.strip()
-            if not cleaned_text.startswith('['):
-                # Try to find the JSON array in the response
-                start_idx = cleaned_text.find('[')
-                end_idx = cleaned_text.rfind(']')
-                if start_idx != -1 and end_idx != -1:
-                    cleaned_text = cleaned_text[start_idx:end_idx + 1]
-                else:
-                    print("No valid JSON array found in response")
-                    return []
+            if cleaned_text.startswith('```json'):
+                cleaned_text = cleaned_text[7:]
+            if cleaned_text.endswith('```'):
+                cleaned_text = cleaned_text[:-3]
 
-            # Parse the JSON
-            procedures = json.loads(cleaned_text)
-            if not isinstance(procedures, list):
-                procedures = [procedures]
+            data = json.loads(cleaned_text.strip())
+            validated_data = ProceduresSchema(**data)
             
-            # Validate each procedure
-            validated_procedures = []
-            required_fields = {
-                'procedure_name', 'description', 'steps',
-                'related_3gpp_spec_sections', 'source_document_title',
-                'source_chunk_ids'
-            }
-            
-            for proc in procedures:
-                if all(key in proc for key in required_fields):
-                    # Ensure steps is properly formatted
-                    if isinstance(proc['steps'], list):
-                        validated_procedures.append(proc)
-                    else:
-                        print(f"Invalid steps format in procedure: {proc['procedure_name']}")
-            
-            return validated_procedures
+            procedures_list = []
+            for category in validated_data.level_1_procedures:
+                for procedure in category.procedures:
+                    procedure_dict = procedure.dict()
+                    procedure_dict['procedure_category'] = category.category_name  # Add category dynamically
+                    procedures_list.append(procedure_dict)
+
+            print(f"Successfully parsed {len(procedures_list)} procedures")
+            return procedures_list
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing error: {e}")
-            print(f"Response text: {response_text[:200]}...")  # Print first 200 chars for debugging
+            print(f"Raw response: {response_text[:200]}...")
             return []
-        except Exception as e:
-            print(f"Error parsing response: {e}")
+        except ValidationError as e:
+            print(f"Validation error: {e}")
             return []
 
-def extract_and_store_procedures(db_handler: DBHandler, doc_id: str, api_key: str, query: str, collection: chromadb.Collection):
-    """Extract procedures, store metadata in DB and steps in JSON"""
-    print("\n[4/4] Extracting relevant procedures...")
-    try:
-        extractor = ProcedureExtractor(api_key)
 
-        # Search for relevant chunks
-        print("Searching for relevant chunks...")
-        results = collection.query(
+    def perform_similarity_search(
+        self,
+        collection: chromadb.Collection,
+        query: str,
+        doc_id: Optional[str] = None,
+        n_results: int = 10,
+        similarity_threshold: float = 0.65
+    ) -> List[Dict]:
+        """Perform vector similarity search on the collection"""
+        
+        # Execute similarity search
+        search_results = collection.query(
             query_texts=[query],
-            n_results=5,
-            include=["documents", "metadatas", "distances"]
+            n_results=n_results,
+            include=["documents", "metadatas", "distances"],
+            where={"doc_id": doc_id} if doc_id else None,
         )
         
-        if not results['documents'][0]:
-            print("✗ No relevant chunks found")
-            return
-
-        print(f"Found {len(results['documents'][0])} relevant chunks")
-
-        # Process results
-        chunks = [{
-            'title': metadata['title'],
-            'content': doc,
-            'index': metadata['index']
-        } for doc, metadata in zip(results['documents'][0], results['metadatas'][0])]
-
-        # Extract procedures
-        print("\nExtracting procedures using Gemini AI...")
-        doc_title = f"3GPP TS {doc_id.split('.')[0]}"
-        procedures = extractor.extract_procedures_from_query(query, chunks, doc_title)
+        # Process and filter results
+        similar_chunks = []
+        total_context = 0
+        max_context = 10000
         
-        if procedures:
-            # Create output directory for steps
-            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output", "procedures", doc_id)
-            os.makedirs(output_dir, exist_ok=True)
+        for doc, metadata, distance in zip(
+            search_results['documents'][0],
+            search_results['metadatas'][0],
+            search_results['distances'][0]
+        ):
+            similarity = 1 - distance
             
-            similarity_score = 1 - results['distances'][0][0]
-            
-            # Store each procedure's metadata in DB and steps in JSON
-            for i, procedure in enumerate(procedures):
-                # Save steps to JSON file
-                steps_file = os.path.join(output_dir, f"procedure_{i+1}_steps.json")
-                steps_data = {
-                    "procedure_name": procedure['procedure_name'],
-                    "steps": procedure['steps']
+            if similarity >= similarity_threshold:
+                chunk = {
+                    'title': metadata['title'],
+                    'content': doc,
+                    'index': metadata['index'],
+                    'similarity': similarity
                 }
                 
-                with open(steps_file, 'w', encoding='utf-8') as f:
-                    json.dump(steps_data, f, indent=2, ensure_ascii=False)
-                
-                # Store metadata in database
-                db_handler.store_procedure_metadata({
-                    "procedure_name": procedure['procedure_name'],
-                    "description": procedure['description'],
-                    "steps_file": steps_file,
-                    "related_3gpp_spec_sections": procedure['related_3gpp_spec_sections'],
-                    "source_document_title": procedure['source_document_title'],
-                    "source_chunk_ids": procedure['source_chunk_ids'],
-                    "doc_id": doc_id,
-                    "similarity_score": similarity_score
-                })
-            
-            print(f"✓ Successfully processed {len(procedures)} procedures:")
-            print(f"  - Metadata stored in database")
-            print(f"  - Steps saved in: {output_dir}")
-        else:
-            print("✗ No relevant procedures found")
+                if total_context + len(doc) <= max_context:
+                    similar_chunks.append(chunk)
+                    total_context += len(doc)
+                else:
+                    break
+        
+        return similar_chunks
 
-    except Exception as e:
-        print(f"✗ Error during extraction: {e}")
+    def extract_procedures(self, query: str, collection: chromadb.Collection, doc_id: Optional[str] = None) -> ExtractionResponse:
+        """Extract procedures using vector similarity search and process results"""
+        print("\n[4/4] Extracting relevant procedures...")
+
+        try:
+            similar_chunks = self.perform_similarity_search(
+                collection=collection,
+                query=query,
+                doc_id=doc_id,
+                n_results=8,
+                similarity_threshold=0.65
+            )
+            
+            if not similar_chunks:
+                return ExtractionResponse(
+                    procedures=[], 
+                    metadata={"error": "No similar chunks found"}
+                )
+
+            # Process similarity search results
+            total_context = 0
+            max_context = 10000
+            chunks = []
+
+            for chunk in similar_chunks:
+                if total_context + len(chunk['content']) > max_context:
+                    break
+                chunks.append(chunk)
+                total_context += len(chunk['content'])
+
+            if not chunks:
+                return ExtractionResponse(
+                    procedures=[], 
+                    metadata={"error": "No valid chunks found"}
+                )
+
+            extracted_procedures = self.extract_procedures_from_query(query, chunks, doc_id)
+            return ExtractionResponse(procedures=extracted_procedures, metadata={"source": doc_id})
+        
+        except Exception as e:
+            print(f"Error extracting procedures: {e}")
+            return ExtractionResponse(procedures=[], metadata={"error": str(e)})

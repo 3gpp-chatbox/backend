@@ -14,8 +14,8 @@ class DocumentChunker:
     def __init__(self, nlp: Language = None):
         # Load spaCy model for semantic analysis
         self.nlp = nlp or spacy.load("en_core_web_sm")
-        self.max_chunk_size = 1000  # Maximum characters per chunk
-        self.overlap = 50  # Overlap between chunks
+        self.max_chunk_size = 500  # Maximum characters per chunk
+        self.overlap = 25  # Overlap between chunks
 
     def process_document(self, markdown_text: str) -> List[Dict]:
         """

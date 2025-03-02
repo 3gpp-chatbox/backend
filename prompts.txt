@@ -1,0 +1,82 @@
+You are a 3GPP specification expert. Your task is to analyze the provided 3GPP 24.501 procedure taxonomy and metadata structure and generate a JSON representation of it.  The JSON should capture the hierarchical relationships between categories, procedures, and their sub-features, as well as incorporate the metadata elements.
+
+**Taxonomy Structure for 3GPP 24.501 Procedures:**
+
+1. **Top-Level Categories:**
+   - Registration Procedures
+   - Session Management Procedures
+
+2. **Second-Level: Individual Procedures:**
+   - Registration Procedures:
+     - Initial Registration
+     - Periodic Registration
+     - Deregistration
+   - Session Management Procedures:
+     - Session Establishment
+     - Session Modification
+     - Session Release
+
+3. **Sub-Features for Each Procedure:**
+   - **Initial Registration:**
+     - Trigger: Device power-on, network selection
+     - State: Idle state
+     - Cause: New device registration, network re-entry
+     - Expected Outcomes: Successful registration, error handling
+     - Error Handling: Steps for failure, retry mechanisms
+     - Feedback Loops: Error reporting, retry notifications
+   - **Session Establishment:**
+     - Trigger: User request, network initiation
+     - State: Connected state
+     - Cause: New service request, network allocation
+     - Expected Outcomes: Successful session setup, error handling
+     - Error Handling: Session setup failure, recovery steps
+     - Feedback Loops: Session status updates, error reporting
+
+**Metadata Integration:**
+
+- **Constraints and Requirements:** Network availability, resource allocation
+- **Message Types:** NAS messages, RRC messages
+- **References:** Sections 5.1, 5.2, etc.
+- **Excerpts:** Direct quotes from the specification
+- **Identifiers:** Unique procedure IDs
+
+**Instructions:**
+
+1.  Create a JSON object that represents the taxonomy. The top-level keys should be the top-level categories ("Registration Procedures", "Session Management Procedures").
+2.  Each top-level category should contain an array of procedure objects.
+3.  Each procedure object should have the following keys:
+    -   `procedure_name` (string): The name of the procedure (e.g., "Initial Registration").
+    -   `sub_features` (object): An object containing the sub-features as key-value pairs (e.g., "Trigger": "Device power-on, network selection").
+    -   `metadata` (object): An object containing the metadata elements as key-value pairs (e.g., "Constraints and Requirements": "Network availability, resource allocation").
+4.  The JSON object should *only* represent the taxonomy and metadata as described above. Do not include any explanatory text or other information.  Ensure it is valid JSON.
+
+**Example (Partial JSON):**
+
+```json
+{
+  "Registration Procedures": [
+    {
+      "procedure_name": "Initial Registration",
+      "sub_features": {
+        "Trigger": "Device power-on, network selection",
+        "State": "Idle state",
+        "Cause": "New device registration, network re-entry",
+        "Expected Outcomes": "Successful registration, error handling",
+        "Error Handling": "Steps for failure, retry mechanisms",
+        "Feedback Loops": "Error reporting, retry notifications"
+      },
+      "metadata": {
+        "Constraints and Requirements": "Network availability, resource allocation",
+        "Message Types": "NAS messages, RRC messages",
+        "References": "Sections 5.1, 5.2, etc.",
+        "Excerpts": "Direct quotes from the specification",
+        "Identifiers": "Unique procedure IDs"
+      }
+    },
+    // ... more procedures
+  ],
+  "Session Management Procedures": [
+     // ... procedures and their sub-features and metadata
+  ]
+}
+Return only the complete, valid JSON object.

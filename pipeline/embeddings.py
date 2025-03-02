@@ -14,17 +14,7 @@
 4.  Output:
     *   The script returns the vector database collection object for use in the extractor script.
 
-5.  Usage:
-    ```bash
-    python embeddings.py  # Or how you run your script
-    ```
-
-6.  Dependencies:
-    *   `sentence-transformers`
-    *   `chromadb` (or your chosen vector database library)
-    *   Other necessary libraries
-
-7.  Model Selection:
+5.  Model Selection:
     * The `model_name` parameter allows you to choose different sentence-transformer models.  Valid options include:`all-mpnet-base-v2` 
 '''
 from sentence_transformers import SentenceTransformer

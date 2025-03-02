@@ -1,11 +1,13 @@
 from preprocessor import docx_to_markdown_with_docling, process_markdown
 from db_handler import DBHandler
 from embeddings import process_embeddings
-from extractor import extract_and_store_procedures
+from extractor import ProcedureExtractor
 import time
 import os
 import sys
+import json
 
+# Add parent directory to path for config import
 root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_folder)
 from config import Gemini_API_KEY
@@ -21,50 +23,121 @@ def main():
     final_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.md")
     db_path = os.path.join(root_folder, "DB", "chunks.db")
     persist_directory = os.path.join(root_folder, "DB", "chroma_db")
+    output_directory = os.path.join(root_folder, "output")
 
     try:
         # Initialize database handler
         db_handler = DBHandler(db_path=db_path, persist_directory=persist_directory)
         doc_id = os.path.basename(final_md_path)
         
-        # Check if markdown exists and process if needed
+        # Process markdown and embeddings if needed
         if not os.path.exists(final_md_path):
             print("\n[1/3] Converting DOCX to Markdown...")
             return_code = docx_to_markdown_with_docling(docx_path, temp_md_path)
-            
             if return_code != 0:
                 print("✗ Conversion failed. Stopping process.")
                 return
-
             process_markdown(temp_md_path, final_md_path, db_path)
-            
-            if os.path.exists(temp_md_path):
-                os.remove(temp_md_path)
-                print("\n→ Temporary file cleaned up")
+            os.remove(temp_md_path)
+            print("\n→ Temporary file cleaned up")
         else:
             print(f"\nUsing existing markdown file: {final_md_path}")
-            # Only process markdown if no chunks exist
             if not db_handler.get_chunks(doc_id):
                 process_markdown(final_md_path, final_md_path, db_path)
             else:
                 print("→ Using existing chunks from database")
 
-        # Process embeddings (will reuse if they exist)
+        # Get or create ChromaDB collection
         collection = process_embeddings(db_handler, doc_id)
         if not collection:
             print("✗ Failed to process embeddings. Stopping.")
             return
 
-        # Extract procedures
+        # Extract procedures using Gemini API
         if Gemini_API_KEY:
-            query = """Mobility Management (MM) Registration"""
-            extract_and_store_procedures(db_handler, doc_id, Gemini_API_KEY, query, collection)
+            procedure_extractor = ProcedureExtractor(api_key=Gemini_API_KEY)
+            
+            # Define the structured query
+            query = """
+            Mobility Management (MM) Procedures
+
+            **Taxonomy Structure for Procedures:**
+            **Top-Level Categories:**
+            - Registration Procedures
+            **Second-Level: Individual Procedures:**
+            - Registration Procedures:
+                - Initial Registration
+                - Periodic Registration
+                - Mobility Registration
+            """
+            
+            os.makedirs(output_directory, exist_ok=True)
+            print(f"\nProcessing procedures...")
+            
+            # Use ChromaDB's semantic search
+            results = collection.query(
+                query_texts=[query],
+                n_results=15,  # Increased for better coverage
+                include=["documents", "metadatas", "distances"]
+            )
+            
+            if not results['documents'][0]:
+                print("✗ No relevant chunks found")
+                return
+
+            # Convert results to chunks format with similarity filtering
+            relevant_chunks = []
+            for doc, metadata, distance in zip(
+                results['documents'][0], 
+                results['metadatas'][0],
+                results['distances'][0]
+            ):
+                similarity = 1 - distance
+                if similarity >= 0.5:  # Similarity threshold
+                    relevant_chunks.append({
+                        'title': metadata['title'],
+                        'content': doc,
+                        'index': metadata['index'],
+                        'similarity': similarity
+                    })
+
+            if not relevant_chunks:
+                print("✗ No chunks met similarity threshold")
+                return
+
+            print(f"→ Found {len(relevant_chunks)} relevant chunks")
+            
+            # Extract procedures from relevant chunks
+            procedures = procedure_extractor.extract_procedures_from_query(
+                query, relevant_chunks, doc_id
+            )
+            
+            if procedures:
+                # Organize procedures by category
+                categorized = {}
+                for proc in procedures:
+                    category = proc['procedure_category']  # Now present
+                    if category not in categorized:
+                        categorized[category] = []
+                    categorized[category].append(proc)
+
+                # Save results by category
+                for category, procs in categorized.items():
+                    output_path = os.path.join(
+                        output_directory, 
+                        f"{category.lower().replace(' ', '_')}_procedures.json"
+                    )
+                    with open(output_path, 'w', encoding='utf-8') as f:
+                        json.dump(procs, f, indent=2, ensure_ascii=False)
+                    print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
+            else:
+                print("✗ No procedures found")
         else:
             print("\n✗ Gemini API key not found in config.py")
 
         total_duration = time.time() - total_start_time
         print(f"\n✓ All processing completed in {total_duration:.2f} seconds")
-
+    
     except Exception as e:
         print(f"\n✗ Process failed: {e}")
     finally:

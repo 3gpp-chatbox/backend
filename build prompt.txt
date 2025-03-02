@@ -1,0 +1,30 @@
+# define purpose
+help an LLM (Language Learning Model) analyze different types of procedures by breaking them down into key features.  
+-Using a structured taxonomy will help the LLM understand and break down procedures into manageable parts
+
+# Identify Key Features of the Procedure
+List important aspects such as the trigger of the procedure, the state during its execution, and underlying causes.
+Consider other potential factors, for example, expected outcomes, error handling, and feedback loops.
+
+# Develop a Tree-Structured Taxonomy 
+Organize the identified features in a hierarchical (tree) structure. 
+Use nodes to represent each feature and branch out for subfeatures, ensuring that each layer adds more granular detail about the procedure.
+
+# Enhance the Taxonomy with Metadata
+Expand the taxonomy by incorporating additional context or constraints. This metadata might include:  
+ 	- Related constraints and requirements  
+ 	- Message types involved in the process  
+ 	- References to chapter numbers or sections of a specification  
+ 	- Excerpts from the specification that support the definition of a feature  
+ 	- Identifiers for retrieved chunks of data or context markers   
+   • Explain how each metadata element supports making the execution flow model more accurate.
+
+#  Integrate and Test with the LLM  
+    ***Use the complete taxonomy and metadata as input to the LLM.  
+    ***Instruct the LLM to process each procedural type separately, using the taxonomy as a roadmap to analyze the structure of the procedure.  
+    Verify that the LLM's output reflects a detailed execution flow based on all the provided data.
+
+# Iterate and Refine  
+    Review the LLM’s output to ensure that the procedure is being analyzed accurately.  
+   Update the taxonomy and metadata as needed to fine-tune the analysis.  
+   Continue iterating until the execution flow model is as accurate and comprehensive as required.
