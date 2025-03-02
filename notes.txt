@@ -1,3 +1,4 @@
+ https://www.youtube.com/watch?v=gPw4leY3SEk (5G Registration & Procedures used in Registration and Mobility Management)
  1) query = """
             Mobility Management (MM) Procedures
 

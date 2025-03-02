@@ -2,6 +2,7 @@ from preprocessor import docx_to_markdown_with_docling, process_markdown
 from db_handler import DBHandler
 from embeddings import process_embeddings
 from extractor import ProcedureExtractor
+from extractGraphData import extract_nodes_and_edges
 import time
 import os
 import sys
@@ -24,6 +25,7 @@ def main():
     db_path = os.path.join(root_folder, "DB", "chunks.db")
     persist_directory = os.path.join(root_folder, "DB", "chroma_db")
     output_directory = os.path.join(root_folder, "output")
+    graph_directory = os.path.join(root_folder, "graphs")
 
     try:
         # Initialize database handler
@@ -67,8 +69,6 @@ def main():
             **Second-Level: Individual Procedures:**
             - Registration Procedures:
                 - Initial Registration
-                - Periodic Registration
-                - Mobility Registration
             """
             
             os.makedirs(output_directory, exist_ok=True)
@@ -125,11 +125,21 @@ def main():
                 for category, procs in categorized.items():
                     output_path = os.path.join(
                         output_directory, 
-                        f"{category.lower().replace(' ', '_')}_procedures.json"
+                        f"{category.lower().replace(' ', '_')}.json"
                     )
                     with open(output_path, 'w', encoding='utf-8') as f:
                         json.dump(procs, f, indent=2, ensure_ascii=False)
                     print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
+
+                    # Extract and save graph data
+                    graph_data = extract_nodes_and_edges(procs)
+                    graph_path = os.path.join(
+                        graph_directory, 
+                        f"{category.lower().replace(' ', '_')}_graph.json"
+                    )
+                    with open(graph_path, 'w', encoding='utf-8') as f:
+                        json.dump(graph_data, f, indent=2, ensure_ascii=False)
+                    print(f"→ Saved graph data for {category} to {graph_path}")
             else:
                 print("✗ No procedures found")
         else:

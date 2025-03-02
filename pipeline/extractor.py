@@ -23,19 +23,19 @@ class SubFeatures(BaseModel):
         ...,
         description="Sequence of steps in the procedure"
     )
-    Cause: str = Field(
+    Causes: List[str] = Field(
         ...,
         description="Cause of the procedure"
     )   
-    Expected_Outcomes: str = Field(
+    Expected_Outcomes: List[str] = Field(
         ...,
         description="Expected outcomes of the procedure"
     )
-    Error_Handling: str = Field(
+    Error_Handling: List[str] = Field(
         ...,
         description="Error handling for the procedure"
     )
-    Feedback_Loops: str = Field(
+    Feedback_Loops: List[str] = Field(
         ...,
         description="Feedback loops for the procedure"
     )
@@ -258,3 +258,4 @@ class ProcedureExtractor:
         except Exception as e:
             print(f"Error extracting procedures: {e}")
             return ExtractionResponse(procedures=[], metadata={"error": str(e)})
+
