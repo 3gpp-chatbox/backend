@@ -2,7 +2,8 @@
 import os
 from dotenv import load_dotenv
 from google import genai
-import lib.doc_converter as doc_converter
+from src.schemas import FlowPropertyGraph
+import json
 
 
 flash_model = "gemini-2.0-flash"
@@ -20,9 +21,6 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 
-# ## call the converter function to convert docx to markdown
-result = doc_converter.convert_to_markdown("data/stripped/24501-j11.docx")
-
 
 def token_counter(client, model, contents):
     """Count the number of tokens in the given contents"""
@@ -31,160 +29,66 @@ def token_counter(client, model, contents):
     return response
 
 
-
-
-prompt = """
-The file uploaded is extracted from the 3GPP specification 24.501. Please analyze the content and provide a structured representation of the procedural flow information.
-
-Extract the procedural flow information from the above section and return it in a structured format.below is an example for you to thinking and help you to understand the format:
-
-The LTE Attach Procedure allows a User Equipment (UE) to register with
-
-        the network to receive services.
-
-        This procedure involves multiple steps and interactions between the UE
-
-        and the Mobility Management Entity (MME).
-
-
-Disclaimer: This example is a simplified representation. For detailed and specific implementations, refer to the official 3GPP specifications and consult with telecommunications professionals.
-
-
-Step 1: Extracting the Model from 3GPP Specification
-
-Core Components to Identify
-
-States: Different conditions or statuses of the UE and network
-
-elements.
-
-Actions: Operations performed by the UE or network.
-
-Events: Triggers causing transitions between states.
-
-Parameters: Data exchanged or required during the procedure.
-
-Flow of Execution: Sequence of steps in the procedure.
-
-Conditionals: Decisions based on certain criteria or parameters.
-
-Metadata: Additional information like timestamps, message types, or
-
-IDs.
-
-
-
-
-Step1: Key Steps in the procedure:
-
-
-Initial UE State: UE is powered on and not attached to any network.Attach Request: UE sends an Attach Request message to the MME.Authentication: MME initiates authentication procedures.
-
-Security Mode Command: MME sets up security parameters.Attach Accept: MME sends an Attach Accept message to UE.Attach Complete: UE confirms with an Attach Complete message.Final UE State: UE is attached to the network and can access services.
-
-Step 2: Representing the Model as a Flow Property Graph
-
-
-A property graph consists of nodes (vertices) and edges, where both can have properties. This structure is suitable for representing complex relationships and flows.
-
-Creating Nodes and Edges:
-
-Nodes represent States and Events.
-
-
-Edges represent Actions and Transitions, capturing the Flow of
-
-Execution.
-
-Properties include Parameters, Conditionals, and Metadata.
-
-
-
-
-Step 2: Attach procedure Nodes and Edges
-
-State Nodes:UE_Powered_On UE_Attaching UE_Authenticating UE_Securing UE_Attached
-
-Event Nodes:
-
-Attach_Request_Received Authentication_Challenge Security_Mode_Command Attach_Accept_Received Attach_Complete_Sent Graph Edges:
-
-Edges connect nodes to represent transitions triggered by
-
-aciions or events.
-
-Edge properties capture parameters, conditionals, and
-
-metadata
-
-step 2: JSON representation of property graph
-   {{
-        "nodes": [
-            {{
-                "id": "UE_Powered_On",
-                "type": "state",
-                "properties": {{}}
-            }},
-            {{
-                "id": "UE_Attaching",
-                "type": "state",
-                "properties": {{}}
-            }},
-            {{
-                "id": "Attach_Request_Received",
-                "type": "event",
-                "properties": {{
-                    "message_type": "Attach Request"
-                }},
-                "parameters": ["IMSI", "TAI"]
-            }}
-        ],
-        "edges": [
-            {{
-                "from": "UE_Powered_On",
-                "to": "UE_Attaching",
-                "action": "Send_Attach_Request",
-                "properties": {{
-                    "parameters": ["IMSI", "TAI"],
-                    "metadata": {{
-                        "timestamp": "T0"
-                    }}
-                }}
-            }},
-            {{
-                "from": "UE_Attaching",
-                "to": "Attach_Request_Received",
-                "event": "Attach_Request_Received",
-                "properties": {{}}
-            }}
-        ]
-    }}
-
-
-
-Step 3: Incorporating Conditionals and Parameters
-
-Conditionals:
-
-Decisions based on IMSI validation, security capabilities, etc.
-
-Represented as properties or separate nodes in the graph.
-
-Example Conditional:
-
-If the authentication succeeds, proceed to security mode setup.
-
-If it fails, reject the attach request.
-
-Parameters and Metadata:
-
-Parameters like !MSL Temporary.Mobile Subscriber Identity (fMSI), Tracking Area Identity (TAI).
-
-Metadata such as timestamps, message identifiers.
-
-
-
-Based on the above, analyze and extract the information from the given text and provide a structured representation of the procedural flow information.
-"""
-
-response = client.models.generate_content(model=pro_model, contents=[prompt, file])
+def generate_graph(client, model, contents):
+    prompt = f"""
+    You are tasked with analyzing a 3GPP specification document and creating a flow property graph representation of the procedural information contained within.
+
+    # OBJECTIVE
+    Extract the procedural flow from the 3GPP specification and represent it as a structured flow property graph that captures states, events, actions, and transitions.
+
+    # DETAILED INSTRUCTIONS
+    1. Identify the key components of the 3GPP procedure:
+    - States: Different conditions of network elements (UE, AMF, SMF, etc.)
+    - Events: Triggers that cause transitions between states
+    - Actions: Operations performed by network elements
+    - Messages: Protocol messages exchanged between entities
+    - Parameters: Data elements exchanged or required during the procedure
+    - Conditionals: Decision points and alternative paths in the procedure
+
+    2. Create a flow property graph with:
+    - Nodes representing States and Events
+    - Edges representing Actions and Transitions
+    - Properties capturing Parameters, Conditionals, and Metadata
+
+    3. Include specific 3GPP protocol elements:
+    - Network entities (UE, AMF, SMF, gNB, etc.)
+    - Message types (Registration Request, Authentication Request, etc.)
+    - Protocol timers and counters
+    - Error handling and fallback procedures
+
+    Now analyze the provided 3GPP specification text and create a comprehensive flow property graph following this format.
+
+    The procedure target is initial registration procedure
+    ---
+    {contents}
+    """
+
+    # Updated API call using Pydantic schema
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": FlowPropertyGraph,
+            "temperature": 0,
+        },
+    )
+
+    with open("output/flow_graph.json", "w") as f:
+        # Parse the response into the Sections model
+        response_text = response.text  # Gemini returns text, even with JSON mime type
+        response_json = json.loads(response_text)  # Convert JSON string to dict
+        response = FlowPropertyGraph(**response_json)  # Convert dict to Pydantic object
+        json.dump(response_json, f, indent=4)
+
+    return response
+
+
+contents_path = "contents.md"
+
+
+with open(contents_path, "r") as f:
+    contents = f.read()
+
+
+generate_graph(client, flash_model, contents)

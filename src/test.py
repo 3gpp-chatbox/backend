@@ -98,13 +98,11 @@ def token_counter(client, model, contents):
 
 response = get_relevant_sections(toc)
 # Parse the response into the Sections model
-response_json = response.text  # Gemini returns text, even with JSON mime type
-sections_data = json.loads(response_json)  # Convert JSON string to dict
-response = Response(**sections_data)  # Convert dict to Pydantic object
+response_text = response.text  # Gemini returns text, even with JSON mime type
+response_json = json.loads(response_text)  # Convert JSON string to dict
+response = Response(**response_json)  # Convert dict to Pydantic object
 
 final_contents = generate_markdown(doc_id=1, target_headings=response.sections)
 
 
-tokens_used = token_counter(client, flash_model, final_contents)
-
-print(tokens_used)
+print(final_contents)

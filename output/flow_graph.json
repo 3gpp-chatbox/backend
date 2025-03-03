@@ -1,0 +1,225 @@
+{
+    "procedureName": "Initial Registration Procedure",
+    "nodes": [
+        {
+            "id": "UE_5GMM-DEREGISTERED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-DEREGISTERED",
+                "description": "UE is in 5GMM-DEREGISTERED state, no 5GMM context established."
+            }
+        },
+        {
+            "id": "UE_Send_Registration_Request",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Send",
+                "description": "UE sends REGISTRATION REQUEST message to AMF."
+            }
+        },
+        {
+            "id": "AMF_Receive_Registration_Request",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Receive",
+                "description": "AMF receives REGISTRATION REQUEST message from UE."
+            }
+        },
+        {
+            "id": "AMF_5GMM-DEREGISTERED",
+            "type": "State",
+            "entity": "AMF",
+            "properties": {
+                "state": "5GMM-DEREGISTERED",
+                "description": "AMF is in 5GMM-DEREGISTERED state, no 5GMM context established."
+            }
+        },
+        {
+            "id": "AMF_Send_Registration_Accept",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Send",
+                "description": "AMF sends REGISTRATION ACCEPT message to UE."
+            }
+        },
+        {
+            "id": "UE_Receive_Registration_Accept",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Receive",
+                "description": "UE receives REGISTRATION ACCEPT message from AMF."
+            }
+        },
+        {
+            "id": "UE_5GMM-REGISTERED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-REGISTERED",
+                "description": "UE is in 5GMM-REGISTERED state, 5GMM context established."
+            }
+        },
+        {
+            "id": "AMF_5GMM-REGISTERED",
+            "type": "State",
+            "entity": "AMF",
+            "properties": {
+                "state": "5GMM-REGISTERED",
+                "description": "AMF is in 5GMM-REGISTERED state, 5GMM context established."
+            }
+        },
+        {
+            "id": "AMF_Send_Registration_Reject",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Send",
+                "description": "AMF sends REGISTRATION REJECT message to UE."
+            }
+        },
+        {
+            "id": "UE_Receive_Registration_Reject",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Receive",
+                "description": "UE receives REGISTRATION REJECT message from AMF."
+            }
+        },
+        {
+            "id": "UE_Send_Registration_Complete",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Send",
+                "description": "UE sends REGISTRATION COMPLETE message to AMF."
+            }
+        },
+        {
+            "id": "AMF_Receive_Registration_Complete",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Receive",
+                "description": "AMF receives REGISTRATION COMPLETE message from UE."
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "UE_Initial_Registration_Request",
+            "from": "UE_5GMM-DEREGISTERED",
+            "to": "UE_Send_Registration_Request",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION REQUEST",
+                "parameters": [
+                    "5GS registration type IE (initial registration)",
+                    "5GS mobile identity IE (SUCI or PEI)",
+                    "Requested NSSAI",
+                    "5GMM capability IE",
+                    "S1 UE network capability IE (if S1 mode supported)"
+                ],
+                "description": "UE initiates initial registration by sending REGISTRATION REQUEST."
+            }
+        },
+        {
+            "id": "AMF_Receive_Initial_Registration_Request",
+            "from": "AMF_5GMM-DEREGISTERED",
+            "to": "AMF_Receive_Registration_Request",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION REQUEST",
+                "description": "AMF receives REGISTRATION REQUEST from UE."
+            }
+        },
+        {
+            "id": "AMF_Accept_Registration",
+            "from": "AMF_Receive_Registration_Request",
+            "to": "AMF_Send_Registration_Accept",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION ACCEPT",
+                "parameters": [
+                    "5G-GUTI",
+                    "TAI list",
+                    "Allowed NSSAI",
+                    "5GS network feature support IE"
+                ],
+                "conditions": [
+                    "AMF accepts the registration request"
+                ],
+                "description": "AMF accepts the registration and sends REGISTRATION ACCEPT."
+            }
+        },
+        {
+            "id": "UE_Transition_to_Registered",
+            "from": "UE_Receive_Registration_Accept",
+            "to": "UE_5GMM-REGISTERED",
+            "type": "Transition",
+            "properties": {
+                "description": "UE receives REGISTRATION ACCEPT and transitions to 5GMM-REGISTERED."
+            }
+        },
+        {
+            "id": "AMF_Transition_to_Registered",
+            "from": "AMF_Send_Registration_Accept",
+            "to": "AMF_5GMM-REGISTERED",
+            "type": "Transition",
+            "properties": {
+                "description": "AMF sends REGISTRATION ACCEPT and transitions to 5GMM-REGISTERED."
+            }
+        },
+        {
+            "id": "AMF_Reject_Registration",
+            "from": "AMF_Receive_Registration_Request",
+            "to": "AMF_Send_Registration_Reject",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION REJECT",
+                "parameters": [
+                    "5GMM cause value",
+                    "T3346 value (optional)"
+                ],
+                "conditions": [
+                    "AMF cannot accept the registration request"
+                ],
+                "description": "AMF rejects the registration and sends REGISTRATION REJECT."
+            }
+        },
+        {
+            "id": "UE_Transition_to_Deregistered",
+            "from": "UE_Receive_Registration_Reject",
+            "to": "UE_5GMM-DEREGISTERED",
+            "type": "Transition",
+            "properties": {
+                "description": "UE receives REGISTRATION REJECT and transitions to 5GMM-DEREGISTERED."
+            }
+        },
+        {
+            "id": "UE_Send_Registration_Complete_Message",
+            "from": "UE_Receive_Registration_Accept",
+            "to": "UE_Send_Registration_Complete",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION COMPLETE",
+                "description": "UE sends REGISTRATION COMPLETE message to AMF."
+            }
+        },
+        {
+            "id": "AMF_Receive_Registration_Complete_Message",
+            "from": "AMF_Send_Registration_Accept",
+            "to": "AMF_Receive_Registration_Complete",
+            "type": "Action",
+            "properties": {
+                "messageType": "REGISTRATION COMPLETE",
+                "description": "AMF receives REGISTRATION COMPLETE message from UE."
+            }
+        }
+    ]
+}
