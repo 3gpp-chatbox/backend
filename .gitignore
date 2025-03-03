@@ -23,3 +23,21 @@ processed_chunks.pkl
 # IDE
 .vscode/
 .idea/
+
+# Data
+processed_data/
+
+# Logs
+logs/
+
+# Configuration
+config/
+
+# Configuration
+config/
+
+package-lock.json
+
+# Node modules
+node_modules/
+
