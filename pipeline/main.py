@@ -132,14 +132,14 @@ def main():
                     print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
 
                     # Extract and save graph data
-                    graph_data = extract_nodes_and_edges(procs)
-                    graph_path = os.path.join(
-                        graph_directory, 
-                        f"{category.lower().replace(' ', '_')}_graph.json"
-                    )
-                    with open(graph_path, 'w', encoding='utf-8') as f:
-                        json.dump(graph_data, f, indent=2, ensure_ascii=False)
-                    print(f"→ Saved graph data for {category} to {graph_path}")
+                    # graph_data = extract_nodes_and_edges(procs)
+                    # graph_path = os.path.join(
+                    #     graph_directory, 
+                    #     f"{category.lower().replace(' ', '_')}_graph.json"
+                    # )
+                    # with open(graph_path, 'w', encoding='utf-8') as f:
+                    #     json.dump(graph_data, f, indent=2, ensure_ascii=False)
+                    # print(f"→ Saved graph data for {category} to {graph_path}")
             else:
                 print("✗ No procedures found")
         else:

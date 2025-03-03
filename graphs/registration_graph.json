@@ -1,0 +1,181 @@
+{
+  "nodes": [
+    {
+      "id": "ue_init_reg",
+      "label": "UE initiates registration procedure",
+      "type": "Trigger",
+      "properties": {
+        "causes": [
+          "UE power on",
+          "UE out of coverage",
+          "UE needs to establish an emergency PDU session"
+        ]
+      }
+    },
+    {
+      "id": "ue_attempt_reg",
+      "label": "UE attempting registration",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "ue_send_reg_req",
+      "label": "UE sends registration request",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "reg_req_msg",
+      "label": "Registration Request",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "net_auth_ue",
+      "label": "Network authenticates UE",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "net_responds_reg_req",
+      "label": "Network responds to registration request",
+      "type": "Flow of execution",
+      "properties": {}
+    },
+    {
+      "id": "net_reg_ue",
+      "label": "Network registers UE",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "ue_registered",
+      "label": "UE registered",
+      "type": "State",
+      "properties": {
+        "expected_outcomes": [
+          "UE is registered with the network",
+          "UE can access network services"
+        ]
+      }
+    },
+    {
+      "id": "ue_completes_reg",
+      "label": "UE completes registration procedure",
+      "type": "Flow of execution",
+      "properties": {}
+    },
+    {
+      "id": "reg_accept_msg",
+      "label": "Registration Accept",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "reg_reject_msg",
+      "label": "Registration Reject",
+      "type": "Message",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "ue_init_reg",
+      "target": "ue_attempt_reg",
+      "label": "Triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e2",
+      "source": "ue_attempt_reg",
+      "target": "ue_send_reg_req",
+      "label": "Action",
+      "type": "Transition",
+      "properties": {}
+    },
+    {
+      "id": "e3",
+      "source": "ue_send_reg_req",
+      "target": "reg_req_msg",
+      "label": "Sends",
+      "type": "Message Flow",
+      "properties": {}
+    },
+    {
+      "id": "e4",
+      "source": "reg_req_msg",
+      "target": "net_auth_ue",
+      "label": "Receives",
+      "type": "Message Flow",
+      "properties": {}
+    },
+    {
+      "id": "e5",
+      "source": "net_auth_ue",
+      "target": "net_reg_ue",
+      "label": "Then",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "e6",
+      "source": "net_reg_ue",
+      "target": "net_responds_reg_req",
+      "label": "Executes",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "e7",
+      "source": "net_responds_reg_req",
+      "target": "reg_accept_msg",
+      "label": "Response (Accept)",
+      "type": "Message Flow",
+      "properties": {
+        "error_handling": null
+      }
+    },
+    {
+      "id": "e8",
+      "source": "net_responds_reg_req",
+      "target": "reg_reject_msg",
+      "label": "Response (Reject)",
+      "type": "Message Flow",
+      "properties": {
+        "error_handling": [
+          "Registration failure",
+          "Authentication failure"
+        ]
+      }
+    },
+    {
+      "id": "e9",
+      "source": "reg_accept_msg",
+      "target": "ue_registered",
+      "label": "Indicates",
+      "type": "State Change",
+      "properties": {}
+    },
+    {
+      "id": "e10",
+      "source": "reg_reject_msg",
+      "target": "ue_attempt_reg",
+      "label": "Feedback Loop",
+      "type": "Feedback Loop",
+      "properties": {}
+    },
+    {
+      "id": "e11",
+      "source": "ue_registered",
+      "target": "ue_completes_reg",
+      "label": "Completes",
+      "type": "State Transition",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "References": "24501-j11.md, Section 5.5.1.1"
+  }
+}
