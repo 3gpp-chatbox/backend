@@ -9,7 +9,14 @@ const PORT = process.env.PORT || 3000;
 // Neo4j Connection
 const driver = neo4j.driver(
     process.env.NEO4J_URI || 'bolt://localhost:7687',
-    neo4j.auth.basic(process.env.NEO4J_USERNAME || 'neo4j', process.env.NEO4J_PASSWORD || 'password')
+    neo4j.auth.basic(
+        process.env.NEO4J_USERNAME || 'neo4j', 
+        process.env.NEO4J_PASSWORD || 'password'
+    ),
+    {
+        encrypted: process.env.NEO4J_ENCRYPTED === 'true' || false,
+        trust: 'TRUST_ALL_CERTIFICATES'
+    }
 );
 
 // Test Neo4j connection
@@ -67,17 +74,12 @@ app.get('/fetch-jsondata/:procedureType', async (req, res) => {
 
         // Transform the data into the expected format
         const transformedData = {
-            nodes: rawData.nodes.map(node => {
-                const nodeData = {
-                    id: node.identity.toString(),
-                    label: node.properties.name || node.labels[0],
-                    type: node.labels[0],
-                    description: node.properties.description || '',
-                    properties: node.properties
-                };
-                console.log('Transformed node:', nodeData);
-                return nodeData;
-            }),
+            nodes: rawData.nodes.map(node => ({
+                id: node.identity.toString(),
+                label: node.properties.name || node.labels[0],
+                type: node.labels[0],
+                description: node.properties.description || ''
+            })),
             edges: rawData.edges.map(edge => {
                 const edgeData = {
                     source: edge.start.toString(),
@@ -120,6 +122,55 @@ app.get('/test-connection', async (req, res) => {
     } catch (error) {
         res.status(500).json({
             status: 'error',
+            message: error.message
+        });
+    } finally {
+        await session.close();
+    }
+});
+
+// API to fetch complete Initial Registration procedure flow
+app.get('/registration-procedure', async (req, res) => {
+    const session = driver.session();
+    
+    console.log('Fetching Initial Registration procedure...');
+    
+    try {
+        const result = await session.run(`
+            MATCH (source)-[r:SENDS_MESSAGE]->(target)
+            WHERE r.procedure = 'Initial_Registration'
+            WITH source, r, target
+            ORDER BY r.sequence_number
+            RETURN {
+                step: r.sequence_number,
+                source: source.name,
+                target: target.name,
+                message: r.message,
+                description: r.description,
+                sourceState: r.source_state,
+                targetState: r.target_state,
+                trigger: r.trigger,
+                conditions: r.conditions,
+                timing: r.timing
+            } as step
+            ORDER BY step.step
+        `);
+
+        const procedureFlow = result.records.map(record => record.get('step'));
+
+        res.json({
+            status: 'success',
+            data: {
+                procedure: 'Initial_Registration',
+                total_steps: procedureFlow.length,
+                procedure_flow: procedureFlow
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
             message: error.message
         });
     } finally {

@@ -37,6 +37,7 @@ config/
 config/
 
 package-lock.json
+package.json
 
 # Node modules
 node_modules/

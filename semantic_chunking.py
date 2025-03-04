@@ -3,7 +3,7 @@
 from sentence_transformers import SentenceTransformer, util
 import re
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from sklearn.cluster import KMeans
 import numpy as np
 from typing import List, Dict
