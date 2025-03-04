@@ -61,15 +61,57 @@ def main():
             
             # Define the structured query
             query = """
-            Mobility Management (MM) Procedures
+            Extract structured details specifically for the **Initial Registration** procedure within **Registration Procedures**.
+            Ensure the output follows a structured format, capturing the following key fields:
 
-            **Taxonomy Structure for Procedures:**
-            **Top-Level Categories:**
-            - Registration Procedures
-            **Second-Level: Individual Procedures:**
-            - Registration Procedures:
-                - Initial Registration
-            """
+            **Procedure Name:**  
+            - "Initial Registration"  
+
+            **Sub-Features to Retrieve:**  
+            1. **Triggers:**  
+            - Capture key events that cause the UE to initiate the registration procedure.  
+            - Include deregistration scenarios and intersystem changes leading to registration.  
+
+            2. **States:**  
+            - Extract relevant **5GMM** and **EMM** states before, during, and after registration.  
+            - Include conditions for each state transition.  
+
+            3. **Actions:**  
+            - List the explicit steps UE takes to initiate registration.  
+            - Capture NAS message exchange sequences.  
+
+            4. **Flow of Execution:**  
+            - Detail sequential steps in the registration process.  
+            - Include key interactions between UE and network.  
+
+            5. **Causes:**  
+            - Identify reasons leading to initial registration.  
+            - Differentiate between voluntary and network-initiated causes.  
+
+            6. **Expected Outcomes:**  
+            - Outline possible successful registration results.  
+            - Include GUTI assignment and access to services.  
+
+            7. **Error Handling:**  
+            - Capture steps taken when registration fails.  
+            - Include scenarios for message rejection and security failures.  
+
+            8. **Feedback Loops:**  
+            - Document UE behavior when registration is rejected.  
+            - Include mechanisms like retry logic and alternative access methods.  
+
+            **Metadata:**  
+            - Constraints & Requirements (if applicable)  
+            - Relevant NAS Message Types (e.g., REGISTRATION REQUEST, REGISTRATION ACCEPT, DEREGISTRATION ACCEPT)  
+            - References to 3GPP documentation sections.  
+            - Extract key excerpts that explain registration initiation conditions.  
+
+            **Instructions for Data Extraction:**  
+            - Exclude unrelated MM procedures and background information.  
+            - Prioritize accuracy and completeness.  
+            - Ensure minimal redundancy while maintaining all essential details.  
+        """
+
             
             os.makedirs(output_directory, exist_ok=True)
             print(f"\nProcessing procedures...")

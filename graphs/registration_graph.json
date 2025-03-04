@@ -1,181 +1,157 @@
 {
   "nodes": [
     {
-      "id": "ue_init_reg",
-      "label": "UE initiates registration procedure",
+      "id": "5GMM-IDLE",
+      "label": "5GMM-IDLE mode",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "5GMM-CONNECTED",
+      "label": "5GMM-CONNECTED mode",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "EMMDEREGISTERED",
+      "label": "EMMDEREGISTERED",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "Trigger1",
+      "label": "UE operating in single-registration mode performs a registration procedure for mobility and periodic registration update indicating mobility registration updating following an intersystem change from S1 mode to N1 mode",
       "type": "Trigger",
       "properties": {
-        "causes": [
-          "UE power on",
-          "UE out of coverage",
-          "UE needs to establish an emergency PDU session"
-        ]
+        "Cause": "Intersystem change from S1 mode to N1 mode"
       }
     },
     {
-      "id": "ue_attempt_reg",
-      "label": "UE attempting registration",
-      "type": "State",
-      "properties": {}
-    },
-    {
-      "id": "ue_send_reg_req",
-      "label": "UE sends registration request",
-      "type": "Action",
-      "properties": {}
-    },
-    {
-      "id": "reg_req_msg",
-      "label": "Registration Request",
-      "type": "Message",
-      "properties": {}
-    },
-    {
-      "id": "net_auth_ue",
-      "label": "Network authenticates UE",
-      "type": "Action",
-      "properties": {}
-    },
-    {
-      "id": "net_responds_reg_req",
-      "label": "Network responds to registration request",
-      "type": "Flow of execution",
-      "properties": {}
-    },
-    {
-      "id": "net_reg_ue",
-      "label": "Network registers UE",
-      "type": "Action",
-      "properties": {}
-    },
-    {
-      "id": "ue_registered",
-      "label": "UE registered",
-      "type": "State",
+      "id": "Trigger2",
+      "label": "UE which was previously registered in S1 mode before entering state EMMDEREGISTERED performs an initial registration procedure",
+      "type": "Trigger",
       "properties": {
-        "expected_outcomes": [
-          "UE is registered with the network",
-          "UE can access network services"
-        ]
+        "Cause": "UE previously registered in S1 mode before entering state EMMDEREGISTERED"
       }
     },
     {
-      "id": "ue_completes_reg",
-      "label": "UE completes registration procedure",
-      "type": "Flow of execution",
+      "id": "Action1",
+      "label": "UE NAS provides the lower layers with a GUAMI part of the 5GGUTI mapped from 4GGUTI",
+      "type": "Action",
       "properties": {}
     },
     {
-      "id": "reg_accept_msg",
-      "label": "Registration Accept",
-      "type": "Message",
+      "id": "Action2",
+      "label": "Initiate a registration procedure for initial registration",
+      "type": "Action",
       "properties": {}
     },
     {
-      "id": "reg_reject_msg",
-      "label": "Registration Reject",
+      "id": "Action3",
+      "label": "Handle the EMM parameters EMM state EPS update status 4GGUTI last visited registered TAI TAI list and eKSI as specified in 3GPP TS 24.301",
+      "type": "Action",
+      "properties": {
+        "Reference": "3GPP TS 24.301"
+      }
+    },
+    {
+      "id": "REGISTRATION_REQUEST",
+      "label": "REGISTRATION REQUEST",
       "type": "Message",
-      "properties": {}
+      "properties": {
+        "References": "Sections 5.3.1.1, 5.4.5.3.3, 5.5.1.3.4, 5.3.20.2, 6, 7"
+      }
+    },
+    {
+      "id": "REGISTRATION_ACCEPT",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {
+        "Expected_Outcome": "UE is successfully registered with the 5G network, UE receives a 5GGUTI, UE transitions to 5GMM-REGISTERED state"
+      }
+    },
+    {
+      "id": "REGISTRATION_REJECT",
+      "label": "REGISTRATION REJECT",
+      "type": "Message",
+      "properties": {
+        "Feedback_Loops": "UE adjusts registration attempt counter based on network response"
+      }
     }
   ],
   "edges": [
     {
-      "id": "e1",
-      "source": "ue_init_reg",
-      "target": "ue_attempt_reg",
+      "id": "Edge1",
+      "source": "Trigger1",
+      "target": "Action2",
       "label": "Triggers",
-      "type": "Trigger",
+      "type": "Triggers",
       "properties": {}
     },
     {
-      "id": "e2",
-      "source": "ue_attempt_reg",
-      "target": "ue_send_reg_req",
-      "label": "Action",
-      "type": "Transition",
+      "id": "Edge2",
+      "source": "Trigger2",
+      "target": "Action2",
+      "label": "Triggers",
+      "type": "Triggers",
       "properties": {}
     },
     {
-      "id": "e3",
-      "source": "ue_send_reg_req",
-      "target": "reg_req_msg",
-      "label": "Sends",
-      "type": "Message Flow",
-      "properties": {}
-    },
-    {
-      "id": "e4",
-      "source": "reg_req_msg",
-      "target": "net_auth_ue",
-      "label": "Receives",
-      "type": "Message Flow",
-      "properties": {}
-    },
-    {
-      "id": "e5",
-      "source": "net_auth_ue",
-      "target": "net_reg_ue",
-      "label": "Then",
+      "id": "Edge3",
+      "source": "Action2",
+      "target": "Action1",
+      "label": "Sequence",
       "type": "Sequence",
       "properties": {}
     },
     {
-      "id": "e6",
-      "source": "net_reg_ue",
-      "target": "net_responds_reg_req",
-      "label": "Executes",
-      "type": "Flow",
+      "id": "Edge4",
+      "source": "Action1",
+      "target": "Action3",
+      "label": "Sequence",
+      "type": "Sequence",
       "properties": {}
     },
     {
-      "id": "e7",
-      "source": "net_responds_reg_req",
-      "target": "reg_accept_msg",
-      "label": "Response (Accept)",
-      "type": "Message Flow",
-      "properties": {
-        "error_handling": null
-      }
-    },
-    {
-      "id": "e8",
-      "source": "net_responds_reg_req",
-      "target": "reg_reject_msg",
-      "label": "Response (Reject)",
-      "type": "Message Flow",
-      "properties": {
-        "error_handling": [
-          "Registration failure",
-          "Authentication failure"
-        ]
-      }
-    },
-    {
-      "id": "e9",
-      "source": "reg_accept_msg",
-      "target": "ue_registered",
-      "label": "Indicates",
-      "type": "State Change",
+      "id": "Edge5",
+      "source": "Action2",
+      "target": "REGISTRATION_REQUEST",
+      "label": "Sends",
+      "type": "MessageFlow",
       "properties": {}
     },
     {
-      "id": "e10",
-      "source": "reg_reject_msg",
-      "target": "ue_attempt_reg",
-      "label": "Feedback Loop",
-      "type": "Feedback Loop",
+      "id": "Edge6",
+      "source": "REGISTRATION_REQUEST",
+      "target": "REGISTRATION_ACCEPT",
+      "label": "Receives",
+      "type": "MessageFlow",
       "properties": {}
     },
     {
-      "id": "e11",
-      "source": "ue_registered",
-      "target": "ue_completes_reg",
-      "label": "Completes",
-      "type": "State Transition",
+      "id": "Edge7",
+      "source": "REGISTRATION_REQUEST",
+      "target": "REGISTRATION_REJECT",
+      "label": "Receives",
+      "type": "MessageFlow",
+      "properties": {}
+    },
+    {
+      "id": "Edge8",
+      "source": "EMMDEREGISTERED",
+      "target": "Action2",
+      "label": "State Transition",
+      "type": "Transition",
+      "properties": {}
+    },
+    {
+      "id": "Edge9",
+      "source": "5GMM-IDLE",
+      "target": "Action2",
+      "label": "State Transition",
+      "type": "Transition",
       "properties": {}
     }
   ],
-  "metadata": {
-    "References": "24501-j11.md, Section 5.5.1.1"
-  }
+  "metadata": {}
 }

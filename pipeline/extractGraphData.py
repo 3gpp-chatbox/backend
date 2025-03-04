@@ -151,7 +151,7 @@ def store_in_neo4j(graph_data: Dict[str, Any], neo4j_uri: str, neo4j_user: str, 
 if __name__ == "__main__":
     try:
         # Read the registration procedures file
-        file_path = "../output/registration_procedures_procedures.json"
+        file_path = "../output/6_mobility_management_(mm)_procedures.json"
         if not os.path.exists(file_path):
             print(f"Error: File not found: {file_path}")
             sys.exit(1)

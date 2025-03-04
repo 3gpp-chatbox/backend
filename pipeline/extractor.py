@@ -84,7 +84,7 @@ class ProcedureExtractor:
         genai.configure(api_key=api_key) 
         self.client = genai.GenerativeModel(model_name)
         self.generation_config = {
-            "temperature": 0.2,
+            "temperature": 0,
             "top_p": 0.8,
             "top_k": 40,
             # "max_output_tokens": 8000
@@ -119,6 +119,11 @@ class ProcedureExtractor:
             f"Section {chunk['title']}\nContent: {chunk['content']}"
             for chunk in chunks
         ])
+        
+        # Add debug printing
+        print("\n=== Chunks Text ===")
+        print(chunks_text)
+        print("=== End Chunks Text ===\n")
         
         # Use model_json_schema 
         schema = json.dumps(ProceduresSchema.model_json_schema(), indent=2)

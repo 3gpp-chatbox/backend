@@ -1,0 +1,55 @@
+[
+  {
+    "procedure_name": "Initial Registration",
+    "sub_features": {
+      "Triggers": [
+        "UE is deregistered and needs to register to the network.",
+        "Network-initiated de-registration procedure completion by the UE.",
+        "Intersystem change from S1 mode to N1 mode in 5GMMIDLE mode when registered for emergency bearer services in S1 mode."
+      ],
+      "States": [
+        "5GMM-DEREGISTERED",
+        "EMMREGISTERED.NOCELLAVAILABLE",
+        "5GMM REGISTERED.NORMALSERVICE"
+      ],
+      "Actions": [
+        "UE initiates the initial registration procedure.",
+        "UE sends a REGISTRATION REQUEST message.",
+        "UE handles EMM parameters if operating in single-registration mode after receiving a reject message."
+      ],
+      "Flow_of_execution": [
+        "UE determines the need for initial registration",
+        "UE sends REGISTRATION REQUEST message.",
+        "Network authenticates the UE (if needed).",
+        "Network establishes security context (if needed).",
+        "Network sends REGISTRATION ACCEPT message.",
+        "UE enters 5GMM-REGISTERED state."
+      ],
+      "Causes": [
+        "UE is not registered to the network.",
+        "UE is deregistered.",
+        "Intersystem change from S1 mode to N1 mode when registered for emergency bearer services."
+      ],
+      "Expected_Outcomes": [
+        "UE is successfully registered to the 5G network.",
+        "UE obtains a 5G-GUTI.",
+        "UE is able to access 5G services."
+      ],
+      "Error_Handling": [
+        "UE handles EMM parameters if operating in single-registration mode after receiving a reject message.",
+        "UE stores the current TAI in the list of 5GS forbidden tracking areas for roaming."
+      ],
+      "Feedback_Loops": [
+        "If registration is rejected, the UE may attempt registration on another PLMN or SNPN or over non-3GPP access."
+      ]
+    },
+    "metadata": {
+      "Constraints_Requirements": null,
+      "Message_Types": "REGISTRATION REQUEST, REGISTRATION ACCEPT, DEREGISTRATION ACCEPT",
+      "References": "Sections 5.1.4.3, 5.5.2.3.2, 5.3.20.2 of document 24501-j11.md",
+      "Excerpts": "if the UE is registered for emergency bearer services in S1 mode the UE shall initiate the initial registration for emergency services.",
+      "Identifiers": null
+    },
+    "procedure_category": "Registration Procedures"
+  }
+]
