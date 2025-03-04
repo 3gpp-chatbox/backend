@@ -8,6 +8,8 @@ import json
 import os
 from pydantic import BaseModel, ValidationError, Field
 from typing import List, Dict, Optional
+import sys
+
 
 
 # Configure API key
@@ -33,6 +35,8 @@ class Edge(BaseModel):
     to_node: str
     action: str
     properties: Optional[Dict[str, str]] = {}  # Flexible properties (empty dictionary is acceptable)
+     # Optional metadata as a string (allow empty string)
+    metadata: Optional[str] = ""  # Allow empty string
 
 # Define the top-level structure for the graph
 class GraphModel(BaseModel):
@@ -209,7 +213,7 @@ def validate_json(file_path: str):
 
     if not os.path.exists(file_path):
         print("Error: JSON file not found.")
-        return
+        return "INVALID JSON"
 
     try:
         # Open the cleaned JSON file and parse it
@@ -219,15 +223,59 @@ def validate_json(file_path: str):
         # Validate the cleaned JSON with Pydantic
         graph = GraphModel(**data)  # Use data read from file for Pydantic validation
         print("VALID JSON: Pydantic validation passed")
+        return "VALID JSON"  # Return a success message if validation passes
     
     except json.JSONDecodeError as e:
         print(f"INVALID JSON: JSON decode error - {e}")
+        return "INVALID JSON"
     except ValidationError as e:
         print(f"INVALID JSON: Pydantic validation error - {e}")
+        return "INVALID JSON"
 
 
 
+def load_json(file_path):
+    """Load JSON from file."""
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return None
 
+def correct_json(error_info):
+    """Send invalid JSON and error details to Google AI (Gemini) for correction."""
+    json_data = load_json()
+    if json_data is None:
+        print("Error: Failed to load JSON file.")
+        return
+
+    prompt = f"""
+    The following JSON is invalid due to the errors provided. Please correct it:
+    
+    **Invalid JSON:**  
+    ```json
+    {json.dumps(json_data, indent=2)}
+    ```
+    
+    **Errors:**  
+    {error_info}
+    
+    Return only the corrected JSON without explanations.if there is ```json and ``` at the beginning and end of the response, remove them.
+    """
+
+    # Send request to Google AI (Gemini) model
+    model = genai.GenerativeModel("gemini-pro")  # Use "gemini-pro" for text tasks
+    response = model.generate_content(prompt)
+
+    corrected_json = response.text.strip()  # Get the response text
+
+    try:
+        # Save corrected JSON back to file
+        with open(JSON_FILE, "w") as f:
+            f.write(corrected_json)
+        print("JSON corrected and saved.")
+    except Exception as e:
+        print(f"Error saving corrected JSON: {e}")
 
 
 # Main function to execute the workflow
@@ -235,6 +283,8 @@ def main():
     # Step 1: Ask the LLM to find the section with procedure info
     procedure_query = "Initial registration initiation"
     section_name = find_section_with_procedure_info(procedure_query)
+   
+    error_info = sys.argv[1] if len(sys.argv) > 1 else "Unknown error"
     
     print(f"Found Section: {section_name}")
     
@@ -247,11 +297,20 @@ def main():
         
         save_procedural_info_to_json(response, "data.json")
         clean_json("data.json")
-        validate_json("data.json")
+        validation_result = validate_json("data.json")  # Now validation result is returned
+        
+        if "VALID JSON" in validation_result:
+            print("JSON is valid! Proceeding with conversion...")
+        else:
+            print("Invalid JSON detected. Running correction...")
+            load_json("data.json")
+            correct_json(error_info)  # Step 4: AI Correction
+            time.sleep(2)
         
         print(f"Flow graph saved to data.json")
     else:
         print("Section content not found.")
+
 
 # Run the main function
 if __name__ == "__main__":

@@ -10,117 +10,130 @@
       }
     },
     {
-      "id": "Initial_Registration_Triggered",
+      "id": "Initial_Registration_Initiation",
+      "type": "action",
+      "properties": {
+        "action": "Initiate Registration Procedure"
+      }
+    },
+    {
+      "id": "REGISTRATION_REQUEST_Sent",
       "type": "event",
       "properties": {
-        "triggers": [
-          "Initial registration for 5GS services",
-          "Initial registration for emergency services",
-          "Initial registration for SMS over NAS",
-          "UE moves from GERAN/UTRAN to NG-RAN",
-          "Initial registration for onboarding services in SNPN",
-          "Initial registration for disaster roaming services",
-          "Initial registration to come out of unavailability period and resume normal services"
-        ]
+        "message_type": "REGISTRATION REQUEST"
       }
     },
     {
-      "id": "UE_Initiates_Registration",
+      "id": "Timer_T3510_Started",
       "type": "action",
       "properties": {
-        "action": "Sending REGISTRATION REQUEST message to AMF"
+        "action": "Start Timer T3510"
       }
     },
     {
-      "id": "Timer_Started",
+      "id": "Timer_T3502_Stopped",
       "type": "action",
       "properties": {
-        "action": "Starting timer T3510"
+        "action": "Stop Timer T3502",
+        "conditional": "If Timer T3502 is running"
       }
     },
     {
-      "id": "Timer_Stopped",
+      "id": "Timer_T3511_Stopped",
       "type": "action",
       "properties": {
-        "action": "Stopping timer T3502 and/or T3511 if running"
+        "action": "Stop Timer T3511",
+        "conditional": "If Timer T3511 is running"
       }
     },
     {
-      "id": "5GS_Mobile_Identity_Handling",
+      "id": "Handle_5GS_Mobile_Identity",
       "type": "action",
       "properties": {
-        "action": "Handles 5GS mobile identity IE based on available identities"
-      }
-    },
-    {
-      "id": "Additional_IE_Inclusion",
-      "type": "action",
-      "properties": {
-        "action": "Includes additional IEs based on UE capabilities and network requirements"
-      }
-    },
-    {
-      "id": "SUCI_Timer_Handling",
-      "type": "action",
-      "properties": {
-        "action": "Starts/uses timer T3519 if SUCI is included"
-      }
-    },
-    {
-      "id": "NAS_Security_Context",
-      "type": "conditional",
-      "properties": {
-        "condition": "If UE has valid 5G NAS security context, includes NAS message container IE"
+        "action": "Handle 5GS Mobile Identity IE"
       }
     }
   ],
   "edges": [
     {
       "from": "5GMM_DEREGISTERED",
-      "to": "Initial_Registration_Triggered",
-      "action": "Detects trigger for initial registration",
-      "properties": {}
+      "to": "Initial_Registration_Initiation",
+      "action": "Determine Registration Reason",
+      "properties": {
+        "conditions": [
+          "Initial registration for 5GS services",
+          "Initial registration for emergency services",
+          "Initial registration for SMS over NAS",
+          "Mobility from GERAN/UTRAN to NG-RAN",
+          "Initial registration for onboarding services in SNPN",
+          "Initial registration for disaster roaming services",
+          "Initial registration to come out of unavailability period"
+        ]
+      }
     },
     {
-      "from": "Initial_Registration_Triggered",
-      "to": "UE_Initiates_Registration",
-      "action": "Sends REGISTRATION REQUEST",
-      "properties": {}
+      "from": "Initial_Registration_Initiation",
+      "to": "REGISTRATION_REQUEST_Sent",
+      "action": "Send REGISTRATION REQUEST to AMF",
+      "properties": {
+        "parameters": [
+          "5GS mobile identity IE (5G-GUTI, SUCI, PEI)",
+          "UE status IE (EMM registration status)",
+          "Last visited registered TAI",
+          "5GS update type IE (SMS requested bit)",
+          "MICO indication IE",
+          "T3324 IE (Active time value)",
+          "Requested T3512 IE",
+          "Requested DRX parameters IE",
+          "Requested NB-N1 mode DRX parameters IE",
+          "Requested extended DRX parameters IE",
+          "LADN indication IE",
+          "Requested NSSAI IE",
+          "5GMM capability IE",
+          "S1 UE network capability IE",
+          "Mobile station classmark 2 IE",
+          "Supported codecs IE",
+          "Payload container IE (UE STATE INDICATION message)",
+          "Additional information requested IE",
+          "Requested WUS assistance information IE",
+          "Requested PEIPS assistance information IE",
+          "Service-level-AA container IE",
+          "UE determined PLMN with disaster condition IE",
+          "N5GC indication IE",
+          "AUN3 indication IE"
+        ]
+      }
     },
     {
-      "from": "UE_Initiates_Registration",
-      "to": "Timer_Started",
-      "action": "Starts Timer",
-      "properties": {}
+      "from": "REGISTRATION_REQUEST_Sent",
+      "to": "Timer_T3510_Started",
+      "action": "Start Timer",
+      "properties": {
+        "timer": "T3510"
+      }
     },
     {
-      "from": "UE_Initiates_Registration",
-      "to": "Timer_Stopped",
-      "action": "Stops Timers",
-      "properties": {}
+      "from": "REGISTRATION_REQUEST_Sent",
+      "to": "Timer_T3502_Stopped",
+      "action": "Stop Timer (Conditional)",
+      "properties": {
+        "timer": "T3502",
+        "condition": "If T3502 is running"
+      }
     },
     {
-      "from": "UE_Initiates_Registration",
-      "to": "5GS_Mobile_Identity_Handling",
-      "action": "Handles Mobile Identity",
-      "properties": {}
+      "from": "REGISTRATION_REQUEST_Sent",
+      "to": "Timer_T3511_Stopped",
+      "action": "Stop Timer (Conditional)",
+      "properties": {
+        "timer": "T3511",
+        "condition": "If T3511 is running"
+      }
     },
     {
-      "from": "5GS_Mobile_Identity_Handling",
-      "to": "Additional_IE_Inclusion",
-      "action": "Includes Additional IEs",
-      "properties": {}
-    },
-    {
-      "from": "Additional_IE_Inclusion",
-      "to": "SUCI_Timer_Handling",
-      "action": "Handles SUCI Timer",
-      "properties": {}
-    },
-    {
-      "from": "SUCI_Timer_Handling",
-      "to": "NAS_Security_Context",
-      "action": "Checks NAS Security Context",
+      "from": "REGISTRATION_REQUEST_Sent",
+      "to": "Handle_5GS_Mobile_Identity",
+      "action": "Handle ID",
       "properties": {}
     }
   ]
