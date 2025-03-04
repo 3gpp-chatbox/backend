@@ -8,6 +8,10 @@ import re
 from typing import Dict, List, Optional
 from docx import Document
 from dataclasses import dataclass
+from src.lib.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 @dataclass
 class Section:
@@ -18,6 +22,7 @@ class Section:
     content: List[Dict[str, str]]
     subsections: List["Section"]
     parent: Optional["Section"] = None
+
 
 def load_document(file_path: str) -> Document:
     """
@@ -30,17 +35,18 @@ def load_document(file_path: str) -> Document:
         Document: The loaded document object
     """
     try:
-        print(f"Loading document from {file_path}")
+        logger.info(f"Loading document from {file_path}")
         doc = Document(file_path)
-        print("Document loaded successfully")
+        logger.info("Document loaded successfully")
         return doc
 
     except FileNotFoundError:
-        print(f"File not found: {file_path}")
+        logger.error(f"File not found: {file_path}")
         return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred while loading document: {e}")
         return None
+
 
 def extract_paragraphs(doc: Document) -> List[Dict[str, any]]:
     """
@@ -81,6 +87,7 @@ def extract_paragraphs(doc: Document) -> List[Dict[str, any]]:
 
     return paragraphs
 
+
 def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Section]:
     """
     Extract document content as a tree of sections based on heading hierarchy.
@@ -93,13 +100,15 @@ def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Sect
     Returns:
         List[Section]: List of top-level sections, each containing their subsections
     """
-    print("Extracting section tree")
+    logger.info("Extracting section tree")
     if doc is None:
-        print("Document is None!")
+        logger.error("Document is None!")
         return []
 
     # Initialize variables
-    current_sections = [None] * (max_heading_level + 1)  # Track current section at each level
+    current_sections = [None] * (
+        max_heading_level + 1
+    )  # Track current section at each level
     current_content = []  # Accumulate content for the current deepest section
     top_level_sections = []  # Store all level 1 sections
     max_chunk_size = 2000
@@ -112,14 +121,22 @@ def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Sect
 
         # Check if the paragraph is a heading (level is not None and within max_heading_level)
         # Also ensure the heading text starts with a number (e.g., "4.1"), which may include decimals
-        if level is not None and level <= max_heading_level and para["text"][0].isdigit():
+        if (
+            level is not None
+            and level <= max_heading_level
+            and para["text"][0].isdigit()
+        ):
             # Create a new section for the heading
             new_section = Section(
                 level=level,
-                heading=para["text"].strip().replace(" ", "_"),  # Replace spaces with underscores for consistency
+                heading=para["text"]
+                .strip()
+                .replace(" ", "_"),  # Replace spaces with underscores for consistency
                 content=[],
                 subsections=[],
-                parent=current_sections[level - 1] if level > 1 else None,  # Link to parent section if not level 1
+                parent=current_sections[level - 1]
+                if level > 1
+                else None,  # Link to parent section if not level 1
             )
 
             # Find the deepest non-None section (highest level) to assign current_content
@@ -129,11 +146,15 @@ def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Sect
                     deepest_section = current_sections[i]
                     break
             if deepest_section is not None:
-                deepest_section.content.extend(current_content)  # Add content to the deepest section
+                deepest_section.content.extend(
+                    current_content
+                )  # Add content to the deepest section
 
             # Update the section hierarchy
             if level > 1 and current_sections[level - 1] is not None:
-                current_sections[level - 1].subsections.append(new_section)  # Link new section to parent
+                current_sections[level - 1].subsections.append(
+                    new_section
+                )  # Link new section to parent
 
             current_sections[level] = new_section  # Set the new section at its level
             current_content = []  # Reset content after assigning it
@@ -164,9 +185,12 @@ def extract_section_tree(doc: Document, max_heading_level: int = 8) -> List[Sect
             deepest_section = current_sections[i]
             break
     if deepest_section is not None:
-        deepest_section.content.extend(current_content)  # Add remaining content to the deepest section
+        deepest_section.content.extend(
+            current_content
+        )  # Add remaining content to the deepest section
 
     return top_level_sections
+
 
 def text_cleaner(text: str) -> str:
     """
@@ -227,6 +251,7 @@ def text_cleaner(text: str) -> str:
 
     return " ".join(normalized_words)
 
+
 def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
     """
     Remove specified sections from a document and save the stripped version.
@@ -250,7 +275,7 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
             any(word.lower() in para.text.lower() for word in excluded_sections)
             or not para.text.strip()[0].isdigit()
         ):
-            print(f"Removing section: {para.text}")
+            logger.info(f"Removing section: {para.text}")
             remove = True
         elif para.style.name.startswith("Heading") and remove:
             remove = False
@@ -269,14 +294,14 @@ def remove_sections(file_path: str, excluded_sections: List[str]) -> str:
 def extract_table_of_contents(section_tree: List[Section]) -> str:
     """
     Generate a hierarchical table of contents string from a section tree.
-    
+
     Args:
         section_tree (List[Section]): List of top-level sections
-        
+
     Returns:
         str: A formatted string containing the table of contents with proper indentation
         showing the hierarchical structure of the document.
-        
+
     Example output:
         1. Introduction
             1.1 Overview
@@ -286,25 +311,26 @@ def extract_table_of_contents(section_tree: List[Section]) -> str:
             2.1 System Requirements
             2.2 User Requirements
     """
+
     def _process_section(section: Section, toc_lines: List[str]):
         """Helper function to recursively process sections and their subsections"""
         # Calculate indentation based on section level (1 spaces per level)
         indent = " " * (section.level - 1)
-       
+
         # Add the current section heading with proper indentation
         # The heading already contains the section number since we preserved it in extract_section_tree
         toc_lines.append(f"{indent}{section.heading}")
-        
+
         # Process all subsections recursively
         for subsection in section.subsections:
             _process_section(subsection, toc_lines)
-    
+
     toc_lines = []
-    
+
     # Process each top-level section
     for section in section_tree:
         _process_section(section, toc_lines)
-    
+
     # Join all lines with newlines to create the final TOC string
     return "\n".join(toc_lines)
 
@@ -313,14 +339,14 @@ def extract_table_of_contents_mini(section_tree: List[Section]) -> str:
     """
     Generate a hierarchical table of contents string from a section tree,
     including only sections up to level 3.
-    
+
     Args:
         section_tree (List[Section]): List of top-level sections
-        
+
     Returns:
         str: A formatted string containing the table of contents with proper indentation
         showing the hierarchical structure of the document up to level 3.
-        
+
     Example output:
         1. Introduction
             1.1 Overview
@@ -330,28 +356,29 @@ def extract_table_of_contents_mini(section_tree: List[Section]) -> str:
             2.1 System Requirements
             2.2 User Requirements
     """
+
     def _process_section(section: Section, toc_lines: List[str]):
         """Helper function to recursively process sections and their subsections up to level 3"""
         # Only process sections up to level 3
         if section.level > 3:
             return
-            
+
         # Calculate indentation based on section level (1 spaces per level)
         indent = " " * (section.level - 1)
-       
+
         # Add the current section heading with proper indentation
         # The heading already contains the section number since we preserved it in extract_section_tree
         toc_lines.append(f"{indent}{section.heading}")
-        
+
         # Process all subsections recursively
         for subsection in section.subsections:
             _process_section(subsection, toc_lines)
-    
+
     toc_lines = []
-    
+
     # Process each top-level section
     for section in section_tree:
         _process_section(section, toc_lines)
-    
+
     # Join all lines with newlines to create the final TOC string
     return "\n".join(toc_lines)

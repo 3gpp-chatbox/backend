@@ -1,11 +1,7 @@
-import logging
 from src.db import db
+from src.lib.logger import get_logger
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def generate_markdown(doc_id: int, target_headings: list[str]) -> str:

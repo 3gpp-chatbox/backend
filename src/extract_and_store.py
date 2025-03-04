@@ -28,8 +28,15 @@ doc = doc_processor.load_document(stripped_doc_path)
 
 
 # Extract sections from the document
-section_tree = doc_processor.extract_section_tree(doc)
+section_tree = doc_processor.extract_section_tree(doc=doc)
+
+toc = doc_processor.extract_table_of_contents_mini(section_tree=section_tree)
+
+# Extract doc_id from file path (e.g. "24501-j11" from "data/24501-j11.docx")
+doc_id = docx_file_path.split("/")[-1].replace(".docx", "")
 
 # Store the sections in the database
 doc_name = doc.core_properties.title
-store_chunks.store_chunks(section_tree, doc_name)
+store_chunks.store_chunks(
+    sections_tree=section_tree, doc_name=doc_name, toc=toc, doc_id=doc_id
+)

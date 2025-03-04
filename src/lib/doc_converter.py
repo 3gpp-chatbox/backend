@@ -1,12 +1,9 @@
-import logging
 import os
 from docling.document_converter import DocumentConverter, ConversionError
+from src.lib.logger import get_logger
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+
+logger = get_logger(__name__)
 
 
 def convert_to_markdown(source_path):
