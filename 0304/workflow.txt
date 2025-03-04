@@ -1,0 +1,14 @@
+Workflow Overview
+First Prompt
+Ask the LLM to locate the section name that contains the desired procedure information.
+
+Provide the sections table as context.
+LLM will return the section name or section_id based on user query.
+Automatic DB Query
+Use the section name or section_id to query the content table automatically.
+
+Second Prompt
+Send the section content to the LLM asking it to:
+
+Extract procedure steps.
+Return the procedure flow property graph in JSON format.
