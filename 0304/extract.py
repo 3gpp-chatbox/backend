@@ -7,8 +7,9 @@ import json
 import json
 import os
 from pydantic import BaseModel, ValidationError, Field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import sys
+import time
 
 
 
@@ -22,29 +23,21 @@ DB_NAME = 'section_content_0228.db'
 
 
 
-# Define the structure of nodes in the graph
 class Node(BaseModel):
     id: str
     type: str
-    properties: Optional[Dict[str, str]] = {}  # Flexible properties (empty dictionary is acceptable)
-    parameters: Optional[List[str]] = []  # Flexible parameters, can be empty
+    properties: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
-# Define the structure of edges in the graph
 class Edge(BaseModel):
-    from_node: str
-    to_node: str
+    from_: str = Field(alias="from")  # ✅ Correcting the key mismatch
+    to: str  # ✅ Directly matches JSON
     action: str
-    properties: Optional[Dict[str, str]] = {}  # Flexible properties (empty dictionary is acceptable)
-     # Optional metadata as a string (allow empty string)
-    metadata: Optional[str] = ""  # Allow empty string
+    parameters: Optional[List[str]] = Field(default_factory=list)
+    properties: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
-# Define the top-level structure for the graph
 class GraphModel(BaseModel):
-    nodes: List[Node]  # List of nodes
-    edges: List[Edge]  # List of edges
-
-
-
+    nodes: List[Node]
+    edges: List[Edge]
 
 # Function to query sections table and locate the relevant section for procedure info
 def find_section_with_procedure_info(procedure_query):
@@ -85,12 +78,21 @@ def get_section_content_by_name(section_name):
     
     # Query the content table using section name
     cursor.execute('SELECT content_chunk FROM content WHERE section_name = ?', (section_name,))
-    content_chunk = cursor.fetchone()
+    result = cursor.fetchone()
+    
+    # Extract content from tuple (or handle None case)
+    content_chunk = result[0] if result else ""
+
+    # Write content to file
+    with open("gotsectioncontent.md", "w", encoding='utf-8') as file:
+        file.write(content_chunk)
     
     # Close the connection
     conn.close()
     
-    return content_chunk[0] if content_chunk else None
+    return content_chunk
+
+
 
 # Function to extract procedure flow from content using LLM
 def extract_procedure_flow(content, procedure_query):
@@ -209,28 +211,23 @@ def clean_json(file_path):
 
 def validate_json(file_path: str):
     """Validate JSON file after cleaning."""
-    clean_json(file_path)  # Clean JSON before validation
+    clean_json(file_path)
 
     if not os.path.exists(file_path):
-        print("Error: JSON file not found.")
-        return "INVALID JSON"
+        return "Error: JSON file not found."
 
     try:
-        # Open the cleaned JSON file and parse it
         with open(file_path, "r") as f:
-            data = json.load(f)  # Try to load the cleaned JSON from file
+            data = json.load(f)
 
-        # Validate the cleaned JSON with Pydantic
-        graph = GraphModel(**data)  # Use data read from file for Pydantic validation
-        print("VALID JSON: Pydantic validation passed")
-        return "VALID JSON"  # Return a success message if validation passes
-    
+        graph = GraphModel(**data)  # Validate using Pydantic
+        return "VALID JSON: Pydantic validation passed"
+
     except json.JSONDecodeError as e:
-        print(f"INVALID JSON: JSON decode error - {e}")
-        return "INVALID JSON"
+        return f"INVALID JSON: JSON decode error - {e}"
     except ValidationError as e:
-        print(f"INVALID JSON: Pydantic validation error - {e}")
-        return "INVALID JSON"
+        return f"INVALID JSON: Pydantic validation error - {e}"
+
 
 
 
@@ -242,7 +239,7 @@ def load_json(file_path):
     except json.JSONDecodeError:
         return None
 
-def correct_json(error_info):
+def correct_json(file_path,error_info):
     """Send invalid JSON and error details to Google AI (Gemini) for correction."""
     json_data = load_json()
     if json_data is None:
@@ -264,14 +261,14 @@ def correct_json(error_info):
     """
 
     # Send request to Google AI (Gemini) model
-    model = genai.GenerativeModel("gemini-pro")  # Use "gemini-pro" for text tasks
+    
     response = model.generate_content(prompt)
 
     corrected_json = response.text.strip()  # Get the response text
 
     try:
         # Save corrected JSON back to file
-        with open(JSON_FILE, "w") as f:
+        with open(file_path, "w") as f:
             f.write(corrected_json)
         print("JSON corrected and saved.")
     except Exception as e:
@@ -284,7 +281,7 @@ def main():
     procedure_query = "Initial registration initiation"
     section_name = find_section_with_procedure_info(procedure_query)
    
-    error_info = sys.argv[1] if len(sys.argv) > 1 else "Unknown error"
+   
     
     print(f"Found Section: {section_name}")
     
@@ -297,14 +294,16 @@ def main():
         
         save_procedural_info_to_json(response, "data.json")
         clean_json("data.json")
-        validation_result = validate_json("data.json")  # Now validation result is returned
+        validation_result = validate_json("data.json").strip()
+  # Now validation result is returned
         
         if "VALID JSON" in validation_result:
             print("JSON is valid! Proceeding with conversion...")
         else:
             print("Invalid JSON detected. Running correction...")
             load_json("data.json")
-            correct_json(error_info)  # Step 4: AI Correction
+            error_info = sys.argv[1] if len(sys.argv) > 1 else "Unknown error"
+            correct_json("data.json",error_info)  # Step 4: AI Correction
             time.sleep(2)
         
         print(f"Flow graph saved to data.json")
