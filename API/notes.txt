@@ -1,0 +1,12 @@
+to run server:
+cd backend/API
+uvicorn main:app --reload
+
+GET /graphs/result-sets
+# Returns: ["Shehara", "OtherPerson"]
+
+GET /graphs/result-sets/Shehara
+# Returns: ["periodic_registration_graph.json", "mobility_registration_graph.json", "initial_registration_graph.json"]
+
+GET /graphs/result-sets/Shehara/periodic_registration
+# Returns: {"status": "success", "data": {"nodes": [...], "edges": [...]}}..
