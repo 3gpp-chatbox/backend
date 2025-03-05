@@ -1,9 +1,11 @@
 # src/main.py
+import json
 import os
+
 from dotenv import load_dotenv
 from google import genai
 from pydantic import BaseModel
-import json
+
 import src.lib.extract_content_data as extract_content_data
 
 flash_model = "gemini-2.0-flash"
@@ -23,39 +25,12 @@ if not api_key:
 client = genai.Client(api_key=api_key)
 
 
-# Load the docx file inside data/
-docx_file_path = "data/24501-j11.docx"
-
-sections_to_exclude = [
-    "annex",
-    "appendix",
-    "abbreviations",
-    "scope",
-    "references",
-    "foreword",
-]
-
-
-# stripped_doc_path = doc_processor.remove_sections(
-#     file_path=docx_file_path, excluded_sections=sections_to_exclude
-# )
-
-# doc = doc_processor.load_document(stripped_doc_path)
-
-# Read the table of contents from the document toc.md
-toc_file_path = "toc_mini.md"
-
-
 class Response(BaseModel):
     sections: list[str]
 
 
-with open(toc_file_path, "r") as f:
-    toc = f.read()
-
-
 def get_relevant_sections(table_of_contents: str):
-    prompt2 = f"""
+    prompt = f"""
                 ROLE: You are an expert in 3GPP specifications.
                 TASK: Analyze the table of contents of 3GPP TS 24.501 provided below and identify the sections that contain information necessary to design a flow diagram of the initial registration procedure. In this flow diagram:
                 Nodes represent 5GMM states (e.g., 5GMM-DEREGISTERED, 5GMM-REGISTERED-INITIATED) and events (e.g., message sending, procedure initiation).
@@ -99,7 +74,7 @@ def get_relevant_sections(table_of_contents: str):
 
     response = client.models.generate_content(
         model=flash_model,
-        contents=prompt2,
+        contents=prompt,
         config={
             "response_mime_type": "application/json",
             "response_schema": Response,
@@ -109,14 +84,20 @@ def get_relevant_sections(table_of_contents: str):
     return response
 
 
-response = get_relevant_sections(toc)
-# Parse the response into the Sections model
-response_json = response.text  # Gemini returns text, even with JSON mime type
-sections_data = json.loads(response_json)  # Convert JSON string to dict
-response = Response(**sections_data)  # Convert dict to Pydantic object
+if __name__ == "__main__":
+    toc_file_path = "toc_mini.md"
 
-final_contents = extract_content_data.generate_markdown(
-    doc_id=1, target_headings=response.sections
-)
+    with open(toc_file_path, "r") as f:
+        toc = f.read()
 
-# print(final_contents)
+    response = get_relevant_sections(toc)
+    # Parse the response into the Sections model
+    response_json = response.text  # Gemini returns text, even with JSON mime type
+    sections_data = json.loads(response_json)  # Convert JSON string to dict
+    response = Response(**sections_data)  # Convert dict to Pydantic object
+
+    final_contents = extract_content_data.generate_markdown(
+        doc_id=1, target_headings=response.sections
+    )
+
+    # print(final_contents)

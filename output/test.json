@@ -7,11 +7,11 @@
             "entity": "UE",
             "properties": {
                 "state": "5GMM-DEREGISTERED",
-                "description": "UE is in 5GMM-DEREGISTERED state, no 5GMM context has been established."
+                "description": "UE is in 5GMM-DEREGISTERED state, no 5GMM context established."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
-                "section_reference": "5.2.2.1"
+                "section_reference": "5.2.2"
             }
         },
         {
@@ -20,7 +20,7 @@
             "entity": "UE",
             "properties": {
                 "eventType": "Registration Request Sent",
-                "description": "UE sends a REGISTRATION REQUEST message to the AMF to initiate initial registration."
+                "description": "UE sends a REGISTRATION REQUEST message to the AMF."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
@@ -33,7 +33,7 @@
             "entity": "UE",
             "properties": {
                 "state": "5GMM-REGISTERED-INITIATED",
-                "description": "UE enters the state 5GMM-REGISTERED-INITIATED after sending the REGISTRATION REQUEST message."
+                "description": "UE enters 5GMM-REGISTERED-INITIATED state, waiting for response from network."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
@@ -46,7 +46,7 @@
             "entity": "AMF",
             "properties": {
                 "eventType": "Registration Accepted",
-                "description": "The AMF accepts the initial registration request."
+                "description": "Network accepts the registration request."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
@@ -59,7 +59,7 @@
             "entity": "UE",
             "properties": {
                 "state": "5GMM-REGISTERED",
-                "description": "UE enters the state 5GMM-REGISTERED after receiving the REGISTRATION ACCEPT message."
+                "description": "UE enters 5GMM-REGISTERED state, 5GMM context established."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
@@ -72,7 +72,7 @@
             "entity": "AMF",
             "properties": {
                 "eventType": "Registration Rejected",
-                "description": "The AMF rejects the initial registration request."
+                "description": "Network rejects the registration request."
             },
             "metadata": {
                 "document_id": "3GPP TS 24.501",
@@ -88,54 +88,71 @@
             "type": "Action",
             "properties": {
                 "messageType": "REGISTRATION REQUEST",
-                "description": "UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF."
+                "parameters": [
+                    "5GS registration type IE (initial registration)",
+                    "5GS mobile identity IE (SUCI or 5G-GUTI or PEI)",
+                    "Requested NSSAI",
+                    "UE status IE (if dual-registration mode)"
+                ],
+                "description": "UE initiates registration procedure by sending REGISTRATION REQUEST."
             }
         },
         {
-            "id": "Transition to Initiated",
+            "id": "Start T3510",
             "from": "Registration Request Sent",
             "to": "5GMM-REGISTERED-INITIATED",
             "type": "Transition",
             "properties": {
-                "description": "UE transitions to 5GMM-REGISTERED-INITIATED state after sending the REGISTRATION REQUEST message."
+                "description": "UE starts timer T3510 and enters 5GMM-REGISTERED-INITIATED state."
             }
         },
         {
-            "id": "Registration Accept Action",
+            "id": "Registration Accept Received",
             "from": "5GMM-REGISTERED-INITIATED",
             "to": "Registration Accepted",
-            "type": "Action",
+            "type": "Event",
             "properties": {
                 "messageType": "REGISTRATION ACCEPT",
-                "description": "AMF sends a REGISTRATION ACCEPT message to the UE."
+                "description": "AMF sends REGISTRATION ACCEPT message."
             }
         },
         {
-            "id": "Transition to Registered",
+            "id": "Registration Complete Sent",
             "from": "Registration Accepted",
             "to": "5GMM-REGISTERED",
-            "type": "Transition",
-            "properties": {
-                "description": "UE transitions to 5GMM-REGISTERED state after receiving the REGISTRATION ACCEPT message."
-            }
-        },
-        {
-            "id": "Registration Reject Action",
-            "from": "5GMM-REGISTERED-INITIATED",
-            "to": "Registration Rejected",
             "type": "Action",
             "properties": {
-                "messageType": "REGISTRATION REJECT",
-                "description": "AMF sends a REGISTRATION REJECT message to the UE."
+                "messageType": "REGISTRATION COMPLETE",
+                "parameters": [],
+                "description": "UE sends REGISTRATION COMPLETE message."
             }
         },
         {
-            "id": "Transition to Deregistered",
+            "id": "Update Status to 5U1",
+            "from": "5GMM-REGISTERED",
+            "to": "5GMM-REGISTERED",
+            "type": "Action",
+            "properties": {
+                "description": "UE sets 5GS update status to 5U1 UPDATED."
+            }
+        },
+        {
+            "id": "Registration Reject Received",
+            "from": "5GMM-REGISTERED-INITIATED",
+            "to": "Registration Rejected",
+            "type": "Event",
+            "properties": {
+                "messageType": "REGISTRATION REJECT",
+                "description": "AMF sends REGISTRATION REJECT message."
+            }
+        },
+        {
+            "id": "Back to 5GMM-DEREGISTERED",
             "from": "Registration Rejected",
             "to": "5GMM-DEREGISTERED",
             "type": "Transition",
             "properties": {
-                "description": "UE transitions to 5GMM-DEREGISTERED state after receiving the REGISTRATION REJECT message."
+                "description": "UE returns to 5GMM-DEREGISTERED state."
             }
         }
     ]

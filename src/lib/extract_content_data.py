@@ -4,7 +4,7 @@ from src.lib.logger import get_logger
 logger = get_logger(__name__)
 
 
-def generate_markdown(doc_id: int, target_headings: list[str]) -> str:
+def generate_markdown(doc_id: str, target_headings: list[str]) -> str:
     """Generate a markdown document from specified document sections.
 
     This function retrieves sections from a document based on given headings and their subheadings,
@@ -32,7 +32,17 @@ def generate_markdown(doc_id: int, target_headings: list[str]) -> str:
         conn = db.get_db_connection()
         cur = conn.cursor()
 
-        # Step 1: Get all target paths for the given headings
+        # Step 1: Check if the document exists
+        cur.execute("SELECT * FROM documents WHERE doc_id = %s", (doc_id,))
+
+        result = cur.fetchone()
+        if not result:
+            logger.error(f"Document {doc_id} not found in the database")
+            return f"Document {doc_id} not found in the database"
+
+        doc_name = result.get("doc_name")
+
+        # Step 2: Get all target paths for the given headings
         cur.execute(
             "SELECT heading, path FROM sections WHERE doc_id = %s AND heading = ANY (%s)",
             (doc_id, target_headings),
@@ -46,7 +56,7 @@ def generate_markdown(doc_id: int, target_headings: list[str]) -> str:
         target_paths: list[str] = [result.get("path") for result in results]
         logger.debug(f"Found target paths: {target_paths}")
 
-        # Step 2: Get all sections under these paths
+        # Step 3: Get all sections under these paths
         # Modify the query to use <@ ANY for multiple paths
         cur.execute(
             """
@@ -60,14 +70,20 @@ def generate_markdown(doc_id: int, target_headings: list[str]) -> str:
         sections = cur.fetchall()
         logger.debug(f"Found {len(sections)} sections under paths {target_paths}")
 
-        # Step 3: Generate markdown
+        # Step 4: Generate markdown
         markdown_lines: list[str] = []
+
+        # Define document title in the markdown
+        markdown_lines.append(f"# {doc_name}")
+        markdown_lines.append("")  # Blank line after title
+
+        # Iterate over sections and create markdown
         for section in sections:
             heading: str = section.get("heading")
             level: int = section.get("level")
             content: str | None = section.get("content")
             # Create markdown heading
-            heading_md = "#" * level + " " + heading
+            heading_md = "#" * (level + 1) + " " + heading
             markdown_lines.append(heading_md)
             # markdown_lines.append("")  # Blank line after heading
             if content:

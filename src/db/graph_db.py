@@ -41,156 +41,124 @@ def close_neo4j_connection(driver):
 def clear_database(driver):
     """Remove all nodes and relationships from the database."""
     with driver.session() as session:
-        session.run("MATCH (n) DETACH DELETE n")
-        # Get all constraints
-        constraints = session.run("SHOW CONSTRAINTS").data()
-        # Drop each constraint
-        for constraint in constraints:
-            session.run(f"DROP CONSTRAINT {constraint['name']}")
-        logger.info("Database cleared")
+        # Check if APOC is available, use it if possible
+        try:
+            session.run(
+                "CALL apoc.schema.assert({}, {})"
+            )  # Drop all constraints and indexes
+            session.run(
+                "MATCH (n) DETACH DELETE n"
+            )  # Delete all nodes and relationships
+            logger.info("Database cleared with APOC")
+        except Exception:
+            # Fallback without APOC
+            constraints = session.run(
+                "SHOW CONSTRAINTS YIELD name RETURN collect(name) AS names"
+            ).single()["names"]
+            if constraints:
+                session.run(
+                    "UNWIND $names AS name CALL { DROP CONSTRAINT $name } IN TRANSACTIONS",
+                    {"names": constraints},
+                )
+            session.run("MATCH (n) DETACH DELETE n")
+            logger.info("Database cleared without APOC")
 
 
 def create_constraints(driver):
-    """Create necessary constraints for the database."""
+    """Create uniqueness constraints for node IDs."""
     with driver.session() as session:
-        # Create constraints for both State and Event nodes
         session.run(
             "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.id IS UNIQUE"
         )
         session.run(
             "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Event) REQUIRE n.id IS UNIQUE"
         )
-        logger.info("Constraints created")
+        session.run(
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Procedure) REQUIRE n.name IS UNIQUE"
+        )
+    logger.info("Constraints created")
 
 
-def import_node(driver, node):
-    """Import a single node into Neo4j."""
+def import_nodes(driver, nodes, procedure_name):
+    """Import State and Event nodes with properties and metadata."""
     with driver.session() as session:
-        # Create base node with common properties
-        # Based on node type, create node with appropriate label
-        if node["type"] == "State":
-            query = """
-            MERGE (n:State {id: $id})
-            SET n.entity = $entity,
-                n.nodeType = $type,
-                n.description = $description,
-                n.document_id = $document_id,
-                n.section_reference = $section_reference,
-                n.other_references = $other_references,
-                n.state = $state
-            """
-            state = node["properties"]["state"]
-            session.run(
-                query,
-                id=node["id"],
-                entity=node["entity"],
-                type=node["type"],
-                description=node["properties"]["description"],
-                document_id=node["metadata"]["document_id"],
-                section_reference=node["metadata"]["section_reference"],
-                other_references=node["metadata"]["other_references"],
-                state=state,
-            )
-        else:  # Event type
-            query = """
-            MERGE (n:Event {id: $id})
-            SET n.entity = $entity,
-                n.nodeType = $type,
-                n.description = $description,
-                n.document_id = $document_id,
-                n.section_reference = $section_reference,
-                n.other_references = $other_references,
-                n.eventType = $eventType
-            """
-            event_type = node["properties"]["eventType"]
-            session.run(
-                query,
-                id=node["id"],
-                entity=node["entity"],
-                type=node["type"],
-                description=node["properties"]["description"],
-                document_id=node["metadata"]["document_id"],
-                section_reference=node["metadata"]["section_reference"],
-                other_references=node["metadata"]["other_references"],
-                eventType=event_type,
-            )
-
-
-def import_nodes(driver, nodes):
-    """Import all nodes into Neo4j."""
-    logger.info(f"Importing {len(nodes)} nodes...")
-    for node in nodes:
-        import_node(driver, node)
-    logger.info("All nodes imported successfully")
-
-
-def import_edge(driver, edge):
-    """Import a single edge into Neo4j."""
-    with driver.session() as session:
-        # Base relationship properties
-        params = {
-            "id": edge["id"],
-            "from_id": edge["from"],
-            "to_id": edge["to"],
-            "type": edge["type"],
-            "description": edge["properties"]["description"],
-        }
-
-        # Add message properties for Action relationships
-        if edge["type"] == "Action":
-            params["messageType"] = edge["properties"]["messageType"]
-            # Convert parameters list to JSON string for Neo4j storage
-            params["parameters"] = json.dumps(edge["properties"]["parameters"])
+        for node in nodes:
+            if "id" not in node or not node["id"]:
+                logger.error(f"Node missing 'id': {node}")
+                raise ValueError(f"Node missing 'id': {node}")
+            # Convert nested objects to JSON strings
+            properties_json = json.dumps(node["properties"])
+            metadata_json = json.dumps(node["metadata"])
 
             query = """
-            MATCH (source {id: $from_id})
-            MATCH (target {id: $to_id})
-            CREATE (source)-[r:ACTION {
-                id: $id,
-                relationType: $type,
-                description: $description,
-                messageType: $messageType,
-                parameters: $parameters
-            }]->(target)
+                CREATE (n:{node_type})
+                SET n.id = $id,
+                    n.procedureName = $procedureName,
+                    n.entity = $entity,
+                    n.properties = $properties_json,
+                    n.metadata = $metadata_json
+                RETURN n
             """
-        else:  # Transition type
-            query = """
-            MATCH (source {id: $from_id})
-            MATCH (target {id: $to_id})
-            CREATE (source)-[r:TRANSITION {
-                id: $id,
-                relationType: $type,
-                description: $description
-            }]->(target)
-            """
-
-        session.run(query, params)  # Remove ** to pass parameters directly
+            try:
+                session.run(
+                    query.format(node_type=node["type"]),
+                    {
+                        "id": str(node["id"]),  # Ensure ID is a string
+                        "procedureName": procedure_name,
+                        "entity": node["entity"],
+                        "properties_json": properties_json,
+                        "metadata_json": metadata_json,
+                    },
+                )
+            except Exception as e:
+                logger.error(f"Failed to import node {node['id']}: {str(e)}")
+                raise
+        logger.info(f"Imported {len(nodes)} nodes for procedure: {procedure_name}")
 
 
 def import_edges(driver, edges):
-    """Import all edges into Neo4j."""
-    logger.info(f"Importing {len(edges)} relationships...")
-    for edge in edges:
-        import_edge(driver, edge)
-    logger.info("All relationships imported successfully")
+    """Import edges (relationships) between nodes."""
+    with driver.session() as session:
+        for edge in edges:
+            # Convert properties to JSON string
+            properties_json = json.dumps(edge["properties"])
+            query = """
+                MATCH (from) WHERE from.id = $from_id
+                MATCH (to) WHERE to.id = $to_id
+                CREATE (from)-[r:{rel_type}]->(to)
+                SET r.id = $edge_id,
+                    r.properties = $properties_json
+            """
+            try:
+                session.run(
+                    query.format(rel_type=edge["type"]),
+                    {
+                        "from_id": str(edge["from"]),  # Ensure IDs are strings
+                        "to_id": str(edge["to"]),
+                        "edge_id": str(edge["id"]),
+                        "properties_json": properties_json,
+                    },
+                )
+            except Exception as e:
+                logger.error(f"Failed to import edge {edge['id']}: {str(e)}")
+                raise
+        logger.info(f"Imported {len(edges)} edges")
 
 
 def create_procedure_node(driver, procedure_name):
-    """Create a procedure node and link it to all nodes."""
+    """Create Procedure node and link it to its State and Event nodes."""
+    query = """
+        MERGE (p:Procedure {name: $name})
+        WITH p
+        MATCH (n:State {procedureName: $name})
+        CREATE (p)-[:CONTAINS]->(n)
+        WITH p
+        MATCH (n:Event {procedureName: $name})
+        CREATE (p)-[:CONTAINS]->(n)
+    """
     with driver.session() as session:
-        session.run(
-            """
-        CREATE (p:Procedure {name: $name})
-        WITH p
-        MATCH (n:State)
-        CREATE (p)-[:CONTAINS]->(n)
-        WITH p
-        MATCH (n:Event)
-        CREATE (p)-[:CONTAINS]->(n)
-        """,
-            name=procedure_name,
-        )
-    logger.info(f"Created procedure node for '{procedure_name}'")
+        session.run(query, {"name": procedure_name})
+    logger.info(f"Created Procedure node: {procedure_name}")
 
 
 def import_flow_graph(json_file_path, clear=True):
@@ -204,6 +172,7 @@ def import_flow_graph(json_file_path, clear=True):
         logger.info(f"Loading flow graph: {data['procedureName']}")
 
         # Connect to Neo4j
+
         driver = get_neo4j_connection()
 
         # Clear database if requested
@@ -214,10 +183,9 @@ def import_flow_graph(json_file_path, clear=True):
         create_constraints(driver)
 
         # Import nodes and edges
-        import_nodes(driver, data["nodes"])
-        import_edges(driver, data["edges"])
 
-        # Create procedure node
+        import_nodes(driver, data["nodes"], data["procedureName"])
+        import_edges(driver, data["edges"])
         create_procedure_node(driver, data["procedureName"])
 
         logger.info(f"Successfully imported flow graph: {data['procedureName']}")
@@ -234,30 +202,55 @@ def import_flow_graph(json_file_path, clear=True):
 # Test the connection if this file is run directly
 if __name__ == "__main__":
     try:
-        # Example: Import flow graph
+        # Import flow graph
         result = import_flow_graph("output/flow_graph.json")
         if result:
             logger.info("Flow graph import test successful")
 
-        # Connect and run simple query to get procedure graph
-        driver = get_neo4j_connection()
-        with driver.session() as session:
-            # Get all nodes in the procedure
-            print("\nNodes:")
-            nodes = session.run("""
-                MATCH (p:Procedure {name: 'Initial Registration Procedure'})
-                MATCH (p)-[:CONTAINS]->(n)
-                RETURN DISTINCT n 
-            """)
-            for record in nodes:
-                node = record["n"]
-                print(node.labels)
-                if "State" in node.labels:
-                    print(f"State: {node['entity']} in {node['state']}")
-                else:
-                    print(f"Event: {node['entity']} - {node['eventType']}")
+            # Connect and run simple query to get procedure graph
+            driver = get_neo4j_connection()
+            with driver.session() as session:
+                # Get all nodes in the procedure
+                print("\nNodes:")
+                nodes = session.run("""
+                    MATCH (p:Procedure {name: 'Initial Registration Procedure'})
+                    MATCH (p)-[:CONTAINS]->(n)
+                    RETURN DISTINCT n
+                """)
+                for record in nodes:
+                    node = record["n"]
+                    print(node.labels)
+                    props = json.loads(node["properties"])
+                    if "State" in node.labels:
+                        print(f"State: {node['entity']} in {props.get('state', 'N/A')}")
+                    else:
+                        print(f"Event: {node['entity']} - {props.get('eventType', 'N/A')}")
 
-        close_neo4j_connection(driver)
+                # Print the flow with unique paths
+                print("\nFlow:")
+                flow = session.run("""
+                    MATCH (p:Procedure {name: 'Initial Registration Procedure'})
+                    MATCH (start)-[r:Action|Transition]->(end)
+                    WHERE start.procedureName = p.name
+                      AND end.procedureName = p.name
+                    RETURN DISTINCT start.id as from, type(r) as rel_type, end.id as to
+                    ORDER BY from, rel_type, to
+                """)
+                for record in flow:
+                    props = {
+                        'from': record['from'],
+                        'rel_type': record['rel_type'],
+                        'to': record['to']
+                    }
+                    print(f"{props['from']} -[{props['rel_type']}]-> {props['to']}")
+
+            close_neo4j_connection(driver)
 
     except Exception as e:
         logger.error(f"Test connection failed: {e}")
+
+    with open("output","r") as file:
+        data = json.load(file)
+
+        print(data)
+

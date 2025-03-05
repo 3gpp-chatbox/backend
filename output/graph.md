@@ -42,6 +42,7 @@ graph TD
         UE_Reg
         UE_Send_Comp
         UE_Recv_Rej
+
     end
 
     subgraph AMF
