@@ -38,40 +38,41 @@ testConnection();
 app.use(cors());
 app.use(express.json());
 
-// API to fetch jsonData from Neo4j based on procedure type
+// API to fetch procedure data (Initial Registration or Periodic Registration)
 app.get('/fetch-jsondata/:procedureType', async (req, res) => {
     const session = driver.session();
     const { procedureType } = req.params;
     
-    console.log(`Fetching data for step: ${procedureType}`);
+    // Validate procedure type
+    const validProcedures = ['Initial_Registration', 'Periodic_Registration'];
+    if (!validProcedures.includes(procedureType)) {
+        return res.status(400).json({
+            error: `Invalid procedure type. Must be one of: ${validProcedures.join(', ')}`
+        });
+    }
+    
+    console.log(`Fetching ${procedureType} procedure...`);
     
     try {
         console.log('Executing Neo4j query...');
         const result = await session.run(`
             MATCH (source)-[r]->(dest)
-            WHERE r.procedure = 'Initial_Registration'
+            WHERE r.procedure = $procedureType
             WITH source, dest, r
-            ORDER BY r.step
+            ORDER BY r.sequence_number
             WITH COLLECT(DISTINCT source) + COLLECT(DISTINCT dest) AS nodes,
                  COLLECT(DISTINCT r) AS edges
             RETURN { nodes: nodes, edges: edges } AS jsonData;
-        `);
+        `, { procedureType });  // Pass procedureType as parameter
 
-        // Get the raw data
         const rawData = result.records[0]?.get('jsonData');
 
         if (!rawData) {
-            console.log('No message flow data found');
+            console.log(`No ${procedureType} flow data found`);
             return res.status(404).json({ 
-                error: `No message flow data found` 
+                error: `No ${procedureType} flow data found` 
             });
         }
-
-        console.log('Raw data from Neo4j:');
-        console.log('Nodes:', rawData.nodes.length);
-        console.log('Edges:', rawData.edges.length);
-        console.log('Sample node:', rawData.nodes[0]?.properties);
-        console.log('Sample edge:', rawData.edges[0]?.properties);
 
         // Transform the data into the expected format
         const transformedData = {
@@ -81,26 +82,22 @@ app.get('/fetch-jsondata/:procedureType', async (req, res) => {
                 type: node.labels[0],
                 description: node.properties.description || ''
             })),
-            edges: rawData.edges.map(edge => {
-                const edgeData = {
-                    source: edge.start.toString(),
-                    target: edge.end.toString(),
-                    label: edge.properties.message || edge.properties.step_name || edge.type,
-                    type: edge.type,
-                    properties: edge.properties
-                };
-                console.log('Transformed edge:', edgeData);
-                return edgeData;
-            })
+            edges: rawData.edges.map(edge => ({
+                source: edge.start.toString(),
+                target: edge.end.toString(),
+                label: edge.properties.message || edge.properties.step_name || edge.type,
+                type: edge.type,
+                properties: edge.properties
+            }))
         };
 
-        console.log('Successfully transformed data:');
+        console.log(`Successfully transformed ${procedureType} data:`);
         console.log('Total nodes:', transformedData.nodes.length);
         console.log('Total edges:', transformedData.edges.length);
 
         res.json(transformedData);
     } catch (error) {
-        console.error('Error fetching data from Neo4j:', error);
+        console.error(`Error fetching ${procedureType} data:`, error);
         res.status(500).json({ 
             error: 'Internal Server Error',
             message: error.message,
