@@ -49,6 +49,7 @@ app.get('/fetch-jsondata/:procedureType', async (req, res) => {
         console.log('Executing Neo4j query...');
         const result = await session.run(`
             MATCH (source)-[r]->(dest)
+            WHERE r.procedure = 'Initial_Registration'
             WITH source, dest, r
             ORDER BY r.step
             WITH COLLECT(DISTINCT source) + COLLECT(DISTINCT dest) AS nodes,
