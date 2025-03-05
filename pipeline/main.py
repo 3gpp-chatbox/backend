@@ -12,7 +12,7 @@ import json
 root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_folder)
 from config import Gemini_API_KEY
-from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+# from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 
 def main():
@@ -190,11 +190,11 @@ def main():
                         print(f"→ Saved graph with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
 
                         # Store in Neo4j
-                        try:
-                            from extractGraphData import store_in_neo4j
-                            store_in_neo4j(graph_data, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-                        except Exception as e:
-                            print(f"✗ Failed to store in Neo4j: {e}")
+                        # try:
+                        #     from extractGraphData import store_in_neo4j
+                        #     store_in_neo4j(graph_data, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+                        # except Exception as e:
+                        #     print(f"✗ Failed to store in Neo4j: {e}")
                     else:
                         print(f"✗ No graph data generated for {category}")
             else:

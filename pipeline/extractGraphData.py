@@ -178,59 +178,59 @@ def store_in_neo4j(graph_data: Dict[str, Any], neo4j_uri: str, neo4j_user: str, 
 
     driver.close()
 
-def get_neo4j_graph(neo4j_uri: str, neo4j_user: str, neo4j_password: str, procedure_name: str) -> Dict[str, Any]:
-    """Retrieve graph data from Neo4j for a specific procedure"""
-    try:
-        from neo4j import GraphDatabase
+# def get_neo4j_graph(neo4j_uri: str, neo4j_user: str, neo4j_password: str, procedure_name: str) -> Dict[str, Any]:
+#     """Retrieve graph data from Neo4j for a specific procedure"""
+#     try:
+#         from neo4j import GraphDatabase
         
-        driver = GraphDatabase.driver(
-            neo4j_uri, 
-            auth=(neo4j_user, neo4j_password)
-        )
+#         driver = GraphDatabase.driver(
+#             neo4j_uri, 
+#             auth=(neo4j_user, neo4j_password)
+#         )
 
-        def fetch_graph(tx, procedure):
-            # Get nodes
-            nodes_result = tx.run("""
-                MATCH (n:ProcedureNode {procedure: $procedure})
-                RETURN collect({
-                    id: n.id,
-                    label: n.label,
-                    type: n.type,
-                    properties: n.properties
-                }) as nodes
-            """, procedure=procedure)
+#         def fetch_graph(tx, procedure):
+#             # Get nodes
+#             nodes_result = tx.run("""
+#                 MATCH (n:ProcedureNode {procedure: $procedure})
+#                 RETURN collect({
+#                     id: n.id,
+#                     label: n.label,
+#                     type: n.type,
+#                     properties: n.properties
+#                 }) as nodes
+#             """, procedure=procedure)
             
-            # Get relationships
-            edges_result = tx.run("""
-                MATCH (source:ProcedureNode {procedure: $procedure})-[r:TRANSITION]->(target:ProcedureNode {procedure: $procedure})
-                RETURN collect({
-                    id: r.id,
-                    source: source.id,
-                    target: target.id,
-                    label: r.label,
-                    type: r.type,
-                    properties: r.properties
-                }) as edges
-            """, procedure=procedure)
+#             # Get relationships
+#             edges_result = tx.run("""
+#                 MATCH (source:ProcedureNode {procedure: $procedure})-[r:TRANSITION]->(target:ProcedureNode {procedure: $procedure})
+#                 RETURN collect({
+#                     id: r.id,
+#                     source: source.id,
+#                     target: target.id,
+#                     label: r.label,
+#                     type: r.type,
+#                     properties: r.properties
+#                 }) as edges
+#             """, procedure=procedure)
             
-            nodes = nodes_result.single()['nodes']
-            edges = edges_result.single()['edges']
+#             nodes = nodes_result.single()['nodes']
+#             edges = edges_result.single()['edges']
             
-            return {
-                'nodes': nodes,
-                'edges': edges,
-                'metadata': {'procedure_name': procedure}
-            }
+#             return {
+#                 'nodes': nodes,
+#                 'edges': edges,
+#                 'metadata': {'procedure_name': procedure}
+#             }
 
-        with driver.session() as session:
-            return session.execute_read(fetch_graph, procedure_name)
+#         with driver.session() as session:
+#             return session.execute_read(fetch_graph, procedure_name)
             
-    except Exception as e:
-        print(f"Error retrieving from Neo4j: {e}")
-        return {'nodes': [], 'edges': [], 'metadata': {}}
-    finally:
-        if 'driver' in locals():
-            driver.close()
+#     except Exception as e:
+#         print(f"Error retrieving from Neo4j: {e}")
+#         return {'nodes': [], 'edges': [], 'metadata': {}}
+#     finally:
+#         if 'driver' in locals():
+#             driver.close()
 
 # For testing
 # if __name__ == "__main__":
