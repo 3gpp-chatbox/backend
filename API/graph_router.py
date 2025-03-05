@@ -1,20 +1,25 @@
 from fastapi import APIRouter, HTTPException
 import json
 import os
-import sys
 from typing import Dict, List
 
 router = APIRouter()
+
+def get_graphs_directory() -> str:
+    """Get the absolute path to the graphs directory inside backend"""
+    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    graphs_dir = os.path.join(backend_dir, "graphs")
+    os.makedirs(graphs_dir, exist_ok=True)
+    
+    return graphs_dir
 
 @router.get("/graphs/{procedure_name}")
 async def get_graph_data(procedure_name: str):
     """Get graph data for a specific procedure"""
     try:
-        # Construct path to graph file
-        root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        sys.path.append(root_folder)
+        graphs_dir = get_graphs_directory()
         graph_path = os.path.join(
-            "graphs", 
+            graphs_dir,
             f"{procedure_name.lower().replace(' ', '_')}_graph.json"
         )
         
@@ -41,15 +46,19 @@ async def get_graph_data(procedure_name: str):
 async def list_available_graphs():
     """List all available graph files"""
     try:
-        graph_dir = os.path.join("backend", "graphs")
+        graphs_dir = get_graphs_directory()
+        
+        # List all graph files
         graph_files = [
             f.replace("_graph.json", "")
-            for f in os.listdir(graph_dir)
+            for f in os.listdir(graphs_dir)
             if f.endswith("_graph.json")
         ]
+        
         return {
             "status": "success",
-            "data": graph_files
+            "data": graph_files,
+            "message": f"Found {len(graph_files)} graph files"
         }
     except Exception as e:
         raise HTTPException(
