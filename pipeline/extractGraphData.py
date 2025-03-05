@@ -44,31 +44,60 @@ def extract_nodes_and_edges(procedures: List[Dict[str, Any]], api_key: str) -> D
         print(f"\nExtracting graph for procedure: {procedure_name}")
         
         # Create prompt for this specific procedure
-        prompt = f"""You are a graph structure expert. Create a graph representation of this 5G NAS procedure.
+        prompt = f"""You are a graph structure expert. Create a detailed graph representation of this 5G NAS procedure.
 
 Input Procedure:
 {json.dumps(procedure, indent=2)}
 
-Task: Convert the procedure into a graph with nodes and edges.
+Task: Convert the procedure into a graph with detailed nodes and edges.
 
 Instructions:
-1. Create nodes for each:
-   - State from States list
-   - Trigger from Triggers list
-   - Action from Actions list
-   - Message from Message_Types
+1. Create nodes with detailed properties for each:
+   - State nodes:
+     * current_state: The state name
+     * conditions: Conditions for this state
+     * next_states: Possible next states
+     * spec_references: Related specification sections
+   
+   - Trigger nodes:
+     * trigger_type: Type of trigger (e.g., "UE initiated", "Network initiated")
+     * conditions: Conditions for trigger activation
+     * related_states: States this trigger affects
+     * spec_references: Related specification sections
 
-2. Create edges to show:
-   - State transitions (following Flow_of_execution)
-   - Message flows
-   - Trigger-to-state connections
-   - Action sequences
+   - Action nodes:
+     * actor: Who performs the action (UE, Network, etc.)
+     * prerequisites: Required conditions
+     * outcomes: Expected results
+     * error_cases: Possible failure scenarios
+     * spec_references: Related specification sections
 
-3. Add relevant properties from:
-   - Error_Handling
-   - Expected_Outcomes
-   - References
-   - Causes
+   - Message nodes:
+     * message_type: Type of NAS message
+     * direction: Message flow direction (UE→Network or Network→UE)
+     * mandatory_ies: Mandatory Information Elements
+     * optional_ies: Optional Information Elements
+     * spec_references: Related specification sections
+
+2. Create edges with properties showing:
+   - State transitions:
+     * trigger: What causes the transition
+     * conditions: Required conditions
+     * success_criteria: What defines success
+     * failure_handling: How failures are handled
+   
+   - Message flows:
+     * sequence_number: Order in the procedure
+     * timing: Any timing requirements
+     * retry_behavior: Retry mechanisms
+     * error_handling: Error handling procedures
+
+3. Include metadata:
+   - procedure_id: Unique identifier
+   - doc_id: Source document ID
+   - spec_sections: All relevant 3GPP specification sections
+   - category: Procedure category
+   - sub_category: Procedure sub-category
 
 Return ONLY a valid JSON object following this schema (no other text):
 {json.dumps(GraphData.model_json_schema(), indent=2)}"""
