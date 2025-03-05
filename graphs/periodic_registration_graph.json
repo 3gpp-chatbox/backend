@@ -1,0 +1,189 @@
+{
+  "nodes": [
+    {
+      "id": "trigger1",
+      "label": "UE in NBN1 mode upon receiving a request from upper layers to transmit user data related to an exceptional event and the UE is allowed to use exception data reporting if timer T3346 is not already running for MO exception data and even if timer T3502 or timer T3511 is running",
+      "type": "Trigger",
+      "properties": {
+        "cause": "Exceptional event data reporting"
+      }
+    },
+    {
+      "id": "trigger2",
+      "label": "UE supports the reconnection to the network due to RAN timing synchronization status change and receives an indication of a change in the RAN timing synchronization status even if timer T3502 is running.",
+      "type": "Trigger",
+      "properties": {
+        "cause": "RAN timing synchronization status change"
+      }
+    },
+    {
+      "id": "trigger3",
+      "label": "5GMM-CONNECTED mode with RRC inactive indication: initiate the registration procedure for mobility and periodic registration update used for mobility i.e. the 5GS registration type IE set to mobility registration updating in the REGISTRATION REQUEST message for N1 NAS signalling connection recovery",
+      "type": "Trigger",
+      "properties": {
+        "cause": "Periodic registration update"
+      }
+    },
+    {
+      "id": "action1",
+      "label": "Initiate a registration procedure for mobility and periodic registration update",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "action2",
+      "label": "If the UE requests the lower layers to transition to RRC_CONNECTED state at initiation of a registration procedure the UE shall enter 5GMMIDLE mode proceed with the pending procedure and if the pending procedure is a registration request procedure and the REGISTRATION REQUEST message does not include UE request type IE with Request type value set to NAS signalling connection release the UE shall include the Uplink data status IE in the REGISTRATION REQUEST message indicating the PDU sessions without active userplane resources for which the UE has pending user data to be sent if any and the PDU sessions for which userplane resources were active prior to receiving the fallback indication if any",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "establish_n1",
+      "label": "Establish N1 NAS signalling connection",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "send_registration_request",
+      "label": "Send REGISTRATION REQUEST message",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "receive_registration_response",
+      "label": "Receive REGISTRATION ACCEPT or REGISTRATION REJECT message",
+      "type": "State",
+      "properties": {
+        "expected_outcomes": [
+          "Successful registration update",
+          "Continued access to services"
+        ]
+      }
+    },
+    {
+      "id": "release_n1",
+      "label": "Release N1 NAS signalling connection",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "registration_request_message",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "references": "24501-j11.md, Section 5.2.3.2.3, Section 5.3.1.4"
+      }
+    },
+    {
+      "id": "registration_accept_message",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {
+        "references": "24501-j11.md, Section 5.2.3.2.3, Section 5.3.1.4"
+      }
+    },
+    {
+      "id": "registration_reject_message",
+      "label": "REGISTRATION REJECT",
+      "type": "Message",
+      "properties": {
+        "references": "24501-j11.md, Section 5.2.3.2.3, Section 5.3.1.4"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "source": "trigger1",
+      "target": "action1",
+      "label": "Triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge2",
+      "source": "trigger2",
+      "target": "action1",
+      "label": "Triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge3",
+      "source": "trigger3",
+      "target": "action1",
+      "label": "Triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge4",
+      "source": "action1",
+      "target": "establish_n1",
+      "label": "Initiates",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "edge5",
+      "source": "establish_n1",
+      "target": "send_registration_request",
+      "label": "Next",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "edge6",
+      "source": "send_registration_request",
+      "target": "receive_registration_response",
+      "label": "Next",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "edge7",
+      "source": "receive_registration_response",
+      "target": "release_n1",
+      "label": "Next",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "edge8",
+      "source": "send_registration_request",
+      "target": "registration_request_message",
+      "label": "Sends",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "edge9",
+      "source": "receive_registration_response",
+      "target": "registration_accept_message",
+      "label": "Receives",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "edge10",
+      "source": "receive_registration_response",
+      "target": "registration_reject_message",
+      "label": "Receives",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "edge11",
+      "source": "action1",
+      "target": "action2",
+      "label": "Follows",
+      "type": "Action",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "procedure_name": "Periodic Registration",
+    "category": "Registration Procedures",
+    "total_nodes": 12,
+    "total_edges": 11
+  }
+}

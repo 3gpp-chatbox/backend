@@ -1,0 +1,232 @@
+{
+  "nodes": [
+    {
+      "id": "5GMM-CONNECTED",
+      "label": "5GMM-CONNECTED mode with RRC inactive indication",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "EMMDEREGISTERED",
+      "label": "EMMDEREGISTERED",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "Network-initiated deregistration requiring re-registration",
+      "label": "Network-initiated deregistration requiring re-registration",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "High priority access",
+      "label": "UE configured for high priority access in selected PLMN or SNPN",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "Registration for emergency services",
+      "label": "Registration for emergency services",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "UE in NBN1 mode",
+      "label": "UE in NBN1 mode requested by upper layer to transmit user data related to an exceptional event",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "Emergency PDU session",
+      "label": "Initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "Deregistration and higher PLMN",
+      "label": "After completion of the network-initiated deregistration procedure and the release of the existing NAS signalling connection if any Tsorcm timers were running and have stopped the UE shall attempt to obtain service on a higher priority PLMN on 3GPP access otherwise initiate an initial registration over both 3GPP access and non3GPP access.",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "Deregistration and non3GPP",
+      "label": "After the completion of the deregistration procedure and the release of the existing NAS signalling connection initiate an initial registration over non3GPP.",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "GUAMI from 4GGUTI",
+      "label": "UE NAS provides the lower layers with a GUAMI part of the 5GGUTI mapped from 4GGUTI as specified in 3GPP TS 23.003 with an indication that the GUAMI is mapped from EPS",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "5GSTMSI",
+      "label": "UE NAS shall provide the lower layers with the 5GSTMSI but shall not provide the registered GUAMI to the lower layers",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "GUAMI of the 5GGUTI",
+      "label": "UE NAS shall provide the lower layers with the GUAMI of the 5GGUTI that the UE NAS has selected but shall not provide the lower layers with the 5GSTMSI",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "REGISTRATION REQUEST",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "REGISTRATION ACCEPT",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "REGISTRATION REJECT",
+      "label": "REGISTRATION REJECT",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "DEREGISTRATION REQUEST",
+      "label": "DEREGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "Establish N1 NAS signalling connection",
+      "label": "Establish N1 NAS signalling connection",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "Release N1 NAS signalling connection",
+      "label": "Release N1 NAS signalling connection",
+      "type": "Action",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "5GMM-CONNECTED",
+      "target": "5GMMIDLE",
+      "label": "enter",
+      "type": "Transition",
+      "properties": {}
+    },
+    {
+      "id": "e2",
+      "source": "EMMDEREGISTERED",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "performs",
+      "type": "Transition",
+      "properties": {}
+    },
+    {
+      "id": "e3",
+      "source": "Network-initiated deregistration requiring re-registration",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e4",
+      "source": "High priority access",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e5",
+      "source": "Registration for emergency services",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e6",
+      "source": "UE in NBN1 mode",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e7",
+      "source": "Emergency PDU session",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e8",
+      "source": "Deregistration and higher PLMN",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e9",
+      "source": "Deregistration and non3GPP",
+      "target": "Establish N1 NAS signalling connection",
+      "label": "triggers",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "e10",
+      "source": "Establish N1 NAS signalling connection",
+      "target": "REGISTRATION REQUEST",
+      "label": "sends",
+      "type": "MessageFlow",
+      "properties": {}
+    },
+    {
+      "id": "e11",
+      "source": "REGISTRATION REQUEST",
+      "target": "REGISTRATION ACCEPT",
+      "label": "receives",
+      "type": "MessageFlow",
+      "properties": {}
+    },
+    {
+      "id": "e12",
+      "source": "REGISTRATION REQUEST",
+      "target": "REGISTRATION REJECT",
+      "label": "receives",
+      "type": "MessageFlow",
+      "properties": {}
+    },
+    {
+      "id": "e13",
+      "source": "REGISTRATION ACCEPT",
+      "target": "Release N1 NAS signalling connection",
+      "label": "then",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "e14",
+      "source": "REGISTRATION REJECT",
+      "target": "Release N1 NAS signalling connection",
+      "label": "then",
+      "type": "Flow",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "procedure_name": "Initial Registration",
+    "category": "Registration Procedures",
+    "total_nodes": 18,
+    "total_edges": 14
+  }
+}
