@@ -1,0 +1,57 @@
+[
+  {
+    "procedure_name": "Initial Registration",
+    "sub_features": {
+      "Triggers": [
+        "Network-initiated de-registration procedure completion by the UE",
+        "UE receives a DEREGISTRATION REQUEST message with the reregistration required indication",
+        "UE which was previously registered in S1 mode before entering state EMMDEREGISTERED performs an initial registration procedure",
+        "Release of the N1 NAS signalling connection",
+        "UE needs to perform the registration procedure with 5GS registration type IE set to initial registration for initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session."
+      ],
+      "States": [
+        "5GMM-DEREGISTERED (after network-initiated deregistration)",
+        "EMM-DEREGISTERED (previously registered in S1 mode)"
+      ],
+      "Actions": [
+        "UE sends a DEREGISTRATION ACCEPT message to the network",
+        "UE initiates an initial registration over non3GPP",
+        "UE shall include the entire REGISTRATION REQUEST message i.e. containing cleartext IEs and noncleartext IEs if any in the NAS message container IE that is sent as part of the SECURITY MODE COMPLETE message",
+        "UE shall send a REGISTRATION REQUEST message including the NAS message container IE as described in subclause 4.4.6."
+      ],
+      "Flow_of_execution": [
+        "UE completes network-initiated deregistration.",
+        "UE releases the existing NAS signalling connection.",
+        "UE initiates initial registration.",
+        "UE includes REGISTRATION REQUEST in NAS message container IE of SECURITY MODE COMPLETE message."
+      ],
+      "Causes": [
+        "Network-initiated deregistration.",
+        "Intersystem change from S1 mode to N1 mode.",
+        "UE needs to perform the registration procedure for initial registration for emergency services",
+        "UE receives a DEREGISTRATION REQUEST message with the reregistration required indication",
+        "UE needs to perform the registration procedure with 5GS registration type IE set to initial registration for initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session."
+      ],
+      "Expected_Outcomes": [
+        "Successful registration.",
+        "Access to services."
+      ],
+      "Error_Handling": [
+        "Lower layer failure or release of the NAS signalling connection received from lower layers before the REGISTRATION ACCEPT or REGISTRATION REJECT message is received. The UE shall abort the registration procedure for initial registration",
+        "UE initiated deregistration required. The registration procedure for initial registration shall be aborted and the UE initiated deregistration procedure shall be performed."
+      ],
+      "Feedback_Loops": [
+        "If registration is rejected, the UE handles 5GMM parameters and state as described for the received 5GMM cause value.",
+        "If the message has been successfully integrity checked by the NAS the UE shall set the SNPNspecific attempt counter for the current SNPN to the UE implementationspecific maximum value."
+      ]
+    },
+    "metadata": {
+      "Constraints_Requirements": null,
+      "Message_Types": "REGISTRATION REQUEST, REGISTRATION ACCEPT, DEREGISTRATION ACCEPT",
+      "References": "Sections 5.5.2.3.2, 5.5.1.2.7, 5.3.1.3, 5.5.1.2.2, 5.3.20.2, 5.2.3.2.3, 5.4.2.3, 6 of document 24501-j11.md",
+      "Excerpts": "The UE shall send a DEREGISTRATION ACCEPT message to the network and enter the state 5GMMDEREGISTERED for non3GPP access. Furthermore the UE shall after the completion of the deregistration procedure and the release of the existing NAS signalling connection initiate an initial registration over non3GPP.",
+      "Identifiers": null
+    },
+    "procedure_category": "Registration Procedures"
+  }
+]

@@ -99,7 +99,87 @@ Return ONLY a valid JSON object following this schema (no other text):
         return GraphData(nodes=[], edges=[], metadata={}).model_dump()
 
 def store_in_neo4j(graph_data: Dict[str, Any], neo4j_uri: str, neo4j_user: str, neo4j_password: str):
-    """Store the graph data in Neo4j database"""
+    """Store the graph data in Neo4j with a structured model"""
+    from neo4j import GraphDatabase
+
+    driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_password))
+
+    def create_graph(tx, data):
+        procedure_name = data['metadata'].get('procedure_name', 'Unknown')
+
+        # Clear existing data for this procedure
+        tx.run("MATCH (n {procedure: $procedure}) DETACH DELETE n", procedure=procedure_name)
+
+        node_mapping = {}  # Store node IDs for creating relationships
+
+        # Create main nodes (States, Triggers, Actions, Messages)
+        for node in data['nodes']:
+            node_id = node['id']
+            node_mapping[node_id] = node 
+
+            tx.run("""
+                CREATE (n:ProcedureNode {
+                    id: $id,
+                    label: $label,
+                    type: $type,
+                    procedure: $procedure
+                })
+            """, {
+                'id': node_id,
+                'label': node['label'],
+                'type': node['type'],
+                'procedure': procedure_name
+            })
+
+            # Handle complex properties as separate nodes
+            for key, value in node.get('properties', {}).items():
+                if isinstance(value, (dict, list)):  # If complex, create separate node
+                    prop_id = f"{node_id}_{key}"
+                    tx.run("""
+                        CREATE (p:PropertyNode {
+                            id: $prop_id,
+                            key: $key,
+                            value: $value
+                        })
+                    """, {
+                        'prop_id': prop_id,
+                        'key': key,
+                        'value': json.dumps(value) 
+                    })
+
+                    tx.run("""
+                        MATCH (n:ProcedureNode {id: $node_id})
+                        MATCH (p:PropertyNode {id: $prop_id})
+                        CREATE (n)-[:HAS_PROPERTY]->(p)
+                    """, {
+                        'node_id': node_id,
+                        'prop_id': prop_id
+                    })
+
+        # Create relationships (Transitions, Triggers, etc.)
+        for edge in data['edges']:
+            source_id = edge['source']
+            target_id = edge['target']
+            tx.run("""
+                MATCH (source:ProcedureNode {id: $source})
+                MATCH (target:ProcedureNode {id: $target})
+                CREATE (source)-[:TRANSITION {id: $id, label: $label, type: $type}]->(target)
+            """, {
+                'source': source_id,
+                'target': target_id,
+                'id': edge['id'],
+                'label': edge['label'],
+                'type': edge['type']
+            })
+
+    with driver.session() as session:
+        session.execute_write(create_graph, graph_data)
+        print("✓ Successfully stored graph in Neo4j")
+
+    driver.close()
+
+def get_neo4j_graph(neo4j_uri: str, neo4j_user: str, neo4j_password: str, procedure_name: str) -> Dict[str, Any]:
+    """Retrieve graph data from Neo4j for a specific procedure"""
     try:
         from neo4j import GraphDatabase
         
@@ -107,89 +187,94 @@ def store_in_neo4j(graph_data: Dict[str, Any], neo4j_uri: str, neo4j_user: str, 
             neo4j_uri, 
             auth=(neo4j_user, neo4j_password)
         )
-        
-        def create_graph(tx, data):
-            # Clear existing data
-            tx.run("MATCH (n) DETACH DELETE n")
+
+        def fetch_graph(tx, procedure):
+            # Get nodes
+            nodes_result = tx.run("""
+                MATCH (n:ProcedureNode {procedure: $procedure})
+                RETURN collect({
+                    id: n.id,
+                    label: n.label,
+                    type: n.type,
+                    properties: n.properties
+                }) as nodes
+            """, procedure=procedure)
             
-            # Create nodes
-            for node in data['nodes']:
-                tx.run("""
-                    CREATE (n:Node {
-                        id: $id,
-                        label: $label,
-                        type: $type,
-                        properties: $properties
-                    })
-                """, node)
+            # Get relationships
+            edges_result = tx.run("""
+                MATCH (source:ProcedureNode {procedure: $procedure})-[r:TRANSITION]->(target:ProcedureNode {procedure: $procedure})
+                RETURN collect({
+                    id: r.id,
+                    source: source.id,
+                    target: target.id,
+                    label: r.label,
+                    type: r.type,
+                    properties: r.properties
+                }) as edges
+            """, procedure=procedure)
             
-            # Create edges
-            for edge in data['edges']:
-                tx.run("""
-                    MATCH (source:Node {id: $source})
-                    MATCH (target:Node {id: $target})
-                    CREATE (source)-[r:TRANSITION {
-                        id: $id,
-                        label: $label,
-                        type: $type,
-                        properties: $properties
-                    }]->(target)
-                """, edge)
-        
+            nodes = nodes_result.single()['nodes']
+            edges = edges_result.single()['edges']
+            
+            return {
+                'nodes': nodes,
+                'edges': edges,
+                'metadata': {'procedure_name': procedure}
+            }
+
         with driver.session() as session:
-            session.execute_write(create_graph, graph_data)
+            return session.execute_read(fetch_graph, procedure_name)
             
-        print("✓ Successfully stored graph in Neo4j")
-        
     except Exception as e:
-        print(f"Error storing in Neo4j: {e}")
+        print(f"Error retrieving from Neo4j: {e}")
+        return {'nodes': [], 'edges': [], 'metadata': {}}
     finally:
         if 'driver' in locals():
             driver.close()
 
 # For testing
-if __name__ == "__main__":
-    try:
-        # Read the registration procedures file
-        file_path = "../output/6_mobility_management_(mm)_procedures.json"
-        if not os.path.exists(file_path):
-            print(f"Error: File not found: {file_path}")
-            sys.exit(1)
+# if __name__ == "__main__":
+#     try:
+#         # Read the registration procedures file
+#         file_path = "../output/8_registration_procedures.json"
+#         if not os.path.exists(file_path):
+#             print(f"Error: File not found: {file_path}")
+#             sys.exit(1)
             
-        with open(file_path, "r") as f:
-            procedures = json.load(f)
+#         with open(file_path, "r") as f:
+#             procedures = json.load(f)
         
-        if not procedures:
-            print("Error: No procedures found in input file")
-            sys.exit(1)
+#         if not procedures:
+#             print("Error: No procedures found in input file")
+#             sys.exit(1)
             
-        # Get API key
-        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        from config import Gemini_API_KEY
+#         # Get API key
+#         sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+#         from config import Gemini_API_KEY
         
-        if not Gemini_API_KEY:
-            print("Error: No API key found")
-            sys.exit(1)
+#         if not Gemini_API_KEY:
+#             print("Error: No API key found")
+#             sys.exit(1)
         
-        # Extract graph data
-        print("\nExtracting graph data...")
-        graph_data = extract_nodes_and_edges(procedures, Gemini_API_KEY)
+#         # Extract graph data
+#         print("\nExtracting graph data...")
+#         graph_data = extract_nodes_and_edges(procedures, Gemini_API_KEY)
         
-        if not graph_data["nodes"]:
-            print("Warning: No nodes generated in graph data")
+#         if not graph_data["nodes"]:
+#             print("Warning: No nodes generated in graph data")
         
-        # Save to file
-        output_dir = "../graphs"
-        os.makedirs(output_dir, exist_ok=True)
+#         # Save to file
+#         output_dir = "../graphs"
+#         os.makedirs(output_dir, exist_ok=True)
         
-        output_path = os.path.join(output_dir, "registration_graph.json")
-        with open(output_path, "w") as f:
-            json.dump(graph_data, f, indent=2)
+#         output_path = os.path.join(output_dir, "registration_graph.json")
+#         with open(output_path, "w") as f:
+#             json.dump(graph_data, f, indent=2)
         
-        print(f"\n✓ Graph data saved to {output_path}")
-        print(f"  - Nodes: {len(graph_data['nodes'])}")
-        print(f"  - Edges: {len(graph_data['edges'])}")
+#         print(f"\n✓ Graph data saved to {output_path}")
+#         print(f"  - Nodes: {len(graph_data['nodes'])}")
+#         print(f"  - Edges: {len(graph_data['edges'])}")
         
-    except Exception as e:
-        print(f"\nError in main: {e}")
-        sys.exit(1)
+#     except Exception as e:
+#         print(f"\nError in main: {e}")
+#         sys.exit(1)

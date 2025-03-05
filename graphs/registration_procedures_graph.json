@@ -1,0 +1,229 @@
+{
+  "nodes": [
+    {
+      "id": "state_5GMM-DEREGISTERED",
+      "label": "5GMM-DEREGISTERED (after network-initiated deregistration)",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "state_EMM-DEREGISTERED",
+      "label": "EMM-DEREGISTERED (previously registered in S1 mode)",
+      "type": "State",
+      "properties": {}
+    },
+    {
+      "id": "trigger_network_dereg",
+      "label": "Network-initiated de-registration procedure completion by the UE",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "trigger_dereg_req",
+      "label": "UE receives a DEREGISTRATION REQUEST message with the reregistration required indication",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "trigger_emm_dereg",
+      "label": "UE which was previously registered in S1 mode before entering state EMMDEREGISTERED performs an initial registration procedure",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "trigger_nas_release",
+      "label": "Release of the N1 NAS signalling connection",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "trigger_emergency_pdu",
+      "label": "UE needs to perform the registration procedure with 5GS registration type IE set to initial registration for initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session.",
+      "type": "Trigger",
+      "properties": {}
+    },
+    {
+      "id": "action_dereg_accept",
+      "label": "UE sends a DEREGISTRATION ACCEPT message to the network",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "action_initiate_reg_non3gpp",
+      "label": "UE initiates an initial registration over non3GPP",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "action_include_reg_req",
+      "label": "UE shall include the entire REGISTRATION REQUEST message i.e. containing cleartext IEs and noncleartext IEs if any in the NAS message container IE that is sent as part of the SECURITY MODE COMPLETE message",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "action_send_reg_req",
+      "label": "UE shall send a REGISTRATION REQUEST message including the NAS message container IE as described in subclause 4.4.6.",
+      "type": "Action",
+      "properties": {}
+    },
+    {
+      "id": "message_REGISTRATION_REQUEST",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "message_REGISTRATION_ACCEPT",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "message_DEREGISTRATION_ACCEPT",
+      "label": "DEREGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {}
+    },
+    {
+      "id": "cause_network_dereg",
+      "label": "Network-initiated deregistration.",
+      "type": "Cause",
+      "properties": {}
+    },
+    {
+      "id": "cause_intersystem_change",
+      "label": "Intersystem change from S1 mode to N1 mode.",
+      "type": "Cause",
+      "properties": {}
+    },
+    {
+      "id": "cause_emergency_service",
+      "label": "UE needs to perform the registration procedure for initial registration for emergency services",
+      "type": "Cause",
+      "properties": {}
+    },
+    {
+      "id": "cause_rereg_req",
+      "label": "UE receives a DEREGISTRATION REQUEST message with the reregistration required indication",
+      "type": "Cause",
+      "properties": {}
+    },
+    {
+      "id": "cause_emergency_pdu",
+      "label": "UE needs to perform the registration procedure with 5GS registration type IE set to initial registration for initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session.",
+      "type": "Cause",
+      "properties": {}
+    },
+    {
+      "id": "outcome_successful_reg",
+      "label": "Successful registration.",
+      "type": "Outcome",
+      "properties": {}
+    },
+    {
+      "id": "outcome_access_services",
+      "label": "Access to services.",
+      "type": "Outcome",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_trigger_network_dereg_to_state",
+      "source": "trigger_network_dereg",
+      "target": "state_5GMM-DEREGISTERED",
+      "label": "Triggers",
+      "type": "Relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_dereg_req_to_state",
+      "source": "trigger_dereg_req",
+      "target": "state_5GMM-DEREGISTERED",
+      "label": "Triggers",
+      "type": "Relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_emm_dereg_to_state",
+      "source": "trigger_emm_dereg",
+      "target": "state_EMM-DEREGISTERED",
+      "label": "Triggers",
+      "type": "Relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_state_to_action_dereg_accept",
+      "source": "state_5GMM-DEREGISTERED",
+      "target": "action_dereg_accept",
+      "label": "Flow of Execution",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_dereg_accept_to_nas_release",
+      "source": "action_dereg_accept",
+      "target": "trigger_nas_release",
+      "label": "Flow of Execution",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "edge_nas_release_to_action_initiate_reg",
+      "source": "trigger_nas_release",
+      "target": "action_initiate_reg_non3gpp",
+      "label": "Flow of Execution",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_initiate_reg_to_action_include",
+      "source": "action_initiate_reg_non3gpp",
+      "target": "action_include_reg_req",
+      "label": "Flow of Execution",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_emergency_pdu_to_action_initiate_reg_non3gpp",
+      "source": "trigger_emergency_pdu",
+      "target": "action_initiate_reg_non3gpp",
+      "label": "Triggers",
+      "type": "Relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_emm_dereg_to_action_initiate_reg_non3gpp",
+      "source": "trigger_emm_dereg",
+      "target": "action_initiate_reg_non3gpp",
+      "label": "Triggers",
+      "type": "Relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_include_reg_req_to_send_reg_req",
+      "source": "action_include_reg_req",
+      "target": "action_send_reg_req",
+      "label": "Flow of Execution",
+      "type": "Sequence",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_send_reg_req_to_message",
+      "source": "action_send_reg_req",
+      "target": "message_REGISTRATION_REQUEST",
+      "label": "Sends",
+      "type": "Message Flow",
+      "properties": {}
+    },
+    {
+      "id": "edge_outcome_successful_reg_to_access_services",
+      "source": "outcome_successful_reg",
+      "target": "outcome_access_services",
+      "label": "Outcomes",
+      "type": "Relationship",
+      "properties": {}
+    }
+  ],
+  "metadata": {}
+}

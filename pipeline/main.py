@@ -12,6 +12,8 @@ import json
 root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_folder)
 from config import Gemini_API_KEY
+from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+
 
 def main():
     total_start_time = time.time()
@@ -173,15 +175,28 @@ def main():
                         json.dump(procs, f, indent=2, ensure_ascii=False)
                     print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
 
-                    # Extract and save graph data
-                    # graph_data = extract_nodes_and_edges(procs)
-                    # graph_path = os.path.join(
-                    #     graph_directory, 
-                    #     f"{category.lower().replace(' ', '_')}_graph.json"
-                    # )
-                    # with open(graph_path, 'w', encoding='utf-8') as f:
-                    #     json.dump(graph_data, f, indent=2, ensure_ascii=False)
-                    # print(f"→ Saved graph data for {category} to {graph_path}")
+                    # Extract and store graph data
+                    print(f"\nProcessing graph data for {category}...")
+                    graph_data = extract_nodes_and_edges(procs, Gemini_API_KEY)
+                    
+                    if graph_data["nodes"]:
+                        # Save to JSON file- optional
+                        graph_path = os.path.join(
+                            graph_directory, 
+                            f"{category.lower().replace(' ', '_')}_graph.json"
+                        )
+                        with open(graph_path, 'w', encoding='utf-8') as f:
+                            json.dump(graph_data, f, indent=2, ensure_ascii=False)
+                        print(f"→ Saved graph with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
+
+                        # Store in Neo4j
+                        try:
+                            from extractGraphData import store_in_neo4j
+                            store_in_neo4j(graph_data, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+                        except Exception as e:
+                            print(f"✗ Failed to store in Neo4j: {e}")
+                    else:
+                        print(f"✗ No graph data generated for {category}")
             else:
                 print("✗ No procedures found")
         else:
