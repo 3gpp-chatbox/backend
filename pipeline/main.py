@@ -63,11 +63,12 @@ def main():
             
             # Define the structured query
             query = """
-            Extract structured details specifically for the **Initial Registration** procedure within **Registration Procedures**.
+            Extract structured details specifically for these procedures within **Registration Procedures**.
             Ensure the output follows a structured format, capturing the following key fields:
 
             **Procedure Name:**  
-            - "Initial Registration"  
+            - "Initial Registration"
+            - "Periodic Registration"
 
             **Sub-Features to Retrieve:**  
             1. **Triggers:**  
@@ -160,7 +161,7 @@ def main():
                 # Organize procedures by category
                 categorized = {}
                 for proc in procedures:
-                    category = proc['procedure_category']  # Now present
+                    category = proc['procedure_category']
                     if category not in categorized:
                         categorized[category] = []
                     categorized[category].append(proc)
@@ -175,28 +176,26 @@ def main():
                         json.dump(procs, f, indent=2, ensure_ascii=False)
                     print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
 
-                    # Extract and store graph data
+                    # Extract and store graph data for each procedure
                     print(f"\nProcessing graph data for {category}...")
-                    graph_data = extract_nodes_and_edges(procs, Gemini_API_KEY)
+                    procedure_graphs = extract_nodes_and_edges(procs, Gemini_API_KEY)
                     
-                    if graph_data["nodes"]:
-                        # Save to JSON file- optional
-                        graph_path = os.path.join(
-                            graph_directory, 
-                            f"{category.lower().replace(' ', '_')}_graph.json"
-                        )
-                        with open(graph_path, 'w', encoding='utf-8') as f:
-                            json.dump(graph_data, f, indent=2, ensure_ascii=False)
-                        print(f"→ Saved graph with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
-
-                        # Store in Neo4j
-                        # try:
-                        #     from extractGraphData import store_in_neo4j
-                        #     store_in_neo4j(graph_data, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-                        # except Exception as e:
-                        #     print(f"✗ Failed to store in Neo4j: {e}")
-                    else:
-                        print(f"✗ No graph data generated for {category}")
+                    # Save individual graph files
+                    for proc_name, graph_data in procedure_graphs.items():
+                        if graph_data and graph_data.get("nodes"):
+                            # Create graphs directory if it doesn't exist
+                            os.makedirs(graph_directory, exist_ok=True)
+                            
+                            # Save to JSON file
+                            graph_path = os.path.join(
+                                graph_directory, 
+                                f"{proc_name.lower().replace(' ', '_')}_graph.json"
+                            )
+                            with open(graph_path, 'w', encoding='utf-8') as f:
+                                json.dump(graph_data, f, indent=2, ensure_ascii=False)
+                            print(f"→ Saved graph for {proc_name} with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
+                        else:
+                            print(f"✗ No valid graph data generated for {proc_name}")
             else:
                 print("✗ No procedures found")
         else:
