@@ -26,12 +26,12 @@ console = Console()
 load_dotenv(override=True)
 
 # Configuration
-INPUT_MD_FILE = os.path.join("backend", "processed_data", "semantic_chunks.md")  # Use semantic_chunks.md instead of .txt
-PROCESSED_DATA_FOLDER = os.path.join("backend", "processed_data")
+INPUT_MD_FILE = os.path.join("processed_data", "semantic_chunks.md")  # Use semantic_chunks.md instead of .txt
+PROCESSED_DATA_FOLDER = os.path.join("processed_data")
 CHUNK_SIZE = 4000
 LLM_MODEL = "gemini-2.0-flash"
-OUTPUT_FILE = os.path.join(PROCESSED_DATA_FOLDER, "periodic_registration_analysis.json")
-OUTPUT_MD_FILE = os.path.join(PROCESSED_DATA_FOLDER, "periodic_registration_analysis.md")
+OUTPUT_FILE = str(Path(PROCESSED_DATA_FOLDER) / "periodic_registration_analysis.json")
+OUTPUT_MD_FILE = str(Path(PROCESSED_DATA_FOLDER) / "periodic_registration_analysis.md")
 INTERMEDIATE_BATCH_SIZE = 10
 RATE_LIMIT_DELAY = 1
 MAX_RETRIES = 3
@@ -154,7 +154,14 @@ def process_md_chunks(md_file_path: str, llm) -> List[Dict]:
         console.print(f"\n[blue]Starting extraction process...[/blue]")
         console.print(f"[blue]Reading from: {md_file_path}[/blue]")
         
-        with open(md_file_path, 'r', encoding='utf-8') as f:
+        # Convert to Path object for better path handling
+        file_path = Path(md_file_path).resolve()
+        console.print(f"[blue]Resolved path: {file_path}[/blue]")
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
             md_content = f.read()
             
         # Debug: Show file content
