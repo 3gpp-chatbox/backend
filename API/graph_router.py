@@ -20,7 +20,7 @@ def get_graphs_directory(result_set: str = None) -> str:
     os.makedirs(graphs_dir, exist_ok=True)
     return graphs_dir
 
-@router.get("/graphs/{result_set}/{procedure_name}")
+@router.get("/graphs/result-sets/{result_set}/{procedure_name}")
 async def get_graph_data(result_set: str, procedure_name: str):
     """Get graph data for a specific procedure from a result set"""
     try:
@@ -70,7 +70,7 @@ async def list_result_sets():
             detail=f"Error listing result sets: {str(e)}"
         )
 
-@router.get("/graphs/{result_set}")
+@router.get("/graphs/result-sets/{result_set}")
 async def list_available_graphs(result_set: str):
     """List all available graph files in a result set"""
     try:

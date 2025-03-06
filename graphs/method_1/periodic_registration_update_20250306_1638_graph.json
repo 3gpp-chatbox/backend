@@ -1,0 +1,261 @@
+{
+    "procedureName": "Periodic Registration Update",
+    "nodes": [
+        {
+            "id": "UE_5GMM_IDLE",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-IDLE",
+                "description": "UE is in 5GMM-IDLE mode over 3GPP access"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_5GMM_CONNECTED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-CONNECTED",
+                "description": "UE is in 5GMM-CONNECTED mode over 3GPP access"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_T3512_Expired",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Timer Expiry",
+                "description": "Timer T3512 expires at the UE"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Emergency_Services",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Condition",
+                "description": "UE is registered for emergency services"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Not_Registered_Normal_Service",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Condition",
+                "description": "UE is not in 5GMM-REGISTERED.NORMAL-SERVICE or 5GMM-REGISTERED.NON-ALLOWED-SERVICE"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Periodic_Registration",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Procedure",
+                "description": "UE initiates periodic registration procedure"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Local_Deregistration",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Action",
+                "description": "UE locally de-registers from the network"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Reset_T3512",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Action",
+                "description": "UE resets and starts timer T3512 with its initial value"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "AMF_Mobile_Reachable_Timer_Expired",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Timer Expiry",
+                "description": "Mobile reachable timer expires at the AMF"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "AMF_Implicit_Deregistration",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Action",
+                "description": "AMF implicitly de-registers the UE"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "AMF_Start_Implicit_Deregistration_Timer",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Action",
+                "description": "AMF starts the implicit de-registration timer over 3GPP access"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "AMF_Start_Mobile_Reachable_Timer",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Action",
+                "description": "AMF starts the mobile reachable timer"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Camping_Suitable_Cell",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Condition",
+                "description": "UE is camping on a suitable cell"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        },
+        {
+            "id": "UE_Re_register",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Action",
+                "description": "UE may re-register to regain normal service"
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.3.7"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "E1",
+            "from": "UE_5GMM_IDLE",
+            "to": "UE_T3512_Expired",
+            "type": "Transition",
+            "properties": {
+                "description": "T3512 expires while UE is in 5GMM-IDLE mode"
+            }
+        },
+        {
+            "id": "E2",
+            "from": "UE_T3512_Expired",
+            "to": "UE_Periodic_Registration",
+            "type": "Action",
+            "properties": {
+                "conditions": [
+                    "UE is not registered for emergency services"
+                ],
+                "description": "UE initiates periodic registration procedure"
+            }
+        },
+        {
+            "id": "E3",
+            "from": "UE_T3512_Expired",
+            "to": "UE_Local_Deregistration",
+            "type": "Action",
+            "properties": {
+                "conditions": [
+                    "UE is registered for emergency services"
+                ],
+                "description": "UE locally de-registers from the network"
+            }
+        },
+        {
+            "id": "E4",
+            "from": "UE_5GMM_CONNECTED",
+            "to": "UE_T3512_Expired",
+            "type": "Transition",
+            "properties": {
+                "description": "T3512 expires while UE is in 5GMM-CONNECTED mode"
+            }
+        },
+        {
+            "id": "E5",
+            "from": "UE_T3512_Expired",
+            "to": "UE_Reset_T3512",
+            "type": "Action",
+            "properties": {
+                "conditions": [
+                    "UE is in 5GMM-CONNECTED mode"
+                ],
+                "description": "UE resets and starts timer T3512"
+            }
+        },
+        {
+            "id": "E6",
+            "from": "UE_Local_Deregistration",
+            "to": "UE_Camping_Suitable_Cell",
+            "type": "Transition",
+            "properties": {
+                "description": "UE is camping on a suitable cell"
+            }
+        },
+        {
+            "id": "E7",
+            "from": "UE_Camping_Suitable_Cell",
+            "to": "UE_Re_register",
+            "type": "Action",
+            "properties": {
+                "description": "UE may re-register to regain normal service"
+            }
+        }
+    ]
+}
