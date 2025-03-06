@@ -3,10 +3,10 @@ cd backend/API
 uvicorn main:app --reload
 
 GET /graphs/result-sets
-# Returns: ["Shehara", "OtherPerson"]
+# Returns: ["Shehara", "Matheus"]
 
-GET /graphs/result-sets/Shehara
-# Returns: ["periodic_registration_graph.json", "mobility_registration_graph.json", "initial_registration_graph.json"]
+GET /graphs/{result_set}
+# Returns: ["periodic_registration_graph.json", "initial_registration_graph.json"]
 
-GET /graphs/result-sets/Shehara/periodic_registration
+GET /graphs/result-sets/Shehara/{procedure_name}
 # Returns: {"status": "success", "data": {"nodes": [...], "edges": [...]}}..
