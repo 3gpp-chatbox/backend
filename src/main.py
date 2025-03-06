@@ -1,10 +1,11 @@
 # src/main.py
+import json
 import os
+
 from dotenv import load_dotenv
 from google import genai
-from src.schemas import FlowPropertyGraph
-import json
 
+from src.schemas import FlowPropertyGraph
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"

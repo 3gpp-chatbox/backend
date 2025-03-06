@@ -1,6 +1,7 @@
 # src/main.py
 import json
 import os
+import datetime
 
 from dotenv import load_dotenv
 from google import genai
@@ -29,7 +30,7 @@ class Response(BaseModel):
     sections: list[str]
 
 
-def get_relevant_sections(table_of_contents: str):
+def get_relevant_sections(table_of_contents: str, save_file=True):
     prompt = f"""
                 ROLE: You are an expert in 3GPP specifications.
                 TASK: Analyze the table of contents of 3GPP TS 24.501 provided below and identify the sections that contain information necessary to design a flow diagram of the initial registration procedure. In this flow diagram:
@@ -81,6 +82,16 @@ def get_relevant_sections(table_of_contents: str):
             "temperature": 0,
         },
     )
+    if save_file:
+        file_name = f"output/prompt_1/sections_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        with open(file_name, "w") as f:
+            # Parse the response into the Sections model
+            response_text = (
+                response.text
+            )  # Gemini returns text, even with JSON mime type
+            response_json = json.loads(response_text)  # Convert JSON string to dict
+            json.dump(response_json, f, indent=4)
+
     return response
 
 

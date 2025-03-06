@@ -3,7 +3,7 @@ import json
 from src.schemas import FlowPropertyGraph
 
 
-def generate_graph(client, model, contents):
+def generate_graph(client, model, contents, save_file=False):
     prompt = f"""
     You are tasked with analyzing a 3GPP specification document and creating a flow property graph representation of the procedural information contained within.
 
@@ -48,11 +48,16 @@ def generate_graph(client, model, contents):
         },
     )
 
-    with open("output/flow_graph.json", "w") as f:
-        # Parse the response into the Sections model
-        response_text = response.text  # Gemini returns text, even with JSON mime type
-        response_json = json.loads(response_text)  # Convert JSON string to dict
-        # response = FlowPropertyGraph(**response_json)  # Convert dict to Pydantic object
-        json.dump(response_json, f, indent=4)
+    if save_file:
+        with open("output/flow_graph33333.json", "w") as f:
+            # Parse the response into the Sections model
+            response_text = (
+                response.text
+            )  # Gemini returns text, even with JSON mime type
+            response_json = json.loads(response_text)  # Convert JSON string to dict
+            response = FlowPropertyGraph(
+                **response_json
+            )  # Convert dict to Pydantic object
+            json.dump(response_json, f, indent=4)
 
     return response

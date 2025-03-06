@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from google import genai
 from pydantic import BaseModel
 
-from src.schemas.property_graph import FlowPropertyGraph
 from src.lib.extract_content_data import generate_markdown
 from src.lib.extract_property_graph import generate_graph
 from src.lib.extract_relevant_sections import get_relevant_sections
@@ -57,18 +56,6 @@ if __name__ == "__main__":
     )
 
     # Generate property graph
-    prompt_2_response = generate_graph(client, flash_model, relevant_chunks_md)
-
-    # Save JSON locally
-    with open("output/prompt_2/test.json", "w") as f:
-        # Parse the response into the Sections model
-        response_text = (
-            prompt_2_response.text
-        )  # Gemini returns text, even with JSON mime type
-        response_2_as_dict = json.loads(response_text)  # Convert JSON string to dict
-
-        # response = FlowPropertyGraph(
-        #     **response_as_dict
-        # )  # Convert dict to Pydantic object
-
-        json.dump(response_2_as_dict, f, indent=4)
+    prompt_2_response = generate_graph(
+        client=client, model=flash_model, contents=relevant_chunks_md, save_file=True
+    )

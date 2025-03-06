@@ -1,7 +1,8 @@
 # src/lib/store_chunks.py
 from typing import List
+
+from src.db import db_connection
 from src.lib.doc_processor import Section
-from src.db import db
 from src.lib.logger import get_logger
 
 logger = get_logger(__name__)
@@ -65,7 +66,7 @@ def store_chunks(sections_tree: List[Section], doc_name: str, toc: str, doc_id: 
         doc_name (str): Name of the document
     """
     try:
-        conn = db.get_db_connection()
+        conn = db_connection.get_db_connection()
         cur = conn.cursor()
 
         # Check if the document already exists in the database

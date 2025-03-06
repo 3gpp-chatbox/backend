@@ -1,4 +1,4 @@
-from src.db import db
+from src.db import db_connection
 from src.lib.logger import get_logger
 
 logger = get_logger(__name__)
@@ -29,7 +29,7 @@ def generate_markdown(doc_id: str, target_headings: list[str]) -> str:
         f"Generating markdown for doc_id={doc_id}, target_headings={target_headings}"
     )
     try:
-        conn = db.get_db_connection()
+        conn = db_connection.get_db_connection()
         cur = conn.cursor()
 
         # Step 1: Check if the document exists
