@@ -30,47 +30,49 @@ class Response(BaseModel):
     sections: list[str]
 
 
-def get_relevant_sections(table_of_contents: str, save_file=True):
+def get_relevant_sections(
+    doc_name: str, table_of_contents: str, procedure_name: str, save_file=False
+):
     prompt = f"""
-                ROLE: You are an expert in 3GPP specifications.
-                TASK: Analyze the table of contents of 3GPP TS 24.501 provided below and identify the sections that contain information necessary to design a flow diagram of the initial registration procedure. In this flow diagram:
-                Nodes represent 5GMM states (e.g., 5GMM-DEREGISTERED, 5GMM-REGISTERED-INITIATED) and events (e.g., message sending, procedure initiation).
+              ROLE: You are an expert in 3GPP specifications.
+            TASK: Analyze the table of contents of the document **{doc_name}** provided below and identify the sections that contain information necessary to design a flow diagram for the **{procedure_name}**. 
+            
+            In this flow diagram:
+            Nodes represent 5GMM states (e.g., 5GMM-DEREGISTERED, 5GMM-REGISTERED-INITIATED) and events (e.g., message sending, procedure initiation).
 
-                Edges represent actions (e.g., sending a message) and transitions (e.g., state changes) between nodes.
+            Edges represent actions (e.g., sending a message) and transitions (e.g., state changes) between nodes.
 
-                Properties include parameters (e.g., message contents), conditions (e.g., success or failure criteria), and metadata (e.g., timers, abnormal cases).
+            Properties include parameters (e.g., message contents), conditions (e.g., success or failure criteria), and metadata (e.g., timers, abnormal cases).
 
-                Instructions:
-                Return sections that specifically detail the initial registration procedure, its associated states, events, actions, transitions, and properties.
+            Instructions:
+            Return sections that specifically detail the {procedure_name}, its associated states, events, actions, transitions, and properties.
 
-                If a section has subsections and all are relevant to the flow diagram’s components, return the parent section only.
+            If a section has subsections and all are relevant to the flow diagram’s components, return the parent section only.
 
-                Always return the full section name exactly as written in the table of contents.
+            Always return the full section name exactly as written in the table of contents.
 
-                Exclude sections that are too general (e.g., covering multiple procedures) unless they contain specific subsections unique to initial registration’s flow.
-
-             STRICT HIERARCHICAL SELECTION RULE:
-                - If you include a parent section in your response, DO NOT include any of its descendant sections.
-                - A section is a descendant if its number starts with the parent section's number followed by a decimal point or underscore.
-                - For example, if "5.5.1_registration_procedure" is included, then "5.5.1.2", "5.5.1.2.1", etc. must be excluded.
-
-
-            EXAMPLES OF CORRECT SELECTION:
-                BAD:
-                "sections": [
-                "5.5.1_registration_procedure",
-                "5.5.1.2_registration_procedure_for_initial_registration",
-                "5.5.1.2.1_general"
-                ]
-
-                GOOD:
-                "sections": [
-                "5.5.1_registration_procedure"
-                ]
+         STRICT HIERARCHICAL SELECTION RULE:
+            - If you include a parent section in your response, DO NOT include any of its descendant sections.
+            - A section is a descendant if its number starts with the parent section's number followed by a decimal point or underscore.
+            - For example, if "5.5.1_registration_procedure" is included, then "5.5.1.2", "5.5.1.2.1", etc. must be excluded.
 
 
-            CONTENT:
-            {table_of_contents}
+        EXAMPLES OF CORRECT SELECTION:
+            BAD:
+            "sections": [
+            "5.5.1_registration_procedure",
+            "5.5.1.2_registration_procedure_for_initial_registration",
+            "5.5.1.2.1_general"
+            ]
+
+            GOOD:
+            "sections": [
+            "5.5.1_registration_procedure"
+            ]
+
+
+        CONTENT:
+        {table_of_contents}
             """
 
     response = client.models.generate_content(
@@ -83,7 +85,7 @@ def get_relevant_sections(table_of_contents: str, save_file=True):
         },
     )
     if save_file:
-        file_name = f"output/prompt_1/sections_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        file_name = f"output/sections/flash/{procedure_name.lower().replace(' ', '_')}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.json"
         with open(file_name, "w") as f:
             # Parse the response into the Sections model
             response_text = (

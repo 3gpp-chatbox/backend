@@ -1,9 +1,12 @@
 import json
+import datetime
 
 from src.schemas import FlowPropertyGraph
 
 
-def generate_graph(client, model, contents, save_file=False):
+def generate_graph(
+    client, model: str, contents: str, procedure_name: str, save_file=False
+):
     prompt = f"""
     You are tasked with analyzing a 3GPP specification document and creating a flow property graph representation of the procedural information contained within.
 
@@ -32,7 +35,7 @@ def generate_graph(client, model, contents, save_file=False):
 
     Now analyze the provided 3GPP specification text and create a comprehensive flow property graph following this format.
 
-    The procedure target is initial registration procedure
+    The procedure target is **{procedure_name}**.
     ---
     {contents}
     """
@@ -49,7 +52,8 @@ def generate_graph(client, model, contents, save_file=False):
     )
 
     if save_file:
-        with open("output/flow_graph33333.json", "w") as f:
+        file_name = f"output/graphs/flash/{procedure_name.lower().replace(' ', '_')}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.json"
+        with open(file_name, "w") as f:
             # Parse the response into the Sections model
             response_text = (
                 response.text

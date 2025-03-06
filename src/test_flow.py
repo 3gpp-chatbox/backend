@@ -12,7 +12,6 @@ from src.lib.extract_relevant_sections import get_relevant_sections
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
-old_pro_model = "gemini-1.5-pro"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -37,8 +36,19 @@ class Response(BaseModel):
 with open(toc_file_path, "r") as f:
     toc = f.read()
 
+
 if __name__ == "__main__":
-    prompt_1_response = get_relevant_sections(toc)
+    procedure_name = "Initial registration procedure"
+    # procedure_name = "Periodic Registration Update"
+    doc_name = "3GPP TS 24.501"
+
+    # Get relevant sections
+    prompt_1_response = get_relevant_sections(
+        doc_name=doc_name,
+        table_of_contents=toc,
+        procedure_name=procedure_name,
+        save_file=True,
+    )
 
     # Parse the response into the Sections model
     response_1_text = (
@@ -57,5 +67,9 @@ if __name__ == "__main__":
 
     # Generate property graph
     prompt_2_response = generate_graph(
-        client=client, model=flash_model, contents=relevant_chunks_md, save_file=True
+        client=client,
+        model=flash_model,
+        contents=relevant_chunks_md,
+        procedure_name=procedure_name,
+        save_file=True,
     )

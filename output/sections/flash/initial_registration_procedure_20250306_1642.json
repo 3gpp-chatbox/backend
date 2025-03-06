@@ -1,0 +1,11 @@
+{
+    "sections": [
+        "5_elementary_procedures_for_5GS_mobility_management",
+        "5.1_overview",
+        "5.1.3_5GMM_sublayer_states",
+        "5.2_behaviour_of_the_UE_in_state_5GMM-DEREGISTERED_and_state_5GMM-REGISTERED",
+        "5.5_5GMM_specific_procedures",
+        "5.5.1_registration_procedure",
+        "8.2_5GS_mobility_management_messages"
+    ]
+}

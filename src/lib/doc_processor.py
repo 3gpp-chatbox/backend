@@ -360,7 +360,7 @@ def extract_table_of_contents_mini(section_tree: List[Section]) -> str:
     def _process_section(section: Section, toc_lines: List[str]):
         """Helper function to recursively process sections and their subsections up to level 3"""
         # Only process sections up to level 3
-        if section.level > 3:
+        if section.level > 4:
             return
 
         # Calculate indentation based on section level (1 spaces per level)
