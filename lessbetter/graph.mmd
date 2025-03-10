@@ -1,0 +1,13 @@
+```mermaid
+graph TD
+    "5GMM_DEREGISTERED"[5GMM-DEREGISTERED (state)]
+    "Registration_Initiation_Trigger"[Trigger for initiating registration procedure. Includes initial registration for 5GS services, emergency services, SMS over NAS, movement from GERAN/UTRAN to NG-RAN, onboarding services in SNPN, disaster roaming services, and resuming normal services. (event)]
+    "Registration_Request_Sent"[REGISTRATION REQUEST (action)]
+    "Timer_Started"[T3510 (action)]
+    "Timer_Stopped"[T3502, T3511 (action)]
+
+    "5GMM_DEREGISTERED" --> |Enter_State| "Registration_Initiation_Trigger"
+    "Registration_Initiation_Trigger" --> |Send_Registration_Request (EPS security context and a valid native 4G-GUTI are available: Create 5G-GUTI mapped from 4G-GUTI, include UE status IE and ATTACH REQUEST message,Holds valid 5G-GUTI assigned by same PLMN/SNPN: Include 5G-GUTI in 5GS mobile identity IE,Holds valid 5G-GUTI assigned by equivalent PLMN/SNPN: Include 5G-GUTI in 5GS mobile identity IE and NID,Holds valid 5G-GUTI assigned by other PLMN/SNPN: Include 5G-GUTI in 5GS mobile identity IE and NID,SUCI available: Include SUCI in 5GS mobile identity IE,Emergency registration: Include PEI in 5GS mobile identity IE,Onboarding services in SNPN: Include onboarding SUCI in 5GS mobile identity IE,dual-registration mode and EMM-REGISTERED state: Include UE status IE with EMM registration status set to "UE is in EMM-REGISTERED state",Supports MICO mode and requests the use of MICO mode: Include the MICO indication IE in the REGISTRATION REQUEST message,The UE supports UAS services and initiates an initial registration for UAS services: include the service-level device ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and set the value to the CAA-level UAV ID,The UE initiates the registration procedure for disaster roaming services: include in the REGISTRATION REQUEST message the UE determined PLMN with disaster condition IE indicating the UE determined PLMN with disaster condition)| "Registration_Request_Sent"
+    "Registration_Request_Sent" --> |Start_Timer (timer:T3510)| "Timer_Started"
+    "Registration_Request_Sent" --> |Stop_Timer (timer:T3502, T3511,condition:If timers are running)| "Timer_Stopped"
+```

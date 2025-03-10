@@ -1,0 +1,59 @@
+You are a 3GPP expert and JSON expert and IT expert. You know NAS specification structure and the document structured very well.
+Below is a parent section and its children sections, please summarize each child section one by one first, and then with children section summaries, combine parent itself content, to summarize parent as well. And generate for each of them a knowledge graph.
+Summarization method is: focusing on entities, events, and state transitions.
+
+Please provide the knowledge graph in valid JSON format, using the following structure:
+"knowledge_graph": {
+    "nodes": [
+        {"id": "...", 
+        "label": "...",
+         "type": "Entity/State/Procedure/etc."},
+        // ... more nodes
+    ],
+    "edges": [
+        {"source": "...", 
+        "target": "...", 
+        "relation": "...", 
+        "condition": "Optional condition"},
+        // ... more edges
+    ]
+}
+
+When summarizing the parent section, please ensure that it provides a high-level overview of the relationships between the child sections and the key concepts they introduce.
+
+Output example:
+Child Section: 5.1.3.2.1.2.1 5GMM-NULL
+Summary: ...
+Knowledge Graph: Ellipsis
+
+Child Section: 5.1.3.2.1.2.2 5GMM-DEREGISTERED
+Summary: ...
+Knowledge Graph: Ellipsis
+
+Parent Section: 5.1.3.2.1.2 Main states
+Summary: ...
+Knowledge Graph: Ellipsis
+
+
+
+Parent Section: 5.1.3.2.1.2 Main states
+
+
+Child Section: 5.1.3.2.1.2.1 5GMM-NULL
+5GS services are disabled in the UE. No 5GS mobility management function shall be performed in this state.
+
+Child Section: 5.1.3.2.1.2.2 5GMM-DEREGISTERED
+In the state 5GMM-DEREGISTERED, no 5GMM context has been established and the UE location is unknown to the network and hence it is unreachable by a network. In order to establish a 5GMM context, the UE shall start the initial registration procedure.
+
+Child Section: 5.1.3.2.1.2.3 5GMM-REGISTERED-INITIATED
+A UE enters the state 5GMM-REGISTERED-INITIATED after it has started the initial registration procedure or the registration procedure for mobility and periodic registration update, and is waiting for a response from the network.
+
+Child Section: 5.1.3.2.1.2.4 5GMM-REGISTERED
+In the state 5GMM-REGISTERED, a 5GMM context has been established. Additionally, one or more PDU session(s) may be established at the UE. The UE may initiate the non-initial registration procedure for mobility and periodic registration update and the service request procedure. The UE in the state 5GMM-REGISTERED over non-3GPP access shall not initiate the periodic registration update procedure.
+
+Child Section: 5.1.3.2.1.2.5 5GMM-DEREGISTERED-INITIATED
+A UE enters the state 5GMM-DEREGISTERED-INITIATED after it has requested release of the 5GMM context by starting the de-registration procedure and is waiting for a response from the network.
+
+Child Section: 5.1.3.2.1.2.6 5GMM-SERVICE-REQUEST-INITIATED
+A UE enters the state 5GMM-SERVICE-REQUEST-INITIATED after it has started the service request procedure and is waiting for a response from the network.
+

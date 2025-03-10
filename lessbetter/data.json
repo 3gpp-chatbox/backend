@@ -1,0 +1,120 @@
+{
+  "procedure_name": "Initial Registration Initiation",
+  "description": "The UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF under various conditions.",
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "state": "5GMM-DEREGISTERED"
+      }
+    },
+    {
+      "id": "Registration_Initiation_Trigger",
+      "type": "event",
+      "properties": {
+        "description": "Trigger for initiating registration procedure. Includes initial registration for 5GS services, emergency services, SMS over NAS, movement from GERAN/UTRAN to NG-RAN, onboarding services in SNPN, disaster roaming services, and resuming normal services."
+      },
+      "parameters": [
+        "reason"
+      ]
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "action",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity",
+        "UE status",
+        "last visited registered TAI",
+        "5GS update type",
+        "MICO indication",
+        "Requested DRX parameters",
+        "Requested extended DRX parameters",
+        "LADN indication",
+        "Requested NSSAI",
+        "5GMM capability",
+        "Follow-on request indicator",
+        "S1 UE network capability",
+        "UE radio capability ID",
+        "Payload container",
+        "NAS message container",
+        "Additional information requested",
+        "Requested WUS assistance information",
+        "Requested PEIPS assistance information",
+        "N5GC indication",
+        "AUN3 indication",
+        "Service-level-AA container",
+        "UE determined PLMN with disaster condition"
+
+      ]
+    },
+    {
+      "id": "Timer_Started",
+      "type": "action",
+      "properties": {
+        "timers": ["T3510"]
+      },
+      "parameters": [
+        "Timer Value"
+      ]
+    },
+    {
+      "id": "Timer_Stopped",
+      "type": "action",
+      "properties": {
+        "timers": ["T3502", "T3511"]
+      },
+      "parameters": [
+        "Timer Name"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Initiation_Trigger",
+      "action": "Enter_State",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Initiation_Trigger",
+      "to": "Registration_Request_Sent",
+      "action": "Send_Registration_Request",
+      "properties": {
+        "conditional_parameters": {
+          "EPS security context and a valid native 4G-GUTI are available": "Create 5G-GUTI mapped from 4G-GUTI, include UE status IE and ATTACH REQUEST message",
+          "Holds valid 5G-GUTI assigned by same PLMN/SNPN": "Include 5G-GUTI in 5GS mobile identity IE",
+          "Holds valid 5G-GUTI assigned by equivalent PLMN/SNPN": "Include 5G-GUTI in 5GS mobile identity IE and NID",
+          "Holds valid 5G-GUTI assigned by other PLMN/SNPN": "Include 5G-GUTI in 5GS mobile identity IE and NID",
+          "SUCI available": "Include SUCI in 5GS mobile identity IE",
+          "Emergency registration": "Include PEI in 5GS mobile identity IE",
+          "Onboarding services in SNPN": "Include onboarding SUCI in 5GS mobile identity IE",
+          "dual-registration mode and EMM-REGISTERED state": "Include UE status IE with EMM registration status set to \"UE is in EMM-REGISTERED state\"",
+          "Supports MICO mode and requests the use of MICO mode": "Include the MICO indication IE in the REGISTRATION REQUEST message",
+		  "The UE supports UAS services and initiates an initial registration for UAS services":"include the service-level device ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and set the value to the CAA-level UAV ID",
+		  "The UE initiates the registration procedure for disaster roaming services":"include in the REGISTRATION REQUEST message the UE determined PLMN with disaster condition IE indicating the UE determined PLMN with disaster condition"
+        }
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Started",
+      "action": "Start_Timer",
+      "properties": {
+        "timer": "T3510"
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Timer_Stopped",
+      "action": "Stop_Timer",
+      "properties": {
+        "timer": "T3502, T3511",
+        "condition": "If timers are running"
+      }
+    }
+  ]
+}

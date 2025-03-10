@@ -1,0 +1,551 @@
+Okay, I'm ready to process the provided NAS specification sections and generate the summaries and knowledge graphs in JSON format.
+
+Child Section: 5.1.3.2.1.2.1 5GMM-NULL
+Summary: The UE is in a state where 5GS services are disabled. No 5GS mobility management functions are active.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-NULL",
+        "label": "5GMM-NULL",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "5GS_Services",
+        "label": "5GS Services",
+        "type": "Entity"
+      },
+      {
+        "id": "Disabled",
+        "label": "Disabled",
+        "type": "State"
+      },
+      {
+        "id": "5GS_Mobility_Management",
+        "label": "5GS Mobility Management",
+        "type": "Function"
+      },
+      {
+        "id": "Inactive",
+        "label": "Inactive",
+        "type": "State"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-NULL",
+        "relation": "is in state"
+      },
+      {
+        "source": "5GS_Services",
+        "target": "Disabled",
+        "relation": "status",
+        "condition": "UE in 5GMM-NULL"
+      },
+      {
+        "source": "5GS_Mobility_Management",
+        "target": "Inactive",
+        "relation": "status",
+        "condition": "UE in 5GMM-NULL"
+      }
+    ]
+  }
+}
+```
+
+Child Section: 5.1.3.2.1.2.2 5GMM-DEREGISTERED
+Summary: The UE is in the 5GMM-DEREGISTERED state, where no 5GMM context exists, and the network is unaware of the UE's location.  The UE needs to initiate the initial registration procedure to establish a 5GMM context.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-DEREGISTERED",
+        "label": "5GMM-DEREGISTERED",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "5GMM_Context",
+        "label": "5GMM Context",
+        "type": "Entity"
+      },
+      {
+        "id": "Not_Established",
+        "label": "Not Established",
+        "type": "State"
+      },
+      {
+        "id": "Network",
+        "label": "Network",
+        "type": "Entity"
+      },
+      {
+        "id": "Location_Unknown",
+        "label": "Location Unknown",
+        "type": "State"
+      },
+      {
+        "id": "Initial_Registration",
+        "label": "Initial Registration",
+        "type": "Procedure"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-DEREGISTERED",
+        "relation": "is in state"
+      },
+      {
+        "source": "5GMM_Context",
+        "target": "Not_Established",
+        "relation": "status",
+        "condition": "UE in 5GMM-DEREGISTERED"
+      },
+      {
+        "source": "Network",
+        "target": "Location_Unknown",
+        "relation": "state of UE location",
+        "condition": "UE in 5GMM-DEREGISTERED"
+      },
+      {
+        "source": "UE",
+        "target": "Initial_Registration",
+        "relation": "shall start",
+        "condition": "UE in 5GMM-DEREGISTERED"
+      }
+    ]
+  }
+}
+```
+
+Child Section: 5.1.3.2.1.2.3 5GMM-REGISTERED-INITIATED
+Summary: The UE enters the 5GMM-REGISTERED-INITIATED state after initiating the initial registration procedure or the registration procedure for mobility and periodic registration update. The UE is waiting for a response from the network.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-REGISTERED-INITIATED",
+        "label": "5GMM-REGISTERED-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "Initial_Registration",
+        "label": "Initial Registration",
+        "type": "Procedure"
+      },
+      {
+        "id": "Mobility_Registration",
+        "label": "Mobility Registration",
+        "type": "Procedure"
+      },
+      {
+        "id": "Periodic_Registration_Update",
+        "label": "Periodic Registration Update",
+        "type": "Procedure"
+      },
+      {
+        "id": "Waiting_For_Response",
+        "label": "Waiting For Response",
+        "type": "State"
+      },
+       {
+        "id": "Network",
+        "label": "Network",
+        "type": "Entity"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-REGISTERED-INITIATED",
+        "relation": "enters state after"
+      },
+      {
+        "source": "UE",
+        "target": "Initial_Registration",
+        "relation": "starts",
+        "condition": "Entering 5GMM-REGISTERED-INITIATED"
+      },
+      {
+        "source": "UE",
+        "target": "Mobility_Registration",
+        "relation": "starts",
+        "condition": "Entering 5GMM-REGISTERED-INITIATED"
+      },
+      {
+        "source": "UE",
+        "target": "Periodic_Registration_Update",
+        "relation": "starts",
+        "condition": "Entering 5GMM-REGISTERED-INITIATED"
+      },
+      {
+        "source": "UE",
+        "target": "Waiting_For_Response",
+        "relation": "is",
+        "condition": "In 5GMM-REGISTERED-INITIATED",
+        "target": "Network"
+      }
+    ]
+  }
+}
+```
+
+Child Section: 5.1.3.2.1.2.4 5GMM-REGISTERED
+Summary: In the 5GMM-REGISTERED state, a 5GMM context has been established. One or more PDU sessions may also be established. The UE can initiate non-initial registration procedures (mobility, periodic update) and the service request procedure. Over non-3GPP access, periodic registration updates are prohibited.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-REGISTERED",
+        "label": "5GMM-REGISTERED",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "5GMM_Context",
+        "label": "5GMM Context",
+        "type": "Entity"
+      },
+      {
+        "id": "Established",
+        "label": "Established",
+        "type": "State"
+      },
+      {
+        "id": "PDU_Session",
+        "label": "PDU Session",
+        "type": "Entity"
+      },
+      {
+        "id": "Mobility_Registration",
+        "label": "Mobility Registration",
+        "type": "Procedure"
+      },
+      {
+        "id": "Periodic_Registration_Update",
+        "label": "Periodic Registration Update",
+        "type": "Procedure"
+      },
+      {
+        "id": "Service_Request",
+        "label": "Service Request",
+        "type": "Procedure"
+      },
+      {
+        "id": "Non-3GPP_Access",
+        "label": "Non-3GPP Access",
+        "type": "Access Type"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-REGISTERED",
+        "relation": "is in state"
+      },
+      {
+        "source": "5GMM_Context",
+        "target": "Established",
+        "relation": "status",
+        "condition": "UE in 5GMM-REGISTERED"
+      },
+      {
+        "source": "UE",
+        "target": "Mobility_Registration",
+        "relation": "may initiate",
+        "condition": "UE in 5GMM-REGISTERED"
+      },
+      {
+        "source": "UE",
+        "target": "Periodic_Registration_Update",
+        "relation": "may initiate",
+        "condition": "UE in 5GMM-REGISTERED"
+      },
+      {
+        "source": "UE",
+        "target": "Service_Request",
+        "relation": "may initiate",
+        "condition": "UE in 5GMM-REGISTERED"
+      },
+      {
+        "source": "UE",
+        "target": "Periodic_Registration_Update",
+        "relation": "shall not initiate",
+        "condition": "UE in 5GMM-REGISTERED and using Non-3GPP_Access"
+      }
+    ]
+  }
+}
+```
+
+Child Section: 5.1.3.2.1.2.5 5GMM-DEREGISTERED-INITIATED
+Summary: The UE enters the 5GMM-DEREGISTERED-INITIATED state after requesting the release of the 5GMM context by starting the de-registration procedure. The UE is waiting for a response from the network.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-DEREGISTERED-INITIATED",
+        "label": "5GMM-DEREGISTERED-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "5GMM_Context",
+        "label": "5GMM Context",
+        "type": "Entity"
+      },
+      {
+        "id": "De-registration",
+        "label": "De-registration",
+        "type": "Procedure"
+      },
+      {
+        "id": "Waiting_For_Response",
+        "label": "Waiting For Response",
+        "type": "State"
+      },
+       {
+        "id": "Network",
+        "label": "Network",
+        "type": "Entity"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-DEREGISTERED-INITIATED",
+        "relation": "enters state after"
+      },
+      {
+        "source": "UE",
+        "target": "De-registration",
+        "relation": "starts",
+        "condition": "Entering 5GMM-DEREGISTERED-INITIATED"
+      },
+      {
+        "source": "UE",
+        "target": "Waiting_For_Response",
+        "relation": "is",
+        "condition": "In 5GMM-DEREGISTERED-INITIATED",
+        "target": "Network"
+      }
+    ]
+  }
+}
+```
+
+Child Section: 5.1.3.2.1.2.6 5GMM-SERVICE-REQUEST-INITIATED
+Summary: The UE enters the 5GMM-SERVICE-REQUEST-INITIATED state after starting the service request procedure. It is waiting for a response from the network.
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM-SERVICE-REQUEST-INITIATED",
+        "label": "5GMM-SERVICE-REQUEST-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "Service_Request",
+        "label": "Service Request",
+        "type": "Procedure"
+      },
+      {
+        "id": "Waiting_For_Response",
+        "label": "Waiting For Response",
+        "type": "State"
+      },
+      {
+        "id": "Network",
+        "label": "Network",
+        "type": "Entity"
+      }
+    ],
+    "edges": [
+      {
+        "source": "UE",
+        "target": "5GMM-SERVICE-REQUEST-INITIATED",
+        "relation": "enters state after"
+      },
+      {
+        "source": "UE",
+        "target": "Service_Request",
+        "relation": "starts",
+        "condition": "Entering 5GMM-SERVICE-REQUEST-INITIATED"
+      },
+      {
+        "source": "UE",
+        "target": "Waiting_For_Response",
+        "relation": "is",
+        "condition": "In 5GMM-SERVICE-REQUEST-INITIATED",
+        "target": "Network"
+      }
+    ]
+  }
+}
+```
+
+Parent Section: 5.1.3.2.1.2 Main states
+Summary: This section defines the main 5GMM states of the UE. It outlines the transitions between these states based on procedures such as registration, de-registration, and service requests. The states include 5GMM-NULL (services disabled), 5GMM-DEREGISTERED (no context, initial registration required), 5GMM-REGISTERED-INITIATED (registration procedures started, waiting for response), 5GMM-REGISTERED (context established, procedures can be initiated), 5GMM-DEREGISTERED-INITIATED (de-registration started, waiting for response), and 5GMM-SERVICE-REQUEST-INITIATED (service request started, waiting for response). The state transitions are triggered by UE actions and network responses.
+
+Knowledge Graph:
+```json
+{
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "5GMM_States",
+        "label": "5GMM States",
+        "type": "Concept"
+      },
+      {
+        "id": "5GMM-NULL",
+        "label": "5GMM-NULL",
+        "type": "State"
+      },
+      {
+        "id": "5GMM-DEREGISTERED",
+        "label": "5GMM-DEREGISTERED",
+        "type": "State"
+      },
+      {
+        "id": "5GMM-REGISTERED-INITIATED",
+        "label": "5GMM-REGISTERED-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "5GMM-REGISTERED",
+        "label": "5GMM-REGISTERED",
+        "type": "State"
+      },
+      {
+        "id": "5GMM-DEREGISTERED-INITIATED",
+        "label": "5GMM-DEREGISTERED-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "5GMM-SERVICE-REQUEST-INITIATED",
+        "label": "5GMM-SERVICE-REQUEST-INITIATED",
+        "type": "State"
+      },
+      {
+        "id": "Registration_Procedure",
+        "label": "Registration Procedure",
+        "type": "Procedure"
+      },
+      {
+        "id": "De-registration_Procedure",
+        "label": "De-registration Procedure",
+        "type": "Procedure"
+      },
+      {
+        "id": "Service_Request_Procedure",
+        "label": "Service Request Procedure",
+        "type": "Procedure"
+      },
+      {
+        "id": "UE",
+        "label": "UE",
+        "type": "Entity"
+      },
+      {
+        "id": "Network",
+        "label": "Network",
+        "type": "Entity"
+      }
+    ],
+    "edges": [
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-NULL",
+        "relation": "includes"
+      },
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-DEREGISTERED",
+        "relation": "includes"
+      },
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-REGISTERED-INITIATED",
+        "relation": "includes"
+      },
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-REGISTERED",
+        "relation": "includes"
+      },
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-DEREGISTERED-INITIATED",
+        "relation": "includes"
+      },
+      {
+        "source": "5GMM_States",
+        "target": "5GMM-SERVICE-REQUEST-INITIATED",
+        "relation": "includes"
+      },
+      {
+        "source": "UE",
+        "target": "5GMM_States",
+        "relation": "has states"
+      },
+      {
+        "source": "Registration_Procedure",
+        "target": "5GMM_States",
+        "relation": "causes transition between"
+      },
+      {
+        "source": "De-registration_Procedure",
+        "target": "5GMM_States",
+        "relation": "causes transition between"
+      },
+      {
+        "source": "Service_Request_Procedure",
+        "target": "5GMM_States",
+        "relation": "causes transition between"
+      }
+    ]
+  }
+}
+```
