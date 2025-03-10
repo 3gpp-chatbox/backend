@@ -1,5 +1,7 @@
 import re
 from typing import Dict, List
+import os
+from pathlib import Path
 
 def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
     """
@@ -55,6 +57,9 @@ def save_chunks_to_markdown(chunks: List[Dict[str, str]], output_file: str):
         chunks (List[Dict[str, str]]): The list of chunks to save.
         output_file (str): The file path where the chunks should be saved.
     """
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    
     with open(output_file, "w", encoding="utf-8") as file:
         for chunk in chunks:
             # Write the heading with the corresponding number of '#' symbols
@@ -66,15 +71,25 @@ def save_chunks_to_markdown(chunks: List[Dict[str, str]], output_file: str):
             
             file.write("\n" + "-" * 50 + "\n\n")  # Optional separator for clarity
 
-# Example usage
-with open("data/cleaned_TS_24.501.md", "r", encoding="utf-8") as file:
-    text = file.read()
-
-# Chunk the text by headings and subheadings
-chunks = chunk_text_by_headings(text)
-
-# Save the chunks to a markdown file
-output_file_path = "data/chunked_output.md"
-save_chunks_to_markdown(chunks, output_file_path)
-
-print(f"Chunks saved to {output_file_path}")
+if __name__ == "__main__":
+    # Get the backend directory path (two levels up from this script)
+    backend_dir = Path(__file__).parent.parent
+    
+    # Define input and output paths relative to backend directory
+    input_markdown = str(backend_dir / "processed_data" / "cleaned_TS_24.501.md")
+    output_markdown = str(backend_dir / "processed_data" / "chunked_TS_24.501.md")
+    
+    print(f"Reading cleaned markdown from: {input_markdown}")
+    print(f"Saving chunked markdown to: {output_markdown}")
+    
+    # Process the file
+    with open(input_markdown, "r", encoding="utf-8") as file:
+        text = file.read()
+    
+    # Chunk the text by headings and subheadings
+    chunks = chunk_text_by_headings(text)
+    
+    # Save the chunks to a markdown file
+    save_chunks_to_markdown(chunks, output_markdown)
+    
+    print(f"Successfully created {len(chunks)} chunks!")

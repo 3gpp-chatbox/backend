@@ -10,7 +10,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 import traceback
 from pathlib import Path
-from semantic_chunking import SemanticChunker, save_semantic_chunks
+from pipeline.semantic_chunking import SemanticChunker, save_semantic_chunks
 from models import (
     NetworkElement, 
     PeriodicRegistrationData, 
@@ -26,7 +26,7 @@ console = Console()
 load_dotenv(override=True)
 
 # Configuration
-INPUT_MD_FILE = os.path.join("processed_data", "semantic_chunks.md")  # Use semantic_chunks.md instead of .txt
+INPUT_MD_FILE = os.path.join("processed_data", "semantic_TS_24.501.md")  # Use semantic_chunks.md instead of .txt
 PROCESSED_DATA_FOLDER = os.path.join("processed_data")
 CHUNK_SIZE = 4000
 LLM_MODEL = "gemini-2.0-flash"
@@ -740,26 +740,17 @@ def save_results(results: List[Dict], output_file: str):
             console.print("[yellow]No results to save[/yellow]")
             return
 
-        # Convert ValidatedData objects to dictionaries
-        processed_results = []
-        for result in results:
-            if hasattr(result, 'data'):
-                # Convert Pydantic model to dict
-                result_dict = result.data.model_dump()
-                processed_results.append(result_dict)
-            else:
-                console.print(f"[yellow]Skipping invalid result: {result}[/yellow]")
-
+        # Even if validation fails, we'll save the raw results
         output_data = {
             'metadata': {
                 'extraction_time': datetime.now().isoformat(),
-                'total_documents': len(processed_results)
+                'total_documents': len(results)
             },
-            'results': processed_results
+            'results': results  # Save raw results directly
         }
 
         # Debug info
-        console.print(f"\n[blue]Saving {len(processed_results)} results to {output_file}[/blue]")
+        console.print(f"\n[blue]Saving {len(results)} results to {output_file}[/blue]")
         
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(output_file), exist_ok=True)

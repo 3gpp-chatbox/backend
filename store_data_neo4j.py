@@ -10,12 +10,8 @@ import glob
 from datetime import datetime
 import traceback
 from dotenv import load_dotenv
-<<<<<<< HEAD
-from models import RegistrationAnalysis, NetworkElement, State, RegistrationStep, Metadata
-=======
 from models import RegistrationData, NetworkElement, ProcedureStep
 from pydantic import ValidationError
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
 
 # Initialize console and load environment variables
 console = Console()
@@ -360,25 +356,6 @@ def create_unique_constraints(session):
         except Exception as e:
             console.print(f"[yellow]Warning creating constraint: {str(e)}[/yellow]")
 
-<<<<<<< HEAD
-def generate_content_hash(content: Dict) -> str:
-    """Generate a hash for content to track duplicates."""
-    content_str = json.dumps(content, sort_keys=True)
-    return hashlib.md5(content_str.encode()).hexdigest()
-
-def store_network_elements(session, elements: List[Dict]):
-    """Store network elements with their properties."""
-    for element in elements:
-        cypher = """
-        MERGE (n:NetworkElement {name: $name})
-        SET n.type = $type,
-            n.description = $description
-        """
-        session.run(cypher, 
-                   name=element['name'],
-                   type=element.get('type', ''),
-                   description=element.get('description', ''))
-=======
 def generate_content_hash(data: dict) -> str:
     """Generate a hash for content deduplication."""
     # Sort dictionary to ensure consistent hashing
@@ -408,7 +385,6 @@ def store_network_elements(session, elements: List[Dict]):
             console.print(f"[green]Stored network element: {element['name']}[/green]")
         else:
             console.print(f"[yellow]Skipped duplicate network element: {element['name']}[/yellow]")
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
 
 def store_states(session, states: List[Dict]):
     """Store states with their properties."""
@@ -553,69 +529,6 @@ def store_timing(session, timings: List[Dict]):
                    state=timing['state'],
                    timing=timing['timing'])
 
-<<<<<<< HEAD
-def store_registration_flow(session, flow_items: List[RegistrationStep]):
-    """Store registration flow items with validated data."""
-    for item in flow_items:
-        try:
-            # Create or merge source and destination elements
-            cypher_elements = """
-            MERGE (source:NetworkElement {name: $source_name})
-            MERGE (dest:NetworkElement {name: $dest_name})
-            """
-            session.run(cypher_elements, 
-                    source_name=item.source_element,
-                    dest_name=item.destination_element)
-
-            # Create or merge states
-            cypher_states = """
-            MERGE (source_state:State {name: $source_state})
-            MERGE (dest_state:State {name: $dest_state})
-            """
-            session.run(cypher_states,
-                    source_state=item.source_state,
-                    dest_state=item.destination_state)
-
-            # Create relationships
-            cypher_flow = """
-            MATCH (source:NetworkElement {name: $source_name})
-            MATCH (dest:NetworkElement {name: $dest_name})
-            MATCH (source_state:State {name: $source_state})
-            MATCH (dest_state:State {name: $dest_state})
-            
-            MERGE (source)-[msg:SENDS_MESSAGE]->(dest)
-            SET msg.sequence_number = $seq_num,
-                msg.message = $message,
-                msg.step_name = $step_name,
-                msg.description = $description
-                
-            MERGE (source_state)-[trans:TRANSITIONS_TO]->(dest_state)
-            SET trans.trigger = $trigger,
-                trans.conditions = $conditions,
-                trans.timing = $timing,
-                trans.sequence_number = $seq_num
-            """
-            
-            session.run(cypher_flow,
-                    source_name=item.source_element,
-                    dest_name=item.destination_element,
-                    source_state=item.source_state,
-                    dest_state=item.destination_state,
-                    seq_num=item.sequence_number,
-                    message=item.message,
-                    step_name=item.step_name,
-                    description=item.description,
-                    trigger=item.trigger,
-                    conditions=item.conditions,
-                    timing=item.timing)
-
-        except Exception as e:
-            console.print(f"[yellow]Warning: Error processing flow item {item.sequence_number}: {str(e)}[/yellow]")
-            continue
-
-def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
-    """Process and store registration analysis data with validation."""
-=======
 def store_registration_flow(session, flow_items: List[Dict]):
     """Store registration flow items with all their properties."""
     for item in flow_items:
@@ -693,50 +606,104 @@ def store_procedure_flow(session, flow_steps: List[Dict]):
     """Store procedure flow steps with deduplication."""
     processed_steps = set()
     for step in flow_steps:
-        # Generate hash for deduplication
-        step_hash = generate_content_hash({
-            'source': step['source'],
-            'target': step['target'],
-            'message': step['message'],
-            'sequence_number': step['sequence_number']
-        })
-        
-        if step_hash not in processed_steps:
-            cypher = """
-            MATCH (source:NetworkElement {name: $source})
-            MATCH (target:NetworkElement {name: $target})
-            MERGE (source)-[r:SENDS_MESSAGE {
-                sequence_number: $sequence_number,
-                message: $message,
-                content_hash: $content_hash
-            }]->(target)
-            SET r.description = $description,
-                r.source_state = $source_state,
-                r.target_state = $target_state,
-                r.trigger = $trigger,
-                r.conditions = $conditions,
-                r.timing = $timing
-            """
-            session.run(cypher,
-                       source=step['source'],
-                       target=step['target'],
-                       sequence_number=step['sequence_number'],
-                       message=step['message'],
-                       description=step.get('description', ''),
-                       source_state=step.get('source_state', ''),
-                       target_state=step.get('target_state', ''),
-                       trigger=step.get('trigger', ''),
-                       conditions=step.get('conditions', []),
-                       timing=step.get('timing', ''),
-                       content_hash=step_hash)
-            processed_steps.add(step_hash)
-            console.print(f"[green]Stored step {step['sequence_number']}: {step['message']}[/green]")
-        else:
-            console.print(f"[yellow]Skipped duplicate step {step['sequence_number']}: {step['message']}[/yellow]")
+        try:
+            # Determine source and target based on message type or default values
+            message = step.get('message', '').lower()
+            source = step.get('source_element') or step.get('source')
+            target = step.get('destination_element') or step.get('target')
+            
+            if not source or not target:
+                # If source/target missing, try to infer from message
+                if 'request' in message:
+                    source = source or 'UE'
+                    target = target or 'AMF'
+                elif 'response' in message or 'accept' in message:
+                    source = source or 'AMF'
+                    target = target or 'UE'
+                else:
+                    # Default values if we can't infer
+                    source = source or 'UE'
+                    target = target or 'AMF'
+
+            # Generate hash for deduplication
+            step_hash = generate_content_hash({
+                'source': source,
+                'target': target,
+                'message': message,
+                'sequence_number': step.get('sequence_number', 0)
+            })
+            
+            if step_hash not in processed_steps:
+                # First ensure network elements exist
+                session.run(
+                    """
+                    MERGE (source:NetworkElement {name: $source})
+                    MERGE (target:NetworkElement {name: $target})
+                    """,
+                    source=source,
+                    target=target
+                )
+
+                # Then create the relationship using MERGE to avoid duplicates
+                cypher = """
+                MATCH (source:NetworkElement {name: $source})
+                MATCH (target:NetworkElement {name: $target})
+                MERGE (source)-[r:SENDS_MESSAGE {
+                    procedure: $procedure,
+                    sequence_number: $sequence_number,
+                    message: $message
+                }]->(target)
+                ON CREATE SET r.description = $description,
+                    r.source_state = $source_state,
+                    r.target_state = $target_state,
+                    r.trigger = $trigger,
+                    r.conditions = $conditions,
+                    r.timing = $timing,
+                    r.content_hash = $content_hash
+                ON MATCH SET r.description = CASE 
+                    WHEN r.description IS NULL THEN $description 
+                    ELSE r.description END,
+                    r.source_state = CASE 
+                    WHEN r.source_state IS NULL THEN $source_state 
+                    ELSE r.source_state END,
+                    r.target_state = CASE 
+                    WHEN r.target_state IS NULL THEN $target_state 
+                    ELSE r.target_state END,
+                    r.trigger = CASE 
+                    WHEN r.trigger IS NULL THEN $trigger 
+                    ELSE r.trigger END,
+                    r.conditions = CASE 
+                    WHEN r.conditions IS NULL THEN $conditions 
+                    ELSE r.conditions END,
+                    r.timing = CASE 
+                    WHEN r.timing IS NULL THEN $timing 
+                    ELSE r.timing END
+                """
+                session.run(cypher,
+                           source=source,
+                           target=target,
+                           sequence_number=step.get('sequence_number', 0),
+                           message=step.get('message', ''),
+                           description=step.get('description', ''),
+                           source_state=step.get('source_state', ''),
+                           target_state=step.get('target_state', ''),
+                           trigger=step.get('trigger', ''),
+                           conditions=step.get('conditions', []),
+                           timing=step.get('timing', ''),
+                           procedure='Initial_Registration',
+                           content_hash=step_hash)
+                processed_steps.add(step_hash)
+                console.print(f"[green]Stored step {step.get('sequence_number', '?')}: {step.get('message', 'Unknown')} ({source} -> {target})[/green]")
+            else:
+                console.print(f"[yellow]Skipped duplicate step {step.get('sequence_number', '?')}: {step.get('message', 'Unknown')}[/yellow]")
+
+        except Exception as e:
+            console.print(f"[yellow]Warning: Error processing step {step.get('sequence_number', '?')}: {str(e)}[/yellow]")
+            console.print(f"[yellow]Step data: {json.dumps(step, indent=2)}[/yellow]")
+            continue
 
 def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
     """Process and store registration analysis data with deduplication."""
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
     try:
         # Test Neo4j connection first
         console.print("[blue]Testing Neo4j connection...[/blue]")
@@ -747,37 +714,9 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
 
         console.print(f"[blue]Reading data from {file_path}...[/blue]")
         with open(file_path, 'r') as f:
-<<<<<<< HEAD
-            raw_data = json.load(f)
-            
-        for result in raw_data.get('results', []):
-            try:
-                # Validate with Pydantic using model_validate instead of from_json
-                analysis = RegistrationAnalysis.model_validate(result)
-                
-                # Store validated data
-                driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
-                with driver.session() as session:
-                    # Clear existing data before storing new data
-                    clear_database(session)
-                    
-                    # Store network elements
-                    store_network_elements(session, [elem.model_dump() for elem in analysis.network_elements])
-                    
-                    # Store states
-                    store_states(session, [state.model_dump() for state in analysis.states])
-                    
-                    # Store registration flow
-                    store_registration_flow(session, analysis.registration_flow)
-                    
-                    # Store metadata
-=======
             data = json.load(f)
 
-        # Clear existing data
         driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
-        with driver.session() as session:
-            clear_database(session)
             
         # Process each result in the results array
         for result in data.get('results', []):
@@ -803,24 +742,11 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
                 # Store metadata
                 if 'metadata' in result:
                     console.print("[blue]Storing metadata...[/blue]")
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
                     cypher_metadata = """
-                    CREATE (m:Metadata)
-                    SET m += $metadata
+                    MERGE (m:Metadata {procedure: 'Initial_Registration'})
+                    ON CREATE SET m += $metadata
+                    ON MATCH SET m += $metadata
                     """
-<<<<<<< HEAD
-                    session.run(cypher_metadata, metadata=analysis.metadata.model_dump())
-                    
-                console.print("[green]✓ Validated and stored data successfully[/green]")
-                
-            except Exception as e:
-                console.print(f"[red]Error processing result: {str(e)}[/red]")
-                console.print(traceback.format_exc())
-                continue
-            
-    except Exception as e:
-        console.print(f"[red]Error processing data: {str(e)}[/red]")
-=======
                     session.run(cypher_metadata, metadata=result['metadata'])
 
         # Verify final data counts
@@ -834,21 +760,11 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
             
     except Exception as e:
         console.print(f"[red]Error storing data in Neo4j: {str(e)}[/red]")
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
         console.print(traceback.format_exc())
         raise
     finally:
         if 'driver' in locals():
             driver.close()
-
-def clear_database(session):
-    """Clear all nodes and relationships from the database."""
-    try:
-        session.run("MATCH (n) DETACH DELETE n")
-        console.print("[green]✓ Database cleared successfully[/green]")
-    except Exception as e:
-        console.print(f"[red]Error clearing database: {str(e)}[/red]")
-        raise
 
 if __name__ == "__main__":
     process_registration_data()

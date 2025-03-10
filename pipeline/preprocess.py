@@ -1,4 +1,6 @@
 import pdfplumber  # Library for extracting data from PDFs
+import os
+from pathlib import Path
 
 
 def pdf_to_markdown(pdf_path, markdown_path):
@@ -60,16 +62,23 @@ def pdf_to_markdown(pdf_path, markdown_path):
             # Add a horizontal rule as a page separator
             markdown_text += "---\n\n"
     
+    # Create the output directory if it doesn't exist
+    os.makedirs(os.path.dirname(markdown_path), exist_ok=True)
+    
     # Write the final markdown content to a file
     with open(markdown_path, "w", encoding="utf-8") as md:
         md.write(markdown_text)
 
-        # ... existing code ...
-
 # Add this at the bottom of the file:
 if __name__ == "__main__":
-    # Replace these paths with your actual PDF and output markdown file paths
-    input_pdf = "data/TS 24.501.pdf"
-    output_markdown = "data/TS_24.501.md"
+    # Get the backend directory path (two levels up from this script)
+    backend_dir = Path(__file__).parent.parent
+    
+    # Define input and output paths relative to backend directory
+    input_pdf = str(backend_dir / "data" / "TS 24.501.pdf")
+    output_markdown = str(backend_dir / "processed_data" / "TS_24.501.md")
+    
+    print(f"Processing PDF from: {input_pdf}")
+    print(f"Saving markdown to: {output_markdown}")
     
     pdf_to_markdown(input_pdf, output_markdown)

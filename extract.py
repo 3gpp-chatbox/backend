@@ -15,7 +15,7 @@ from pathlib import Path
 import sys
 import threading
 import subprocess
-from semantic_chunking import SemanticChunker, save_semantic_chun
+from pipeline.semantic_chunking import SemanticChunker, save_semantic_chunks
 from models import RegistrationAnalysis, NetworkElement, State, RegistrationStep, Metadata
 from models import RegistrationData, NetworkElement, ProcedureStep, Procedure
 from pydantic import ValidationError
@@ -28,7 +28,7 @@ console = Console()
 load_dotenv(override=True)
 
 # Configuration
-INPUT_MD_FILE = os.path.join("processed_data", "semantic_chunks.md")  # Use semantic_chunks.md instead of .txt
+INPUT_MD_FILE = os.path.join("processed_data", "semantic_TS_24.501.md")  # Use semantic_chunks.md instead of .txt
 PROCESSED_DATA_FOLDER = os.path.join("processed_data")
 CHUNK_SIZE = 4000
 LLM_MODEL = "gemini-2.0-flash"
@@ -41,7 +41,6 @@ MAX_RETRIES = 3
 
 EXTRACTION_PROMPT = """Analyze the text and extract the 5G Initial Registration procedure flow.
 You must include ALL required network elements and messages in your response.For each step, include ALL conditions that must be met.
->>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
 
 Example of conditions:
 - For Registration Request: ["No current registration exists", "UE in 5GMM-DEREGISTERED state"]

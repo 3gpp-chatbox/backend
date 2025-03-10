@@ -1,9 +1,10 @@
 import re
 from typing import Dict, List, Tuple
 import os
+from pathlib import Path
 
 def clean_text(text: str) -> str:
-    """Cleans extracted PDF text by removing TOC, headers, footers, images, and page numbers.
+    """Cleans extracted PDF text by removing headers, footers, images, and page numbers.
     
     Args:
         text (str): Raw text extracted from PDF
@@ -39,8 +40,24 @@ def clean_text(text: str) -> str:
     return text
 
 if __name__ == "__main__":
-    with open("data/TS_24.501.md", "r", encoding="utf-8") as file:
-        text = file.read()  # Read the entire file as a single string
-    processed_text = clean_text(text)  # Use the clean_text function
-    with open("data/cleaned_TS_24.501.md", "w", encoding="utf-8") as file:
+    # Get the backend directory path (two levels up from this script)
+    backend_dir = Path(__file__).parent.parent
+    
+    # Define input and output paths relative to backend directory
+    input_markdown = str(backend_dir / "processed_data" / "TS_24.501.md")
+    output_markdown = str(backend_dir / "processed_data" / "cleaned_TS_24.501.md")
+    
+    print(f"Reading markdown from: {input_markdown}")
+    print(f"Saving cleaned markdown to: {output_markdown}")
+    
+    # Create the output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_markdown), exist_ok=True)
+    
+    # Process the file
+    with open(input_markdown, "r", encoding="utf-8") as file:
+        text = file.read()
+    processed_text = clean_text(text)
+    with open(output_markdown, "w", encoding="utf-8") as file:
         file.write(processed_text)
+        
+    print("Cleaning completed successfully!")

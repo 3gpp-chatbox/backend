@@ -9,6 +9,7 @@ import numpy as np
 from typing import List, Dict
 import json
 from pathlib import Path
+import os
 from rich.console import Console
 
 console = Console()
@@ -49,15 +50,15 @@ class SemanticChunker:
         
         return grouped_chunks
 
-def load_chunks_from_markdown(file_path="output.md"):
-    """Loads chunks from the output.md file."""
+def load_chunks_from_markdown(file_path: str) -> List[str]:
+    """Loads chunks from the markdown file."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
             
         # Extract chunks using markdown headers
         chunks = []
-        chunk_sections = content.split("## Chunk")[1:]  # Split on chunk headers
+        chunk_sections = content.split("##")[1:]  # Split on chunk headers
         
         for section in chunk_sections:
             # Extract the chunk content (everything until the next delimiter or end)
@@ -71,47 +72,43 @@ def load_chunks_from_markdown(file_path="output.md"):
         console.print(f"[red]Error loading chunks from {file_path}: {str(e)}[/red]")
         return []
 
-def save_semantic_chunks(chunks: List[str], output_dir: str = "processed_data"):
-    """Save semantic chunks in multiple formats."""
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    
-    # Save as JSON
-    json_output = Path(output_dir) / "semantic_chunks.json"
-    with open(json_output, 'w', encoding='utf-8') as f:
-        json.dump({"chunks": chunks}, f, indent=2, ensure_ascii=False)
-    
-    # Save as Markdown
-    md_output = Path(output_dir) / "semantic_chunks.md"
-    with open(md_output, 'w', encoding='utf-8') as f:
-        for i, chunk in enumerate(chunks, 1):
-            f.write(f"## Semantic Chunk {i}\n\n")
-            f.write(chunk + "\n\n")
-            f.write("---\n\n")
-    
-    # Save as Text
-    txt_output = Path(output_dir) / "semantic_chunks.txt"
-    with open(txt_output, 'w', encoding='utf-8') as f:
-        for i, chunk in enumerate(chunks, 1):
-            f.write(f"=== Semantic Chunk {i} ===\n\n")
-            f.write(chunk + "\n\n")
-            f.write("="*50 + "\n\n")
-    
-    console.print(f"[green]✓ Semantic chunks saved to:[/green]")
-    console.print(f"  - JSON: {json_output}")
-    console.print(f"  - Markdown: {md_output}")
-    console.print(f"  - Text: {txt_output}")
-    
-    return str(md_output)
+def save_semantic_chunks(chunks: List[str], output_file: str):
+    """Save semantic chunks in md format."""
+    try:
+        # Create output directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        # Save as Markdown
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for i, chunk in enumerate(chunks, 1):
+                f.write(f"## Semantic Chunk {i}\n\n")
+                f.write(chunk + "\n\n")
+                f.write("---\n\n")
+        
+        console.print(f"[green]✓ Semantic chunks saved to: {output_file}[/green]")
+        
+    except Exception as e:
+        console.print(f"[red]Error saving semantic chunks: {str(e)}[/red]")
 
 if __name__ == "__main__":
     try:
+        # Get the backend directory path (two levels up from this script)
+        backend_dir = Path(__file__).parent.parent
+        
+        # Define input and output paths relative to backend directory
+        input_markdown = str(backend_dir / "processed_data" / "chunked_TS_24.501.md")
+        output_markdown = str(backend_dir / "processed_data" / "semantic_TS_24.501.md")
+        
+        print(f"Reading chunked markdown from: {input_markdown}")
+        print(f"Will save semantic chunks to: {output_markdown}")
+        
         # Initialize chunker
         chunker = SemanticChunker()
         
-        # Load chunks from output.md
-        input_chunks = load_chunks_from_markdown("output.md")
+        # Load chunks from markdown
+        input_chunks = load_chunks_from_markdown(input_markdown)
         if not input_chunks:
-            console.print("[red]No chunks found in output.md[/red]")
+            console.print("[red]No chunks found in input file[/red]")
             exit(1)
         
         # Process chunks
@@ -119,11 +116,12 @@ if __name__ == "__main__":
         
         # Save results
         if semantic_chunks:
-            output_file = save_semantic_chunks(semantic_chunks)
-            console.print(f"[green]✓ Processing complete! Results saved to {output_file}[/green]")
+            save_semantic_chunks(semantic_chunks, output_markdown)
+            console.print(f"[green]✓ Processing complete![/green]")
             console.print(f"[blue]Original chunks: {len(input_chunks)}, Semantic chunks: {len(semantic_chunks)}[/blue]")
         else:
             console.print("[yellow]No semantic chunks were generated[/yellow]")
             
     except Exception as e:
         console.print(f"[red]Error during processing: {str(e)}[/red]")
+        raise
