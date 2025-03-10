@@ -3,7 +3,6 @@ import re
 import json
 import time
 from typing import List, Dict, Tuple, Set
-from pypdf import PdfReader
 from neo4j import GraphDatabase
 import hashlib
 from rich.console import Console
@@ -11,7 +10,12 @@ import glob
 from datetime import datetime
 import traceback
 from dotenv import load_dotenv
+<<<<<<< HEAD
 from models import RegistrationAnalysis, NetworkElement, State, RegistrationStep, Metadata
+=======
+from models import RegistrationData, NetworkElement, ProcedureStep
+from pydantic import ValidationError
+>>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
 
 # Initialize console and load environment variables
 console = Console()
@@ -85,7 +89,6 @@ def convert_to_relationship_type(description: str) -> str:
 def batch_neo4j_operations(session, operations: List[Dict]):
     """Execute Neo4j operations in batches for better performance."""
     try:
-        # Create an unwind statement for batch processing
         if not operations:
             return
             
@@ -93,38 +96,25 @@ def batch_neo4j_operations(session, operations: List[Dict]):
         
         if operation_type == 'network_element':
             cypher = """
-            UNWIND $operations as op
-            MERGE (n:NetworkElement {name: op.name})
-            SET n.type = op.element_type,
-                n.description = op.description
-            """
-        elif operation_type == 'state':
-            cypher = """
-            UNWIND $operations as op
-            MERGE (s:State {name: op.name})
-            SET s.type = op.state_type,
-                s.description = op.description
+            MERGE (n:NetworkElement {name: $name})
+            SET n.type = $element_type,
+                n.description = $description
             """
         elif operation_type == 'relationship':
-            # Use dynamic relationship type based on the verb
             cypher = """
-            UNWIND $operations as op
-            MATCH (e1:NetworkElement {name: op.element1})
-            MATCH (e2:NetworkElement {name: op.element2})
-            WITH e1, e2, op
-            CALL apoc.merge.relationship(e1, op.rel_type, {}, {description: op.description}, e2)
-            YIELD rel
-            RETURN count(*)
-            """
-        elif operation_type == 'transition':
-            cypher = """
-            UNWIND $operations as op
-            MATCH (s1:State {name: op.from_state})
-            MATCH (s2:State {name: op.to_state})
-            MERGE (s1)-[r:TRANSITIONS_TO]->(s2)
-            SET r.trigger = op.trigger,
-                r.condition = op.condition,
-                r.probability = op.probability
+            MATCH (source:NetworkElement {name: $element1})
+            MATCH (target:NetworkElement {name: $element2})
+            CREATE (source)-[r:SENDS_MESSAGE {
+                procedure: $procedure,
+                sequence_number: $sequence_number,
+                message: $message,
+                description: $description,
+                source_state: $source_state,
+                target_state: $target_state,
+                trigger: $trigger,
+                conditions: $conditions,
+                timing: $timing
+            }]->(target)
             """
             
         session.run(cypher, operations=operations)
@@ -132,96 +122,76 @@ def batch_neo4j_operations(session, operations: List[Dict]):
     except Exception as e:
         console.print(f"[red]Error in batch operation: {str(e)}[/red]")
 
-def process_intermediate_file(file_path: str, driver, processed_files: Set[str]) -> bool:
-    """Process a single intermediate results file and store in Neo4j."""
+def validate_neo4j_data(data: dict) -> bool:
+    """Validate data against Pydantic models"""
     try:
-        if file_path in processed_files:
-            return True
-            
-        console.print(f"[blue]Processing {file_path}...[/blue]")
-        
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-            
-        with driver.session() as session:
-            # First, ensure APOC is available
-            try:
-                session.run("CALL apoc.help('merge')")
-            except Exception as e:
-                console.print("[red]Error: APOC procedures not available. Please install APOC in your Neo4j instance.[/red]")
-                return False
-
-            for result in data.get('results', []):
-                # Batch network elements
-                network_elements = []
-                for element in result.get('network_elements', []):
-                    network_elements.append({
-                        'type': 'network_element',
-                        'name': element['name'],
-                        'element_type': element['type'],
-                        'description': element.get('description', '')
-                    })
-                    if len(network_elements) >= BATCH_SIZE:
-                        batch_neo4j_operations(session, network_elements)
-                        network_elements = []
-                if network_elements:
-                    batch_neo4j_operations(session, network_elements)
-
-                # Batch states
-                states = []
-                for state in result.get('states', []):
-                    states.append({
-                        'type': 'state',
-                        'name': state['name'],
-                        'state_type': state['type'],
-                        'description': state.get('description', '')
-                    })
-                    if len(states) >= BATCH_SIZE:
-                        batch_neo4j_operations(session, states)
-                        states = []
-                if states:
-                    batch_neo4j_operations(session, states)
-
-                # Process relationships with explicit verb labels
-                relationships = []
-                for rel in result.get('network_element_relationships', []):
-                    rel_type = convert_to_relationship_type(rel['relationship'])
-                    relationships.append({
-                        'type': 'relationship',
-                        'element1': rel['element1'],
-                        'element2': rel['element2'],
-                        'rel_type': rel_type,
-                        'description': rel['relationship']
-                    })
-                    if len(relationships) >= BATCH_SIZE:
-                        batch_neo4j_operations(session, relationships)
-                if relationships:
-                    batch_neo4j_operations(session, relationships)
-
-                # Process transitions
-                transitions = []
-                for transition in result.get('transitions', []):
-                    transitions.append({
-                        'type': 'transition',
-                        'from_state': transition['from_state'],
-                        'to_state': transition['to_state'],
-                        'trigger': transition.get('trigger', ''),
-                        'condition': transition.get('condition', ''),
-                        'probability': transition.get('probability', '')
-                    })
-                    if len(transitions) >= BATCH_SIZE:
-                        batch_neo4j_operations(session, transitions)
-                        transitions = []
-                if transitions:
-                    batch_neo4j_operations(session, transitions)
-
-        processed_files.add(file_path)
-        save_processed_files(processed_files)
-        console.print(f"[green]✓ Processed {file_path}[/green]")
+        RegistrationData(**data)
         return True
+    except ValidationError as e:
+        console.print(f"[red]Validation error: {e}[/red]")
+        return False
+
+def verify_neo4j_data(session) -> bool:
+    """Verify data in Neo4j database"""
+    try:
+        # Check nodes exist
+        node_count = session.run("""
+            MATCH (n:NetworkElement) 
+            RETURN count(n) as count
+        """).single()["count"]
+
+        # Check relationships exist
+        rel_count = session.run("""
+            MATCH ()-[r:SENDS_MESSAGE]->()
+            WHERE r.procedure = 'Initial Registration'
+            RETURN count(r) as count
+        """).single()["count"]
+
+        # Check procedure flow is complete
+        flow = session.run("""
+            MATCH (source)-[r:SENDS_MESSAGE]->(target)
+            WHERE r.procedure = 'Initial Registration'
+            RETURN source.name, r.message, target.name, r.sequence_number
+            ORDER BY r.sequence_number
+        """).data()
+
+        console.print(f"[blue]Found {node_count} network elements[/blue]")
+        console.print(f"[blue]Found {rel_count} procedure steps[/blue]")
+        console.print("\n[blue]Procedure Flow:[/blue]")
+        for step in flow:
+            console.print(f"[green]{step['sequence_number']}. {step['source.name']} -> {step['target.name']}: {step['r.message']}[/green]")
+
+        return node_count > 0 and rel_count > 0
 
     except Exception as e:
-        console.print(f"[red]Error processing {file_path}: {str(e)}[/red]")
+        console.print(f"[red]Error verifying data: {str(e)}[/red]")
+        return False
+
+def process_intermediate_file(file_path: str, driver, processed_files: Set[str]) -> bool:
+    try:
+        with open(file_path, 'r') as f:
+            file_data = json.load(f)
+        
+        for result in file_data.get('results', []):
+            # Check if data was previously validated
+            if result.get('validated'):
+                console.print(f"[blue]Found pre-validated data from {result['validation_timestamp']}[/blue]")
+                
+                # Still validate as safety check before Neo4j
+                if validate_neo4j_data(result['data']):
+                    store_to_neo4j(result['data'], driver)
+                else:
+                    console.print("[red]Secondary validation failed[/red]")
+                    continue
+            else:
+                console.print("[yellow]Data not pre-validated, running full validation[/yellow]")
+                if not validate_neo4j_data(result):
+                    continue
+                    
+        return True
+        
+    except Exception as e:
+        console.print(f"[red]Error: {str(e)}[/red]")
         return False
 
 def monitor_and_process():
@@ -390,6 +360,7 @@ def create_unique_constraints(session):
         except Exception as e:
             console.print(f"[yellow]Warning creating constraint: {str(e)}[/yellow]")
 
+<<<<<<< HEAD
 def generate_content_hash(content: Dict) -> str:
     """Generate a hash for content to track duplicates."""
     content_str = json.dumps(content, sort_keys=True)
@@ -407,6 +378,37 @@ def store_network_elements(session, elements: List[Dict]):
                    name=element['name'],
                    type=element.get('type', ''),
                    description=element.get('description', ''))
+=======
+def generate_content_hash(data: dict) -> str:
+    """Generate a hash for content deduplication."""
+    # Sort dictionary to ensure consistent hashing
+    content_str = json.dumps(data, sort_keys=True)
+    return hashlib.md5(content_str.encode()).hexdigest()
+
+def store_network_elements(session, elements: List[Dict]):
+    """Store network elements with deduplication."""
+    processed_elements = set()
+    for element in elements:
+        # Generate hash for deduplication
+        element_hash = generate_content_hash(element)
+        
+        if element_hash not in processed_elements:
+            cypher = """
+            MERGE (n:NetworkElement {name: $name})
+            SET n.type = $type,
+                n.description = $description,
+                n.content_hash = $content_hash
+            """
+            session.run(cypher, 
+                       name=element['name'],
+                       type=element.get('type', ''),
+                       description=element.get('description', ''),
+                       content_hash=element_hash)
+            processed_elements.add(element_hash)
+            console.print(f"[green]Stored network element: {element['name']}[/green]")
+        else:
+            console.print(f"[yellow]Skipped duplicate network element: {element['name']}[/yellow]")
+>>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
 
 def store_states(session, states: List[Dict]):
     """Store states with their properties."""
@@ -551,6 +553,7 @@ def store_timing(session, timings: List[Dict]):
                    state=timing['state'],
                    timing=timing['timing'])
 
+<<<<<<< HEAD
 def store_registration_flow(session, flow_items: List[RegistrationStep]):
     """Store registration flow items with validated data."""
     for item in flow_items:
@@ -612,6 +615,128 @@ def store_registration_flow(session, flow_items: List[RegistrationStep]):
 
 def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
     """Process and store registration analysis data with validation."""
+=======
+def store_registration_flow(session, flow_items: List[Dict]):
+    """Store registration flow items with all their properties."""
+    for item in flow_items:
+        try:
+            # Create or merge source and destination elements if they exist
+            if item.get('source_element') and item.get('destination_element'):
+                cypher_elements = """
+                MERGE (source:NetworkElement {name: $source_name})
+                MERGE (dest:NetworkElement {name: $dest_name})
+                """
+                session.run(cypher_elements, 
+                        source_name=item['source_element'],
+                        dest_name=item['destination_element'])
+
+            # Create or merge source and destination states if they exist
+            if item.get('source_state') and item.get('destination_state'):
+                cypher_states = """
+                MERGE (source_state:State {name: $source_state})
+                MERGE (dest_state:State {name: $dest_state})
+                """
+                session.run(cypher_states,
+                        source_state=item['source_state'],
+                        dest_state=item['destination_state'])
+
+            # Create the message relationship between elements if they exist
+            if item.get('source_element') and item.get('destination_element'):
+                cypher_message = """
+                MATCH (source:NetworkElement {name: $source_name})
+                MATCH (dest:NetworkElement {name: $dest_name})
+                MERGE (source)-[r:SENDS_MESSAGE]->(dest)
+                SET r.step = $sequence_number,
+                    r.message = $message,
+                    r.step_name = $step_name,
+                    r.description = $description,
+                    r.trigger = $trigger,
+                    r.conditions = $conditions,
+                    r.timing = $timing
+                """
+                session.run(cypher_message,
+                        source_name=item['source_element'],
+                        dest_name=item['destination_element'],
+                        sequence_number=item['sequence_number'],
+                        message=item.get('message', ''),
+                        step_name=item.get('step_name', ''),
+                        description=item.get('description', ''),
+                        trigger=item.get('trigger', ''),
+                        conditions=item.get('conditions', []),
+                        timing=item.get('timing', ''))
+
+            # Create the state transition relationship if states exist
+            if item.get('source_state') and item.get('destination_state'):
+                cypher_transition = """
+                MATCH (source_state:State {name: $source_state})
+                MATCH (dest_state:State {name: $dest_state})
+                MERGE (source_state)-[t:TRANSITIONS_TO]->(dest_state)
+                SET t.step = $sequence_number,
+                    t.message = $message,
+                    t.trigger = $trigger,
+                    t.conditions = $conditions,
+                    t.timing = $timing
+                """
+                session.run(cypher_transition,
+                        source_state=item['source_state'],
+                        dest_state=item['destination_state'],
+                        sequence_number=item['sequence_number'],
+                        message=item.get('message', ''),
+                        trigger=item.get('trigger', ''),
+                        conditions=item.get('conditions', []),
+                        timing=item.get('timing', ''))
+        except Exception as e:
+            console.print(f"[yellow]Warning: Error processing flow item {item.get('sequence_number', 'unknown')}: {str(e)}[/yellow]")
+            continue
+
+def store_procedure_flow(session, flow_steps: List[Dict]):
+    """Store procedure flow steps with deduplication."""
+    processed_steps = set()
+    for step in flow_steps:
+        # Generate hash for deduplication
+        step_hash = generate_content_hash({
+            'source': step['source'],
+            'target': step['target'],
+            'message': step['message'],
+            'sequence_number': step['sequence_number']
+        })
+        
+        if step_hash not in processed_steps:
+            cypher = """
+            MATCH (source:NetworkElement {name: $source})
+            MATCH (target:NetworkElement {name: $target})
+            MERGE (source)-[r:SENDS_MESSAGE {
+                sequence_number: $sequence_number,
+                message: $message,
+                content_hash: $content_hash
+            }]->(target)
+            SET r.description = $description,
+                r.source_state = $source_state,
+                r.target_state = $target_state,
+                r.trigger = $trigger,
+                r.conditions = $conditions,
+                r.timing = $timing
+            """
+            session.run(cypher,
+                       source=step['source'],
+                       target=step['target'],
+                       sequence_number=step['sequence_number'],
+                       message=step['message'],
+                       description=step.get('description', ''),
+                       source_state=step.get('source_state', ''),
+                       target_state=step.get('target_state', ''),
+                       trigger=step.get('trigger', ''),
+                       conditions=step.get('conditions', []),
+                       timing=step.get('timing', ''),
+                       content_hash=step_hash)
+            processed_steps.add(step_hash)
+            console.print(f"[green]Stored step {step['sequence_number']}: {step['message']}[/green]")
+        else:
+            console.print(f"[yellow]Skipped duplicate step {step['sequence_number']}: {step['message']}[/yellow]")
+
+def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
+    """Process and store registration analysis data with deduplication."""
+>>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
     try:
         # Test Neo4j connection first
         console.print("[blue]Testing Neo4j connection...[/blue]")
@@ -622,6 +747,7 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
 
         console.print(f"[blue]Reading data from {file_path}...[/blue]")
         with open(file_path, 'r') as f:
+<<<<<<< HEAD
             raw_data = json.load(f)
             
         for result in raw_data.get('results', []):
@@ -645,10 +771,44 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
                     store_registration_flow(session, analysis.registration_flow)
                     
                     # Store metadata
+=======
+            data = json.load(f)
+
+        # Clear existing data
+        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+        with driver.session() as session:
+            clear_database(session)
+            
+        # Process each result in the results array
+        for result in data.get('results', []):
+            with driver.session() as session:
+                # Create constraints
+                create_unique_constraints(session)
+                
+                # Store network elements with deduplication
+                if 'network_elements' in result:
+                    console.print(f"[blue]Processing {len(result['network_elements'])} network elements...[/blue]")
+                    store_network_elements(session, result['network_elements'])
+
+                # Store states
+                if 'states' in result:
+                    console.print(f"[blue]Storing {len(result['states'])} states...[/blue]")
+                    store_states(session, result['states'])
+
+                # Store registration flow with deduplication
+                if 'procedure_flow' in result:
+                    console.print(f"[blue]Processing {len(result['procedure_flow'])} procedure steps...[/blue]")
+                    store_procedure_flow(session, result['procedure_flow'])
+
+                # Store metadata
+                if 'metadata' in result:
+                    console.print("[blue]Storing metadata...[/blue]")
+>>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
                     cypher_metadata = """
                     CREATE (m:Metadata)
                     SET m += $metadata
                     """
+<<<<<<< HEAD
                     session.run(cypher_metadata, metadata=analysis.metadata.model_dump())
                     
                 console.print("[green]✓ Validated and stored data successfully[/green]")
@@ -660,6 +820,21 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
             
     except Exception as e:
         console.print(f"[red]Error processing data: {str(e)}[/red]")
+=======
+                    session.run(cypher_metadata, metadata=result['metadata'])
+
+        # Verify final data counts
+        with driver.session() as session:
+            node_count = session.run("MATCH (n) RETURN count(n) as count").single()["count"]
+            rel_count = session.run("MATCH ()-[r]->() RETURN count(r) as count").single()["count"]
+            
+            console.print(f"[green]✓ Data stored successfully in Neo4j[/green]")
+            console.print(f"[blue]Total nodes: {node_count}[/blue]")
+            console.print(f"[blue]Total relationships: {rel_count}[/blue]")
+            
+    except Exception as e:
+        console.print(f"[red]Error storing data in Neo4j: {str(e)}[/red]")
+>>>>>>> f6782aa2945b2d8857cc56efcdb82409178f0d5a
         console.print(traceback.format_exc())
         raise
     finally:
