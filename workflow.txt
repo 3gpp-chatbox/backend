@@ -1,0 +1,37 @@
+Workflow (Tiered Processing)
+
+1.LLM Keywords:
+Keep this! The LLM helps find the best search words.
+
+2.Embedding Sections:
+Keep this too! Find the most relevant subsections using embeddings.
+
+3.Tiered Processing:
+Top Section (VIP Treatment):
+Give the entire content of the top-ranked section to the LLM.
+Other Sections (Helping Hand):
+For the second and third-ranked sections:
+Use embeddings to find the specific sentences or paragraphs related to the procedure.
+Give only those extracted parts to the LLM.
+
+4.LLM Extraction (Piece by Piece):
+The LLM extracts procedure information, processing the top section as a whole and the other sections in extracted pieces.
+
+5.Combine and Summarize:
+The LLM combines all the extracted information into a flow property graph using JSON and creates a summary.
+
+6.LLM Validation:
+Keep this! The LLM checks its own work and correct if need
+
+
+7.Store Result:
+Keep the validated flow property graph JSON.
+
+
+
+Gemini generates keywords.
+Keywords go into the embedding search to find the most relevant document.
+Retrieve the entire top relevant document.
+Find the next two relevant sections.
+Extract only the most relevant paragraphs from those sections.
+Save everything to a file and send it to LLM for structured JSON extraction.
