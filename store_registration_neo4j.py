@@ -100,17 +100,35 @@ def batch_neo4j_operations(session, operations: List[Dict]):
             cypher = """
             MATCH (source:NetworkElement {name: $element1})
             MATCH (target:NetworkElement {name: $element2})
-            CREATE (source)-[r:SENDS_MESSAGE {
+            MERGE (source)-[r:SENDS_MESSAGE {
                 procedure: $procedure,
                 sequence_number: $sequence_number,
-                message: $message,
-                description: $description,
-                source_state: $source_state,
-                target_state: $target_state,
-                trigger: $trigger,
-                conditions: $conditions,
-                timing: $timing
+                message: $message
             }]->(target)
+            ON CREATE SET r.description = $description,
+                r.source_state = $source_state,
+                r.target_state = $target_state,
+                r.trigger = $trigger,
+                r.conditions = $conditions,
+                r.timing = $timing
+            ON MATCH SET r.description = CASE 
+                WHEN r.description IS NULL THEN $description 
+                ELSE r.description END,
+                r.source_state = CASE 
+                WHEN r.source_state IS NULL THEN $source_state 
+                ELSE r.source_state END,
+                r.target_state = CASE 
+                WHEN r.target_state IS NULL THEN $target_state 
+                ELSE r.target_state END,
+                r.trigger = CASE 
+                WHEN r.trigger IS NULL THEN $trigger 
+                ELSE r.trigger END,
+                r.conditions = CASE 
+                WHEN r.conditions IS NULL THEN $conditions 
+                ELSE r.conditions END,
+                r.timing = CASE 
+                WHEN r.timing IS NULL THEN $timing 
+                ELSE r.timing END
             """
             
         session.run(cypher, operations=operations)
@@ -222,12 +240,8 @@ def monitor_and_process():
                 console.print(f"[red]Error details: {str(e)}[/red]")
                 return False
         
-        # Clear existing data before starting
-        console.print("[blue]Clearing existing database...[/blue]")
-        with driver.session() as session:
-            session.run("MATCH (n) DETACH DELETE n")
-        console.print("[green]Database cleared successfully[/green]")
-        
+        # Initialize processing
+        console.print("[blue]Starting data processing...[/blue]")
         processed_files = load_processed_files()
         
         console.print("[blue]Monitoring for new intermediate results...[/blue]")

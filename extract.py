@@ -4,7 +4,7 @@ import json
 import hashlib
 import time
 from datetime import datetime
-from typing import List, Dict, Any, Set, Optional
+from typing import List, Dict, Any, Set, Optional, Literal
 from dotenv import load_dotenv
 from rich.console import Console
 from langchain.schema import Document
@@ -12,13 +12,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 import traceback
 from pathlib import Path
-import sys
-import threading
-import subprocess
 from pipeline.semantic_chunking import SemanticChunker, save_semantic_chunks
 from models import RegistrationAnalysis, NetworkElement, State, RegistrationStep, Metadata
 from models import RegistrationData, NetworkElement, ProcedureStep, Procedure
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel, Field, validator
 from langchain_core.messages import HumanMessage, SystemMessage
 
 # Initialize console for better output
@@ -28,9 +25,8 @@ console = Console()
 load_dotenv(override=True)
 
 # Configuration
-INPUT_MD_FILE = os.path.join("processed_data", "semantic_TS_24.501.md")  # Use semantic_chunks.md instead of .txt
+INPUT_MD_FILE = os.path.join("processed_data", "semantic_TS_24.501.md")
 PROCESSED_DATA_FOLDER = os.path.join("processed_data")
-CHUNK_SIZE = 4000
 LLM_MODEL = "gemini-2.0-flash"
 OUTPUT_FILE = os.path.join(PROCESSED_DATA_FOLDER, "registration_analysis.json")
 OUTPUT_MD_FILE = os.path.join(PROCESSED_DATA_FOLDER, "registration_analysis.md")
@@ -38,77 +34,137 @@ INTERMEDIATE_BATCH_SIZE = 10
 RATE_LIMIT_DELAY = 1
 MAX_RETRIES = 3
 
+EXTRACTION_PROMPT = '''You are an expert in 5G NAS signaling procedures as defined in 3GPP TS 24.501. Your task is to extract the complete execution flow of the Initial Registration Procedure for each trigger and return it as structured JSON data for visualization.
 
-EXTRACTION_PROMPT = """Analyze the text and extract the 5G Initial Registration procedure flow.
-You must include ALL required network elements and messages in your response.For each step, include ALL conditions that must be met.
+For each trigger of the Initial Registration Procedure, you must provide:
+1. Network Elements involved (UE, gNB, AMF, etc.)
+2. States that the system goes through
+3. Events that occur during the procedure
+4. Edges connecting states and events
 
-Example of conditions:
-- For Registration Request: ["No current registration exists", "UE in 5GMM-DEREGISTERED state"]
-- For Authentication: ["Security context not exists", "Authentication required"]
-- For Security Mode: ["Authentication successful", "Security capabilities received"]
-
-
-Required Network Elements (ALL must be included):
-- UE (User Equipment)
-- AMF (Access and Mobility Management Function)
-- AUSF (Authentication Server Function)
-- UDM (Unified Data Management)
-- PCF (Policy Control Function)
-- NSSF (Network Slice Selection Function)
-- SMSF (SMS Forwarding Function)
-- GGSF (Gateway GPRS Support Function)
-- HSS (Home Subscriber Server)
-- SMF (Session Management Function)
-
-
-Required Messages (ALL must be included):
-1. Registration Request (UE → AMF)
-2. Authentication Request (AMF → UE)
-3. Authentication Vector Request (AUSF → UDM)
-4. Authentication Response (UE → AMF)
-5. Security Mode Command (AMF → UE)
-6. Security Mode Complete (UE → AMF)
-7. Registration Accept (AMF → UE)
-8. Registration Complete (UE → AMF)
-
-Return ONLY this exact JSON structure with all required elements:
-
+The output should follow this exact structure:
 {
-    "procedure": {
-        "name": "Initial Registration",
-        "description": "Complete 5G Initial Registration procedure"
-    },
-    "network_elements": [
-        {
-            "name": "UE",
-            "type": "Network Element",
-            "description": "User Equipment initiating registration"
+  "procedure": "Initial Registration",
+  "trigger": "<TRIGGER_NAME>",
+  "nodes": [
+    // Network Elements (at least 3)
+    { "id": "N1", "label": "User Equipment (UE)", "type": "NetworkElement" },
+    { "id": "N2", "label": "gNB (gNodeB)", "type": "NetworkElement" },
+    { "id": "N3", "label": "AMF", "type": "NetworkElement" },
 
-        }
-        // Include ALL network elements listed above
+    // States (at least 4)
+    { "id": "S1", "label": "Initial State", "type": "State" },
+    { "id": "S2", "label": "Intermediate State", "type": "State" },
+    // ... more states ...
+
+    // Events (at least 3)
+    { "id": "E1", "label": "Event Description", "type": "Event" },
+    { "id": "E2", "label": "Event Description", "type": "Event" }
+    // ... more events ...
+  ],
+  "edges": [
+    { "from": "N1", "to": "N2", "label": "Description of transition" },
+    { "from": "N2", "to": "N3", "label": "Description of transition" },
+    { "from": "N3", "to": "S1", "label": "Description of transition" },
+    { "from": "S1", "to": "E1", "label": "Description of transition" },
+    { "from": "E1", "to": "S2", "label": "Description of transition" },
+    { "from": "S2", "to": "E2", "label": "Description of transition" },
+    { "from": "E2", "to": "S3", "label": "Description of transition" },
+    { "from": "S3", "to": "N4", "label": "Description of transition" },
+    
+  ],
+  "metadata": {
+    "procedureName": "Initial Registration",
+    "specReference": "3GPP TS 24.501",
+    "protocol": "5G NAS",
+    "trigger": "<TRIGGER_NAME>",
+    "mandatoryMessages": [
+      "Registration Request",
+      "Registration Accept",
+      "Registration Complete"
+    ]
+  }
+}
+
+Initial Registration Triggers to extract:
+1. Power On / UE Startup
+2. Enter 5G Coverage
+3. Change of PLMN
+4. Change in Subscription
+5. Registration Area Change
+6. Loss of Connection
+7. Explicit Deregistration
+8. Security Context Change
+9. Emergency Registration
+
+Requirements:
+1. Each node must have a unique ID (N1, N2... for NetworkElements, S1, S2... for States, E1, E2... for Events)
+2. All edges must connect existing nodes
+3. The flow must be complete from initial state to final registered state
+4. Include all mandatory NAS messages in the flow
+5. Include security and authentication steps
+6. Edges must accurately describe the transition or message being sent
+
+Extract the complete flow for the given text, ensuring all requirements are met.'''
+
+# Initial Registration Triggers
+INITIAL_REGISTRATION_TRIGGERS = {
+    "Power On / UE Startup": [
+        r"power.*on",
+        r"UE.*startup",
+        r"first.*time.*register",
+        r"initial.*power.*on"
     ],
-    "procedure_flow": [
-        {
-            "sequence_number": 1,
-            "source": "UE",
-            "target": "AMF",
-            "message": "Registration Request",
-            "description": "UE initiates registration procedure",
-            "source_state": "5GMM-DEREGISTERED",
-            "target_state": "5GMM-REGISTERED-INITIATED",
-            "trigger": ["UE sends Registration Request to AMF", "UE power on", "UE out of coverage", "UE needs to establish an emergency PDU session","UE needs to establish an emergency PDU session"],
-            "conditions": ["UE is not yet registered and has a valid PLMN"],  # Must be a list with [ ]
-            "timing": "Start T3510"
-            "response": "AMF sends Authentication Request to UE"
-        }
-        // Include ALL 8 messages listed above in correct sequence
+    "Enter 5G Coverage": [
+        r"enter.*5G.*coverage",
+        r"move.*into.*5G",
+        r"non-5G.*to.*5G",
+        r"5G.*coverage.*area"
+    ],
+    "Change of PLMN": [
+        r"change.*PLMN",
+        r"new.*PLMN",
+        r"different.*PLMN",
+        r"PLMN.*change"
+    ],
+    "Change in Subscription": [
+        r"subscription.*change",
+        r"USIM.*update",
+        r"subscription.*information",
+        r"subscription.*data"
+    ],
+    "Registration Area Change": [
+        r"tracking.*area.*update.*fail",
+        r"TAU.*reject",
+        r"registration.*area.*change",
+        r"area.*update.*failure"
+    ],
+    "Loss of Connection": [
+        r"deregister.*AMF",
+        r"connection.*loss",
+        r"inactivity",
+        r"registration.*timer.*expir"
+    ],
+    "Explicit Deregistration": [
+        r"5GMM.*De-registration",
+        r"explicit.*deregister",
+        r"UE.*deregister",
+        r"voluntary.*deregister"
+    ],
+    "Security Context Change": [
+        r"security.*context.*lost",
+        r"NAS.*security.*reset",
+        r"security.*parameter.*change",
+        r"fresh.*security"
+    ],
+    "Emergency Registration": [
+        r"emergency.*call",
+        r"emergency.*registration",
+        r"emergency.*service",
+        r"emergency.*PDU"
     ]
 }
 
-Important: Your response must include ALL network elements and ALL messages listed above.The 'conditions' field must be a list (array) with square brackets [ ], even if empty: []
-
-Text to analyze:
-"""
 RELEVANT_KEYWORDS = [
     "registration procedure", 
     "5GMM",
@@ -122,6 +178,17 @@ RELEVANT_KEYWORDS = [
     "5GMM-DEREGISTERED",
     "REGISTRATION ACCEPT",
     "REGISTRATION REQUEST",
+    
+    # Initial registration specific keywords
+    "power on",
+    "startup",
+    "5G coverage",
+    "PLMN",
+    "subscription",
+    "tracking area",
+    "deregistration",
+    "security context",
+    "emergency",
     
     # Additional trigger-related keywords
     "trigger",
@@ -142,6 +209,63 @@ class ValidatedData:
         self.data = data
         self.validation_timestamp = datetime.now()
         self.is_validated = True
+
+class Node(BaseModel):
+    id: str
+    label: str
+    type: Literal["NetworkElement", "State", "Event"]
+
+class Edge(BaseModel):
+    from_: str = Field(..., alias="from")
+    to: str
+    label: str
+
+class Metadata(BaseModel):
+    procedureName: str
+    specReference: str
+    protocol: str
+    trigger: str
+    mandatoryMessages: List[str]
+
+class RegistrationProcedure(BaseModel):
+    procedure: str
+    trigger: str
+    nodes: List[Node]
+    edges: List[Edge]
+    metadata: Metadata
+
+    @validator("nodes")
+    def validate_node_types(cls, nodes):
+        network_elements = [n for n in nodes if n.type == "NetworkElement"]
+        states = [n for n in nodes if n.type == "State"]
+        events = [n for n in nodes if n.type == "Event"]
+        
+        if len(network_elements) < 2:
+            raise ValueError("Must have at least 2 network elements")
+        if len(states) < 4:
+            raise ValueError("Must have at least 4 states")
+        if len(events) < 3:
+            raise ValueError("Must have at least 3 events")
+        return nodes
+
+    @validator("edges")
+    def validate_edge_connections(cls, edges, values):
+        if "nodes" not in values:
+            return edges
+            
+        node_ids = {n.id for n in values["nodes"]}
+        for edge in edges:
+            if edge.from_ not in node_ids:
+                raise ValueError(f"Edge from node {edge.from_} does not exist")
+            if edge.to not in node_ids:
+                raise ValueError(f"Edge to node {edge.to} does not exist")
+        return edges
+
+class ExtractionResult(BaseModel):
+    procedures: List[RegistrationProcedure]
+    extraction_timestamp: datetime = Field(default_factory=datetime.now)
+    total_procedures: int = Field(0)
+    successful_extractions: int = Field(0)
 
 def initialize_llm():
     """Initialize LLM with error handling."""
@@ -244,216 +368,377 @@ def process_md_chunks(md_file_path: str, llm) -> List[Dict]:
 def validate_llm_output(data: dict) -> Optional[ValidatedData]:
     """Validate LLM output and clean data if needed"""
     try:
-        # Clean up data before validation
-        if "procedure_flow" in data:
-            for step in data["procedure_flow"]:
-                # Convert trigger from list to string if needed
-                if isinstance(step.get("trigger"), list):
-                    step["trigger"] = " ".join(step["trigger"])
-                
-                # Ensure conditions is a list
-                if "conditions" in step:
-                    if isinstance(step["conditions"], str):
-                        step["conditions"] = [step["conditions"]]
-                    elif step["conditions"] is None:
-                        step["conditions"] = []
+        # Define valid initial registration triggers
+        VALID_TRIGGERS = {
+            "Power On / UE Startup",
+            "Enter 5G Coverage",
+            "Change of PLMN",
+            "Change in Subscription",
+            "Registration Area Change",
+            "Loss of Connection",
+            "Explicit Deregistration",
+            "Security Context Change",
+            "Emergency Registration"
+        }
 
-        validated_data = RegistrationData(**data)
-        console.print("[green]✓ LLM output validation successful[/green]")
+        # Define valid message types
+        VALID_MESSAGE_TYPES = {
+            # Required messages
+            "Registration Request",
+            "Authentication Request",
+            "Authentication Vector Request",
+            "Authentication Response",
+            "Security Mode Command",
+            "Security Mode Complete",
+            "Registration Accept",
+            "Registration Complete",
+            # Optional messages
+            "Registration Reject",
+            "Identity Request",
+            "Identity Response",
+            "DL NAS Transport",
+            "UL NAS Transport"
+        }
+
+        # Check existing nodes for required messages
+        required_messages = {
+            "Registration Request": False,
+            "Authentication Request": False,
+            "Authentication Vector Request": False,
+            "Authentication Response": False,
+            "Security Mode Command": False,
+            "Security Mode Complete": False,
+            "Registration Accept": False,
+            "Registration Complete": False
+        }
+        
+        existing_nodes = data.get("nodes", [])
+        
+        # First pass: check existing messages
+        for node in existing_nodes:
+            msg_type = node.get("messageType", "")
+            if msg_type in required_messages:
+                required_messages[msg_type] = True
+
+        # Initialize nodes if empty or missing required messages
+        if not existing_nodes or not all(required_messages.values()):
+            if not existing_nodes:
+                data["nodes"] = []
+            
+            # Add missing mandatory messages while preserving existing ones
+            message_sequence = [
+                ("Registration Request", "UE", "AMF"),
+                ("Authentication Request", "AMF", "UE"),
+                ("Authentication Vector Request", "AUSF", "UDM"),
+                ("Authentication Response", "UE", "AMF"),
+                ("Security Mode Command", "AMF", "UE"),
+                ("Security Mode Complete", "UE", "AMF"),
+                ("Registration Accept", "AMF", "UE"),
+                ("Registration Complete", "UE", "AMF")
+            ]
+            
+            for i, (msg_type, source, target) in enumerate(message_sequence):
+                if not required_messages.get(msg_type, True):
+                    data["nodes"].append({
+                        "id": f"A{i + 1}",
+                        "label": f"{source} sends {msg_type}",
+                        "messageType": msg_type,
+                        "source": source,
+                        "target": target
+                    })
+
+        # Validate and clean nodes
+        for i, node in enumerate(data["nodes"]):
+            # Ensure required fields exist
+            if "id" not in node:
+                node["id"] = f"A{i + 1}"
+            if "label" not in node:
+                node["label"] = f"Step {i + 1}"
+            if "source" not in node:
+                node["source"] = "UE" if "UE" in node["label"] else "AMF"
+            if "target" not in node:
+                node["target"] = "AMF" if "AMF" in node["label"] else "UE"
+
+        # Generate edges if missing
+        if "edges" not in data or not data["edges"]:
+            data["edges"] = []
+            for i in range(len(data["nodes"]) - 1):
+                current_node = data["nodes"][i]
+                next_node = data["nodes"][i + 1]
+                data["edges"].append({
+                    "from": current_node["id"],
+                    "to": next_node["id"],
+                    "label": f"Step {i+1} to {i+2}"
+                })
+
+        # Validate trigger
+        if not data.get("trigger") or data["trigger"] not in VALID_TRIGGERS:
+            data["trigger"] = "Power On / UE Startup"  # Default trigger
+
+        # Create metadata if not present
+        if "metadata" not in data:
+            data["metadata"] = {
+                "procedureName": "Initial Registration",
+                "specReference": "3GPP TS 24.501",
+                "protocol": "5G NAS",
+                "parameters": {
+                    "SUPI": "Extracted if present",
+                    "GUTI": "Extracted if present",
+                    "5G-GUTI": "Assigned during registration",
+                    "SecurityContext": "Established during procedure"
+                }
+            }
+
+        # Convert to RegistrationData
+        validated_data = RegistrationData(
+            procedure=Procedure(
+                name="Initial Registration",
+                description="Complete 5G Initial Registration procedure"
+            ),
+            network_elements=[
+                NetworkElement(name="UE", type="Network Element", description="User Equipment"),
+                NetworkElement(name="AMF", type="Network Element", description="Access and Mobility Management Function"),
+                NetworkElement(name="AUSF", type="Network Element", description="Authentication Server Function"),
+                NetworkElement(name="UDM", type="Network Element", description="Unified Data Management")
+            ],
+            procedure_flow=[
+                ProcedureStep(
+                    sequence_number=i+1,
+                    source=node["source"],
+                    target=node["target"],
+                    message=node["label"],
+                    description=node.get("description", node["label"]),
+                    message_type=node.get("messageType"),
+                    conditions=[],
+                    timing=None
+                ) for i, node in enumerate(data["nodes"])
+            ]
+        )
+
         return ValidatedData(validated_data)
-    except ValidationError as e:
-        console.print("[red]LLM output validation failed:[/red]")
-        console.print(f"[red]{str(e)}[/red]")
+
+    except Exception as e:
+        console.print(f"[red]Validation error: {str(e)}[/red]")
+        console.print(traceback.format_exc())
         return None
 
 def verify_extraction(data: dict) -> bool:
-    """Verify if all required nodes and edges are extracted"""
-    
-    # Expected network elements
-    required_elements = {"UE", "AMF", "AUSF", "UDM", "SMF"}
-    
-    # Expected key messages in procedure
-    required_messages = {
-        "Registration Request",
-        "Authentication Request",
-        "Authentication Vector Request",
-        "Authentication Response",
-        "Security Mode Command",
-        "Security Mode Complete",
-        "Registration Accept",
-        "Registration Complete"
-    }
-    
-    # Check network elements
-    extracted_elements = {ne["name"] for ne in data.get("network_elements", [])}
-    missing_elements = required_elements - extracted_elements
-    
-    # Check procedure flow
-    extracted_messages = {step["message"] for step in data.get("procedure_flow", [])}
-    missing_messages = required_messages - extracted_messages
-    
-    # Print verification results
-    console.print("\n[blue]Verification Results:[/blue]")
-    
-    if missing_elements:
-        console.print(f"[red]Missing network elements: {', '.join(missing_elements)}[/red]")
-    else:
-        console.print(f"[green]✓ All required network elements found: {', '.join(extracted_elements)}[/green]")
+    """Verify if all required nodes and edges are extracted for initial registration"""
+    try:
+        # First try to validate using Pydantic model
+        try:
+            procedure = RegistrationProcedure(**data)
+            console.print("[green]✓ Basic structure validation passed[/green]")
+        except ValidationError as ve:
+            console.print(f"[red]Structure validation failed: {str(ve)}[/red]")
+            return False
+
+        # Verify network elements
+        network_elements = [n for n in procedure.nodes if n.type == "NetworkElement"]
+        required_elements = {"UE", "gNB", "AMF"}
+        found_elements = {ne.label.split('(')[0].strip() for ne in network_elements}
         
-    if missing_messages:
-        console.print(f"[red]Missing messages: {', '.join(missing_messages)}[/red]")
-    else:
-        console.print(f"[green]✓ All required messages found[/green]")
+        missing_elements = required_elements - found_elements
+        if missing_elements:
+            console.print(f"[red]Missing required network elements: {', '.join(missing_elements)}[/red]")
+            return False
+        else:
+            console.print(f"[green]✓ Found all required network elements: {', '.join(found_elements)}[/green]")
+
+        # Verify states
+        states = [n for n in procedure.nodes if n.type == "State"]
+        if len(states) < 4:
+            console.print(f"[red]Insufficient states: found {len(states)}, need at least 4[/red]")
+            return False
+        console.print(f"[green]✓ Found {len(states)} states[/green]")
+
+        # Verify events
+        events = [n for n in procedure.nodes if n.type == "Event"]
+        if len(events) < 3:
+            console.print(f"[red]Insufficient events: found {len(events)}, need at least 3[/red]")
+            return False
+        console.print(f"[green]✓ Found {len(events)} events[/green]")
+
+        # Verify edges connect existing nodes
+        node_ids = {n.id for n in procedure.nodes}
+        for edge in procedure.edges:
+            if edge.from_ not in node_ids:
+                console.print(f"[red]Edge references non-existent from node: {edge.from_}[/red]")
+                return False
+            if edge.to not in node_ids:
+                console.print(f"[red]Edge references non-existent to node: {edge.to}[/red]")
+                return False
+
+        console.print("[green]✓ All edges reference valid nodes[/green]")
+
+        # Verify mandatory messages in metadata
+        required_messages = {
+            "Registration Request",
+            "Registration Accept",
+            "Registration Complete"
+        }
         
-    # Verify sequence
-    steps = data.get("procedure_flow", [])
-    if steps:
-        console.print("\n[blue]Message Sequence:[/blue]")
-        for step in sorted(steps, key=lambda x: x["sequence_number"]):
-            console.print(f"[green]{step['sequence_number']}. {step['source']} -> {step['target']}: {step['message']}[/green]")
-    
-    return not (missing_elements or missing_messages)
+        found_messages = set(procedure.metadata.mandatoryMessages)
+        missing_messages = required_messages - found_messages
+        if missing_messages:
+            console.print(f"[red]Missing mandatory messages: {', '.join(missing_messages)}[/red]")
+            return False
+        console.print("[green]✓ All mandatory messages present[/green]")
+
+        # Verify trigger is valid
+        valid_triggers = {
+            "Power On / UE Startup",
+            "Enter 5G Coverage",
+            "Change of PLMN",
+            "Change in Subscription",
+            "Registration Area Change",
+            "Loss of Connection",
+            "Explicit Deregistration",
+            "Security Context Change",
+            "Emergency Registration"
+        }
+
+        if not any(trigger.lower() in procedure.trigger.lower() for trigger in valid_triggers):
+            console.print(f"[red]Invalid trigger: {procedure.trigger}[/red]")
+            return False
+        console.print(f"[green]✓ Valid trigger: {procedure.trigger}[/green]")
+
+        # All checks passed
+        console.print("\n[green]✓ Extraction verification completed successfully[/green]")
+        return True
+
+    except Exception as e:
+        console.print(f"[red]Error during verification: {str(e)}[/red]")
+        console.print(traceback.format_exc())
+        return False
 
 def process_chunk(doc: Document, llm: Any) -> Dict:
     try:
         chunk_info = f"Processing chunk {doc.metadata['chunk_index'] + 1}/{doc.metadata['total_chunks']}"
         console.print(f"\n[blue]{chunk_info}[/blue]")
         
-        if not is_relevant_chunk(doc.page_content):
-            console.print("[yellow]Skipping irrelevant chunk[/yellow]")
-            return None
-            
-        console.print("[green]Processing relevant chunk...[/green]")
-        
-        # Debug: Show chunk content
+        # Debug: Show chunk content preview
+        preview = doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
         console.print("\n[blue]Chunk content preview:[/blue]")
-        console.print(doc.page_content[:200])
+        console.print(preview)
         
         messages = [
-            SystemMessage(content="You are a 5G expert. Return ONLY a valid JSON object, nothing else."),
-            HumanMessage(content=EXTRACTION_PROMPT + doc.page_content)
+            SystemMessage(content=EXTRACTION_PROMPT),
+            HumanMessage(content=f"Extract ALL initial registration triggers and their flows from this text:\n\n{doc.page_content}")
         ]
-        
-        # Extract and verify registration-specific triggers
-        additional_triggers = extract_additional_triggers(doc.page_content)
-        if additional_triggers:
-            console.print("\n[blue]Found Initial Registration triggers:[/blue]")
-            verified_triggers = []
-            
-            for trigger in additional_triggers:
-                if verify_registration_trigger(trigger):
-                    verified_triggers.append(trigger)
-                    console.print(f"[green]✓ {trigger}[/green]")
-                else:
-                    console.print(f"[yellow]? {trigger} (not specific to Initial Registration)[/yellow]")
-            
-            # Use only verified triggers
-            additional_triggers = verified_triggers
-        
-        # Add to LLM context if found
-        if additional_triggers:
-            context = "\nAdditional triggers found in text:\n" + "\n".join(f"- {t}" for t in additional_triggers)
-            messages.append(HumanMessage(content=context))
         
         try:
             # Call LLM
             response = llm.invoke(messages)
-            
-            # Debug: Show raw response
-            console.print("\n[blue]LLM Raw Response:[/blue]")
-            console.print(response.content)
-            
-            # Clean response text
             response_text = response.content.strip()
+            
+            # Debug: Show raw LLM response
+            console.print("\n[blue]Raw LLM Response:[/blue]")
+            console.print(response_text)
             
             # Find JSON in response
             json_start = response_text.find('{')
             json_end = response_text.rfind('}') + 1
             
             if json_start >= 0 and json_end > 0:
+                json_str = response_text[json_start:json_end]
+                console.print("\n[blue]Attempting to parse JSON[/blue]")
+                
                 try:
-                    json_str = response_text[json_start:json_end]
-                    console.print("\n[blue]Extracted JSON:[/blue]")
-                    console.print(json_str)
+                    # Remove any markdown formatting
+                    json_str = re.sub(r'```json\s*|\s*```', '', json_str)
+                    json_str = json_str.strip()
                     
+                    # Parse the JSON
                     data = json.loads(json_str)
-                    if verify_complete_response(data):
-                        validated_data = validate_llm_output(data)
-                        if validated_data:
-                            return validated_data
+                    
+                    # Validate using Pydantic
+                    try:
+                        # Convert to RegistrationProcedure model
+                        procedure = RegistrationProcedure(**data)
+                        console.print("[green]✓ Successfully validated registration procedure[/green]")
+                        
+                        # Return validated data
+                        return procedure.model_dump()
+                    except ValidationError as ve:
+                        console.print(f"[red]Validation error: {str(ve)}[/red]")
+                        # Return raw data for debugging
+                        return {
+                            "error": f"Validation failed: {str(ve)}",
+                            "raw_data": data
+                        }
+                        
                 except json.JSONDecodeError as e:
                     console.print(f"[red]JSON Parse Error: {str(e)}[/red]")
-                    console.print(f"[yellow]Attempted to parse:[/yellow]\n{json_str[:200]}...")
+                    console.print(f"[yellow]Attempted to parse:[/yellow]\n{json_str[:1000]}...")
+                    return {"error": f"JSON parse error: {str(e)}"}
             else:
                 console.print("[red]No JSON structure found in response[/red]")
-            
-            return None
+                return {"error": "No JSON found in response"}
                 
         except Exception as e:
             console.print(f"[red]Error calling LLM: {str(e)}[/red]")
             console.print(traceback.format_exc())
-            return None
+            return {"error": f"LLM error: {str(e)}"}
             
     except Exception as e:
         console.print(f"[red]Error processing chunk: {str(e)}[/red]")
         console.print(traceback.format_exc())
-        return None
+        return {"error": f"Processing error: {str(e)}"}
 
 def verify_complete_response(data: dict) -> bool:
     """Verify if response contains all required elements including additional triggers"""
     
     # Check basic structure
-    required_keys = {"procedure", "network_elements", "procedure_flow"}
+    required_keys = {"procedure", "nodes", "edges", "metadata"}
     if not all(key in data for key in required_keys):
         console.print("[red]Missing required sections in response[/red]")
         return False
         
-    # Check network elements (must have all 5)
-    required_elements = {"UE", "AMF", "AUSF", "UDM", "SMF"}
-    found_elements = {ne["name"] for ne in data.get("network_elements", [])}
-    if not required_elements.issubset(found_elements):
-        console.print(f"[red]Missing network elements: {required_elements - found_elements}[/red]")
-        return False
+    try:
+        # Validate using Pydantic model
+        procedure = RegistrationProcedure(**data)
         
-    # Check procedure flow (must have all 8 messages)
-    required_messages = {
-        "Registration Request",
-        "Authentication Request",
-        "Authentication Vector Request",
-        "Authentication Response",
-        "Security Mode Command",
-        "Security Mode Complete",
-        "Registration Accept",
-        "Registration Complete"
-    }
-    found_messages = {step["message"] for step in data.get("procedure_flow", [])}
-    if not required_messages.issubset(found_messages):
-        console.print(f"[red]Missing messages: {required_messages - found_messages}[/red]")
-        return False
+        # Check network elements (must have all required)
+        network_elements = [n for n in procedure.nodes if n.type == "NetworkElement"]
+        required_elements = {"UE", "gNB", "AMF"}
+        found_elements = {ne.label.split('(')[0].strip() for ne in network_elements}
+        if not required_elements.issubset(found_elements):
+            console.print(f"[red]Missing network elements: {required_elements - found_elements}[/red]")
+            return False
+            
+        # Check states (must have at least 4)
+        states = [n for n in procedure.nodes if n.type == "State"]
+        if len(states) < 4:
+            console.print("[red]Insufficient states[/red]")
+            return False
+            
+        # Check events (must have at least 3)
+        events = [n for n in procedure.nodes if n.type == "Event"]
+        if len(events) < 3:
+            console.print("[red]Insufficient events[/red]")
+            return False
+            
+        # Check mandatory messages
+        required_messages = {
+            "Registration Request",
+            "Registration Accept",
+            "Registration Complete"
+        }
+        if not required_messages.issubset(set(procedure.metadata.mandatoryMessages)):
+            console.print("[red]Missing mandatory messages[/red]")
+            return False
+            
+        # All checks passed
+        console.print("[green]✓ Response verification complete - all elements present[/green]")
+        return True
         
-    # Check if procedure flow has correct sequence numbers
-    flow_steps = data.get("procedure_flow", [])
-    if not flow_steps or len(flow_steps) < 8:
-        console.print("[red]Incomplete procedure flow[/red]")
+    except ValidationError as ve:
+        console.print(f"[red]Validation error: {str(ve)}[/red]")
         return False
-        
-    # Check if conditions are present and non-empty
-    for step in flow_steps:
-        if not step.get("conditions"):
-            console.print(f"[yellow]Warning: Missing conditions for step {step['sequence_number']}: {step['message']}[/yellow]")
-            # Add default conditions based on message type
-            if "Registration Request" in step["message"]:
-                step["conditions"] = ["No current registration exists", "UE in 5GMM-DEREGISTERED state"]
-            elif "Authentication" in step["message"]:
-                step["conditions"] = ["Security context not exists", "Authentication required"]
-            elif "Security Mode" in step["message"]:
-                step["conditions"] = ["Authentication successful", "Security capabilities received"]
-            else:
-                step["conditions"] = ["Prerequisite steps completed"]
-    
-    # All checks passed
-    console.print("[green]✓ Response verification complete - all elements present[/green]")
-    return True
+    except Exception as e:
+        console.print(f"[red]Error during verification: {str(e)}[/red]")
+        return False
 
 @retry(
     stop=stop_after_attempt(MAX_RETRIES),
@@ -530,62 +815,66 @@ def is_relevant_chunk(text: str) -> bool:
     return has_standard_keywords or has_trigger_pattern
 
 def extract_additional_triggers(text: str) -> List[str]:
-    """Extract triggers specifically related to 5G Initial Registration"""
-    triggers = []
+    """Extract initial registration triggers from text."""
+    found_triggers = []
     
-    # Keywords specific to Initial Registration
-    registration_keywords = [
-        "initial registration", "5gmm-deregistered",
-        "registration request", "registration accept",
-        "authentication", "security mode", "registration complete"
-    ]
+    # Define trigger patterns for each category
+    INITIAL_REGISTRATION_TRIGGERS = {
+        "Power On": [
+            r"power.*on",
+            r"UE.*start",
+            r"initial.*power",
+            r"device.*start"
+        ],
+        "Enter 5G Coverage": [
+            r"enter.*5G",
+            r"5G.*coverage",
+            r"move.*to.*5G",
+            r"detect.*5G"
+        ],
+        "Change of PLMN": [
+            r"change.*PLMN",
+            r"new.*PLMN",
+            r"different.*PLMN",
+            r"PLMN.*selection"
+        ],
+        "Change in Subscription": [
+            r"subscription.*change",
+            r"USIM.*update",
+            r"new.*subscription",
+            r"modify.*subscription"
+        ],
+        "Registration Area Change": [
+            r"area.*change",
+            r"new.*area",
+            r"different.*area",
+            r"tracking.*area"
+        ]
+    }
     
-    # Network elements involved in Initial Registration
-    network_elements = [
-        "UE", "AMF", "AUSF", "UDM", "SMF", "NSSF", 
-        "PCF", "SMSF", "HSS", "GGSF"
-    ]
+    # Check each trigger category and its patterns
+    for trigger_name, patterns in INITIAL_REGISTRATION_TRIGGERS.items():
+        for pattern in patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                if trigger_name not in found_triggers:
+                    found_triggers.append(trigger_name)
+                    console.print(f"[green]✓ Found trigger: {trigger_name}[/green]")
+                    break
     
-    # Patterns for trigger extraction
-    patterns = [
-        r"(?:initial|new)\s+registration\s+(?:when|if)\s+(.*?)(?:[\.,]|$)",
-        r"(?:UE|AMF)\s+initiates?\s+(?:initial)?\s*registration\s+(?:when|if)\s+(.*?)(?:[\.,]|$)",
-        r"registration\s+(?:request|procedure)\s+is\s+triggered\s+(?:when|if)\s+(.*?)(?:[\.,]|$)"
-    ]
+    if not found_triggers:
+        console.print("[yellow]No specific initial registration triggers found[/yellow]")
     
-    for pattern in patterns:
-        matches = re.finditer(pattern, text, re.IGNORECASE)
-        for match in matches:
-            trigger = match.group(1).strip()
-            
-            # Validate trigger
-            is_valid = (
-                any(kw.lower() in trigger.lower() for kw in registration_keywords) and
-                any(ne.lower() in trigger.lower() for ne in network_elements) and
-                len(trigger.split()) >= 3
-            )
-            
-            if is_valid:
-                trigger = trigger.strip('.,;: ')
-                trigger = re.sub(r'\s+', ' ', trigger)
-                if trigger not in triggers:
-                    triggers.append(trigger)
-                    console.print(f"[green]✓ Valid trigger: {trigger}[/green]")
-    
-    return triggers
+    return found_triggers
 
 def verify_registration_trigger(trigger: str) -> bool:
     """Verify if a trigger is related to Initial Registration"""
-    registration_indicators = [
-        "initial registration",
-        "registration request",
-        "first time registration",
-        "new registration",
-        "5gmm-deregistered",
-        "registration procedure"
-    ]
-    
-    return any(indicator.lower() in trigger.lower() for indicator in registration_indicators)
+    # Check if the trigger matches any known trigger category
+    return any(
+        trigger_name.lower() in trigger.lower() or
+        any(re.search(pattern, trigger, re.IGNORECASE) 
+            for pattern in patterns)
+        for trigger_name, patterns in INITIAL_REGISTRATION_TRIGGERS.items()
+    )
 
 def save_results(results: List[Dict], output_file: str):
     """Save results to JSON file with better error handling."""
@@ -595,103 +884,77 @@ def save_results(results: List[Dict], output_file: str):
             console.print("[yellow]No results to save[/yellow]")
             return
 
-        # Convert ValidatedData objects to dictionaries
+        # Process results to ensure they can be serialized
         processed_results = []
         for result in results:
-            if hasattr(result, 'data'):
-                # Convert Pydantic model to dict
-                result_dict = result.data.model_dump()
-                processed_results.append(result_dict)
+            if isinstance(result, dict):
+                if "error" not in result:
+                    try:
+                        # Validate using Pydantic model
+                        procedure = RegistrationProcedure(**result)
+                        processed_results.append(procedure.model_dump())
+                    except ValidationError as ve:
+                        console.print(f"[yellow]Skipping invalid result: {str(ve)}[/yellow]")
+                else:
+                    console.print(f"[yellow]Skipping result with error: {result['error']}[/yellow]")
+            elif hasattr(result, 'model_dump'):
+                processed_results.append(result.model_dump())
             else:
-                console.print(f"[yellow]Skipping invalid result: {result}[/yellow]")
+                console.print(f"[yellow]Warning: Skipping invalid result of type {type(result)}[/yellow]")
 
-        output_data = {
-            'metadata': {
-                'extraction_time': datetime.now().isoformat(),
-                'total_documents': len(processed_results)
-            },
-            'results': processed_results
-        }
+        # Create output data structure
+        output_data = ExtractionResult(
+            procedures=processed_results,
+            total_procedures=len(results),
+            successful_extractions=len(processed_results)
+        )
 
         # Debug info
-        console.print(f"\n[blue]Saving {len(processed_results)} results to {output_file}[/blue]")
+        console.print(f"\n[blue]Saving {len(processed_results)} processed results to {output_file}[/blue]")
         
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
         # Save JSON
         with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(output_data, f, indent=2, ensure_ascii=False)
+            json.dump(output_data.model_dump(), f, indent=2, ensure_ascii=False)
             
         # Verify file was saved correctly
         if os.path.exists(output_file):
             file_size = os.path.getsize(output_file)
             console.print(f"[green]✓ Results saved successfully ({file_size} bytes)[/green]")
+            
+            # Show first few lines of saved file for debugging
+            try:
+                with open(output_file, 'r', encoding='utf-8') as f:
+                    first_lines = ''.join([next(f) for _ in range(10)])
+                console.print("[blue]Preview of saved file:[/blue]")
+                console.print(first_lines)
+            except Exception as e:
+                console.print(f"[yellow]Warning: Could not read back file for verification: {str(e)}[/yellow]")
         else:
             console.print("[red]Error: File not created[/red]")
 
     except Exception as e:
         console.print(f"[red]Error saving results: {str(e)}[/red]")
         console.print(traceback.format_exc())
-
-def save_results_to_md(results: List[Dict], output_file: str):
-    """Save results to markdown file with better error handling."""
-    try:
-        if not results:
-            console.print("[yellow]No results to save to markdown[/yellow]")
-            return
-
-        # Create directory if it doesn't exist
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write("# 5G Initial Registration Analysis\n\n")
-            
-            for result in results:
-                if hasattr(result, 'data'):
-                    data = result.data.model_dump()
-                    
-                    # Write procedure info
-                    f.write(f"## {data['procedure']['name']}\n")
-                    f.write(f"{data['procedure']['description']}\n\n")
-                    
-                    # Write network elements
-                    f.write("### Network Elements\n")
-                    for element in data['network_elements']:
-                        f.write(f"- **{element['name']}**: {element['description']}\n")
-                    f.write("\n")
-                    
-                    # Write procedure flow
-                    f.write("### Procedure Flow\n")
-                    for step in data['procedure_flow']:
-                        f.write(f"\n#### {step['sequence_number']}. {step['message']}\n")
-                        f.write(f"- **Source**: {step['source']}\n")
-                        f.write(f"- **Target**: {step['target']}\n")
-                        f.write(f"- **Description**: {step['description']}\n")
-                        if step.get('source_state'):
-                            f.write(f"- **Source State**: {step['source_state']}\n")
-                        if step.get('target_state'):
-                            f.write(f"- **Target State**: {step['target_state']}\n")
-                        if step.get('trigger'):
-                            f.write(f"- **Trigger**: {step['trigger']}\n")
-                        if step.get('conditions'):
-                            f.write("- **Conditions**:\n")
-                            for condition in step['conditions']:
-                                f.write(f"  - {condition}\n")
-                        if step.get('timing'):
-                            f.write(f"- **Timing**: {step['timing']}\n")
-                    f.write("\n---\n\n")
-
-        # Verify file was saved correctly
-        if os.path.exists(output_file):
-            file_size = os.path.getsize(output_file)
-            console.print(f"[green]✓ Markdown saved successfully ({file_size} bytes)[/green]")
-        else:
-            console.print("[red]Error: Markdown file not created[/red]")
-
-    except Exception as e:
-        console.print(f"[red]Error saving markdown: {str(e)}[/red]")
-        console.print(traceback.format_exc())
+        
+        # Try to save backup with error info
+        try:
+            backup_file = output_file.replace('.json', '_backup.json')
+            with open(backup_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'error': str(e),
+                    'metadata': {
+                        'timestamp': datetime.now().isoformat(),
+                        'total_results': len(results),
+                        'successful_results': len(processed_results)
+                    },
+                    'raw_results': results
+                }, f, indent=2, ensure_ascii=False)
+            console.print(f"[yellow]Saved backup to {backup_file}[/yellow]")
+        except Exception as backup_error:
+            console.print(f"[red]Failed to save backup: {str(backup_error)}[/red]")
 
 def save_intermediate_results(results: List[ValidatedData], output_dir: str):
     """Save already validated results"""
@@ -732,14 +995,13 @@ def main():
 
         # Save final results to JSON and MD file
         save_results(all_results, OUTPUT_FILE)
-        save_results_to_md(all_results, OUTPUT_MD_FILE)
         console.print("[green]✓ Processing completed successfully[/green]")
 
         # After processing chunks
         for result in all_results:
             if result:
                 console.print("\n[blue]Verifying extraction result:[/blue]")
-                verify_extraction(result.data.dict())
+                verify_extraction(result)
 
     except Exception as e:
         console.print(f"[red]Error in main process: {str(e)}[/red]")

@@ -508,7 +508,7 @@ def verify_extraction(data: dict) -> bool:
     
     if is_valid:
         console.print("\n[green]✓ Periodic Registration extraction verified successfully[/green]")
-                else:
+    else:
         console.print("\n[red]Periodic Registration extraction verification failed[/red]")
     
     return is_valid
@@ -594,10 +594,10 @@ def process_chunk(doc: Document, llm: Any) -> List[Dict]:
             json_end = response_text.rfind(']') + 1
             
             if json_start >= 0 and json_end > 0:
+                json_str = response_text[json_start:json_end]
+                console.print("\n[blue]Attempting to parse JSON array[/blue]")
+                
                 try:
-                    json_str = response_text[json_start:json_end]
-                    console.print("\n[blue]Attempting to parse JSON array[/blue]")
-                    
                     # Remove any markdown formatting
                     json_str = re.sub(r'```json\s*|\s*```', '', json_str)
                     json_str = json_str.strip()
@@ -633,21 +633,12 @@ def process_chunk(doc: Document, llm: Any) -> List[Dict]:
                         validated_data = validate_llm_output(data)
                         if validated_data and verify_extraction(validated_data.data.model_dump()):
                             console.print(f"[green]✓ Successfully validated data for trigger: {data.get('trigger', 'unknown')}[/green]")
-                            # Debug: Show validated structure
-                            console.print("\n[blue]Validated Data Structure:[/blue]")
-                            console.print(json.dumps(validated_data.data.model_dump(), indent=2))
                             results.append(validated_data.data.model_dump())
                         else:
                             console.print(f"[yellow]Failed to validate data for trigger: {data.get('trigger', 'unknown')}[/yellow]")
                     
-                    if not results:
-                        console.print("[yellow]No valid triggers found in response[/yellow]")
-                    else:
-                        console.print(f"[green]✓ Found {len(results)} valid triggers[/green]")
-                    
                     return results
-                        
-            except json.JSONDecodeError as e:
+                except json.JSONDecodeError as e:
                     console.print(f"[red]JSON Parse Error: {str(e)}[/red]")
                     console.print(f"[yellow]Attempted to parse:[/yellow]\n{json_str[:1000]}...")
                     return []

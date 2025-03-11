@@ -159,9 +159,10 @@ class PeriodicRegistrationNeo4j:
 
                 # Create metadata node
                 session.run("""
-                    CREATE (m:Metadata)
-                    SET m += $props
-                """, {'props': metadata_props})
+                    MERGE (m:Metadata {type: $type})
+                    ON CREATE SET m += $props
+                    ON MATCH SET m += $props
+                """, {'type': metadata_props['type'], 'props': metadata_props})
 
                 console.print("[green]✓ Stored metadata[/green]")
 
