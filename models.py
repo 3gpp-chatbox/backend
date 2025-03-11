@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Union, Dict
+from typing import List, Optional, Union, Dict, Any
 
 class NetworkElement(BaseModel):
     name: str
@@ -63,15 +63,31 @@ class PeriodicRegistrationStep(ProcedureStep):
 
 class PeriodicRegistrationMetadata(BaseModel):
     procedureName: str = Field(default="Periodic Registration Update")
-    specReference: str
+    specReference: str = Field(default="3GPP TS 24.501")
     protocol: str = Field(default="5G NAS")
     timer: Optional[str] = None
+    parameters: Optional[Dict[str, str]] = Field(default_factory=dict)
+
+class Node(BaseModel):
+    id: str
+    label: str
+    source: str
+    target: str
+    messageType: Optional[str] = None
+    type: Optional[str] = None
+
+class Edge(BaseModel):
+    from_: str = Field(alias="from")
+    to: str
+    label: str
+    condition: Optional[str] = None
 
 class PeriodicRegistrationData(BaseModel):
+    procedure: str = Field(default="Periodic Registration")
     trigger: str
-    description: str
-    nodes: List[Dict]
-    edges: List[Dict]
+    description: str = Field(default="Periodic Registration Update procedure")
+    nodes: List[Dict[str, Any]]
+    edges: List[Dict[str, Any]]
     metadata: PeriodicRegistrationMetadata
     network_elements: List[NetworkElement]
     procedure_flow: List[PeriodicRegistrationStep] 

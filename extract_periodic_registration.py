@@ -37,26 +37,36 @@ RATE_LIMIT_DELAY = 1
 MAX_RETRIES = 3
 
 RELEVANT_KEYWORDS = [
-    "registration",
     "periodic registration",
-    "registration procedure",
-    "5G NAS",
-    "UE",
-    "AMF",
-    "timer",
+    "registration update",
     "T3512",
-    "RAT",
-    "TA List",
-    "NSSAI",
-    "Service Area"
+    "timer expiry",
+    "rat change",
+    "tracking area",
+    "nssai",
+    "service area",
+    "registration accept",
+    "registration request",
+    "5GMM-REGISTERED",
+    
+    # Additional trigger-related keywords
+    "trigger",
+    "initiated by",
+    "caused by",
+    "when",
+    "if",
+    "condition",
+    "change",
+    "update",
+    "modification"
 ]
 
-EXTRACTION_PROMPT = '''You are an expert in 5G NAS signaling procedures as defined in 3GPP TS 24.501. Your task is to extract the execution flow of the Periodic Registration Procedure for each trigger and return it as structured JSON data for visualization.
+EXTRACTION_PROMPT = '''You are an expert in 5G NAS signaling procedures as defined in 3GPP TS 24.501. Your task is to extract the complete execution flow of the Periodic Registration Procedure for each trigger and return it as structured JSON data for visualization.
 
 IMPORTANT: Each procedure flow MUST include these three mandatory messages in order:
-1. Registration Request (from UE to AMF)
-2. Registration Accept (from AMF to UE)
-3. Registration Complete (from UE to AMF)
+1. Registration Request (UE → AMF)
+2. Registration Accept (AMF → UE)
+3. Registration Complete (UE → AMF)
 
 Triggers for Periodic Registration Procedure:
 1. T3512 Timer Expiry (UE-initiated periodic registration)
@@ -65,52 +75,67 @@ Triggers for Periodic Registration Procedure:
 4. Change in Network Slice Selection Assistance Information (NSSAI)
 5. Change in Service Area
 
-For each trigger, follow these steps:
+### **Extraction Requirements:**
+1. **Complete Message Extraction:**  
+   - Extract all NAS signaling messages exchanged between UE and AMF, not just the three mandatory ones.  
+   - Include optional messages such as Identity Request/Response, Authentication Request/Response, and any failure messages.  
 
-1. Identify the event that triggers Periodic Registration.
-2. Extract the sequence of signaling messages exchanged between UE (User Equipment) and AMF (Access and Mobility Management Function).
-3. Identify decision points where different outcomes are possible.
-4. Return the execution flow as JSON, structured as a directed graph, where:
-   - Nodes represent states or messages (MUST include all three mandatory messages).
-   - Edges define the transitions between states/messages.
+2. **Decision Points and Alternative Flows:**  
+   - Identify and include failure scenarios (e.g., AMF rejects request, retransmission, fallback to another RAT).  
+   - Indicate alternative flows based on network conditions (e.g., active PDU session vs. inactive PDU session).  
 
-Expected JSON Output Format:
-For each trigger, return JSON in this format:
+3. **JSON Structure and Formatting:**  
+   - **Nodes** represent individual steps in the procedure (e.g., UE detects timer expiry, sends message, waits for response).  
+   - **Edges** must explicitly define the transition between steps, including retry attempts if applicable.  
+   - **Node IDs** must be structured as `"A1"`, `"A2"`, etc., maintaining logical sequencing.  
 
+4. **Metadata Extraction:**  
+   - Extract and include key parameters such as GUTI, TMSI, network slice information, and timer values.  
+   - Identify whether authentication/security updates occur during the procedure.  
+
+### **Expected JSON Format example:**
 {
   "procedure": "Periodic Registration",
   "trigger": "T3512 Timer Expiry",
   "nodes": [
-    { "id": "1", "label": "UE detects timer expiry" },
-    { "id": "2", "label": "UE sends Registration Request", "messageType": "Registration Request" },
-    { "id": "3", "label": "AMF processes request" },
-    { "id": "4", "label": "AMF sends Registration Accept", "messageType": "Registration Accept" },
-    { "id": "5", "label": "UE sends Registration Complete", "messageType": "Registration Complete" },
-    { "id": "6", "label": "UE updates registration timer" }
+    { "id": "A1", "label": "UE detects timer expiry", "source": "UE", "target": "UE" },
+    { "id": "A2", "label": "UE sends Registration Request", "messageType": "Registration Request", "source": "UE", "target": "AMF" },
+    { "id": "A3", "label": "AMF processes request", "source": "AMF", "target": "AMF" },
+    { "id": "A4", "label": "AMF decision point: Accept or Reject?", "source": "AMF", "target": "AMF", "type": "decision" },
+    
+    { "id": "A5", "label": "AMF sends Registration Accept", "messageType": "Registration Accept", "source": "AMF", "target": "UE" },
+    { "id": "A6", "label": "UE sends Registration Complete", "messageType": "Registration Complete", "source": "UE", "target": "AMF" },
+    { "id": "A7", "label": "UE updates registration timer", "source": "UE", "target": "UE" },
+
+    { "id": "B1", "label": "AMF rejects registration", "messageType": "Registration Reject", "source": "AMF", "target": "UE", "type": "error" },
+    { "id": "B2", "label": "UE retries Registration Request after T3512 expiry", "source": "UE", "target": "AMF" }
   ],
   "edges": [
-    { "from": "1", "to": "2", "label": "Trigger detected" },
-    { "from": "2", "to": "3", "label": "NAS message sent to AMF" },
-    { "from": "3", "to": "4", "label": "AMF accepts registration" },
-    { "from": "4", "to": "5", "label": "UE acknowledges" },
-    { "from": "5", "to": "6", "label": "Periodic registration complete" }
+    { "from": "A1", "to": "A2", "label": "Trigger detected" },
+    { "from": "A2", "to": "A3", "label": "NAS message sent to AMF" },
+    { "from": "A3", "to": "A4", "label": "AMF processes request" },
+    
+    { "from": "A4", "to": "A5", "label": "AMF accepts registration", "condition": "Success" },
+    { "from": "A5", "to": "A6", "label": "UE acknowledges" },
+    { "from": "A6", "to": "A7", "label": "Periodic registration complete" },
+
+    { "from": "A4", "to": "B1", "label": "AMF rejects registration", "condition": "Failure" },
+    { "from": "B1", "to": "B2", "label": "UE retries after T3512 expiry" }
   ],
   "metadata": {
     "procedureName": "Periodic Registration Update",
     "specReference": "3GPP TS 24.501",
     "protocol": "5G NAS",
-    "timer": "T3512"
+    "timer": "T3512",
+    "parameters": {
+      "GUTI": "Extracted if present",
+      "TMSI": "Extracted if present",
+      "NSSAI": "Extracted if applicable",
+      "SecurityContext": "Updated/Reused"
+    }
   }
 }
-
-REQUIREMENTS:
-1. Each response MUST include all three mandatory messages (Registration Request, Accept, and Complete)
-2. Node IDs MUST be in format "A1", "A2", etc. for proper sequencing
-3. Each node MUST have a source and target (either UE or AMF)
-4. Edges MUST connect all nodes in sequence
-5. MessageType MUST be explicitly set for the three mandatory messages
-
-Extract the complete procedure flow from the provided text, including all messages, parameters, conditions, and outcomes. Do not use default values - only extract what is explicitly mentioned in the text.'''
+'''
 
 class ValidatedData:
     def __init__(self, data: PeriodicRegistrationData):
@@ -214,234 +239,169 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
             "Change in Service Area"
         }
 
-        # Ensure nodes exist and have required messages
-        if "nodes" not in data or not isinstance(data["nodes"], list):
-            data["nodes"] = [
-                {"id": "A1", "label": "UE detects trigger condition", "source": "UE", "target": "UE"},
-                {"id": "A2", "label": "UE sends Registration Request", "source": "UE", "target": "AMF", "messageType": "Registration Request"},
-                {"id": "A3", "label": "AMF sends Registration Accept", "source": "AMF", "target": "UE", "messageType": "Registration Accept"},
-                {"id": "A4", "label": "UE sends Registration Complete", "source": "UE", "target": "AMF", "messageType": "Registration Complete"}
-            ]
+        # Define valid message types that can appear in the procedure
+        VALID_MESSAGE_TYPES = {
+            # Required messages
+            "Registration Request",
+            "Registration Accept",
+            "Registration Complete",
+            # Optional messages
+            "Authentication Request",
+            "Authentication Response",
+            "Security Mode Command",
+            "Security Mode Complete",
+            "Identity Request",
+            "Identity Response",
+            "DL NAS Transport",
+            "UL NAS Transport",
+            "Registration Reject",
+            "Configuration Update Command",
+            "Configuration Update Complete"
+        }
 
-        # Ensure edges exist
-        if "edges" not in data or not data["edges"]:
-            data["edges"] = []
-            nodes = data["nodes"]
-            for i in range(len(nodes) - 1):
-                data["edges"].append({
-                    "from": nodes[i]["id"],
-                    "to": nodes[i + 1]["id"],
-                    "label": f"Step {i+1} to {i+2}"
+        # Check existing nodes for required messages
+        has_request = False
+        has_accept = False
+        has_complete = False
+        existing_nodes = data.get("nodes", [])
+        
+        # First pass: check existing messages
+        for node in existing_nodes:
+            msg_type = node.get("messageType", "").lower()
+            if "registration request" in msg_type:
+                has_request = True
+            elif "registration accept" in msg_type:
+                has_accept = True
+            elif "registration complete" in msg_type:
+                has_complete = True
+
+        # Initialize nodes if empty or missing required messages
+        if not existing_nodes or not (has_request and has_accept and has_complete):
+            if not existing_nodes:
+                data["nodes"] = []
+            
+            # Add missing mandatory messages while preserving existing ones
+            if not has_request:
+                data["nodes"].insert(0, {
+                    "id": "A1",
+                    "label": "UE sends Registration Request",
+                    "source": "UE",
+                    "target": "AMF",
+                    "messageType": "Registration Request"
+                })
+            
+            if not has_accept:
+                # Insert before Registration Complete if it exists
+                insert_pos = len(data["nodes"])
+                for i, node in enumerate(data["nodes"]):
+                    if "registration complete" in node.get("messageType", "").lower():
+                        insert_pos = i
+                        break
+                data["nodes"].insert(insert_pos, {
+                    "id": f"A{insert_pos + 1}",
+                    "label": "AMF sends Registration Accept",
+                    "source": "AMF",
+                    "target": "UE",
+                    "messageType": "Registration Accept"
+                })
+            
+            if not has_complete:
+                data["nodes"].append({
+                    "id": f"A{len(data['nodes']) + 1}",
+                    "label": "UE sends Registration Complete",
+                    "source": "UE",
+                    "target": "AMF",
+                    "messageType": "Registration Complete"
                 })
 
-        # Ensure network elements exist
-        if "network_elements" not in data:
-            data["network_elements"] = [
-                {
-                    "name": "UE",
-                    "type": "Network Element",
-                    "description": "User Equipment initiating periodic registration"
-                },
-                {
-                    "name": "AMF",
-                    "type": "Network Element",
-                    "description": "Access and Mobility Management Function handling registration"
-                }
-            ]
+        # Validate and clean nodes
+        for i, node in enumerate(data["nodes"]):
+            # Ensure required fields exist
+            if "id" not in node:
+                node["id"] = f"A{i + 1}"
+            if "label" not in node:
+                node["label"] = f"Step {i + 1}"
+            if "source" not in node:
+                node["source"] = "UE" if "UE" in node["label"] else "AMF"
+            if "target" not in node:
+                node["target"] = "AMF" if "AMF" in node["label"] else "UE"
 
-        # Clean up data before validation
-        if "nodes" in data and isinstance(data["nodes"], list):
-            # Ensure required messages exist
-            has_request = False
-            has_accept = False
-            has_complete = False
-            
-            for node in data["nodes"]:
-                # Set message type based on label content
-                label = node.get("label", "").lower()
-                if "registration request" in label:
-                    node["messageType"] = "Registration Request"
-                    has_request = True
-                elif "registration accept" in label:
-                    node["messageType"] = "Registration Accept"
-                    has_accept = True
-                elif "registration complete" in label:
-                    node["messageType"] = "Registration Complete"
-                    has_complete = True
+            # Set or validate message type
+            if "messageType" not in node:
+                # Try to infer message type from label
+                label_lower = node["label"].lower()
+                for msg_type in VALID_MESSAGE_TYPES:
+                    if msg_type.lower() in label_lower:
+                        node["messageType"] = msg_type
+                        break
+                if "messageType" not in node:
+                    node["messageType"] = "NAS Message"
+            elif node["messageType"] not in VALID_MESSAGE_TYPES:
+                # Try to map to a valid message type
+                msg_lower = node["messageType"].lower()
+                for valid_type in VALID_MESSAGE_TYPES:
+                    if valid_type.lower() in msg_lower:
+                        node["messageType"] = valid_type
+                        break
 
-                # Ensure source and target are valid strings
-                if not node.get("source") or not isinstance(node.get("source"), str):
-                    if "UE" in node.get("label", ""):
-                        node["source"] = "UE"
-                    elif "AMF" in node.get("label", ""):
-                        node["source"] = "AMF"
-                    else:
-                        node["source"] = "UE"  # Default source
-                
-                if not node.get("target") or not isinstance(node.get("target"), str):
-                    if "AMF" in node.get("label", "") and node["source"] != "AMF":
-                        node["target"] = "AMF"
-                    elif "UE" in node.get("label", "") and node["source"] != "UE":
-                        node["target"] = "UE"
-                    else:
-                        node["target"] = "AMF"  # Default target
-
-                # Clean up conditions
-                if "conditions" in node and isinstance(node["conditions"], str):
-                    node["conditions"] = [node["conditions"]]
-                elif node.get("conditions") is None:
-                    node["conditions"] = []
-
-                # Ensure other required fields exist
-                if not node.get("parameters"):
-                    node["parameters"] = []
-                if not node.get("outcome"):
-                    node["outcome"] = ""
-
-            # Add missing required messages if needed
-            if not (has_request and has_accept and has_complete):
-                next_id = f"A{len(data['nodes']) + 1}"
-                if not has_request:
-                    data["nodes"].append({
-                        "id": next_id,
-                        "label": "UE sends Registration Request",
-                        "source": "UE",
-                        "target": "AMF",
-                        "messageType": "Registration Request",
-                        "parameters": [],
-                        "conditions": [],
-                        "outcome": ""
-                    })
-                    next_id = f"A{len(data['nodes']) + 1}"
-                
-                if not has_accept:
-                    data["nodes"].append({
-                        "id": next_id,
-                        "label": "AMF sends Registration Accept",
-                        "source": "AMF",
-                        "target": "UE",
-                        "messageType": "Registration Accept",
-                        "parameters": [],
-                        "conditions": [],
-                        "outcome": ""
-                    })
-                    next_id = f"A{len(data['nodes']) + 1}"
-                
-                if not has_complete:
-                    data["nodes"].append({
-                        "id": next_id,
-                        "label": "UE sends Registration Complete",
-                        "source": "UE",
-                        "target": "AMF",
-                        "messageType": "Registration Complete",
-                        "parameters": [],
-                        "conditions": [],
-                        "outcome": ""
-                    })
-
-                # Regenerate edges after adding missing messages
-                data["edges"] = []
-                for i in range(len(data["nodes"]) - 1):
-                    data["edges"].append({
-                        "from": data["nodes"][i]["id"],
-                        "to": data["nodes"][i + 1]["id"],
-                        "label": f"Step {i+1} to {i+2}"
-                    })
+        # Regenerate edges to ensure proper flow
+        data["edges"] = []
+        for i in range(len(data["nodes"]) - 1):
+            data["edges"].append({
+                "from": data["nodes"][i]["id"],
+                "to": data["nodes"][i + 1]["id"],
+                "label": f"Step {i+1} to {i+2}",
+                "condition": "Success"
+            })
 
         # Validate trigger
-        trigger = data.get("trigger")
-        if not trigger:
-            trigger_nodes = [node for node in data.get("nodes", []) 
-                           if any(valid_trigger.lower() in node.get("label", "").lower() 
-                                 for valid_trigger in VALID_TRIGGERS)]
-            if trigger_nodes:
-                data["trigger"] = trigger_nodes[0]["label"]
-            else:
-                console.print("[yellow]Warning: No valid trigger found in data[/yellow]")
-                console.print("[yellow]Valid triggers are:[/yellow]")
-                for t in VALID_TRIGGERS:
-                    console.print(f"[yellow]- {t}[/yellow]")
-        else:
-            if not any(valid_trigger.lower() in trigger.lower() for valid_trigger in VALID_TRIGGERS):
-                console.print(f"[yellow]Warning: Trigger '{trigger}' may not be a standard periodic registration trigger[/yellow]")
-                console.print("[yellow]Valid triggers are:[/yellow]")
-                for t in VALID_TRIGGERS:
-                    console.print(f"[yellow]- {t}[/yellow]")
+        if not data.get("trigger") or data["trigger"] not in VALID_TRIGGERS:
+            # Try to infer trigger from nodes
+            for node in data["nodes"]:
+                for trigger in VALID_TRIGGERS:
+                    if trigger.lower() in node["label"].lower():
+                        data["trigger"] = trigger
+                        break
+            if not data.get("trigger"):
+                data["trigger"] = "T3512 Timer Expiry"  # Default trigger
 
-        # Create metadata
-        metadata = PeriodicRegistrationMetadata(
-            specReference=data.get("metadata", {}).get("specReference", "TS 24.501"),
-            timer=data.get("metadata", {}).get("timer", "T3512" if "T3512" in str(data.get("trigger", "")).upper() else None)
-        )
+        # Create metadata if not present
+        if "metadata" not in data:
+            data["metadata"] = {
+                "procedureName": "Periodic Registration Update",
+                "specReference": "3GPP TS 24.501",
+                "protocol": "5G NAS",
+                "timer": "T3512" if "T3512" in data["trigger"] else None
+            }
 
-        # Convert nodes to procedure flow steps with proper sequence numbers
-        procedure_flow = []
-        seen_sequence_numbers = set()
-        next_sequence_number = 1
-        
-        for node in data.get("nodes", []):
-            try:
-                if node["id"].startswith("A"):
-                    seq_num = int(node["id"].replace("A", ""))
-                else:
-                    seq_num = ord(node["id"][0].upper()) - ord('A') + 1
-                    
-                # Handle duplicate sequence numbers
-                while seq_num in seen_sequence_numbers:
-                    seq_num = next_sequence_number
-                    next_sequence_number += 1
-                    
-                seen_sequence_numbers.add(seq_num)
-                next_sequence_number = max(next_sequence_number, seq_num + 1)
-                
-            except (ValueError, IndexError, KeyError):
-                while next_sequence_number in seen_sequence_numbers:
-                    next_sequence_number += 1
-                seq_num = next_sequence_number
-                seen_sequence_numbers.add(seq_num)
-                next_sequence_number += 1
-                
-            # Debug output for node validation
-            console.print(f"\n[blue]Processing node {seq_num}:[/blue]")
-            console.print(f"[blue]Source: {node.get('source')}[/blue]")
-            console.print(f"[blue]Target: {node.get('target')}[/blue]")
-            console.print(f"[blue]Label: {node.get('label')}[/blue]")
-                
-            step = PeriodicRegistrationStep(
-                sequence_number=seq_num,
-                source=node.get("source", "UE"),
-                target=node.get("target", "AMF"),
-                message=node.get("label", ""),
-                description=node.get("label", ""),
-                message_type=node.get("messageType", "NAS Registration"),
-                parameters=node.get("parameters", []),
-                conditions=node.get("conditions", []),
-                outcome=node.get("outcome", "")
-            )
-            procedure_flow.append(step)
-
-        # Create final validated data
+        # Convert to PeriodicRegistrationData
         validated_data = PeriodicRegistrationData(
-            trigger=data.get("trigger"),
+            trigger=data["trigger"],
             description=data.get("description", "Periodic Registration Update procedure"),
-            nodes=data.get("nodes", []),
-            edges=data.get("edges", []),
-            metadata=metadata,
+            nodes=data["nodes"],
+            edges=data["edges"],
+            metadata=PeriodicRegistrationMetadata(**data["metadata"]),
             network_elements=data["network_elements"],
-            procedure_flow=sorted(procedure_flow, key=lambda x: x.sequence_number)
+            procedure_flow=[
+                PeriodicRegistrationStep(
+                    sequence_number=i+1,
+                    source=node["source"],
+                    target=node["target"],
+                    message=node["label"],
+                    description=node["label"],
+                    message_type=node["messageType"],
+                    parameters=[],
+                    conditions=[],
+                    outcome=""
+                ) for i, node in enumerate(data["nodes"])
+            ]
         )
 
-        console.print("[green]✓ LLM output validation successful[/green]")
         return ValidatedData(validated_data)
 
-    except ValidationError as e:
-        console.print("[red]LLM output validation failed:[/red]")
-        console.print(f"[red]{str(e)}[/red]")
-        # Debug output for validation error
-        if data and "nodes" in data:
-            console.print("\n[yellow]Node data that caused validation error:[/yellow]")
-            for node in data["nodes"]:
-                console.print(f"[yellow]{json.dumps(node, indent=2)}[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Validation error: {str(e)}[/red]")
+        console.print(traceback.format_exc())
         return None
 
 def verify_extraction(data: dict) -> bool:
@@ -770,7 +730,83 @@ def save_results(results: List[Dict], output_file: str):
         console.print(f"[red]Error saving results: {str(e)}[/red]")
         console.print(traceback.format_exc())
 
+def extract_additional_triggers(text: str) -> List[str]:
+    """Extract periodic registration triggers from text."""
+    periodic_triggers = {
+        "T3512 Timer Expiry": [
+            r"T3512.*expir",
+            r"timer.*T3512",
+            r"periodic.*timer"
+        ],
+        "Change in RAT": [
+            r"change.*RAT",
+            r"RAT.*change",
+            r"Radio Access Technology.*change",
+            r"different.*RAT"
+        ],
+        "Change in Tracking Area List": [
+            r"change.*TA List",
+            r"Tracking Area.*change",
+            r"new.*Tracking Area",
+            r"different.*TA"
+        ],
+        "Change in NSSAI": [
+            r"change.*NSSAI",
+            r"NSSAI.*change",
+            r"Network Slice.*change",
+            r"new.*NSSAI"
+        ],
+        "Change in Service Area": [
+            r"change.*Service Area",
+            r"Service Area.*change",
+            r"new.*Service Area",
+            r"different.*Service Area"
+        ]
+    }
+    
+    found_triggers = []
+    
+    for trigger_name, patterns in periodic_triggers.items():
+        for pattern in patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                if trigger_name not in found_triggers:
+                    found_triggers.append(trigger_name)
+                    console.print(f"[green]✓ Found trigger: {trigger_name}[/green]")
+                break
+    
+    if not found_triggers:
+        console.print("[yellow]No specific periodic registration triggers found[/yellow]")
+    
+    return found_triggers
 
+def verify_registration_trigger(trigger: str) -> bool:
+    """Verify if a trigger is related to Periodic Registration"""
+    valid_triggers = {
+        "T3512 Timer Expiry",
+        "Change in RAT",
+        "Change in Tracking Area List",
+        "Change in NSSAI",
+        "Change in Service Area"
+    }
+    
+    # Direct match with valid triggers
+    if trigger in valid_triggers:
+        return True
+    
+    # Check for keyword matches
+    trigger_lower = trigger.lower()
+    trigger_indicators = [
+        "periodic registration",
+        "registration update",
+        "t3512",
+        "timer expiry",
+        "rat change",
+        "tracking area",
+        "nssai",
+        "service area"
+    ]
+    
+    return any(indicator in trigger_lower for indicator in trigger_indicators)
 
 def main():
     try:

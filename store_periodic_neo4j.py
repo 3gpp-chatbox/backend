@@ -182,24 +182,53 @@ def process_periodic_registration_data(file_path: str = "processed_data/periodic
             # Create constraints
             neo4j_handler.create_constraints()
             
-            # Store network elements (these are shared across triggers)
-            if 'network_elements' in data:
-                neo4j_handler.store_network_elements(data['network_elements'])
+            # Process results array
+            results = data.get('results', [])
+            if not results:
+                console.print("[yellow]No results found in the data[/yellow]")
+                return
 
-            # Process each trigger's data separately
-            for trigger_data in data.get('triggers', []):
-                trigger_name = trigger_data.get('name')
-                if trigger_name:
-                    # Store trigger data
-                    neo4j_handler.store_trigger(trigger_data)
-                    
-                    # Store procedure flow for this trigger
-                    if 'procedure_flow' in trigger_data:
-                        neo4j_handler.store_procedure_flow(trigger_name, trigger_data['procedure_flow'])
-                    
-                    # Store metadata if present
-                    if 'metadata' in trigger_data:
-                        neo4j_handler.store_metadata(trigger_data['metadata'])
+            for result in results:
+                # Store network elements
+                if 'network_elements' in result:
+                    neo4j_handler.store_network_elements(result['network_elements'])
+
+                # Store trigger
+                trigger_data = {
+                    'name': result.get('trigger', ''),
+                    'description': result.get('description', ''),
+                    'specification': result.get('metadata', {}).get('specReference', ''),
+                    'section': ''  # Add section if available in your data
+                }
+                neo4j_handler.store_trigger(trigger_data)
+
+                # Store procedure flow
+                if 'procedure_flow' in result:
+                    flow_steps = []
+                    for step in result['procedure_flow']:
+                        flow_step = {
+                            'source': step['source'],
+                            'target': step['target'],
+                            'message': step['message'],
+                            'description': step['description'],
+                            'message_type': step.get('message_type', ''),
+                            'parameters': step.get('parameters', []),
+                            'conditions': step.get('conditions', []),
+                            'outcome': step.get('outcome', '')
+                        }
+                        flow_steps.append(flow_step)
+                    neo4j_handler.store_procedure_flow(trigger_data['name'], flow_steps)
+
+                # Store metadata
+                if 'metadata' in result:
+                    metadata = {
+                        'timestamp': datetime.now().isoformat(),
+                        'version': '1.0',
+                        'source': result['metadata'].get('specReference', ''),
+                        'parser_version': '1.0',
+                        'timer': result['metadata'].get('timer', '')
+                    }
+                    neo4j_handler.store_metadata(metadata)
 
             console.print("[green]✓ Successfully stored periodic registration data[/green]")
             
