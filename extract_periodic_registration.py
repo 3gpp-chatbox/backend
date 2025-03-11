@@ -486,7 +486,7 @@ def verify_extraction(data: dict) -> bool:
         console.print("[red]Missing nodes in graph structure[/red]")
     if not has_edges:
         console.print("[red]Missing edges in graph structure[/red]")
-    
+        
     # Verify sequence
     if data.get("procedure_flow"):
         console.print("\n[blue]Message Sequence:[/blue]")
@@ -508,7 +508,7 @@ def verify_extraction(data: dict) -> bool:
     
     if is_valid:
         console.print("\n[green]✓ Periodic Registration extraction verified successfully[/green]")
-    else:
+                else:
         console.print("\n[red]Periodic Registration extraction verification failed[/red]")
     
     return is_valid
@@ -647,7 +647,7 @@ def process_chunk(doc: Document, llm: Any) -> List[Dict]:
                     
                     return results
                         
-                except json.JSONDecodeError as e:
+            except json.JSONDecodeError as e:
                     console.print(f"[red]JSON Parse Error: {str(e)}[/red]")
                     console.print(f"[yellow]Attempted to parse:[/yellow]\n{json_str[:1000]}...")
                     return []
@@ -659,7 +659,7 @@ def process_chunk(doc: Document, llm: Any) -> List[Dict]:
             console.print(f"[red]Error calling LLM: {str(e)}[/red]")
             console.print(traceback.format_exc())
             return []
-            
+
     except Exception as e:
         console.print(f"[red]Error processing chunk: {str(e)}[/red]")
         console.print(traceback.format_exc())
@@ -689,7 +689,7 @@ def is_relevant_chunk(text: str) -> bool:
         console.print("[green]✓ Found standard keywords[/green]")
     if has_trigger_pattern:
         console.print("[green]✓ Found potential trigger pattern[/green]")
-    
+        
     return has_standard_keywords or has_trigger_pattern
 
 def save_results(results: List[Dict], output_file: str):
