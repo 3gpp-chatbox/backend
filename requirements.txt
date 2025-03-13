@@ -1,48 +1,20 @@
-# backend requirements
 
 
+# API requirements
 fastapi 	#or flask Backend framework (choose one)
 uvicorn	 #ASGI server for FastAPI
-# gunicorn	 #Production-ready WSGI server for Flask
-# requests	 #Handle API requests
-# pydantic	 #Define API request/response models
+
 
 # Data Preparation and RAG pipeline
-pandas	 #Handle structured text data
-numpy	 #Numerical operations
-# faiss-cpu	 #Vector search for document retrieval
 chromadb	 #Alternative vector database
 sentence-transformers	 #Convert text into embeddings
-# langchain
-# PyMuPDF #for pdf file handling
-# markdown-it
-# markdownify
-docling
+docling #Convert dcx to md
+spacy #chunking
+# python -m spacy download en_core_web_sm   
 
-# Knowledge Graph and Visualization
-networkx	#Create knowledge graphs
-# matplotlib	 #Generates static graph visualizations
-neo4j	 #Stores and retrieves graph data
-
+# LLM
 google.generativeai
 google-genai
 
-# Add requests package
-requests
-
-python-docx
-
-spacy
-# python -m spacy download en_core_web_sm
-
-transformers
-torch
-networkx
-sentencepiece  # Required for BART model
-
-pytesseract
-Pillow
-
-tiktoken
 
 
