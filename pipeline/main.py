@@ -1,4 +1,5 @@
-from preprocessor import docx_to_markdown_with_docling, process_markdown
+from preprocessor import process_docx
+from chunker import create_chunks
 from db_handler import DBHandler
 from embeddings import process_embeddings
 from extractor import ProcedureExtractor
@@ -12,7 +13,6 @@ import json
 root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_folder)
 from config import Gemini_API_KEY
-# from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 
 def main():
@@ -22,7 +22,6 @@ def main():
     # Setup paths
     root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     docx_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.docx")
-    temp_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "temp.md")
     final_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.md")
     db_path = os.path.join(root_folder, "DB", "chunks.db")
     persist_directory = os.path.join(root_folder, "DB", "chroma_db")
@@ -34,20 +33,17 @@ def main():
         db_handler = DBHandler(db_path=db_path, persist_directory=persist_directory)
         doc_id = os.path.basename(final_md_path)
         
-        # Process markdown and embeddings if needed
+        # Process document if needed
         if not os.path.exists(final_md_path):
-            print("\n[1/3] Converting DOCX to Markdown...")
-            return_code = docx_to_markdown_with_docling(docx_path, temp_md_path)
+            print("\n[1/3] Processing DOCX file...")
+            return_code = process_docx(docx_path, final_md_path, db_path)
             if return_code != 0:
-                print("✗ Conversion failed. Stopping process.")
+                print("✗ Processing failed. Stopping process.")
                 return
-            process_markdown(temp_md_path, final_md_path, db_path)
-            os.remove(temp_md_path)
-            print("\n→ Temporary file cleaned up")
         else:
             print(f"\nUsing existing markdown file: {final_md_path}")
             if not db_handler.get_chunks(doc_id):
-                process_markdown(final_md_path, final_md_path, db_path)
+                create_chunks(final_md_path, db_path)
             else:
                 print("→ Using existing chunks from database")
 

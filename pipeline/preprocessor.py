@@ -5,49 +5,39 @@ import re
 from chunker import create_chunks
 from db_handler import DBHandler
 
-def docx_to_markdown_with_docling(docx_file, md_file):
-    start_time = time.time()
-    print("\n[1/2] Starting Docling conversion...")
+def process_docx(docx_file: str, output_path: str, db_path: str):
+    """
+    Direct conversion from DOCX to processed markdown
+    """
+    total_start_time = time.time()
+    print("\n=== Starting Document Processing ===")
+    
     try:
+        # Convert DOCX to markdown text
+        print("\n[1/2] Converting DOCX to markdown...")
         converter = DocumentConverter()
         result = converter.convert(docx_file)
         markdown_text = result.document.export_to_markdown()
-        with open(md_file, "w", encoding="utf-8") as f:
-            f.write(markdown_text)
-        duration = time.time() - start_time
-        print(f"\u2713 Markdown file created: {md_file}")
-        print(f"\u2713 Conversion completed in {duration:.2f} seconds")
-        return 0
-    except Exception as e:
-        print(f"\u2717 Error during conversion: {e}")
-        return 1
-
-def process_markdown(input_path: str, output_path: str, db_path: str):
-    start_time = time.time()
-    print("\n[2/2] Starting Markdown processing...")
-    try:
-        if not os.path.exists(input_path):
-            raise FileNotFoundError(f"Input file not found: {input_path}")
         
-        with open(input_path, "r", encoding="utf-8") as f:
-            markdown_text = f.read()      
+        # Process markdown content
+        print("\n[2/2] Processing markdown content...")
+        filtered_markdown = filter_markdown_content(markdown_text)
         
-        print("→ Filtering content...")
-        filtered_markdown = filter_markdown_content(markdown_text)       
-        
-        # Only write to output file if it's different from input
-        if input_path != output_path:
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(filtered_markdown)
-        
+        # Write processed markdown
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(filtered_markdown)
+            
         # Create chunks from the filtered markdown
         print("→ Creating chunks...")
         chunks = create_chunks(output_path, db_path)
         
-        duration = time.time() - start_time
-        print(f"✓ Processing completed in {duration:.2f} seconds")    
+        total_duration = time.time() - total_start_time
+        print(f"\n✓ All processing completed in {total_duration:.2f} seconds")
+        return 0
+        
     except Exception as e:
-        print(f"✗ Error: {e}")
+        print(f"\n✗ Processing failed: {e}")
+        return 1
 
 def filter_markdown_content(markdown_text):
     lines = markdown_text.splitlines()
@@ -57,7 +47,7 @@ def filter_markdown_content(markdown_text):
     found_first_heading = False
     
     exclude_keywords = ["Forward", "Scope", "References", "Definitions", 
-                        "Abbreviations", "Annex", "Table of Contents"]
+                       "Abbreviations", "Annex", "Table of Contents"]
     
     current_heading = None
     heading_content = []
@@ -113,8 +103,9 @@ def _process_previous_heading(output_lines, current_heading, heading_content):
         output_lines.pop()
 
 def clean_line(line):
-    line = re.sub(r'\[\d+\]', '', line)
-    line = re.sub(r"[-/()[\]{}:,'\";?]", "", line)
-    line = re.sub(r"^\|+|\|+$", "", line)
-    line = re.sub(r"^\s*\|", "", line)
-    return re.sub(r"\s+", " ", line).strip()
+    """Clean and normalize text lines"""
+    line = re.sub(r'\[\d+\]', '', line)  # Remove reference numbers
+    line = re.sub(r"[-/()[\]{}:,'\";?]", "", line)  # Remove punctuation
+    line = re.sub(r"^\|+|\|+$", "", line)  # Remove table borders
+    line = re.sub(r"^\s*\|", "", line)  # Remove leading table markers
+    return re.sub(r"\s+", " ", line).strip()  # Normalize whitespace
