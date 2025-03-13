@@ -1,4 +1,0 @@
-1.db-init-insert.py
-2.extract0310.py
-3.loop.py
-4.extract-json.py

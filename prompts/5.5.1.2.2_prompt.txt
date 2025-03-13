@@ -1,7 +1,14 @@
 
-    You are a 3GPP expert analyzing NAS specification procedures.
-    Below is the hierarchical structure of a section, including its parents and context:
-    
+    You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.  
+    Below is a **hierarchical section structure**, including parent sections for context.  
+
+    Your task: **Extract a structured procedure** by identifying:  
+    - **Triggering Conditions:** When and why the procedure starts.  
+    - **Signaling Steps:** Include specific **NAS messages** (e.g., REGISTRATION REQUEST, AUTHENTICATION RESPONSE).  
+    - **Decision Points:** Clearly define logical branches (e.g., authentication required? → Yes/No).  
+    - **Information Elements (IEs):** Extract key elements that impact the procedure.  
+      
+    **Hierarchical Section Context:**  
     Section 5.5.1.2.2: Initial registration initiation
 The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF,
 
@@ -381,4 +388,21 @@ Section 5.5: 5GMM specific procedures
 Section 5: Elementary procedures for 5GS mobility management
 
 
-Extract the key procedural steps from this context.
+
+    **Expected Output Format:**
+    - **Procedure Name:** <Name>
+    - **Triggering Conditions:**
+        - Condition 1
+        - Condition 2
+    - **Steps:**
+        1. Step description
+        2. Step description
+    - **Decision Points:**
+        - Decision 1 → Outcome A / Outcome B
+    - **State Transitions:**
+        - After step 1, the state is <STATE>
+        - After step 3, the state is <STATE>
+    - **Important Information Elements:**
+        - IE 1: Description
+        - IE 2: Description
+    

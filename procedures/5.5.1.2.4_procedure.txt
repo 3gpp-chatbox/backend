@@ -1,162 +1,98 @@
-The provided text describes the actions taken by the AMF (Access and Mobility Management Function) and UE (User Equipment) during the "Initial Registration Accepted by the Network" phase of the 5G registration procedure. Key procedural steps for both AMF and UE are:
-
-**AMF (Network) Actions:**
-
-1.  **Processing Registration Request:**
-    *   During emergency registration, the AMF skips mobility, access, regional, subscription, and CAG restrictions.
-
-2.  **Sending Registration Accept:** The AMF sends a REGISTRATION ACCEPT message to the UE if the initial registration request is accepted.
-
-3.  **Handling UE Capabilities:** Stores the received 5GMM capability, S1 UE network capability, and UE security capability from the UE.
-
-4.  **TAI List Assignment:**
-    *   Assigns and includes a TAI (Tracking Area Identity) list to the UE, excluding mixed NB-N1 and non-NB-N1 TAIs.
-    *   Includes a single TAI if the request was over non-3GPP access.
-
-5.  **Service Area Restrictions:** May include service area restrictions.
-
-6.  **Equivalent PLMN/SNPN Lists:**
-    *   May include a list of equivalent PLMNs or SNPNs in the REGISTRATION ACCEPT message.
-    *   For SNPNs, this is conditional on the ESI bit in the UE's 5GMM capability.
-    *   The AMF of a PLMN shall not include a list of equivalent SNPNs.
-    *   The AMF of an SNPN shall not include a list of equivalent PLMNs.
-
-7.  **LADN Handling:** Determines and includes LADN (Local Area Data Network) information based on the LADN indication IE in the REGISTRATION REQUEST message, UE subscription, location and local configuration. If the UE supports LADN per DNN and S-NSSAI and the extended LADN information is available for the UE, the AMF shall include the extended LADN information which consists of the determined LADN DNNs for the UE, the S-NSSAIs associated with the determined LADN DNNs for the UE and in the allowed NSSAI or partially allowed NSSAI, and LADN service area(s) available in the current registration area in the Extended LADN information IE in the Registration accept type 6 IE container IE of the REGISTRATION ACCEPT message.
-
-8.  **WUS Assistance Information:** Negotiates, stores, and may include Negotiated WUS assistance information (Wake-Up Signal) if supported.
-
-9.  **PEIPS Assistance Information:** Determines, stores, and includes Negotiated PEIPS assistance information (Paging Early Indication to reduce power consumption) if supported.
-
-10. **Unavailability Period:** If the UE set the UN-PER bit to "unavailability period supported" in the 5GMM capability IE in the REGISTRATION REQUEST message and the AMF supports and accepts the use of unavailability period for the UE, then the AMF shall set the UN-PER bit to "unavailability period supported" in the 5GS network feature support IE in the REGISTRATION ACCEPT message. The AMF may determine and provide the unavailability period duration/start to the UE in the Unavailability configuration IE in the REGISTRATION ACCEPT message.
-
-11. **5G-GUTI Reallocation:** Includes the new assigned 5G-GUTI together with the assigned TAI list.
-
-12. **CAG Information:**  If the UE has set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and the AMF needs to update the "CAG information list" stored in the UE, the AMF shall include the CAG information list IE or the Extended CAG information list IE in the REGISTRATION ACCEPT message.
-
-13. **Timer Initiation (T3550):** Starts timer T3550 and enters `5GMM-COMMON-PROCEDURE-INITIATED` state under certain conditions, like sending a new 5G-GUTI or SOR transparent container, Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE,  or if certain capabilities related to PEIPS or RACS are negotiated.
-
-14. **MICO Mode:** Handles MICO (Mobile Initiated Connection Only) mode indication and active time values.
-
-15. **Timer Values:** Includes T3512 (periodic registration timer), non-3GPP de-registration timer values if applicable.
-
-16. **CIoT 5GS Optimization:** Indicates support for control plane CIoT 5GS optimization if accepted. May include T3448 value IE if decides to activate the congestion control for transport of user data via the control plane.
-
-17. **Truncated 5G-S-TMSI Configuration:** If the UE in NB-N1 mode is using control plane CIoT 5GS optimization; and the network is configured to provide the truncated 5G-S-TMSI configuration for control plane CIoT 5GS optimizations, the AMF shall include the Truncated 5G-S-TMSI configuration IE in the REGISTRATION ACCEPT message and set the "Truncated AMF Set ID value" and the "Truncated AMF Pointer value" in the Truncated 5G-S-TMSI configuration IE based on network policies.
-
-18. **UUAA Procedure:** If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, and if the UUAA procedure is to be performed during the registration procedure according to operator policy, the AMF shall initiate the UUAA-MM procedure with the UAS-NF as specified in 3GPP TS 23.256 [6AB] and shall include a service-level-AA pending indication in the Service-level-AA container IE of the REGISTRATION ACCEPT message.
-
-19. **MINT:** May include the List of PLMNs to be used in disaster condition IE, the Disaster roaming wait range IE and the Disaster return wait range IE if the UE supports MINT.
-
-20. **Forbidden TAIs:** May include forbidden TAIs for roaming or regional provision of service.
-
-21. **RAN Timing Synchronization:** May include RAN timing synchronization IE to request UE reconnection.
-
-22. **MBSR Authorization:** May include the Feature authorization indication IE and set the MBSRAI field if the UE is authorized to operate as an MBSR.
-
-23. **Network Feature Support:** Sets bits in the 5GS network feature support IE to indicate support for features like LCS-UPP, SUPL, IMS voice, emergency services, ATSSS, NAPS, paging indication for voice services, reject paging request, paging restriction and ranging and sidelink positioning.
-
-24. **SMS over NAS:** Sets the SMS allowed bit of the 5GS registration result IE based on successful SMSF selection and activation.
-
-25. **NSSAI Handling:** Includes the allowed NSSAI and may include rejected NSSAI, partially rejected NSSAI and pending NSSAI in the REGISTRATION ACCEPT message.  Handles network slice-specific authentication and authorization (NSSAA) indicators and pending NSSAI. May include the On-demand NSSAI IE in the REGISTRATION ACCEPT message. Includes the configured NSSAI for the current PLMN or SNPN. Includes the NSSRG information in the REGISTRATION ACCEPT message. If the UE supports S-NSSAI time validity information and the AMF needs to update the S-NSSAI time validity information, then the AMF shall include the S-NSSAI time validity information IE in the REGISTRATION ACCEPT message. If the UE supports S-NSSAI location validity information and the AMF needs to update the S-NSSAI location validity information, then the AMF shall include the new S-NSSAI location validity information in the Registration accept type 6 IE container IE of the REGISTRATION ACCEPT message. If the UE has set the NSAG bit to "NSAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message over 3GPP access, the AMF may include the NSAG information IE in the REGISTRATION ACCEPT message. If the UE supports network slice replacement and the AMF determines to provide the mapping information between the S-NSSAI to be replaced and the alternative S-NSSAI to the UE, then the AMF shall include the Alternative NSSAI IE, the Allowed NSSAI IE including the alternative S-NSSAI, if not included in the current allowed NSSAI, and the Configured NSSAI IE including the alternative S-NSSAI, if not included in the current configured NSSAI, in the REGISTRATION ACCEPT message.
-
-26. **Interworking with EPS:** Sets the IWK N26 bit in the 5GS network feature support IE to indicate support for interworking with EPS.
-
-27. **DRX Parameters:** Includes Negotiated DRX parameters, Negotiated NB-N1 mode DRX parameters and Negotiated extended DRX parameters if requested and supported.
-
-28. **SOR Handling:** Includes SOR transparent container IE, if required.
-
-29. **NSSAI Inclusion Mode:** May include the NSSAI inclusion mode IE.
-
-30. **Operator-defined access category definitions:** May include operator-defined access category definitions.
-
-31. **Service Gap Control:** May include the T3447 value IE to indicate the service gap time value.
-
-32. **RAT utilization control:** If the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access and the network decides to apply the RAT utilization control, the AMF shall include the RAT utilization control IE in the REGISTRATION ACCEPT message.
-
-33. **Disaster Roaming Services:** If the 5GS registration type IE in the REGISTRATION REQUEST message is set to "disaster roaming initial registration", the AMF shall determine the PLMN with disaster condition and shall set the Disaster roaming registration result value bit in the 5GS registration result IE to "no additional information" or "request for registration for disaster roaming services accepted as registration not for disaster roaming services" in the REGISTRATION ACCEPT message.
-
-34. **Truncated 5G-S-TMSI Configuration:** If the UE in NB-N1 mode is using control plane CIoT 5GS optimization; and the network is configured to provide the truncated 5G-S-TMSI configuration for control plane CIoT 5GS optimizations, the AMF shall include the Truncated 5G-S-TMSI configuration IE in the REGISTRATION ACCEPT message and set the "Truncated AMF Set ID value" and the "Truncated AMF Pointer value" in the Truncated 5G-S-TMSI configuration IE based on network policies.
-
-35. **UE radio capability ID:** If the UE is not in NB-N1 mode, the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message includes a UE radio capability ID IE, the AMF shall include the UE radio capability ID IE in the REGISTRATION ACCEPT message.
-
-36. **N1 NAS signalling connection release bit:** If the UE indicates support of the N1 NAS signalling connection release in the REGISTRATION REQUEST message and the network decides to accept the N1 NAS signalling connection release, then the AMF shall set the N1 NAS signalling connection release bit to "N1 NAS signalling connection release supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
-
-37. **Paging Indication for Voice Services Bit:** If the UE indicates support of the paging indication for voice services in the REGISTRATION REQUEST message and the network decides to accept the paging indication for voice services, then the AMF shall set the paging indication for voice services bit to "paging indication for voice services supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
-
-38. **Reject Paging Request Bit:** If the UE indicates support of the reject paging request in the REGISTRATION REQUEST message and the network decides to accept the reject paging request, then the AMF shall set the reject paging request bit to "reject paging request supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
-
-39. **Paging Restriction Bit:** If the UE indicates support of the paging restriction in the REGISTRATION REQUEST message, and the AMF sets the reject paging request bit or the N1 NAS signalling connection release bit or both of them in the 5GS network feature support IE of the REGISTRATION ACCEPT message, and the network decides to accept the paging restriction, then the AMF shall set the paging restriction bit to "paging restriction supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
-
-40. **Ranging and Sidelink Positioning Bit:** If the UE indicates support of ranging and sidelink positioning in the REGISTRATION REQUEST message and the network supports and accepts the use of ranging and sidelink positioning, the AMF shall set the ranging and sidelink positioning support bit to "Ranging and sidelink positioning supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
-
-41. **Discontinuous Coverage:** If the UE supports discontinuous coverage and is registered over a satellite NG-RAN access, the AMF may for discontinuous coverage include the Discontinuous coverage maximum time offset IE in the REGISTRATION ACCEPT message.
-
-42. **Unavailability configuration:** If the UE supports discontinuous coverage and is registered over a satellite NG-RAN access, the AMF may for discontinuous coverage include the Unavailability configuration IE in the REGISTRATION ACCEPT message.
-
-**UE (Device) Actions:**
-
-1.  **TAI List Handling:** Deletes the old TAI list and stores the received TAI list.
-
-2.  **Service Area Restriction Handling:** Acts according to subclause 5.3.5 if service area restrictions are received.
-
-3.  **Equivalent PLMN/SNPN List Handling:**
-    *   Stores the list of equivalent PLMNs/SNPNs.
-    *   Removes PLMNs in forbidden list (if not for emergency services).
-    *   Adds the registered PLMN/SNPN to the list.
-    *   Replaces the stored list on each receipt. Deletes if no list is received.
-
-4.  **LADN Handling:** Stores received LADN information. If there exists one or more LADN DNNs which are included in the LADN indication IE of the REGISTRATION REQUEST message and are not included in the LADN information IE and Extended LADN information IE in the Registration accept type 6 IE container IE of the REGISTRATION ACCEPT message, the UE considers such LADN DNNs as not available in the current registration area.
-
-5.  **Registration Attempt Counter:** Resets the registration attempt counter.
-
-6.  **State Transition:** Enters `5GMM-REGISTERED` state and sets the 5GS update status to `5U1 UPDATED`.
-
-7.  **Timer Handling:**
-    *   Uses the received T3512 value as the periodic registration update timer.
-    *   Uses the received T3324 value as the active timer.
-    *   Uses the value in non-3GPP de-registration timer value IE as non-3GPP de-registration timer.
-
-8.  **Registration Complete Message:**
-    *   Sends a REGISTRATION COMPLETE message to the AMF in specific cases, such as when network slicing information, CAG information, Operator-defined access category definitions, Extended emergency number list, Negotiated PEIPS assistance information IE, UE radio capability ID IE or UE radio capability ID deletion indication IE, Truncated 5G-S-TMSI configuration IE or service-level-AA pending indication in the Service-level-AA container IE are received.
-
-9.  **SMS Allowed:** Considers the SMS allowed bit of the 5GS registration result IE as applicable for both accesses (if registered over both 3GPP and non-3GPP).
-
-10. **5GS Registration Result:** Handles the 5GS registration result IE to determine registration access (3GPP, non-3GPP, or both) and initiate de-registration procedures on the other access if necessary.
-
-11. **NSSAI Handling:** Stores allowed NSSAI, handles the partially rejected NSSAI, extended rejected NSSAI, network slice-specific authentication and authorization (NSSAA) indicators, pending NSSAI, configured NSSAI and NSAG information. Delete the network slicing information and the NSSAI inclusion mode for each and every PLMN or SNPN except for the current PLMN or SNPN as specified in subclause 4.6.2.2 and remove all tracking areas from the list of "5GS forbidden tracking areas for roaming" which were added due to rejection of S-NSSAI due to "S-NSSAI not available in the current registration area".
-
-12. **Interworking with EPS:** Stores the received interworking without N26 interface indicator.
-
-13. **Network Feature Support:** Provides the IMS voice over PS session indicator, the Emergency services support indicator, and the Emergency services fallback indicator, location services indicator (5G-LCS), the network support for ATSSS and the network support for non-3GPP access path switching to upper layers.
-
-14. **Access Identity:** Acts as a UE with access identity 1 or access identity 2 configured for MPS or MCS.
-
-15. **DRX Parameters:** Stores and uses the received Negotiated DRX parameters, Negotiated NB-N1 mode DRX parameters and Negotiated extended DRX parameters.
-
-16. **SOR Handling:** Stores the received SOR counter and proceeds as specified in 3GPP TS 23.122 [5] annex C, if the SOR transparent container IE included in the REGISTRATION ACCEPT message successfully passes the integrity check.
-
-17. **NSSAI Inclusion Mode:** Operates in the NSSAI inclusion mode indicated in the NSSAI inclusion mode IE over the current access within the current PLMN and its equivalent PLMN(s), if any, or the current SNPN ,in the current registration area.
-
-18. **Operator-defined access category definitions:** Stores the received operator-defined access category definitions for the RPLMN.
-
-19. **Service Gap Control:** Stores the new T3447 value, erase any previous stored T3447 value if exists and use the new T3447 value with the timer T3447 next time it is started, if the REGISTRATION ACCEPT message contains the T3447 value IE.
-
-20. **T3448 value:** If the T3448 value IE is present in the received REGISTRATION ACCEPT message and the value indicates that this timer is neither zero nor deactivated, the UE shall stop timer T3448 if it is running and start timer T3448 with the value provided in the T3448 value IE.
-
-21. **Truncated 5G-S-TMSI Configuration:** If the REGISTRATION ACCEPT message contains the Truncated 5G-S-TMSI configuration IE, then the UE shall store the included truncated 5G-S-TMSI configuration and return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the truncated 5G-S-TMSI configuration.
-
-22. **UE radio capability ID:** If the UE is not in NB-N1 mode, the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message includes a UE radio capability ID IE, the UE shall store the UE radio capability ID.
-
-23. **Service-level-AA:** If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message contains the service-level-AA pending indication in the Service-level-AA container IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the service-level-AA pending indication.
-
-24. **MINT:** If the UE receives the List of PLMNs to be used in disaster condition IE, the Disaster roaming wait range IE and the Disaster return wait range IE in the REGISTRATION ACCEPT message and the UE supports MINT, the UE shall delete the stored parameters and store the new parameters received in the message.
-
-25. **Disaster Roaming Services:** If the UE indicates "disaster roaming initial registration" in the 5GS registration type IE in the REGISTRATION REQUEST message and the 5GS registration result IE value in the REGISTRATION ACCEPT message is set to "request for registration for disaster roaming service accepted as registration not for disaster roaming service", the UE shall consider itself registered for normal service. If the UE receives the forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming" IE or the forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service" IE in the REGISTRATION ACCEPT message, the UE shall store the TAI(s) belonging to the serving PLMN or equivalent PLMN(s) included in the IE, if not already stored, into the corresponding list.
-
-26. **RAN timing synchronization:** If the UE supporting the reconnection to the network due to RAN timing synchronization status change receives the RAN timing synchronization IE with the RecReq bit set to "Reconnection requested" in the REGISTRATION ACCEPT message, the UE shall operate as specified in subclauses 5.3.1.4, 5.5.1.3.2 and 5.6.1.1.
-
-27. **Discontinuous Coverage:** If the UE receives, the Discontinuous coverage maximum time offset IE in the REGISTRATION ACCEPT message, the UE shall replace any previously received discontinuous coverage maximum time offset value.
-
-28. **RAT utilization control:** If the REGISTRATION ACCEPT message received over 3GPP access contains the RAT utilization control IE, the UE shall store the received RAT utilization control information together with the PLMN identity of the current PLMN in the list of "PLMNs with associated RAT restrictions" and replace the previously stored one associated with the current PLMN, if any, with the newly received RAT utilization control information.
-
-This summarizes the core exchange and processing steps performed by the AMF and UE when the network accepts the UE's initial registration request.
+```text
+- **Procedure Name:** Initial registration accepted by the network
+- **Triggering Conditions:**
+    - Initial registration request is accepted by the network
+
+- **Steps:**
+    1. The AMF sends a REGISTRATION ACCEPT message to the UE.
+    2. The AMF assigns and includes a TAI list in the REGISTRATION ACCEPT message.  If the REGISTRATION REQUEST was received over non-3GPP access, the TAI list contains a single TAI.
+    3. The AMF may include service area restrictions in the Service area list IE in the REGISTRATION ACCEPT message.
+    4. The AMF may include a list of equivalent PLMNs in the REGISTRATION ACCEPT message.
+    5. If the ESI bit of the 5GMM capability IE of the REGISTRATION REQUEST message is set to "equivalent SNPNs supported", the AMF of a SNPN may include a list of equivalent SNPNs in the REGISTRATION ACCEPT message.
+    6. If the AMF supports and accepts the use of WUS assistance information for the UE, then the AMF shall determine the negotiated UE paging probability information for the UE and include it in the Negotiated WUS assistance information IE in the REGISTRATION ACCEPT message (if the UE is not performing the initial registration for emergency services).
+    7. If the UE sets the NR-PSSI bit to "NR paging subgrouping supported" in the 5GMM capability IE in the REGISTRATION REQUEST message and the AMF supports and accepts the use of PEIPS assistance information for the UE, then the AMF shall determine the Paging subgroup ID for the UE, and shall include it in the Negotiated PEIPS assistance information IE in the REGISTRATION ACCEPT message or in the Updated PEIPS assistance information IE in the CONFIGURATION UPDATE COMMAND message as part of the registration procedure.
+    8. If the UE set the UN-PER bit to "unavailability period supported" in the 5GMM capability IE in the REGISTRATION REQUEST message and the AMF supports and accepts the use of unavailability period for the UE, then the AMF shall set the UN-PER bit to "unavailability period supported" in the 5GS network feature support IE in the REGISTRATION ACCEPT message. Furthermore, if the AMF is able to determine an unavailability period duration for the UE based on satellite coverage availability information and the UE is registered over a satellite NG-RAN access, the AMF shall store the determined unavailability period duration and provide the determined unavailability period duration to the UE by including the unavailability period duration in the Unavailability configuration IE in the REGISTRATION ACCEPT message. If the AMF is able to determine the start of unavailability period based on satellite coverage availability information, the AMF shall store the determined start of unavailability period and provide the determined start of unavailability period to the UE by including the start of unavailability period in the Unavailability configuration IE in the REGISTRATION ACCEPT message.
+    9. The AMF shall include the LADN information which consists of the determined LADN DNNs for the UE and LADN service area(s) available in the current registration area in the LADN information IE of the REGISTRATION ACCEPT message.
+    10. If the UE has set the LADN-DS bit to "LADN per DNN and S-NSSAI supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and the extended LADN information is available for the UE, the AMF shall include the extended LADN information which consists of the determined LADN DNNs for the UE, the S-NSSAIs associated with the determined LADN DNNs for the UE and in the allowed NSSAI or partially allowed NSSAI, and LADN service area(s) available in the current registration area in the Extended LADN information IE in the Registration accept type 6 IE container IE of the REGISTRATION ACCEPT message.
+    11. During the initial registration procedure, if the AMF has not allocated a new 5G-GUTI by the generic UE configuration update procedure, the AMF shall include in the REGISTRATION ACCEPT message the new assigned 5G-GUTI together with the assigned TAI list.
+    12. If the UE has set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and the AMF needs to update the "CAG information list" stored in the UE, the AMF shall include the CAG information list IE or the Extended CAG information list IE in the REGISTRATION ACCEPT message.
+    13. If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.
+    14. If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.
+    15. If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.
+    16. If the UE is not in NB-N1 mode and the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message. If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.
+    17. The AMF shall include the MICO indication IE in the REGISTRATION ACCEPT message only if the MICO indication IE was included in the REGISTRATION REQUEST message, the AMF supports and accepts the use of MICO mode.
+    18. The AMF shall include an active time value in the T3324 IE in the REGISTRATION ACCEPT message if the UE requested an active time value in the REGISTRATION REQUEST message and the AMF accepts the use of MICO mode and the use of active time.
+    19. The AMF shall include the T3512 value IE in the REGISTRATION ACCEPT message only if the REGISTRATION REQUEST message was sent over the 3GPP access.
+    20. The AMF shall include the non-3GPP de-registration timer value IE in the REGISTRATION ACCEPT message only if the REGISTRATION REQUEST message was sent over the non-3GPP access.
+    21. If the UE requests "control plane CIoT 5GS optimization" in the 5GS update type IE, indicates support of control plane CIoT 5GS optimization in the 5GMM capability IE and the AMF decides to accept the requested CIoT 5GS optimization and the registration request, the AMF shall indicate "control plane CIoT 5GS optimization supported" in the 5GS network feature support IE of the REGISTRATION ACCEPT message.
+    22. The AMF may include the T3447 value IE set to the service gap time value in the REGISTRATION ACCEPT message if the UE has indicated support for service gap control in the REGISTRATION REQUEST message and a service gap time value is available in the 5GMM context.
+    23. If the UE has indicated support for the control plane CIoT 5GS optimizations, and the AMF decides to activate the congestion control for transport of user data via the control plane, then the AMF shall include the T3448 value IE in the REGISTRATION ACCEPT message.
+    24. If the UE in NB-N1 mode is using control plane CIoT 5GS optimization and the network is configured to provide the truncated 5G-S-TMSI configuration for control plane CIoT 5GS optimizations, the AMF shall include the Truncated 5G-S-TMSI configuration IE in the REGISTRATION ACCEPT message and set the "Truncated AMF Set ID value" and the "Truncated AMF Pointer value" in the Truncated 5G-S-TMSI configuration IE based on network policies. The AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.
+    25. If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, and the specified conditions are met, the AMF shall initiate the UUAA-MM procedure with the UAS-NF and shall include a service-level-AA pending indication in the Service-level-AA container IE of the REGISTRATION ACCEPT message. The AMF shall store in the UE 5GMM context that a UUAA procedure is pending. The AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED. If the REGISTRATION REQUEST message was received over non-3GPP access, the AMF shall not initiate UUAA-MM procedure.
+    26. If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, and if the UE has a valid aerial UE subscription information, the UUAA procedure is to be performed during the registration procedure according to operator policy, and there is a valid successful UUAA result for the UE in the UE 5GMM context, then the AMF shall include a service-level-AA response in the Service-level-AA container IE of the REGISTRATION ACCEPT message and set the SLAR field in the service-level-AA response to "Service level authentication and authorization was successful".
+    27. If the AMF determines that the UUAA-MM procedure needs to be performed for a UE, the AMF has not received the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message from the UE and the AMF decides to accept the UE to be registered for other services than UAS services based on the user's subscription data and the operator policy, the AMF shall accept the initial registration request and shall mark in the UE's 5GMM context that the UE is not allowed to request UAS services.
+    28. If the UE supports MINT, the AMF may include the List of PLMNs to be used in disaster condition IE in the REGISTRATION ACCEPT message.
+    29. If the UE supports MINT, the AMF may include the Disaster roaming wait range IE in the REGISTRATION ACCEPT message.
+    30. If the UE supports MINT, the AMF may include the Disaster return wait range IE in the REGISTRATION ACCEPT message.
+    31. If the AMF received the list of TAIs from the satellite NG-RAN, and determines that, by UE subscription and operator's preferences, any but not all TAIs in the received list of TAIs is forbidden for roaming or for regional provision of service, the AMF shall include the TAI(s) in the corresponding forbidden TAI IE in the REGISTRATION ACCEPT message.
+    32. If the UE has set the Reconnection to the network due to RAN timing synchronization status change (RANtiming) bit to "Reconnection to the network due to RAN timing synchronization status change supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, the AMF may include the RAN timing synchronization IE with the RecReq bit set to "Reconnection requested" in the REGISTRATION ACCEPT message.
+    33. If the AMF receives the initial registration request along with the mobile IAB-indication over N2 reference point from UE and the UE is authorized to operate as an MBSR based on the subscription information and local policy, the AMF shall include the Feature authorization indication IE in the REGISTRATION ACCEPT message and shall set the MBSRAI field to "authorized to operate as MBSR". If the AMF receives the initial registration request along with the mobile IAB-indication over N2 reference point from UE and the UE is not authorized to operate as an MBSR based on the subscription information and local policy but can operate as a UE, the AMF shall include the Feature authorization indication IE in the REGISTRATION ACCEPT message and shall set the MBSRAI field to "not authorized to operate as MBSR but allowed to operate as a UE".
+    34. If the UE supports user plane positioning using LCS-UPP, SUPL, or both, the AMF shall set the LCS-UPP bit, the SUPL bit, or both in the 5GS network feature support IE of the REGISTRATION ACCEPT message as specified in 3GPP TS 24.572.
+    35. Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
+    36. If the REGISTRATION ACCEPT message included a T3512 value IE, the UE shall use the value in the T3512 value IE as periodic registration update timer (T3512).
+    37. If the REGISTRATION ACCEPT message include a T3324 value IE, the UE shall use the value in the T3324 value IE as active timer (T3324).
+    38. If the REGISTRATION ACCEPT message included a non-3GPP de-registration timer value IE, the UE shall use the value in non-3GPP de-registration timer value IE as non-3GPP de-registration timer.
+    39. If the REGISTRATION ACCEPT message contains a configured NSSAI IE with a new configured NSSAI for the current PLMN or SNPN and optionally the mapped S-NSSAI(s) for the configured NSSAI for the current PLMN or SNPN, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information.
+    40. If the UE has set the RCMAN bit to "Sending of REGISTRATION COMPLETE message for NSAG information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the NSAG information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE.
+    41. If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall replace the "CAG information list" stored in the UE under the specified conditions.
+    42. If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the "CAG information list".
+    43. If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE.
+    44. If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE.
+    45. Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED. The 5G-GUTI, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, the PEIPS assistance information, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, and the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall be considered as valid.
+
+- **Decision Points:**
+    - REGISTRATION REQUEST message received over non-3GPP access? → Yes: Include single TAI in the TAI list / No: Include multiple TAIs in the TAI list.
+    - Initial registration procedure is for emergency services? → Yes: AMF shall not include a list of equivalent SNPNs in the REGISTRATION ACCEPT message / No: AMF may include a list of equivalent SNPNs in the REGISTRATION ACCEPT message
+    - UE requested active time and AMF accepts MICO and use of active time? → Yes: include active time value in T3324 IE / No: do not include active time value in T3324 IE
+    - UE supports control plane CIoT 5GS optimization and AMF decides to accept? → Yes: Indicate support in 5GS network feature support IE / No: Do not indicate support.
+    - AMF determines UUAA-MM procedure needs to be performed for a UE but has not received the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and the AMF decides to accept the UE to be registered for other services than UAS services based on the user's subscription data and the operator policy → Accept initial registration request and mark in the UE's 5GMM context that the UE is not allowed to request UAS services
+    - 5GS update type IE was included in the REGISTRATION REQUEST message with the SMS requested bit set to "SMS over NAS supported", and SMSF selection is successful → AMF shall set the SMS allowed bit of the 5GS registration result IE to "SMS over NAS allowed" in the REGISTRATION ACCEPT message / If SMSF selection is not successful, SMS activation via the SMSF is not successful, the AMF does not allow the use of SMS over NAS, the SMS requested bit of the 5GS update type IE was set to "SMS over NAS not supported" in the REGISTRATION REQUEST message; or the 5GS update type IE was not included in the REGISTRATION REQUEST message, then the AMF shall set the SMS allowed bit of the 5GS registration result IE to "SMS over NAS not allowed" in the REGISTRATION ACCEPT message.
+    - The UE sets the NSSAA bit in the 5GMM capability IE to "Network slice-specific authentication and authorization not supported"?
+    - AMF determines a disaster condition applies to the PLMN with disaster condition, and the UE is allowed to be registered for disaster roaming services → AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE to "no additional information" in the REGISTRATION ACCEPT message. If the AMF determines that the UE can be registered to the PLMN for normal service, the AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE to "request for registration for disaster roaming services accepted as registration not for disaster roaming services" in the REGISTRATION ACCEPT message
+
+- **State Transitions:**
+    - After sending REGISTRATION ACCEPT, the AMF starts T3550 (if 5G-GUTI or SOR transparent container IE included) and enters 5GMM-COMMON-PROCEDURE-INITIATED
+    - After sending REGISTRATION ACCEPT, the AMF starts T3550 (if Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included) and enters 5GMM-COMMON-PROCEDURE-INITIATED
+    - After sending REGISTRATION ACCEPT, the AMF starts T3550 (if the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included) and enters 5GMM-COMMON-PROCEDURE-INITIATED
+    - After sending REGISTRATION ACCEPT, the AMF starts T3550 (if the UE is not in NB-N1 mode and the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message and either a UE radio capability ID IE or a UE radio capability ID deletion indication IE is included) and enters 5GMM-COMMON-PROCEDURE-INITIATED
+    - After receiving a REGISTRATION COMPLETE message, the AMF stops timer T3550 and change to state 5GMM-REGISTERED.
+    - Upon receipt of the REGISTRATION ACCEPT message, the UE enters state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
+
+- **Important Information Elements:**
+    - 5GS registration type IE: Indicates the type of registration requested by the UE (e.g., initial registration, emergency registration)
+    - TAI list: List of Tracking Area Identities assigned to the UE.
+    - Service area list IE: List of service area restrictions.
+    - Equivalent PLMNs: List of PLMNs considered equivalent to the registered PLMN.
+    - 5GMM capability IE: Contains UE capabilities related to 5GMM procedures.
+    - Requested NSSAI: Network Slice Selection Assistance Information requested by the UE.
+    - Allowed NSSAI: Network Slice Selection Assistance Information allowed by the network.
+    - Extended rejected NSSAI IE: Indicates which S-NSSAI(s) have been rejected by the network, along with a cause.
+    - Negotiated WUS assistance information IE: The negotiated UE paging probability information for the UE.
+    - Negotiated PEIPS assistance information IE: The Paging subgroup ID for the UE.
+    - UE radio capability ID IE:  A network assigned UE radio capability ID
+    - UE radio capability ID deletion indication IE: An indication the network-assigned UE radio capability IDs associated with the RPLMN or RSNPN
+    - MICO indication IE: Contains parameters related to MICO mode.
+    - 5GS network feature support IE: Indicates the features supported by the network.
+    - Registration accept type 6 IE container IE: A container for type 6 IEs.
+    - Truncated 5G-S-TMSI configuration IE: Contains Truncated 5G-S-TMSI configuration parameters.
+    - Service-level-AA container IE: Contains parameters related to service-level authentication and authorization for UAVs
+    - Network slicing indication IE: Indicates whether the subscription data for network slicing has changed.
+    - CAG information list IE: Contains information about Closed Access Groups (CAGs).
+    - SOR transparent container IE: Contains the steering of roaming information.
+    - NSSAI inclusion mode IE: Indicates the NSSAI inclusion mode.
+    - RAT utilization control IE: Indicates the RAT restriction.
+    - RAN timing synchronization IE: RAN timing synchronization status.
+    - Unavailability configuration IE: Contains configuration for UE unavailability.
+    - Feature authorization indication IE: Authorisation to operate as MBSR or not
+    - Discontinuous coverage maximum time offset IE: Max timer value for discontinuous coverage
+```

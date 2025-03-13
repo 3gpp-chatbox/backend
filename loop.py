@@ -44,15 +44,38 @@ def get_hierarchical_content(section_id):
 # Function to send hierarchical content to LLM
 def extract_procedure_from_llm(section_id, content_hierarchy):
     prompt = """
-    You are a 3GPP expert analyzing NAS specification procedures.
-    Below is the hierarchical structure of a section, including its parents and context:
-    
-    """
-    for sec_id, sec_name, sec_content in content_hierarchy:
-        prompt += f"Section {sec_id}: {sec_name}\n{sec_content}\n\n"
-    
-    prompt += "Extract the key procedural steps from this context."
+    You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.  
+    Below is a **hierarchical section structure**, including parent sections for context.  
 
+    Your task: **Extract a structured procedure** by identifying:  
+    - **Triggering Conditions:** When and why the procedure starts.  
+    - **Signaling Steps:** Include specific **NAS messages** (e.g., REGISTRATION REQUEST, AUTHENTICATION RESPONSE).  
+    - **Decision Points:** Clearly define logical branches (e.g., authentication required? → Yes/No).  
+    - **Information Elements (IEs):** Extract key elements that impact the procedure.  
+      
+    **Hierarchical Section Context:**  
+    """
+    for sec_id, sec_name, content_chunk in content_hierarchy:
+        prompt += f"Section {sec_id}: {sec_name}\n{content_chunk}\n\n"
+    
+    prompt += """
+    **Expected Output Format:**
+    - **Procedure Name:** <Name>
+    - **Triggering Conditions:**
+        - Condition 1
+        - Condition 2
+    - **Steps:**
+        1. Step description
+        2. Step description
+    - **Decision Points:**
+        - Decision 1 → Outcome A / Outcome B
+    - **State Transitions:**
+        - After step 1, the state is <STATE>
+        - After step 3, the state is <STATE>
+    - **Important Information Elements:**
+        - IE 1: Description
+        - IE 2: Description
+    """
 
       # Save the whole prompt to a file
     prompt_file = f"prompts/{section_id}_prompt.txt"

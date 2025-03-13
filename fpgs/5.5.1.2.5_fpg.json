@@ -1,417 +1,575 @@
 {
-  "procedure_name": "UE Handling of REGISTRATION REJECT",
-  "description": "UE behavior upon receiving a REGISTRATION REJECT message after an initial registration attempt.",
+  "procedure_name": "Initial Registration Not Accepted by the Network",
   "nodes": [
     {
-      "id": "Registration_Attempt",
-      "type": "state",
-      "properties": {
-        "description": "UE is attempting registration."
-      }
+      "id": "1",
+      "type": "Event",
+      "entity": "UE",
+      "description": "UE sends REGISTRATION REQUEST"
     },
     {
-      "id": "Receive_Registration_Reject",
-      "type": "event",
-      "properties": {
-        "message_type": "REGISTRATION REJECT"
-      },
-      "parameters": ["5GMM Cause Value", "Extended 5GMM Cause IE", "RAT utilization control IE", "N3IWF identifier IE", "TNAN information IE"]
+      "id": "2",
+      "type": "Action",
+      "entity": "AMF",
+      "description": "AMF determines registration cannot be accepted (see Triggering Conditions)"
     },
     {
-      "id": "Check_Integrity_Protection",
-      "type": "conditional",
-      "properties": {
-        "condition": "Is REGISTRATION REJECT integrity protected?"
-      }
+      "id": "3",
+      "type": "Action",
+      "entity": "AMF",
+      "description": "AMF sends REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value"
     },
     {
-      "id": "Integrity_Protected_Yes",
-      "type": "state",
-      "properties": {
-        "description": "REGISTRATION REJECT message is integrity protected."
-      }
+      "id": "4",
+      "type": "Event",
+      "entity": "UE",
+      "description": "UE receives REGISTRATION REJECT message"
     },
     {
-      "id": "Integrity_Protected_No",
-      "type": "state",
-      "properties": {
-        "description": "REGISTRATION REJECT message is NOT integrity protected."
-      }
+      "id": "5",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #3 or #6?"
     },
     {
-      "id": "Evaluate_5GMM_Cause",
-      "type": "conditional",
-      "properties": {
-        "description": "Decision based on the received 5GMM Cause Value."
-      },
-      "parameters":["5GMM Cause Value"]
+      "id": "6",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, considers USIM/entry as invalid"
+    },
+    {
+      "id": "7",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #7?"
+    },
+    {
+      "id": "8",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, considers USIM/entry as invalid"
+    },
+    {
+      "id": "9",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #10?"
+    },
+    {
+      "id": "10",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts the initial registration procedure"
+    },
+    {
+      "id": "11",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #11?"
+    },
+    {
+      "id": "12",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, stores the PLMN identity in the forbidden PLMN list"
+    },
+    {
+      "id": "13",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #12?"
+    },
+    {
+      "id": "14",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes TAI related information, enters 5GMM-DEREGISTERED.LIMITED-SERVICE"
+    },
+    {
+      "id": "15",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #13?"
+    },
+    {
+      "id": "16",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes TAI and registration information, enters 5GMM-DEREGISTERED.LIMITED-SERVICE or 5GMM-DEREGISTERED.PLMN-SEARCH"
+    },
+    {
+      "id": "17",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #15?"
+    },
+    {
+      "id": "18",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes TAI and registration information, stores current TAI, enters 5GMM-DEREGISTERED.LIMITED-SERVICE"
+    },
+    {
+      "id": "19",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #22?"
     },
      {
-      "id": "General_Actions",
-      "type": "state",
-      "properties": {
-        "description": "General Actions executed regardless of 5GMM cause."
-      },
-      "actions": [
-        "Abort Initial Registration",
-        "Potentially reset registration attempt counter",
-        "Enter different 5GMM states (e.g., 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION)",
-        "Delete stored information (5G-GUTI, TAI, ngKSI, PLMN lists, SNPN lists)",
-        "Set 5GS update status (5U2 NOT UPDATED, 5U3 ROAMING NOT ALLOWED)",
-        "Start/Stop timers (T3346, T3245, T3526)",
-        "Disable N1 mode capability (if applicable)",
-        "Store PLMN identity and geographical location in 'PLMNs not allowed to operate at the present UE location' (if applicable)",
-        "Store current TAI in '5GS forbidden tracking areas' lists (if applicable)"
-      ]
+      "id": "20",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "T3346 value IE is present and not zero/deactivated?"
     },
     {
-      "id": "Cause_3_6_7",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #3 (Illegal UE), #6 (Illegal ME), or #7 (5GS services not allowed)"
-      },
-      "actions": [
-        "Consider USIM/SIM invalid",
-        "Delete credentials",
-        "Enter deregistered state"
-      ]
+      "id": "21",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts initial registration, enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, starts T3346"
     },
     {
-      "id": "Cause_11_78",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #11 (PLMN not allowed) or #78 (PLMN not allowed to operate at the present UE location)"
-      },
-      "actions": [
-        "Store PLMN in forbidden list",
-        "Perform PLMN selection",
-        "Store current location (if known)"
-      ]
+      "id": "22",
+      "type": "Action",
+      "entity": "UE",
+      "description": "Abnormal case (UE specific action not defined in this procedure)"
     },
     {
-      "id": "Cause_12",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #12 (Tracking area not allowed)"
-      },
-      "actions": [
-        "Store current TAI in '5GS forbidden tracking areas for regional provision of service'"
-      ]
+      "id": "23",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #27?"
     },
     {
-      "id": "Cause_13_15",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #13 (Roaming not allowed in this tracking area) or #15 (No suitable cells in tracking area)"
-      },
-      "actions": [
-        "Store current TAI in '5GS forbidden tracking areas for roaming'",
-        "Search for another suitable cell (Cause #15 only)",
-        "Store RAT utilization control information (Cause #15 only)"
-      ]
+      "id": "24",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, disables N1 mode capability, enters 5GMM-DEREGISTERED.LIMITED-SERVICE"
     },
     {
-      "id": "Cause_22",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #22 (Congestion)"
-      },
-      "actions": [
-        "Start back-off timer (T3346)",
-        "Attempt registration again after timer expires"
-      ]
+      "id": "25",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #31?"
     },
     {
-      "id": "Cause_27_72",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #27 (N1 mode not allowed) or #72 (Non-3GPP access to 5GCN not allowed)"
-      },
-      "actions": [
-        "Disable N1 mode capability",
-        "Disable N1 mode for non-3GPP access (Cause #72 only)"
-      ]
+      "id": "26",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE enables E-UTRA capability, disables the N1 mode capability for 3GPP access, and enter the 5GMM-DEREGISTERED.NO-CELL-AVAILABLE"
     },
     {
-      "id": "Cause_31",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #31 (Redirection to EPC required)"
-      },
-      "actions": [
-        "Disable N1 mode for 3GPP access",
-        "Enter deregistered state"
-      ]
+      "id": "27",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #36?"
     },
     {
-      "id": "Cause_62",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #62 (No network slices available)"
-      },
-      "actions": [
-        "Store rejected S-NSSAI(s) with the corresponding rejection cause",
-        "Take actions based on the cause (e.g., back-off timer T3526)"
-      ]
-    },
-    {
-      "id": "Cause_76",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #76 (Not authorized for this CAG or authorized for CAG cells only)"
-      },
-      "actions": [
-        "Updates the CAG information list.",
-        "Searches for a suitable cell according to the updated CAG information"
-      ]
+      "id": "28",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, stores the PLMN identity in the forbidden PLMN list, enters state 5GMM-DEREGISTERED.PLMN-SEARCH"
     },
      {
-      "id": "Cause_81_82",
-      "type": "state",
-      "properties": {
-        "description": "5GMM Cause Value: #81 (Selected N3IWF is not compatible with the allowed NSSAI) or #82 (Selected TNGF is not compatible with the allowed NSSAI)"
-      },
-      "actions": [
-        "UE may use the provided N3IWF identifier IE in N3IWF selection (Cause #81)",
-        "UE may use the provided TNAN information IE in TNAN selection (Cause #82)"
-      ]
+      "id": "29",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #62?"
     },
     {
-      "id": "SNPN_Specific_Actions",
-      "type": "state",
-      "properties": {
-        "description": "Actions specific to SNPNs (e.g., storing SNPN ID in a forbidden list)."
-      },
-      "actions": [
-        "Store SNPN ID in forbidden list (if applicable)"
-      ]
+      "id": "30",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts initial registration, enters 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH, resets the registration attempt counter and takes actions based on the rejection cause in the rejected S-NSSAI(s)."
+    },
+      {
+      "id": "31",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #72?"
     },
     {
-      "id": "Single_Registration_Mode",
-      "type": "state",
-      "properties": {
-        "description": "UE operating in single-registration mode."
-      },
-      "actions": [
-        "Handle EMM parameters as specified in TS 24.301"
-      ]
-    },
-    {
-      "id": "Abnormal_Cases",
-      "type": "state",
-      "properties": {
-        "description": "Handles abnormal cases (e.g., unexpected cause values)."
-      },
-      "actions": [
-        "Execute error handling procedures (subclause 5.5.1.2.7)"
-      ]
+      "id": "32",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets the 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes last visited registered TAI and TAI list. If the UE is not registering or has not registered to the same PLMN over 3GPP access, the UE shall additionally delete 5G-GUTI and ngKSI. Additionally, the UE shall reset the registration attempt counter and enter the state 5GMM-DEREGISTERED."
     },
      {
-      "id": "End_Procedure",
-      "type": "state",
-      "properties": {
-        "description": "End of Registration Reject handling procedure"
-      }
+      "id": "33",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #73?"
+    },
+    {
+      "id": "34",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, stores the PLMN identity in the forbidden PLMN list, enters state 5GMM-DEREGISTERED.PLMN-SEARCH"
+    },
+     {
+      "id": "35",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #74?"
+    },
+    {
+      "id": "36",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets the 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information and the list of equivalent SNPNs (if available). The UE shall reset the registration attempt counter and store the SNPN identity in the temporarily forbidden SNPNs list."
+    },
+     {
+      "id": "37",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #75?"
+    },
+    {
+      "id": "38",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets the 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information and the list of equivalent SNPNs (if available). The UE shall reset the registration attempt counter and store the SNPN identity in the permanently forbidden SNPNs list."
+    },
+     {
+      "id": "39",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #76?"
+    },
+    {
+      "id": "40",
+      "type": "Action",
+      "entity": "UE",
+      "description": "The UE shall set the 5GS update status to 5U3 ROAMING NOT ALLOWED and reset the registration attempt counter. If the 5GMM cause #76 is received from a CAG cell, and if the UE receives a CAG information list in the CAG information list IE or the Extended CAG information list IE included in the REGISTRATION REJECT message, the UE shall replace the CAG information list stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN."
+    },
+     {
+      "id": "41",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #77?"
+    },
+    {
+      "id": "42",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes registration information, shall reset the registration attempt counter, shall enter the state 5GMM-DEREGISTERED"
+    },
+     {
+      "id": "43",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #78?"
+    },
+    {
+      "id": "44",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE sets the 5GS update status to 5U3 ROAMING NOT ALLOWED, deletes last visited registered TAI and TAI list. If the UE is not registering or has not registered to the same PLMN over non-3GPP access, the UE shall additionally delete the list of equivalent PLMNs, 5G-GUTI and ngKSI."
+    },
+     {
+      "id": "45",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #79?"
+    },
+    {
+      "id": "46",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts the initial registration procedure, sets the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+     {
+      "id": "47",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #80?"
+    },
+    {
+      "id": "48",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED, enter state 5GMM-DEREGISTERED. PLMN-SEARCH and shall delete any 5G-GUTI, last visited registered TAI, TAI list and ngKSI."
+    },
+     {
+      "id": "49",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #81?"
+    },
+    {
+      "id": "50",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+     {
+      "id": "51",
+      "type": "Decision",
+      "entity": "UE",
+      "description": "5GMM cause value in REGISTRATION REJECT = #82?"
+    },
+    {
+      "id": "52",
+      "type": "Action",
+      "entity": "UE",
+      "description": "UE aborts the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
     }
+
   ],
   "edges": [
     {
-      "from": "Registration_Attempt",
-      "to": "Receive_Registration_Reject",
-      "event": "Receive_Registration_Reject",
-      "properties": {}
+      "source": "1",
+      "target": "2",
+      "condition": "UE initiates REGISTRATION REQUEST"
     },
     {
-      "from": "Receive_Registration_Reject",
-      "to": "Check_Integrity_Protection",
-      "action": "Check message integrity",
-      "properties": {}
+      "source": "2",
+      "target": "3",
+      "condition": "Registration not accepted"
     },
     {
-      "from": "Check_Integrity_Protection",
-      "to": "Integrity_Protected_Yes",
-      "condition": "Yes",
-      "properties": {}
+      "source": "3",
+      "target": "4",
+      "condition": "Always"
     },
     {
-      "from": "Check_Integrity_Protection",
-      "to": "Integrity_Protected_No",
-      "condition": "No",
-      "properties": {}
+      "source": "4",
+      "target": "5",
+      "condition": "Always"
     },
     {
-      "from": "Integrity_Protected_Yes",
-      "to": "Evaluate_5GMM_Cause",
-      "action": "Evaluate 5GMM Cause Value",
-      "properties": {}
+      "source": "5",
+      "target": "6",
+      "condition": "5GMM cause value = #3 or #6"
     },
     {
-      "from": "Integrity_Protected_No",
-      "to": "Evaluate_5GMM_Cause",
-      "action": "May ignore Extended 5GMM cause IE and RAT utilization control IE",
-      "properties": {}
+      "source": "5",
+      "target": "7",
+      "condition": "5GMM cause value != #3 or #6"
     },
     {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_3_6_7",
-      "condition": "Cause #3, #6, or #7",
-      "properties": {}
+      "source": "7",
+      "target": "8",
+      "condition": "5GMM cause value = #7"
     },
     {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_11_78",
-      "condition": "Cause #11 or #78",
-      "properties": {}
+      "source": "7",
+      "target": "9",
+      "condition": "5GMM cause value != #7"
     },
     {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_12",
-      "condition": "Cause #12",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_13_15",
-      "condition": "Cause #13 or #15",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_22",
-      "condition": "Cause #22",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_27_72",
-      "condition": "Cause #27 or #72",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_31",
-      "condition": "Cause #31",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_62",
-      "condition": "Cause #62",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_76",
-      "condition": "Cause #76",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Cause_81_82",
-      "condition": "Cause #81 or #82",
-      "properties": {}
-    },
-    {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "Abnormal_Cases",
-      "condition": "Unexpected cause value",
-      "properties": {}
-    },
-   {
-      "from": "Cause_3_6_7",
-      "to": "General_Actions",
-      "properties": {}
-    },
-    {
-      "from": "Cause_11_78",
-      "to": "General_Actions",
-      "properties": {}
-    },
-    {
-      "from": "Cause_12",
-      "to": "General_Actions",
-      "properties": {}
-    },
-    {
-      "from": "Cause_13_15",
-      "to": "General_Actions",
-      "properties": {}
-    },
-    {
-      "from": "Cause_22",
-      "to": "General_Actions",
-      "properties": {}
-    },
-    {
-      "from": "Cause_27_72",
-      "to": "General_Actions",
-      "properties": {}
+      "source": "9",
+      "target": "10",
+      "condition": "5GMM cause value = #10"
     },
      {
-      "from": "Cause_31",
-      "to": "General_Actions",
-      "properties": {}
+      "source": "9",
+      "target": "11",
+      "condition": "5GMM cause value != #10"
     },
     {
-      "from": "Cause_62",
-      "to": "General_Actions",
-      "properties": {}
-    },
-      {
-      "from": "Cause_76",
-      "to": "General_Actions",
-      "properties": {}
+      "source": "11",
+      "target": "12",
+      "condition": "5GMM cause value = #11"
     },
      {
-      "from": "Cause_81_82",
-      "to": "General_Actions",
-      "properties": {}
+      "source": "11",
+      "target": "13",
+      "condition": "5GMM cause value != #11"
     },
     {
-      "from": "General_Actions",
-      "to": "SNPN_Specific_Actions",
-      "properties": {},
-      "condition": "If SNPN related"
-    },
-    {
-      "from": "SNPN_Specific_Actions",
-      "to": "Single_Registration_Mode",
-      "properties": {}
+      "source": "13",
+      "target": "14",
+      "condition": "5GMM cause value = #12"
     },
      {
-      "from": "Abnormal_Cases",
-      "to": "Single_Registration_Mode",
-      "properties": {}
+      "source": "13",
+      "target": "15",
+      "condition": "5GMM cause value != #12"
     },
     {
-      "from": "Single_Registration_Mode",
-      "to": "End_Procedure",
-      "properties": {}
+      "source": "15",
+      "target": "16",
+      "condition": "5GMM cause value = #13"
+    },
+     {
+      "source": "15",
+      "target": "17",
+      "condition": "5GMM cause value != #13"
     },
     {
-      "from": "General_Actions",
-      "to": "End_Procedure",
-      "properties": {},
-      "condition": "No SNPN specific actions"
+      "source": "17",
+      "target": "18",
+      "condition": "5GMM cause value = #15"
     },
-
+     {
+      "source": "17",
+      "target": "19",
+      "condition": "5GMM cause value != #15"
+    },
     {
-      "from": "Evaluate_5GMM_Cause",
-      "to": "General_Actions",
-      "condition": "no specific cause triggered",
-      "properties": {}
+      "source": "19",
+      "target": "20",
+      "condition": "5GMM cause value = #22"
     },
-      {
-      "from": "Integrity_Protected_Yes",
-      "to": "General_Actions",
-      "properties": {},
-      "condition": "evaluateCauseValue is false"
+    {
+      "source": "20",
+      "target": "21",
+      "condition": "T3346 value IE is present and not zero/deactivated"
     },
-       {
-      "from": "Integrity_Protected_No",
-      "to": "General_Actions",
-      "properties": {},
-      "condition": "evaluateCauseValue is false"
+    {
+      "source": "20",
+      "target": "22",
+      "condition": "T3346 value IE is zero/deactivated or not present"
+    },
+    {
+      "source": "19",
+      "target": "23",
+      "condition": "5GMM cause value != #22"
+    },
+    {
+      "source": "23",
+      "target": "24",
+      "condition": "5GMM cause value = #27"
+    },
+    {
+      "source": "23",
+      "target": "25",
+      "condition": "5GMM cause value != #27"
+    },
+    {
+      "source": "25",
+      "target": "26",
+      "condition": "5GMM cause value = #31"
+    },
+    {
+      "source": "25",
+      "target": "27",
+      "condition": "5GMM cause value != #31"
+    },
+    {
+      "source": "27",
+      "target": "28",
+      "condition": "5GMM cause value = #36"
+    },
+    {
+      "source": "27",
+      "target": "29",
+      "condition": "5GMM cause value != #36"
+    },
+     {
+      "source": "29",
+      "target": "30",
+      "condition": "5GMM cause value = #62"
+    },
+    {
+      "source": "29",
+      "target": "31",
+      "condition": "5GMM cause value != #62"
+    },
+    {
+      "source": "31",
+      "target": "32",
+      "condition": "5GMM cause value = #72"
+    },
+    {
+      "source": "31",
+      "target": "33",
+      "condition": "5GMM cause value != #72"
+    },
+    {
+      "source": "33",
+      "target": "34",
+      "condition": "5GMM cause value = #73"
+    },
+    {
+      "source": "33",
+      "target": "35",
+      "condition": "5GMM cause value != #73"
+    },
+    {
+      "source": "35",
+      "target": "36",
+      "condition": "5GMM cause value = #74"
+    },
+    {
+      "source": "35",
+      "target": "37",
+      "condition": "5GMM cause value != #74"
+    },
+    {
+      "source": "37",
+      "target": "38",
+      "condition": "5GMM cause value = #75"
+    },
+    {
+      "source": "37",
+      "target": "39",
+      "condition": "5GMM cause value != #75"
+    },
+    {
+      "source": "39",
+      "target": "40",
+      "condition": "5GMM cause value = #76"
+    },
+    {
+      "source": "39",
+      "target": "41",
+      "condition": "5GMM cause value != #76"
+    },
+    {
+      "source": "41",
+      "target": "42",
+      "condition": "5GMM cause value = #77"
+    },
+    {
+      "source": "41",
+      "target": "43",
+      "condition": "5GMM cause value != #77"
+    },
+    {
+      "source": "43",
+      "target": "44",
+      "condition": "5GMM cause value = #78"
+    },
+    {
+      "source": "43",
+      "target": "45",
+      "condition": "5GMM cause value != #78"
+    },
+     {
+      "source": "45",
+      "target": "46",
+      "condition": "5GMM cause value = #79"
+    },
+    {
+      "source": "45",
+      "target": "47",
+      "condition": "5GMM cause value != #79"
+    },
+     {
+      "source": "47",
+      "target": "48",
+      "condition": "5GMM cause value = #80"
+    },
+    {
+      "source": "47",
+      "target": "49",
+      "condition": "5GMM cause value != #80"
+    },
+     {
+      "source": "49",
+      "target": "50",
+      "condition": "5GMM cause value = #81"
+    },
+    {
+      "source": "49",
+      "target": "51",
+      "condition": "5GMM cause value != #81"
+    },
+     {
+      "source": "51",
+      "target": "52",
+      "condition": "5GMM cause value = #82"
     }
   ]
 }
