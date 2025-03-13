@@ -1,0 +1,26 @@
+Okay, based on the provided table of contents of a 3GPP NAS specification document, here's a list of sections with heading level 3 that explicitly discuss procedures:
+
+*   **4.4.2**, Handling of 5G NAS security contexts
+*   **5.4.1**, Primary authentication and key agreement procedure
+*   **5.4.2**, Security mode control procedure
+*   **5.4.3**, Identification procedure
+*   **5.4.4**, Generic UE configuration update procedure
+*   **5.4.5**, NAS transport procedure(s)
+*   **5.4.6**, 5GMM status procedure
+*   **5.4.7**, Network slice-specific authentication and authorization procedure
+*   **5.5.1**, Registration procedure
+*   **5.5.2**, De-registration procedure
+*   **5.5.3**, eCall inactivity procedure
+*   **5.5.4**, Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+*   **5.6.1**, Service request procedure
+*   **5.6.2**, Paging procedure
+*   **5.6.3**, Notification procedure
+*   **6.3.1**, PDU session authentication and authorization procedure
+*   **6.3.2**, Network-requested PDU session modification procedure
+*   **6.3.3**, Network-requested PDU session release procedure
+*   **6.4.1**, UE-requested PDU session establishment procedure
+*   **6.4.2**, UE-requested PDU session modification procedure
+*   **6.4.3**, UE-requested PDU session release procedure
+*   **6.5.1**, General
+*   **6.6.1**, Exchange of extended protocol configuration options
+*   **6.6.2**, Remote UE report procedure
