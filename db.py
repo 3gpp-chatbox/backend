@@ -1,95 +1,79 @@
+import os
 import re
+import uuid  # Import uuid module to generate unique IDs
 import chromadb
 from sentence_transformers import SentenceTransformer
 
-# ✅ Load embedding model
-model_embedding = SentenceTransformer('all-MiniLM-L6-v2')
+# Initialize the Persistent Chroma client with a specific path for persistent storage
+client = chromadb.PersistentClient(path="./chroma_db")  # Using PersistentClient
 
-# ✅ Use persistent ChromaDB storage
-client = chromadb.PersistentClient(path="./chroma_db")
+# Set up the collection (persistent storage will be used)
+collection = client.get_or_create_collection("sections")  # Chroma will store the collection in the specified path
 
-# ✅ Ensure the collection exists
-collection_name = "3gpp_sections"
-collections = [c.name for c in client.list_collections()]
-if collection_name in collections:
-    collection = client.get_collection(collection_name)
-    print(f"Using existing ChromaDB collection: {collection_name}")
-else:
-    collection = client.create_collection(collection_name)
-    print(f"Created new ChromaDB collection: {collection_name}")
+# Initialize the SentenceTransformer model for generating embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# ✅ Function to load and chunk Markdown file
-def load_and_chunk_md(md_file):
-    with open(md_file, "r", encoding="utf-8") as f:
-        content = f.read()
+# Read the Markdown file
+with open('24501-j11.md', 'r', encoding='utf-8') as file:
+    md_content = file.read()
 
-    section_pattern = re.compile(r'^(?P<number>\d+(\.\d+)*)(?:\s+(?P<title>.+))?$')
+# Regex to match headings like # 5 ..., ## 5.1 ..., ### 5.4.1 ...
+heading_pattern = re.compile(r'^(#{1,7})\s+(\d+(\.\d+)*)\s+(.+)', re.MULTILINE)
 
-    sections = []
-    current_section = None
-    current_content = []
+# Track Parent Sections
+parent_sections = {}  # Stores {level: section_id}
+parent_section_names = {}  # Stores {level: section_name}
 
-    for line in content.split("\n"):
-        match = section_pattern.match(line.strip())
-        if match:
-            if current_section is not None:
-                sections.append((current_section, " ".join(current_content) if current_content else "[No content]"))
+# Store vectors and metadata for Chroma
+for match in heading_pattern.finditer(md_content):
+    heading_level = len(match.group(1))  # Number of # (heading level)
+    section_id = match.group(2).strip()  # Extract section ID (e.g., "5", "5.1")
+    section_name = match.group(4).strip()  # Extract section name
 
-            current_section = match.group("number")
-            title = match.group("title") or "[No title]"
-            current_content = [title]
-        else:
-            current_content.append(line.strip())
+    parent_section_id = None
+    parent_section_name = None
 
-    if current_section is not None:
-        sections.append((current_section, " ".join(current_content) if current_content else "[No content]"))
+    # If not top-level heading, find parent section
+    if heading_level > 1:
+        parent_section_id = parent_sections.get(heading_level - 1)
+        parent_section_name = parent_section_names.get(heading_level - 1)
 
-    chunks, ids = [], []
-    seen_ids = set()  # To track unique ids
-    for section_num, text in sections:
-        sentences = re.split(r'(?<!\d)\. (?!\d)', text)
-        for j, sentence in enumerate(sentences):
-            if sentence.strip():
-                # Create a unique ID by appending section number, sentence number, and a counter to avoid duplicates
-                unique_id = f"section_{section_num}_sentence_{j}"
+    # Extract content chunk under the heading
+    content_start_index = match.end()
+    next_heading_match = heading_pattern.search(md_content, content_start_index)
+    content_end_index = next_heading_match.start() if next_heading_match else len(md_content)
+    content_chunk = md_content[content_start_index:content_end_index].strip()
 
-                # Ensure no duplicate IDs by appending a counter if needed
-                counter = 1
-                original_id = unique_id
-                while unique_id in seen_ids:
-                    unique_id = f"{original_id}_{counter}"
-                    counter += 1
+    # Combine section_id, section_name, and content_chunk to form a document for embedding
+    document = f"{section_id}: {section_name} - {content_chunk}"
 
-                seen_ids.add(unique_id)
-                chunks.append(sentence.strip())
-                ids.append(unique_id)
+    # Generate embedding for the document using the model
+    embedding = model.encode(document)
 
-    return chunks, ids
+    # Generate a unique ID for the document using uuid
+    document_id = str(uuid.uuid4())  # This generates a random unique UUID
 
-# ✅ Load and chunk Markdown file
-MD_FILE = "24501-j11.md"
-chunks, ids = load_and_chunk_md(MD_FILE)
+    # Ensure that parent_section_id and parent_section_name are not None
+    parent_section_id = parent_section_id if parent_section_id is not None else ""
+    parent_section_name = parent_section_name if parent_section_name is not None else ""
 
-# ✅ Check that we have valid data before embedding
-if len(chunks) == 0:
-    print("⚠️ No valid content to embed. Exiting script.")
-else:
-    # ✅ Create embeddings (even for sections with no content)
-    embeddings = model_embedding.encode(chunks)
+    # Add section and its embedding to the Chroma collection
+    collection.add(
+        ids=[document_id],  # The unique ID for the document (generated using uuid)
+        documents=[document],  # This is the document metadata we are storing
+        metadatas=[{
+            "section_id": section_id,
+            "section_name": section_name,
+            "parent_section_id": parent_section_id,
+            "parent_section_name": parent_section_name,
+            "section_level": heading_level
+        }],
+        embeddings=[embedding]  # The embedding for the document
+    )
 
-    # ✅ Split embeddings into smaller batches
-    BATCH_SIZE = 5000  # Adjust this value based on the error message
-    for i in range(0, len(chunks), BATCH_SIZE):
-        batch_embeddings = embeddings[i:i + BATCH_SIZE]
-        batch_ids = ids[i:i + BATCH_SIZE]
-        batch_chunks = chunks[i:i + BATCH_SIZE]
+    # Store parent section tracking
+    parent_sections[heading_level] = section_id
+    parent_section_names[heading_level] = section_name
 
-        # ✅ Store in ChromaDB
-        collection.add(
-            embeddings=batch_embeddings.tolist(),
-            ids=batch_ids,
-            documents=batch_chunks
-        )
-
-    print("✅ ChromaDB collection populated successfully!")
-
+# Commit the data (Chroma handles this automatically, but ensure the collection is finalized)
+print("✅ Data inserted successfully into Chroma.")
