@@ -1,0 +1,50 @@
+The section describes the UE's behavior upon receiving a REGISTRATION REJECT message after an initial registration attempt. The key procedural steps are dependent on the 5GMM cause value received in the REGISTRATION REJECT message:
+
+**General Actions:**
+
+*   The UE aborts the initial registration procedure.
+*   The UE may reset the registration attempt counter.
+*   The UE may enter different 5GMM states depending on the cause (e.g., 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, 5GMM-DEREGISTERED.PLMN-SEARCH, 5GMM-DEREGISTERED.LIMITED-SERVICE, 5GMM-DEREGISTERED.NO-SUPI, 5GMM-DEREGISTERED.NO-CELL-AVAILABLE).
+*   The UE may delete stored information like 5G-GUTI, last visited registered TAI, TAI list, ngKSI, equivalent PLMN lists, equivalent SNPN lists, depending on the cause.
+*   The UE sets the 5GS update status (e.g., 5U2 NOT UPDATED, 5U3 ROAMING NOT ALLOWED).
+*   The UE may start or stop timers (e.g. T3346, T3245, T3526).
+*   The UE may disable N1 mode capability.
+*   The UE may store the PLMN identity and, if it is known, the current geographical location in the list of "PLMNs not allowed to operate at the present UE location".
+*   The UE may store current TAI in the list of "5GS forbidden tracking areas for roaming" or "5GS forbidden tracking areas for regional provision of service".
+
+**Specific Actions Based on 5GMM Cause Value (examples):**
+
+*   **\#3 (Illegal UE) or \#6 (Illegal ME):**  The UE considers the USIM/SIM as invalid for 5GS services, deletes credentials and enters a deregistered state.
+*   **\#7 (5GS services not allowed):** Similar to illegal UE/ME, the UE considers the USIM invalid and enters a deregistered state.
+*   **\#11 (PLMN not allowed):** The UE stores the PLMN in a forbidden list and performs PLMN selection.
+*   **\#12 (Tracking area not allowed):** The UE stores the current TAI in the list of "5GS forbidden tracking areas for regional provision of service".
+*   **\#13 (Roaming not allowed in this tracking area):** The UE stores the current TAI in the list of "5GS forbidden tracking areas for roaming".
+*   **\#15 (No suitable cells in tracking area):** The UE stores the current TAI in the list of "5GS forbidden tracking areas for roaming" and searches for another suitable cell. If RAT utilization control IE is received, the UE shall store the received RAT utilization control information together with the PLMN identity of the current PLMN in the list of "PLMNs with associated RAT restrictions".
+*   **\#22 (Congestion):** The UE starts a back-off timer (T3346) and attempts registration again after the timer expires.
+*   **\#27 (N1 mode not allowed):** The UE disables N1 mode capability.
+*   **\#31 (Redirection to EPC required):** The UE disables N1 mode for 3GPP access and enters a deregistered state.
+*   **\#62 (No network slices available):** The UE stores the rejected S-NSSAI(s) with the corresponding rejection cause and takes actions based on the cause (e.g., not attempting to use the S-NSSAI in the current PLMN/SNPN until certain conditions are met or starting a back-off timer T3526).
+*   **\#72 (Non-3GPP access to 5GCN not allowed):** UE disables N1 mode capability for non-3GPP access.
+*   **\#76 (Not authorized for this CAG or authorized for CAG cells only):** UE updates the CAG information list and searches for a suitable cell according to the updated CAG information.
+*   **\#78 (PLMN not allowed to operate at the present UE location):** The UE stores the PLMN identity and, if it is known, the current geographical location in the list of "PLMNs not allowed to operate at the present UE location" and perform a PLMN selection.
+*   **\#81 (Selected N3IWF is not compatible with the allowed NSSAI):** The UE may use the provided N3IWF identifier IE in N3IWF selection.
+*   **\#82 (Selected TNGF is not compatible with the allowed NSSAI):** The UE may use the provided TNAN information IE in TNAN selection.
+
+**SNPN Specific Actions:**
+
+* Some cause values trigger specific handling related to SNPNs (e.g., storing the SNPN ID in a "forbidden SNPNs" list).
+
+**Single-Registration Mode:**
+
+*   If the UE is operating in single-registration mode, it also handles EMM parameters as specified in TS 24.301.
+
+**Integrity Protection:**
+
+*   The UE checks if the REGISTRATION REJECT message is integrity protected and may take different actions if it is not (e.g., using a random back-off timer value).
+*   The UE may ignore the Extended 5GMM cause IE or RAT utilization control IE if the message is not integrity protected.
+
+**Abnormal Cases:**
+
+*   The section also specifies the UE behavior for abnormal cases, such as receiving unexpected cause values or receiving certain cause values in specific scenarios (e.g., cause #31 over non-3GPP access). These abnormal cases generally lead to specific error handling procedures detailed in subclause 5.5.1.2.7 (which is not fully described in this extracted section).
+
+In summary, the UE's actions upon receiving a REGISTRATION REJECT are highly dependent on the specific cause value and the UE's configuration (single vs. dual registration, support for certain features like CIoT optimizations, access type, SNPN etc.). The specification provides detailed procedures for each case.

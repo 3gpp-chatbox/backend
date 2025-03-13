@@ -1,87 +1,96 @@
 import sqlite3
 
-# Function to query the database and retrieve the full hierarchy for a section (parent, grandparent, etc.)
-def query_section_hierarchy(section_id):
-    hierarchy = []
+import sqlite3
+import re
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+import json
+import json
+import os
+from pydantic import BaseModel, ValidationError, Field,model_validator
+from typing import List, Dict, Optional, Any 
+import sys
+import time
+from enum import Enum
 
-    # Loop to retrieve parent sections up to level 1
-    current_section = section_id
-    while current_section:
-        conn = sqlite3.connect('section_content_0310.db')
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            SELECT section_id, section_name
-            FROM sections
-            WHERE section_id = ?
-        ''', (current_section,))
-        
-        result = cursor.fetchone()
-        if result:
-            hierarchy.insert(0, result)  # Insert at the beginning to maintain order
-            # Move up to the parent section by removing the last segment
-            current_section = '.'.join(current_section.split('.')[:-1]) if '.' in current_section else None
-        else:
-            break
-        conn.close()
-    
-    return hierarchy
+load_dotenv()
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# Function to query the database and get all subsections for a given section (Level 7)
-def query_subsections(section_id_prefix):
+# Initialize Gemini model
+model = genai.GenerativeModel('gemini-2.0-flash')
+
+# Function to retrieve hierarchical content from the database
+def get_hierarchical_content(section_id):
     conn = sqlite3.connect('section_content_0310.db')
     cursor = conn.cursor()
     
-    cursor.execute('''
-        SELECT section_id, section_name
-        FROM sections
-        WHERE section_id LIKE ?
-    ''', (f'{section_id_prefix}%',))  # Wildcard search for subsections
+    # Extract hierarchy (parents, grandparents, etc.)
+    levels = section_id.split('.')
+    related_sections = []
     
-    subsections = cursor.fetchall()
+    for i in range(len(levels), 0, -1):
+        section_prefix = '.'.join(levels[:i])
+        cursor.execute('''
+            SELECT section_id, section_name, content_chunk FROM content WHERE section_id = ?
+        ''', (section_prefix,))
+        result = cursor.fetchone()
+        if result:
+            related_sections.append(result)
+    
     conn.close()
+    return related_sections
+
+# Function to send hierarchical content to LLM
+def extract_procedure_from_llm(section_id, content_hierarchy):
+    prompt = """
+    You are a 3GPP expert analyzing NAS specification procedures.
+    Below is the hierarchical structure of a section, including its parents and context:
     
-    return subsections
-
-# Function to send the data to LLM and retrieve extracted info
-def send_to_llm(hierarchy, subsections):
-    # For simplicity, simulate sending to LLM and returning extracted info
-    # In real implementation, you will send hierarchy and subsections to the LLM via API
-    print("Sending to LLM with hierarchy:")
-    for section_id, section_name in hierarchy:
-        print(f"Section ID: {section_id}, Section Name: {section_name}")
+    """
+    for sec_id, sec_name, sec_content in content_hierarchy:
+        prompt += f"Section {sec_id}: {sec_name}\n{sec_content}\n\n"
     
-    print("Subsections:")
-    for section_id, section_name in subsections:
-        print(f"Section ID: {section_id}, Section Name: {section_name}")
+    prompt += "Extract the key procedural steps from this context."
+
+
+      # Save the whole prompt to a file
+    prompt_file = f"prompts/{section_id}_prompt.txt"
+    os.makedirs("prompts", exist_ok=True)
+    with open(prompt_file, 'w', encoding='utf-8') as prompt_out_file:
+        prompt_out_file.write(prompt)
     
-    # Return simulated extracted info (in real implementation, this would be the LLM response)
-    return f"Extracted info for subsections of {hierarchy[-1][0]}"
+    response = model.generate_content(prompt).text.strip()
+    return response
 
-# Function to loop through the Level 7 sections and process them with full context
-def process_procedures_with_context(level7_sections):
-    for section_id, section_name in level7_sections:
-        # 1. Query the hierarchy (parent, grandparent, etc.)
-        hierarchy = query_section_hierarchy(section_id)
+# Function to process sections from file
+def process_sections_from_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()[1:]  # Skip header
+    
+    for line in lines:
+        section_id, section_name = line.strip().split(', ', 1)
         
-        # 2. Query the Level 7 subsections (this is the detailed section)
-        subsections = query_subsections(section_id)
+        if section_name.lower() == "general":
+            print(f"⏭️ Skipping {section_id} ({section_name})")
+            continue  # Skip general sections
         
-        # 3. Send the data (hierarchy + subsections) to the LLM for processing
-        llm_output = send_to_llm(hierarchy, subsections)
+        print(f"🔍 Processing {section_id} ({section_name})")
         
-        # Optionally, save the LLM output to a file
-        with open(f"{section_id}_llm_output.txt", "w", encoding="utf-8") as file:
-            file.write(llm_output)
-        print(f"✅ Saved output for {section_id}.")
+        # Retrieve hierarchical context
+        hierarchy = get_hierarchical_content(section_id)
+        
+        # Extract procedures using LLM
+        procedure_info = extract_procedure_from_llm(section_id, hierarchy)
+        
+        # Save result
+        output_file = f"procedures/{section_id}_procedure.txt"
+        os.makedirs("procedures", exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as out_file:
+            out_file.write(procedure_info)
+        
+        print(f"✅ Saved procedure for {section_id} in {output_file}")
 
-# Example Level 7 sections to process
-level7_sections = [
-    ("5.5.1.2.2", "Initial registration initiation"),
-    ("5.5.1.3.3", "5GMM common procedure initiation"),
-    ("5.5.2.2.6", "Abnormal cases in the UE"),
-    # Add more Level 7 sections here...
-]
-
-# Process the procedures with context
-process_procedures_with_context(level7_sections)
+# Run the process
+test_file = "5.5_sections.txt"
+process_sections_from_file(test_file)

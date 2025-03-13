@@ -1,0 +1,9 @@
+Based on the provided text, here's a breakdown of the key procedural steps and considerations related to 5GMM common procedures initiation within the context of the registration procedure:
+
+*   **Network-Initiated 5GMM Common Procedures:** The network (AMF) can initiate 5GMM common procedures (e.g., identification, authentication, security procedures) during the registration procedure. The initiation is conditional, based on information received in the REGISTRATION REQUEST message.
+
+*   **NAS Security Mode Control Procedures:** If an entire unciphered REGISTRATION REQUEST message needs to be signaled, followed by signaling of selected EPS NAS security algorithms, two NAS security mode control procedures should be initiated as part of 5GMM common procedures within the ongoing registration procedure. This is linked to subclause 5.4.2.4, which likely provides further details on this specific scenario.
+
+*   **Emergency Registration Handling:** During emergency registration (5GS registration type IE set to "emergency registration"), if the AMF is configured to support emergency registration for unauthenticated SUCIs, the AMF *may* skip the authentication procedure even if no 5G NAS security context exists. In such cases, the AMF proceeds directly to the security mode control procedure. This is an optimization for emergency scenarios.
+
+In summary, the steps involve the network deciding whether to initiate standard security procedures or, in specific emergency cases, skipping authentication and proceeding directly to security mode control.

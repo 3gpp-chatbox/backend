@@ -1,0 +1,162 @@
+{
+  "procedure_name": "5GMM Common Procedure Initiation during Registration",
+  "description": "This FPG outlines the conditions under which the AMF initiates 5GMM common procedures (specifically authentication) during the registration procedure for mobility and periodic registration update.",
+  "nodes": [
+    {
+      "id": "Registration_Request_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "AMF_Processing",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Initiate_Authentication",
+      "type": "action",
+      "properties": {
+        "action_type": "Authentication"
+      }
+    },
+    {
+      "id": "Skip_Authentication_Emergency",
+      "type": "action",
+      "properties": {
+        "action_type": "Skip Authentication"
+      }
+    },
+    {
+      "id": "Check_Emergency_Session",
+      "type": "conditional",
+      "properties": {
+        "condition": "UE has only an emergency PDU session"
+      }
+    },
+    {
+      "id": "Check_Mobility_Scenario",
+      "type": "conditional",
+      "properties": {
+        "condition": "UE initiated registration after handover/inter-system change to N1 mode in 5GMM-CONNECTED mode"
+      }
+    },
+    {
+      "id": "Check_Shared_Network_Cell",
+      "type": "conditional",
+      "properties": {
+        "condition": "Target cell is a shared network cell"
+      }
+    },
+    {
+      "id": "Check_5G_GUTI_Mismatch",
+      "type": "conditional",
+      "properties": {
+        "condition": "PLMN ID in 5G-GUTI differs from selected PLMN ID of the target cell (either from 5GS mobile identity or 5G-GUTI mapped from 4G-GUTI without Additional GUTI IE)"
+      }
+    },
+     {
+      "id": "Do_Not_Initiate_Authentication",
+      "type": "action",
+      "properties": {
+        "action_type": "Do Not Initiate Authentication"
+      }
+    },
+     {
+      "id": "Security_Mode_Control",
+      "type": "action",
+      "properties": {
+        "action_type": "Security Mode Control (subclause 5.4.2)"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Registration_Request_Received",
+      "to": "AMF_Processing",
+      "action": "Receive Registration Request",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Processing",
+      "to": "Check_Emergency_Session",
+      "action": "Process Request and Check Conditions",
+      "properties": {}
+    },
+    {
+      "from": "Check_Emergency_Session",
+      "to": "Skip_Authentication_Emergency",
+      "condition": "TRUE",
+      "properties": {}
+    },
+    {
+      "from": "Check_Emergency_Session",
+      "to": "Check_Mobility_Scenario",
+      "condition": "FALSE",
+      "properties": {}
+    },
+    {
+      "from": "Skip_Authentication_Emergency",
+      "to": "Security_Mode_Control",
+      "action": "Proceed to Security Mode Control",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Processing",
+      "to": "Initiate_Authentication",
+      "condition": "Otherwise",
+      "properties": {}
+    },
+    {
+      "from": "Check_Mobility_Scenario",
+      "to": "Check_Shared_Network_Cell",
+      "condition": "TRUE",
+      "properties": {}
+    },
+    {
+      "from": "Check_Mobility_Scenario",
+      "to": "Initiate_Authentication",
+      "condition": "FALSE",
+      "properties": {}
+    },
+
+     {
+      "from": "Check_Shared_Network_Cell",
+      "to": "Check_5G_GUTI_Mismatch",
+      "condition": "TRUE",
+      "properties": {}
+    },
+    {
+      "from": "Check_Shared_Network_Cell",
+      "to": "Initiate_Authentication",
+      "condition": "FALSE",
+      "properties": {}
+    },
+
+    {
+      "from": "Check_5G_GUTI_Mismatch",
+      "to": "Do_Not_Initiate_Authentication",
+      "condition": "TRUE",
+      "properties": {}
+    },
+    {
+      "from": "Check_5G_GUTI_Mismatch",
+      "to": "Initiate_Authentication",
+      "condition": "FALSE",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_Authentication",
+      "to": "Initiate_Authentication",
+      "action": "Initiate Authentication Procedure",
+      "properties": {}
+    },
+    {
+      "from": "Do_Not_Initiate_Authentication",
+      "to": "Do_Not_Initiate_Authentication",
+      "action": "Continue Registration Procedure without Authentication",
+      "properties": {}
+    }
+  ]
+}

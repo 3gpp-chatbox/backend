@@ -1,0 +1,74 @@
+Okay, let's break down the procedural steps described in the provided text, focusing on the UE's actions upon receiving a REGISTRATION REJECT message or encountering failures during initial registration for emergency services.
+
+**Section 5.5.1.2.6: Initial registration for emergency services not accepted by the network**
+
+This section describes UE behavior when the initial registration for emergency services is rejected.  There are different scenarios depending on the cause code and the access type.
+
+1.  **REGISTRATION REJECT with 5GMM cause #5 "PEI not accepted":**
+    *   The UE enters the `5GMM-DEREGISTERED.NO-SUPI` state.
+    *   If the rejection is received over 3GPP access OR over integrity-protected non-3GPP access AND the UE supports registration over the other access technology, the UE handles 5GMM parameters and state for that other access, as described for this cause value.
+
+2.  **REGISTRATION REJECT with a 5GMM cause *other* than #5 "PEI not accepted":**
+    *   The UE performs actions as described in subclause 5.5.1.2.5.
+    *   The UE informs upper layers of the failure.
+
+3.  **Initial registration failure due to *abnormal cases*:**
+    *   The UE performs actions as described in subclause 5.5.1.2.7.
+    *   The UE informs upper layers of the failure.
+
+4.  **Shared Network, REGISTRATION REJECT:**
+    *   The UE performs the actions described in 5.5.1.2.5
+    *   The UE either:
+        *   Informs the upper layers of the failure.
+        *   OR attempts PLMN/SNPN selection in the shared network and, *if* an initial registration for emergency services was *not* already attempted with the selected PLMN/SNPN,  it initiates a new initial registration for emergency services with the selected PLMN/SNPN. The action depends on whether the REGISTRATION REQUEST message was for sending a PDU SESSION ESTABLISHMENT REQUEST message with request type set to "existing emergency PDU session". The UE handles equivalent PLMN and SNPN differently from non-equivalent PLMN and SNPN.
+            *   If the selected PLMN/SNPN is an *equivalent* PLMN/SNPN, initiate an initial registration for emergency services.
+            *   If the selected PLMN/SNPN is *not* an equivalent PLMN/SNPN, perform a PLMN/SNPN selection and initiate a new initial registration for emergency services, unless it was previously attempted with the selected PLMN/SNPN.
+5.  **Shared Network, initial registration failure due to *abnormal cases*:**
+    *   The UE performs the actions described in 5.5.1.2.7
+    *   The UE either:
+        *   Informs the upper layers of the failure.
+        *   OR attempts PLMN/SNPN selection in the shared network and, *if* an initial registration for emergency services was *not* already attempted with the selected PLMN/SNPN,  it initiates a new initial registration for emergency services with the selected PLMN/SNPN. The action depends on whether the REGISTRATION REQUEST message was for sending a PDU SESSION ESTABLISHMENT REQUEST message with request type set to "existing emergency PDU session". The UE handles equivalent PLMN and SNPN differently from non-equivalent PLMN and SNPN.
+            *   If the selected PLMN/SNPN is an *equivalent* PLMN/SNPN, initiate an initial registration for emergency services.
+            *   If the selected PLMN/SNPN is *not* an equivalent PLMN/SNPN, perform a PLMN/SNPN selection and initiate a new initial registration for emergency services, unless it was previously attempted with the selected PLMN/SNPN.
+
+**Section 5.5.1.2.6A: Initial registration for initiating an emergency PDU session not accepted by the network**
+
+This sub-section focuses on rejection scenarios specifically when the UE is trying to establish an emergency PDU session during initial registration.
+
+1.  **Initial registration rejected for "initial registration" with PDU SESSION ESTABLISHMENT REQUEST message with request type set to "initial emergency request":**
+    *   The UE performs actions as described in subclause 5.5.1.2.5.
+    *   If the UE is in the same selected PLMN/SNPN where the last initial registration request was attempted, the UE either:
+        *   Informs the upper layers of the failure.
+        *   OR attempts initial registration for emergency services.
+
+2.  **Initial registration rejected for "initial registration" for emergency PDU session due to handover of an existing PDN connection:**
+     *   The UE performs actions as described in subclause 5.5.1.2.5.
+     *   If the UE is in the same selected PLMN/SNPN or equivalent PLMN/SNPN where the last initial registration request was attempted, the UE attempts initial registration for emergency services.
+
+3.  **Initial registration failure due to abnormal case b) in 5.5.1.2.7:**
+    *   The UE performs actions as described in subclause 5.5.1.2.7.
+    *   The UE informs upper layers of the failure.
+
+4.  **Initial registration failure due to abnormal cases c), d) or e) in 5.5.1.2.7:**
+    *   The UE performs actions as described in subclause 5.5.1.2.7.
+    *   If the UE is in:
+        *   the same selected PLMN or SNPN where the last initial registration request was attempted and the PDU session does not need to be established due to handover of an existing PDN connection for emergency bearer services, the UE either:
+            *   inform the upper layers of the failure; or
+            *   attempt initial registration for emergency services; or
+        *   the same selected PLMN or equivalent PLMN or the same selected SNPN or equivalent SNPN, where the last initial registration request was attempted and the PDU session needs to be established due to handover of an existing PDN connection for emergency bearer services, attempt initial registration for emergency services.
+
+**Key Takeaways & General Procedural Steps (Summarized):**
+
+*   **Upon receiving a REGISTRATION REJECT:** The UE generally performs actions described in 5.5.1.2.5. The specific behavior then depends on the cause code, access type (3GPP vs non-3GPP), and whether it's a shared network scenario.
+
+*   **Inform Upper Layers:**  A common action is to inform the upper layers about the failure. This allows application-level logic to handle the situation (e.g., try a different IP-CAN as per 3GPP TS 24.229).
+
+*   **PLMN/SNPN Selection (Shared Network):**  In a shared network, the UE may attempt PLMN/SNPN selection and then initiate another initial registration attempt for emergency services *if* it hasn't already tried that specific PLMN/SNPN.  The logic differentiates between equivalent and non-equivalent PLMN/SNPN.
+
+*   **Abnormal Case Handling:** Failures due to abnormal cases (handled by 5.5.1.2.7) generally involve performing those actions and then potentially informing the upper layers and/or trying another initial registration attempt, with special handling for handover scenarios.
+
+*   **Handover Scenario for Emergency PDU Session:** There is specific logic to deal with the case where the emergency PDU session establishment is triggered due to handover of an existing PDN connection for emergency bearer services. In this case, the UE will often retry registration if in the same or an equivalent PLMN/SNPN.
+
+*   **Retry Registration:** A key action in many scenarios is to retry the initial registration for emergency services.
+
+This analysis provides a good understanding of the UE's procedural responses to rejections and failures during initial registration for emergency services. To get a complete picture, you would also need to consult subclauses 5.5.1.2.5 and 5.5.1.2.7, as they are referenced extensively.

@@ -1,0 +1,379 @@
+{
+  "procedure_name": "Initial Registration for Emergency Services Failure Handling",
+  "description": "UE behavior when initial registration for emergency services is rejected or fails.",
+  "nodes": [
+    {
+      "id": "Start",
+      "type": "state",
+      "properties": {
+        "description": "Initial registration attempt for emergency services"
+      }
+    },
+    {
+      "id": "Registration_Reject_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REJECT"
+      }
+    },
+    {
+      "id": "Abnormal_Failure_Detected",
+      "type": "event",
+      "properties": {
+        "description": "Initial registration failure due to abnormal case"
+      }
+    },
+    {
+      "id": "PEI_Not_Accepted",
+      "type": "condition",
+      "properties": {
+        "cause_code": "5GMM cause #5 \"PEI not accepted\""
+      }
+    },
+    {
+      "id": "Other_Cause_Code",
+      "type": "condition",
+      "properties": {
+        "description": "5GMM cause other than #5"
+      }
+    },
+    {
+      "id": "Enter_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "action",
+      "properties": {
+        "description": "UE enters 5GMM-DEREGISTERED.NO-SUPI state"
+      }
+    },
+    {
+      "id": "Handle_Other_Access",
+      "type": "action",
+      "properties": {
+        "description": "Handle 5GMM parameters and state for other access (if supported)"
+      }
+    },
+    {
+      "id": "Perform_5.5.1.2.5_Actions",
+      "type": "action",
+      "properties": {
+        "description": "Perform actions as described in subclause 5.5.1.2.5"
+      }
+    },
+    {
+      "id": "Inform_Upper_Layers_Failure",
+      "type": "action",
+      "properties": {
+        "description": "Inform upper layers of the failure"
+      }
+    },
+    {
+      "id": "Perform_5.5.1.2.7_Actions",
+      "type": "action",
+      "properties": {
+        "description": "Perform actions as described in subclause 5.5.1.2.7"
+      }
+    },
+     {
+      "id": "Shared_Network_Scenario",
+      "type": "condition",
+      "properties": {
+        "description": "Scenario in a shared network"
+      }
+    },
+    {
+      "id": "Attempt_PLMN_SNPN_Selection",
+      "type": "action",
+      "properties": {
+        "description": "Attempts PLMN/SNPN selection in the shared network"
+      }
+    },
+    {
+      "id": "Not_Already_Attempted",
+      "type": "condition",
+      "properties": {
+        "description": "initial registration for emergency services was not already attempted with the selected PLMN/SNPN"
+      }
+    },
+    {
+      "id": "Equivalent_PLMN_SNPN",
+      "type": "condition",
+      "properties": {
+        "description": "Selected PLMN/SNPN is an equivalent PLMN/SNPN"
+      }
+    },
+    {
+      "id": "Not_Equivalent_PLMN_SNPN",
+      "type": "condition",
+      "properties": {
+        "description": "Selected PLMN/SNPN is not an equivalent PLMN/SNPN"
+      }
+    },
+    {
+      "id": "Initiate_New_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Initiate a new initial registration for emergency services with the selected PLMN/SNPN"
+      }
+    },
+    {
+      "id": "Establish_Emergency_PDU_Session",
+      "type": "condition",
+      "properties": {
+        "description": "REGISTRATION REQUEST message was for sending a PDU SESSION ESTABLISHMENT REQUEST message with request type set to \"existing emergency PDU session\""
+      }
+    },
+    {
+      "id": "Initial_Emergency_Request",
+      "type": "condition",
+      "properties": {
+        "description": "PDU SESSION ESTABLISHMENT REQUEST message with request type set to \"initial emergency request\""
+      }
+    },
+    {
+      "id": "Handover_Existing_PDN",
+      "type": "condition",
+      "properties": {
+        "description": "Emergency PDU session due to handover of an existing PDN connection"
+      }
+    },
+    {
+      "id": "In_Same_PLMN_SNPN",
+      "type": "condition",
+      "properties": {
+        "description": "UE is in the same selected PLMN/SNPN where the last initial registration request was attempted"
+      }
+    },
+        {
+      "id": "Retry_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Attempts initial registration for emergency services"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Start",
+      "to": "Registration_Reject_Received",
+      "event": "Registration_Reject_Received",
+      "properties": {}
+    },
+    {
+      "from": "Start",
+      "to": "Abnormal_Failure_Detected",
+      "event": "Abnormal_Failure_Detected",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Reject_Received",
+      "to": "PEI_Not_Accepted",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "PEI_Not_Accepted",
+      "to": "Enter_5GMM_DEREGISTERED_NO_SUPI",
+      "properties": {
+        "condition_result": "true"
+      }
+    },
+    {
+      "from": "Enter_5GMM_DEREGISTERED_NO_SUPI",
+      "to": "Handle_Other_Access",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Reject_Received",
+      "to": "Other_Cause_Code",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Other_Cause_Code",
+      "to": "Perform_5.5.1.2.5_Actions",
+      "properties": {
+        "condition_result": "true"
+      }
+    },
+    {
+      "from": "Perform_5.5.1.2.5_Actions",
+      "to": "Inform_Upper_Layers_Failure",
+      "properties": {}
+    },
+    {
+      "from": "Abnormal_Failure_Detected",
+      "to": "Perform_5.5.1.2.7_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Perform_5.5.1.2.7_Actions",
+      "to": "Inform_Upper_Layers_Failure",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Reject_Received",
+      "to": "Shared_Network_Scenario",
+      "type": "conditional",
+      "properties": {}
+    },
+     {
+      "from": "Abnormal_Failure_Detected",
+      "to": "Shared_Network_Scenario",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Shared_Network_Scenario",
+      "to": "Perform_5.5.1.2.5_Actions",
+      "properties": {
+        "condition_result": "true",
+        "description": "REGISTRATION REJECT with cause other than PEI not accepted in shared network"
+      }
+    },
+    {
+      "from": "Shared_Network_Scenario",
+      "to": "Perform_5.5.1.2.7_Actions",
+      "properties": {
+        "condition_result": "true",
+        "description": "Abnormal failure in shared network"
+      }
+    },
+    {
+      "from": "Perform_5.5.1.2.5_Actions",
+      "to": "Attempt_PLMN_SNPN_Selection",
+      "properties": {}
+    },
+    {
+      "from": "Perform_5.5.1.2.7_Actions",
+      "to": "Attempt_PLMN_SNPN_Selection",
+      "properties": {}
+    },
+    {
+      "from": "Attempt_PLMN_SNPN_Selection",
+      "to": "Inform_Upper_Layers_Failure",
+      "properties": {}
+    },
+    {
+       "from": "Attempt_PLMN_SNPN_Selection",
+       "to": "Not_Already_Attempted",
+       "type": "conditional",
+       "properties": {}
+    },
+    {
+      "from": "Not_Already_Attempted",
+      "to": "Initiate_New_Registration",
+       "properties": {
+        "condition_result": "true"
+      }
+    },
+     {
+      "from": "Initiate_New_Registration",
+      "to": "Equivalent_PLMN_SNPN",
+      "type": "conditional",
+      "properties": {}
+    },
+      {
+      "from": "Initiate_New_Registration",
+      "to": "Not_Equivalent_PLMN_SNPN",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+        "from": "Equivalent_PLMN_SNPN",
+        "to": "Initiate_New_Registration",
+        "properties":{
+          "description": "Initiate initial registration for emergency services",
+          "condition_result": "true"
+        }
+    },
+    {
+        "from": "Not_Equivalent_PLMN_SNPN",
+        "to": "Attempt_PLMN_SNPN_Selection",
+        "properties":{
+          "description": "Perform a PLMN/SNPN selection and initiate a new initial registration for emergency services",
+          "condition_result": "true"
+        }
+    },
+    {
+      "from": "Registration_Reject_Received",
+      "to": "Establish_Emergency_PDU_Session",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Establish_Emergency_PDU_Session",
+      "to": "Initial_Emergency_Request",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Establish_Emergency_PDU_Session",
+      "to": "Handover_Existing_PDN",
+      "type": "conditional",
+      "properties": {}
+    },
+     {
+      "from": "Establish_Emergency_PDU_Session",
+      "to": "Abnormal_Failure_Detected",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Initial_Emergency_Request",
+      "to": "Perform_5.5.1.2.5_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Initial_Emergency_Request",
+      "to": "In_Same_PLMN_SNPN",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+        "from": "In_Same_PLMN_SNPN",
+        "to": "Inform_Upper_Layers_Failure",
+        "properties": {}
+    },
+    {
+        "from": "In_Same_PLMN_SNPN",
+        "to": "Retry_Registration",
+        "properties": {}
+    },
+    {
+        "from": "Handover_Existing_PDN",
+        "to": "Perform_5.5.1.2.5_Actions",
+        "properties": {}
+    },
+    {
+        "from": "Handover_Existing_PDN",
+        "to": "In_Same_PLMN_SNPN",
+        "type": "conditional",
+        "properties": {}
+    },
+    {
+        "from": "In_Same_PLMN_SNPN",
+        "to": "Retry_Registration",
+        "properties": {}
+    },
+    {
+        "from": "Abnormal_Failure_Detected",
+        "to": "Perform_5.5.1.2.7_Actions",
+        "properties": {}
+    },
+    {
+        "from": "Abnormal_Failure_Detected",
+        "to": "In_Same_PLMN_SNPN",
+        "type": "conditional",
+        "properties": {}
+    },
+    {
+        "from": "In_Same_PLMN_SNPN",
+        "to": "Inform_Upper_Layers_Failure",
+        "properties": {}
+    },
+    {
+        "from": "In_Same_PLMN_SNPN",
+        "to": "Retry_Registration",
+        "properties": {}
+    }
+  ]
+}

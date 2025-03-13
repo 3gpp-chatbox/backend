@@ -1,0 +1,197 @@
+{
+  "procedure_name": "Initial Registration Accepted by the Network",
+  "description": "5G registration procedure where the network accepts the initial registration request from the UE.",
+  "nodes": [
+    {
+      "id": "UE_Initial_Registration_Request_Sent",
+      "type": "state",
+      "properties": {
+        "entity": "UE"
+      }
+    },
+    {
+      "id": "AMF_Processing_Registration_Request",
+      "type": "action",
+      "properties": {
+        "entity": "AMF",
+        "description": "AMF processes the registration request, skipping restrictions in emergency scenarios."
+      }
+    },
+    {
+      "id": "AMF_Sends_Registration_Accept",
+      "type": "action",
+      "properties": {
+        "entity": "AMF",
+        "description": "AMF sends REGISTRATION ACCEPT message."
+      },
+      "parameters": [
+        "5G-GUTI",
+        "TAI List",
+        "Allowed NSSAI",
+        "Rejected NSSAI",
+        "Partially Rejected NSSAI",
+        "Extended Rejected NSSAI",
+        "Pending NSSAI",
+        "Service Area Restrictions",
+        "Equivalent PLMN/SNPN Lists",
+        "LADN Information",
+        "WUS Assistance Information",
+        "PEIPS Assistance Information",
+        "5GS Network Feature Support",
+        "Unavailability Configuration",
+        "CAG Information",
+        "Truncated 5G-S-TMSI configuration",
+		    "Alternative NSSAI",
+        "SOR Transparent Container",
+		    "Operator-defined access category definitions",
+		    "Extended emergency number list",
+		    "UE radio capability ID",
+        "Service-level-AA pending indication",
+        "List of PLMNs to be used in disaster condition",
+        "Disaster roaming wait range",
+        "Disaster return wait range",
+        "Forbidden TAIs",
+        "RAN timing synchronization",
+        "MBSRAI field",
+        "NSSRG information",
+        "S-NSSAI time validity information",
+        "NSSAI inclusion mode",
+        "Discontinuous coverage maximum time offset",
+		    "Unavailability configuration",
+        "RAT utilization control information"
+      ]
+    },
+    {
+      "id": "AMF_Timer_T3550_Started",
+      "type": "state",
+      "properties": {
+        "entity": "AMF",
+        "description": "Timer T3550 started by AMF if conditions are met."
+      },
+	    "parameters": ["Timer Value"]
+    },
+    {
+      "id": "UE_Receives_Registration_Accept",
+      "type": "event",
+      "properties": {
+        "entity": "UE",
+        "message_type": "REGISTRATION ACCEPT"
+      }
+    },
+    {
+      "id": "UE_Handles_Information_Elements",
+      "type": "action",
+      "properties": {
+        "entity": "UE",
+        "description": "UE processes the received information elements from the REGISTRATION ACCEPT message."
+      }
+    },
+    {
+      "id": "UE_Registration_Complete_Message_Sent",
+      "type": "action",
+      "properties": {
+        "entity": "UE",
+        "description": "UE sends REGISTRATION COMPLETE message to AMF under specific conditions."
+      }
+    },
+    {
+      "id": "UE_5GMM_REGISTERED",
+      "type": "state",
+      "properties": {
+        "entity": "UE",
+        "description": "UE enters 5GMM-REGISTERED state."
+      }
+    },
+	{
+      "id": "AMF_NSSAI_Handling",
+      "type": "action",
+      "properties": {
+        "entity": "AMF",
+        "description": "AMF includes the allowed NSSAI and may include rejected NSSAI, partially rejected NSSAI and pending NSSAI in the REGISTRATION ACCEPT message. Handles network slice-specific authentication and authorization (NSSAA) indicators and pending NSSAI. May include the On-demand NSSAI IE in the REGISTRATION ACCEPT message. Includes the configured NSSAI for the current PLMN or SNPN."
+      }
+    },
+    {
+      "id": "UE_NSSAI_Handling",
+      "type": "action",
+      "properties": {
+        "entity": "UE",
+        "description": "UE stores allowed NSSAI, handles the partially rejected NSSAI, extended rejected NSSAI, network slice-specific authentication and authorization (NSSAA) indicators, pending NSSAI, configured NSSAI and NSAG information. Delete the network slicing information and the NSSAI inclusion mode for each and every PLMN or SNPN except for the current PLMN or SNPN."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Initial_Registration_Request_Sent",
+      "to": "AMF_Processing_Registration_Request",
+      "event": "Registration Request Received",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      }
+    },
+    {
+      "from": "AMF_Processing_Registration_Request",
+      "to": "AMF_NSSAI_Handling",
+      "action": "Process NSSAI Information",
+      "properties": {
+        "description": "Handling of Allowed/Rejected NSSAI"
+      }
+    },
+	{
+      "from": "AMF_NSSAI_Handling",
+      "to": "AMF_Sends_Registration_Accept",
+      "action": "Prepare Registration Accept Message",
+      "properties": {
+        "description": "AMF prepares registration accept message with necessary IEs"
+      }
+    },
+    {
+      "from": "AMF_Sends_Registration_Accept",
+      "to": "AMF_Timer_T3550_Started",
+      "condition": "If conditions are met",
+      "properties": {
+        "description": "AMF starts T3550"
+      }
+    },
+    {
+      "from": "AMF_Sends_Registration_Accept",
+      "to": "UE_Receives_Registration_Accept",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "AMF -> UE"
+      }
+    },
+    {
+      "from": "UE_Receives_Registration_Accept",
+      "to": "UE_Handles_Information_Elements",
+      "action": "Process Information Elements",
+      "properties": {
+        "description": "UE handles the received IEs."
+      }
+    },
+	{
+      "from": "UE_Handles_Information_Elements",
+      "to": "UE_NSSAI_Handling",
+      "action": "Store NSSAI Information",
+      "properties": {
+        "description": "UE handle the allowed NSSAI, partially rejected NSSAI, and configured NSSAI."
+      }
+    },
+    {
+      "from": "UE_Handles_Information_Elements",
+      "to": "UE_Registration_Complete_Message_Sent",
+      "condition": "Specific conditions met (e.g., receiving slicing information, CAG information, PEIPS, UE Radio Capability)",
+      "properties": {
+        "description": "UE sends Registration Complete to AMF if certain information elements are received.",
+        "message_type": "REGISTRATION COMPLETE"
+      }
+    },
+    {
+      "from": "UE_Handles_Information_Elements",
+      "to": "UE_5GMM_REGISTERED",
+      "properties": {
+        "description": "UE Enters registered state.",
+        "status": "5U1 UPDATED"
+      }
+    }
+  ]
+}

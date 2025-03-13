@@ -1,0 +1,43 @@
+Okay, let's break down the key procedural steps described in sections 5.5.1.3.6 and 5.5.1.3.6A, keeping in mind the hierarchical context. These sections deal with the UE's behavior when a mobility and periodic registration update request for emergency services (either initiating a new emergency PDU session or performing an emergency services fallback) is not accepted by the network or fails.
+
+Here's a summary of the key procedures/actions the UE takes in different scenarios:
+
+**Section 5.5.1.3.6: Mobility and periodic registration update for initiating an emergency PDU session not accepted by the network**
+
+*   **General Failure (Not Accepted):** If the network doesn't accept the mobility and periodic registration update request, the UE follows procedures in subclause 5.5.1.3.5.
+*   **Authentication Rejection:** If the failure is due to receiving an AUTHENTICATION REJECT message, the UE follows procedures in subclauses 5.4.1.2.2.11, 5.4.1.2.3.1, 5.4.1.2.3A.1 or 5.4.1.3.5. *Then*, if the UE is still in the same PLMN:
+    *   Informs the upper layers of the failure.
+    *   *OR* Performs de-registration locally (if not already de-registered) and attempts initial registration for emergency services.
+*   **Abnormal Case b) in 5.5.1.3.7:** Follows the actions described in 5.5.1.3.7 *and* informs the upper layers of the failure to access the network.
+*   **Abnormal Cases c), d), e), or g) in 5.5.1.3.7:** Follows the procedures described in 5.5.1.3.7. *Then*, if the UE is still in the same PLMN:
+    *   Informs the upper layers of the failure.
+    *   *OR* Performs de-registration locally (if not already de-registered) and attempts initial registration for emergency services.
+
+**Section 5.5.1.3.6A: Mobility and periodic registration update for an emergency services fallback not accepted by the network**
+
+*   **Abnormal Case in 5.5.1.3.7:** Follows the procedures described in subclause 5.5.1.3.7.
+*   **Not accepted by the network (as described in 5.5.1.3.5):** Follows the procedures described in subclause 5.5.1.3.5.
+*   **Authentication Rejection:** Follows the procedures described in subclauses 5.4.1.2.2.11, 5.4.1.2.3.1, 5.4.1.2.3A.1 or 5.4.1.3.5.
+*   **Abnormal Case b) in 5.5.1.3.7:** Informs the upper layers of the failure to access the network.
+*   **Abnormal Cases c), d), e) or g), Cannot be accepted, or Authentication Reject, AND UE doesn't attempt E-UTRA/EPC or 5GCN selection, AND is camped on NR/E-UTRA connected to 5GCN in the same PLMN:** Informs the upper layers of the failure of the procedure.
+
+**Key Takeaways and General Procedure Flow (in simplified terms):**
+
+1.  **Attempt Registration Update for Emergency Services:** The UE attempts a mobility and periodic registration update specifically for either initiating an emergency PDU session or as a fallback for emergency services.
+2.  **Failure Analysis:** The UE analyzes *why* the registration update failed. Common reasons include:
+    *   General rejection by the network (as described in 5.5.1.3.5).
+    *   Authentication failure (receiving an AUTHENTICATION REJECT message).
+    *   Specific abnormal cases defined in 5.5.1.3.7.
+3.  **Action Based on Failure Reason:** Based on the *specific* failure reason, the UE takes different actions:
+    *   **Refer to Other Subclauses:** Often, the UE is directed to perform the procedures defined in other subclauses (5.5.1.3.5, 5.4.1.2.2.11, 5.4.1.2.3.1, 5.4.1.2.3A.1, 5.4.1.3.5, or 5.5.1.3.7). This indicates that there are established procedures for handling those specific error conditions.
+    *   **Inform Upper Layers:** A common action is to inform the upper layers of the failure. This allows the upper layers (e.g., the application making the emergency call) to take appropriate action, which might include trying a different IP-CAN or other mechanisms (as hinted at by the notes referencing 3GPP TS 24.229).
+    *   **De-registration and Initial Registration:** In some scenarios (specifically after an authentication failure or certain abnormal cases *and* if the UE is still in the same PLMN), the UE may de-register and attempt an *initial* registration specifically for emergency services. This is a more drastic step, suggesting a more serious failure.
+    *   **Limited Action (Emergency Fallback):**  In specific cases, if the emergency fallback fails and certain conditions are met (doesn't attempt E-UTRA/EPC selection, camped on NR/E-UTRA connected to 5GCN in the same PLMN), the UE *only* informs the upper layers.
+
+**Important Considerations:**
+
+*   **Context Matters:** The UE's actions are highly dependent on the *specific* reason for the failure and the current state of the UE (e.g., which PLMN it's in, whether it's already de-registered).
+*   **Upper Layer Interaction:** The upper layers play a critical role in handling these failures. The NAS layer informs them, and they decide on the next course of action.
+*   **Emergency Focus:**  The ultimate goal is to ensure that emergency services can be accessed. The procedures outline different approaches to try and achieve this, even if the initial attempt fails.
+
+This breakdown should give you a good understanding of the key procedural steps described in these sections. Remember to consult the full specification for complete details.

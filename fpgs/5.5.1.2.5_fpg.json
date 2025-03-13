@@ -1,0 +1,417 @@
+{
+  "procedure_name": "UE Handling of REGISTRATION REJECT",
+  "description": "UE behavior upon receiving a REGISTRATION REJECT message after an initial registration attempt.",
+  "nodes": [
+    {
+      "id": "Registration_Attempt",
+      "type": "state",
+      "properties": {
+        "description": "UE is attempting registration."
+      }
+    },
+    {
+      "id": "Receive_Registration_Reject",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REJECT"
+      },
+      "parameters": ["5GMM Cause Value", "Extended 5GMM Cause IE", "RAT utilization control IE", "N3IWF identifier IE", "TNAN information IE"]
+    },
+    {
+      "id": "Check_Integrity_Protection",
+      "type": "conditional",
+      "properties": {
+        "condition": "Is REGISTRATION REJECT integrity protected?"
+      }
+    },
+    {
+      "id": "Integrity_Protected_Yes",
+      "type": "state",
+      "properties": {
+        "description": "REGISTRATION REJECT message is integrity protected."
+      }
+    },
+    {
+      "id": "Integrity_Protected_No",
+      "type": "state",
+      "properties": {
+        "description": "REGISTRATION REJECT message is NOT integrity protected."
+      }
+    },
+    {
+      "id": "Evaluate_5GMM_Cause",
+      "type": "conditional",
+      "properties": {
+        "description": "Decision based on the received 5GMM Cause Value."
+      },
+      "parameters":["5GMM Cause Value"]
+    },
+     {
+      "id": "General_Actions",
+      "type": "state",
+      "properties": {
+        "description": "General Actions executed regardless of 5GMM cause."
+      },
+      "actions": [
+        "Abort Initial Registration",
+        "Potentially reset registration attempt counter",
+        "Enter different 5GMM states (e.g., 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION)",
+        "Delete stored information (5G-GUTI, TAI, ngKSI, PLMN lists, SNPN lists)",
+        "Set 5GS update status (5U2 NOT UPDATED, 5U3 ROAMING NOT ALLOWED)",
+        "Start/Stop timers (T3346, T3245, T3526)",
+        "Disable N1 mode capability (if applicable)",
+        "Store PLMN identity and geographical location in 'PLMNs not allowed to operate at the present UE location' (if applicable)",
+        "Store current TAI in '5GS forbidden tracking areas' lists (if applicable)"
+      ]
+    },
+    {
+      "id": "Cause_3_6_7",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #3 (Illegal UE), #6 (Illegal ME), or #7 (5GS services not allowed)"
+      },
+      "actions": [
+        "Consider USIM/SIM invalid",
+        "Delete credentials",
+        "Enter deregistered state"
+      ]
+    },
+    {
+      "id": "Cause_11_78",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #11 (PLMN not allowed) or #78 (PLMN not allowed to operate at the present UE location)"
+      },
+      "actions": [
+        "Store PLMN in forbidden list",
+        "Perform PLMN selection",
+        "Store current location (if known)"
+      ]
+    },
+    {
+      "id": "Cause_12",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #12 (Tracking area not allowed)"
+      },
+      "actions": [
+        "Store current TAI in '5GS forbidden tracking areas for regional provision of service'"
+      ]
+    },
+    {
+      "id": "Cause_13_15",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #13 (Roaming not allowed in this tracking area) or #15 (No suitable cells in tracking area)"
+      },
+      "actions": [
+        "Store current TAI in '5GS forbidden tracking areas for roaming'",
+        "Search for another suitable cell (Cause #15 only)",
+        "Store RAT utilization control information (Cause #15 only)"
+      ]
+    },
+    {
+      "id": "Cause_22",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #22 (Congestion)"
+      },
+      "actions": [
+        "Start back-off timer (T3346)",
+        "Attempt registration again after timer expires"
+      ]
+    },
+    {
+      "id": "Cause_27_72",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #27 (N1 mode not allowed) or #72 (Non-3GPP access to 5GCN not allowed)"
+      },
+      "actions": [
+        "Disable N1 mode capability",
+        "Disable N1 mode for non-3GPP access (Cause #72 only)"
+      ]
+    },
+    {
+      "id": "Cause_31",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #31 (Redirection to EPC required)"
+      },
+      "actions": [
+        "Disable N1 mode for 3GPP access",
+        "Enter deregistered state"
+      ]
+    },
+    {
+      "id": "Cause_62",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #62 (No network slices available)"
+      },
+      "actions": [
+        "Store rejected S-NSSAI(s) with the corresponding rejection cause",
+        "Take actions based on the cause (e.g., back-off timer T3526)"
+      ]
+    },
+    {
+      "id": "Cause_76",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #76 (Not authorized for this CAG or authorized for CAG cells only)"
+      },
+      "actions": [
+        "Updates the CAG information list.",
+        "Searches for a suitable cell according to the updated CAG information"
+      ]
+    },
+     {
+      "id": "Cause_81_82",
+      "type": "state",
+      "properties": {
+        "description": "5GMM Cause Value: #81 (Selected N3IWF is not compatible with the allowed NSSAI) or #82 (Selected TNGF is not compatible with the allowed NSSAI)"
+      },
+      "actions": [
+        "UE may use the provided N3IWF identifier IE in N3IWF selection (Cause #81)",
+        "UE may use the provided TNAN information IE in TNAN selection (Cause #82)"
+      ]
+    },
+    {
+      "id": "SNPN_Specific_Actions",
+      "type": "state",
+      "properties": {
+        "description": "Actions specific to SNPNs (e.g., storing SNPN ID in a forbidden list)."
+      },
+      "actions": [
+        "Store SNPN ID in forbidden list (if applicable)"
+      ]
+    },
+    {
+      "id": "Single_Registration_Mode",
+      "type": "state",
+      "properties": {
+        "description": "UE operating in single-registration mode."
+      },
+      "actions": [
+        "Handle EMM parameters as specified in TS 24.301"
+      ]
+    },
+    {
+      "id": "Abnormal_Cases",
+      "type": "state",
+      "properties": {
+        "description": "Handles abnormal cases (e.g., unexpected cause values)."
+      },
+      "actions": [
+        "Execute error handling procedures (subclause 5.5.1.2.7)"
+      ]
+    },
+     {
+      "id": "End_Procedure",
+      "type": "state",
+      "properties": {
+        "description": "End of Registration Reject handling procedure"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Registration_Attempt",
+      "to": "Receive_Registration_Reject",
+      "event": "Receive_Registration_Reject",
+      "properties": {}
+    },
+    {
+      "from": "Receive_Registration_Reject",
+      "to": "Check_Integrity_Protection",
+      "action": "Check message integrity",
+      "properties": {}
+    },
+    {
+      "from": "Check_Integrity_Protection",
+      "to": "Integrity_Protected_Yes",
+      "condition": "Yes",
+      "properties": {}
+    },
+    {
+      "from": "Check_Integrity_Protection",
+      "to": "Integrity_Protected_No",
+      "condition": "No",
+      "properties": {}
+    },
+    {
+      "from": "Integrity_Protected_Yes",
+      "to": "Evaluate_5GMM_Cause",
+      "action": "Evaluate 5GMM Cause Value",
+      "properties": {}
+    },
+    {
+      "from": "Integrity_Protected_No",
+      "to": "Evaluate_5GMM_Cause",
+      "action": "May ignore Extended 5GMM cause IE and RAT utilization control IE",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_3_6_7",
+      "condition": "Cause #3, #6, or #7",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_11_78",
+      "condition": "Cause #11 or #78",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_12",
+      "condition": "Cause #12",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_13_15",
+      "condition": "Cause #13 or #15",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_22",
+      "condition": "Cause #22",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_27_72",
+      "condition": "Cause #27 or #72",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_31",
+      "condition": "Cause #31",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_62",
+      "condition": "Cause #62",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_76",
+      "condition": "Cause #76",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Cause_81_82",
+      "condition": "Cause #81 or #82",
+      "properties": {}
+    },
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "Abnormal_Cases",
+      "condition": "Unexpected cause value",
+      "properties": {}
+    },
+   {
+      "from": "Cause_3_6_7",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_11_78",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_12",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_13_15",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_22",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_27_72",
+      "to": "General_Actions",
+      "properties": {}
+    },
+     {
+      "from": "Cause_31",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Cause_62",
+      "to": "General_Actions",
+      "properties": {}
+    },
+      {
+      "from": "Cause_76",
+      "to": "General_Actions",
+      "properties": {}
+    },
+     {
+      "from": "Cause_81_82",
+      "to": "General_Actions",
+      "properties": {}
+    },
+    {
+      "from": "General_Actions",
+      "to": "SNPN_Specific_Actions",
+      "properties": {},
+      "condition": "If SNPN related"
+    },
+    {
+      "from": "SNPN_Specific_Actions",
+      "to": "Single_Registration_Mode",
+      "properties": {}
+    },
+     {
+      "from": "Abnormal_Cases",
+      "to": "Single_Registration_Mode",
+      "properties": {}
+    },
+    {
+      "from": "Single_Registration_Mode",
+      "to": "End_Procedure",
+      "properties": {}
+    },
+    {
+      "from": "General_Actions",
+      "to": "End_Procedure",
+      "properties": {},
+      "condition": "No SNPN specific actions"
+    },
+
+    {
+      "from": "Evaluate_5GMM_Cause",
+      "to": "General_Actions",
+      "condition": "no specific cause triggered",
+      "properties": {}
+    },
+      {
+      "from": "Integrity_Protected_Yes",
+      "to": "General_Actions",
+      "properties": {},
+      "condition": "evaluateCauseValue is false"
+    },
+       {
+      "from": "Integrity_Protected_No",
+      "to": "General_Actions",
+      "properties": {},
+      "condition": "evaluateCauseValue is false"
+    }
+  ]
+}

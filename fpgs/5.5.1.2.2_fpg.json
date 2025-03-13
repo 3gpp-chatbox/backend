@@ -1,0 +1,212 @@
+{
+  "procedure_name": "UE Initial Registration Initiation",
+  "description": "Procedure for the UE to initiate initial registration with the 5G network.",
+  "nodes": [
+    {
+      "id": "UE_5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "state": "5GMM-DEREGISTERED"
+      }
+    },
+    {
+      "id": "REGISTRATION_REQUEST_Initiated",
+      "type": "action",
+      "properties": {
+        "action": "Initiate REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "Emergency_Services_Check",
+      "type": "conditional",
+      "properties": {
+        "condition": "Check if already registered for emergency services over the non-current access"
+      }
+    },
+    {
+      "id": "Emergency_Registration_Over_Non3GPP",
+      "type": "conditional",
+      "properties": {
+        "condition": "Check if registration for emergency services over 3GPP access fails"
+      }
+    },
+    {
+      "id": "Timer_Management",
+      "type": "action",
+      "properties": {
+        "action": "Start/Stop Timers (T3510, T3502, T3511)"
+      }
+    },
+    {
+      "id": "5GS_Mobile_Identity_Handling",
+      "type": "conditional",
+      "properties": {
+        "condition": "Check for interworking without N26, valid 4G-GUTI, EPS security context, and existing 5G-GUTI"
+      }
+    },
+    {
+      "id": "Include_5G_GUTI",
+      "type": "action",
+      "properties": {
+        "action": "Include the prioritized 5G-GUTI in the REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "Include_SUCI",
+      "type": "action",
+      "properties": {
+        "action": "Include the SUCI in the REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "Include_PEI",
+      "type": "action",
+      "properties": {
+        "action": "Include the PEI in the REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "SUCI_Handling",
+      "type": "action",
+      "properties": {
+        "action": "Start T3519 and store SUCI"
+      }
+    },
+    {
+      "id": "Dual_Registration_Mode_Check",
+      "type": "conditional",
+      "properties": {
+        "condition": "Check if operating in dual-registration mode and in EMM-REGISTERED state"
+      }
+    },
+     {
+      "id": "Include_UE_Status_IE",
+      "type": "action",
+      "properties": {
+        "action": "Include the `UE status` IE with the EMM registration status set to 'UE is in EMM-REGISTERED state'"
+      }
+    },
+    {
+      "id": "IE_Inclusion_Decision",
+      "type": "conditional",
+      "properties": {
+        "condition": "Decision on which additional IEs to include based on capabilities, configuration, and circumstances"
+      }
+    },
+    {
+      "id": "NAS_Message_Container_Handling",
+      "type": "conditional",
+      "properties": {
+        "condition": "Check for valid 5G NAS security context"
+      }
+    },
+    {
+      "id": "Send_REGISTRATION_REQUEST",
+      "type": "action",
+      "properties": {
+        "action": "Send REGISTRATION REQUEST message to AMF"
+      }
+    },
+    {
+      "id": "AMF_Processing",
+      "type": "action",
+      "properties": {
+        "action": "AMF Processes REGISTRATION REQUEST"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_5GMM_DEREGISTERED",
+      "to": "REGISTRATION_REQUEST_Initiated",
+      "action": "Enter DEREGISTERED state",
+      "properties": {
+        "trigger": "Initial registration conditions met"
+      }
+    },
+    {
+      "from": "REGISTRATION_REQUEST_Initiated",
+      "to": "Emergency_Services_Check",
+      "action": "Start Registration Process",
+      "properties": {}
+    },
+    {
+      "from": "Emergency_Services_Check",
+      "to": "Emergency_Registration_Over_Non3GPP",
+      "action": "Check registration for emergency services",
+      "properties": {}
+    },
+    {
+      "from": "Emergency_Registration_Over_Non3GPP",
+      "to": "Timer_Management",
+      "action": "Check registration for emergency services over 3GPP",
+      "properties": {}
+    },
+    {
+      "from": "Timer_Management",
+      "to": "5GS_Mobile_Identity_Handling",
+      "action": "Manage Timers",
+      "properties": {}
+    },
+    {
+      "from": "5GS_Mobile_Identity_Handling",
+      "to": "Include_5G_GUTI",
+      "action": "Determine Mobile Identity Handling",
+      "properties": {}
+    },
+    {
+      "from": "5GS_Mobile_Identity_Handling",
+      "to": "Include_SUCI",
+      "action": "Determine Mobile Identity Handling (If no valid GUTI is available)",
+      "properties": {}
+    },
+    {
+      "from": "5GS_Mobile_Identity_Handling",
+      "to": "Include_PEI",
+      "action": "Determine Mobile Identity Handling (If neither GUTI nor SUCI is available and registration is for emergency services)",
+      "properties": {}
+    },
+    {
+      "from": "Include_SUCI",
+      "to": "SUCI_Handling",
+      "action": "Include SUCI",
+      "properties": {}
+    },
+     {
+      "from": "SUCI_Handling",
+      "to": "Dual_Registration_Mode_Check",
+      "action": "Handling SUCI",
+      "properties": {}
+    },
+    {
+      "from": "Dual_Registration_Mode_Check",
+      "to": "Include_UE_Status_IE",
+      "action": "Check Dual Registration Mode",
+      "properties": {}
+    },
+    {
+      "from": "Include_UE_Status_IE",
+      "to": "IE_Inclusion_Decision",
+      "action": "Include UE Status IE",
+      "properties": {}
+    },
+    {
+      "from": "IE_Inclusion_Decision",
+      "to": "NAS_Message_Container_Handling",
+      "action": "Make decision to include IEs in the message",
+      "properties": {}
+    },
+    {
+      "from": "NAS_Message_Container_Handling",
+      "to": "Send_REGISTRATION_REQUEST",
+      "action": "Determine NAS Message Container Handling",
+      "properties": {}
+    },
+    {
+      "from": "Send_REGISTRATION_REQUEST",
+      "to": "AMF_Processing",
+      "action": "Send REGISTRATION REQUEST",
+      "properties": {}
+    }
+  ]
+}

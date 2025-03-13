@@ -1,0 +1,423 @@
+{
+  "procedure_name": "UE Initiates Registration Procedure (Mobility and Periodic Update)",
+  "description": "UE initiates the registration procedure for mobility and periodic registration update as defined in 3GPP specifications.",
+  "nodes": [
+    {
+      "id": "Determine_Triggering_Condition",
+      "type": "action",
+      "properties": {
+        "description": "UE determines the reason for initiating registration based on conditions a) through zp), zm1), zn), and zq)."
+      }
+    },
+    {
+      "id": "Send_REGISTRATION_REQUEST",
+      "type": "action",
+      "properties": {
+        "description": "UE sends a REGISTRATION REQUEST message to the AMF."
+      },
+      "parameters": ["REGISTRATION REQUEST"]
+    },
+    {
+      "id": "Set_5GS_Registration_Type_IE",
+      "type": "action",
+      "properties": {
+        "description": "UE sets the 5GS registration type IE based on the registration reason."
+      },
+      "parameters": ["5GS registration type IE"]
+    },
+    {
+      "id": "Handle_S1_Mode_Support",
+      "type": "conditional",
+      "properties": {
+        "description": "If UE supports S1 mode, E-UTRA not disabled, and registration for specific reasons, set S1 mode bit in 5GMM capability IE and include S1 UE network capability IE."
+      },
+      "parameters": ["S1 mode bit", "5GMM capability IE", "S1 UE network capability IE", "EPS-UPIP bit", "HO attach bit"]
+    },
+    {
+      "id": "Set_Capability_Bits_in_5GMM_IE",
+      "type": "action",
+      "properties": {
+        "description": "UE sets capability bits in the 5GMM capability IE to indicate supported features."
+      },
+      "parameters": ["LPP", "LCS", "RACS", "5G-SRVCC", "restriction on the use of enhanced coverage", "network slice-specific authentication and authorization", "CAG feature", "extended CAG information list", "enhanced CAG information", "sending of REGISTRATION COMPLETE message for acknowledging the reception of Negotiated PEIPS assistance inforation IE", "NSAG", "the unavailability period", "network slice replacement", "ciphered broadcast assistance data", "WUS assistance information", "NR-PSSI", "service gap control", "multiple user-plane resources in NB-N1 mode", "extended rejected NSSAI", "NSSRG", "5G ProSe features", "UAS services", "the N1 NAS signalling connection release", "the paging indication for voice services", "the reject paging request", "the paging restriction", "MINT", "slice-based N3IWF selection", "slice-based TNGF selection", "A2X over E-UTRA-PC5", "A2X over NR-PC5", "A2X over Uu", "event notification", "SSNPNSI", "ESI", "LADN-DS", "Reconnection to the network due to RAN timing synchronization status change (RANtiming)", "MPSIU", "MCSIU", "ranging and sidelink positioning (RSLP)", "partial network slice", "network slice usage control", "S-NSSAI time validity information and S-NSSAI location validity information"]
+    },
+    {
+      "id": "Include_UE_Policy_Container",
+      "type": "conditional",
+      "properties": {
+        "description": "If single-registration mode and inter-system change from S1 to N1, may include Payload container IE set to 'UE policy container' and UE STATE INDICATION message."
+      },
+      "parameters": ["Payload container IE", "UE STATE INDICATION"]
+    },
+    {
+      "id": "Handle_SMS_over_NAS",
+      "type": "conditional",
+      "properties": {
+        "description": "If UE needs to request/change SMS over NAS, set SMS requested bit in the 5GS update type IE."
+      },
+      "parameters": ["SMS requested bit", "5GS update type IE"]
+    },
+    {
+      "id": "Start_Stop_Timers",
+      "type": "action",
+      "properties": {
+        "description": "Start timer T3510 and stops timer T3502 and T3511 if those timers are running."
+      },
+      "parameters": ["T3510", "T3502", "T3511"]
+    },
+    {
+      "id": "Include_Last_Visited_TAI",
+      "type": "conditional",
+      "properties": {
+        "description": "Include last visited registered TAI if available."
+      },
+      "parameters": ["Last visited registered TAI"]
+    },
+    {
+      "id": "Handle_5GS_Mobile_Identity",
+      "type": "action",
+      "properties": {
+        "description": "Include 5GS mobile identity IE with 5G-GUTI, 5G-GUTI mapped from 4G-GUTI, or SUCI. May also include NID or additional GUTI IE."
+      },
+      "parameters": ["5G-GUTI", "SUCI", "NID", "additional GUTI IE"]
+    },
+    {
+      "id": "MICO_Mode",
+      "type": "conditional",
+      "properties": {
+        "description": "If supports and requests MICO mode, includes MICO indication IE, T3324 IE, and optionally Requested T3512 value IE."
+      },
+      "parameters": ["MICO indication IE", "T3324 IE", "Requested T3512 value IE"]
+    },
+    {
+      "id": "DRX_Parameters",
+      "type": "conditional",
+      "properties": {
+        "description": "If needs to use/change DRX parameters, include Requested DRX parameters IE."
+      },
+      "parameters": ["Requested DRX parameters IE"]
+    },
+    {
+      "id": "eDRX_Parameters",
+      "type": "conditional",
+      "properties": {
+        "description": "If supports eDRX and requests its use, include Requested extended DRX parameters IE."
+      },
+      "parameters": ["Requested extended DRX parameters IE"]
+    },
+    {
+      "id": "LADN_Information",
+      "type": "conditional",
+      "properties": {
+        "description": "If needs to request LADN information, include LADN indication IE."
+      },
+      "parameters": ["LADN indication IE"]
+    },
+    {
+      "id": "Uplink_Data_Status",
+      "type": "conditional",
+      "properties": {
+        "description": "May include Uplink data status IE to indicate PDU sessions with pending user data."
+      },
+      "parameters": ["Uplink data status IE"]
+    },
+    {
+      "id": "PDU_Session_Status",
+      "type": "conditional",
+      "properties": {
+        "description": "When initiated in 5GMM-IDLE mode, may include PDU session status IE. If paging received with non-3GPP access type, include Allowed PDU session status IE."
+      },
+      "parameters": ["PDU session status IE", "Allowed PDU session status IE"]
+    },
+    {
+      "id": "UE_Status",
+      "type": "conditional",
+      "properties": {
+        "description": "If single-registration mode and inter-system change from S1 to N1, include UE status IE with EMM registration status set to 'UE is in EMM-REGISTERED state'."
+      },
+      "parameters": ["UE status IE", "EMM registration status"]
+    },
+    {
+      "id": "EPS_NAS_Message_Container",
+      "type": "conditional",
+      "properties": {
+        "description": "If single-registration mode, inter-system change from S1 to N1 and initiated in 5GMM-IDLE mode, shall/may include a TRACKING AREA UPDATE REQUEST message in the EPS NAS message container IE."
+      },
+      "parameters": ["EPS NAS message container IE", "TRACKING AREA UPDATE REQUEST message"]
+    },
+    {
+      "id": "Requested_NSSAI",
+      "type": "conditional",
+      "properties": {
+        "description": "Include Requested NSSAI IE or Requested mapped NSSAI IE containing S-NSSAI(s) to which it intends to register."
+      },
+      "parameters": ["Requested NSSAI IE", "Requested mapped NSSAI IE", "S-NSSAI"]
+    },
+    {
+      "id": "Unavailability_Information",
+      "type": "conditional",
+      "properties": {
+        "description": "For case zm1, if network indicated support for the unavailability period in the last registration procedure, the UE shall include the Unavailability information IE in the REGISTRATION REQUEST message."
+      },
+      "parameters": ["Unavailability information IE"]
+    },
+    {
+      "id": "Follow_on_Request_Indicator",
+      "type": "action",
+      "properties": {
+        "description": "The UE sets the Follow-on request indicator to Follow-on request pending if applicable."
+      },
+      "parameters": ["Follow-on request indicator"]
+    },
+    {
+      "id": "Update_Type_IE",
+      "type": "conditional",
+      "properties": {
+        "description": "For case n, the UE shall include the 5GS update type IE in the REGISTRATION REQUEST message with the NG-RAN-RCU bit set to UE radio capability update needed."
+      },
+      "parameters": ["5GS update type IE"]
+    },
+     {
+      "id": "Service_level_AA_container",
+      "type": "conditional",
+      "properties": {
+        "description": "For case zf, the UE shall include the service-level device ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and set the value to the CAA-level UAV ID."
+      },
+      "parameters": ["Service-level-AA container IE"]
+    },
+    {
+      "id": "NAS_message_container",
+      "type": "conditional",
+      "properties": {
+        "description": "The UE shall send the REGISTRATION REQUEST message including the NAS message container IE as described in subclause 4.4.6."
+      },
+      "parameters": ["NAS message container IE"]
+    },
+    {
+      "id": "Unavailability_information_2",
+      "type": "conditional",
+      "properties": {
+        "description": "For case zm1, if the network indicated support for the unavailability period in the last registration procedure, the UE shall include the Unavailability information IE in the REGISTRATION REQUEST message."
+      },
+      "parameters": ["Unavailability information IE"]
+    },
+    {
+      "id": "UE_request_type_IE",
+      "type": "conditional",
+      "properties": {
+        "description": "If the network supports the N1 NAS signalling connection release, and the MUSIM UE requests the network to release the NAS signalling connection, the UE shall set Request type to NAS signalling connection release in the UE request type IE, set the Follow-on request indicator to No follow-on request pending and, if the network supports the paging restriction, may set the paging restriction preference in the Paging restriction IE in the REGISTRATION REQUEST message."
+      },
+      "parameters": ["UE request type IE"]
+    }
+  ],
+  "edges": [
+    {
+      "from": "Determine_Triggering_Condition",
+      "to": "Send_REGISTRATION_REQUEST",
+      "action": "Initiate Registration",
+      "properties": {
+        "description": "Based on the triggering condition, the UE decides to send the REGISTRATION REQUEST."
+      }
+    },
+    {
+      "from": "Send_REGISTRATION_REQUEST",
+      "to": "Set_5GS_Registration_Type_IE",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Before sending, the UE needs to set the registration type."
+      }
+    },
+    {
+      "from": "Set_5GS_Registration_Type_IE",
+      "to": "Handle_S1_Mode_Support",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally handle S1 mode support."
+      }
+    },
+    {
+      "from": "Handle_S1_Mode_Support",
+      "to": "Set_Capability_Bits_in_5GMM_IE",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Set capability bits in the 5GMM capability IE."
+      }
+    },
+    {
+      "from": "Set_Capability_Bits_in_5GMM_IE",
+      "to": "Include_UE_Policy_Container",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include the UE policy container."
+      }
+    },
+    {
+      "from": "Include_UE_Policy_Container",
+      "to": "Handle_SMS_over_NAS",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally handle SMS over NAS."
+      }
+    },
+    {
+      "from": "Handle_SMS_over_NAS",
+      "to": "Start_Stop_Timers",
+      "action": "Start Timers",
+      "properties": {
+        "description": "Start the necessary timers after sending the request."
+      }
+    },
+    {
+      "from": "Start_Stop_Timers",
+      "to": "Include_Last_Visited_TAI",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Optionally Include the last visited registered TAI."
+      }
+    },
+    {
+      "from": "Include_Last_Visited_TAI",
+      "to": "Handle_5GS_Mobile_Identity",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Handle and include the 5GS mobile identity."
+      }
+    },
+    {
+      "from": "Handle_5GS_Mobile_Identity",
+      "to": "MICO_Mode",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally configure MICO mode parameters."
+      }
+    },
+    {
+      "from": "MICO_Mode",
+      "to": "DRX_Parameters",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally configure DRX parameters."
+      }
+    },
+    {
+      "from": "DRX_Parameters",
+      "to": "eDRX_Parameters",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally configure extended DRX parameters."
+      }
+    },
+     {
+      "from": "eDRX_Parameters",
+      "to": "LADN_Information",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally configure LADN information."
+      }
+    },
+    {
+      "from": "LADN_Information",
+      "to": "Uplink_Data_Status",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Optionally include Uplink Data Status."
+      }
+    },
+    {
+      "from": "Uplink_Data_Status",
+      "to": "PDU_Session_Status",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include PDU session status."
+      }
+    },
+    {
+      "from": "PDU_Session_Status",
+      "to": "UE_Status",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally set the UE status."
+      }
+    },
+    {
+      "from": "UE_Status",
+      "to": "EPS_NAS_Message_Container",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include EPS NAS message container."
+      }
+    },
+    {
+      "from": "EPS_NAS_Message_Container",
+      "to": "Requested_NSSAI",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include Requested NSSAI."
+      }
+    },
+    {
+      "from": "Requested_NSSAI",
+      "to": "Unavailability_Information",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include Unavailability Information."
+      }
+    },
+    {
+      "from": "Unavailability_Information",
+      "to": "Follow_on_Request_Indicator",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally set the Follow-on request Indicator."
+      }
+    },
+        {
+      "from": "Follow_on_Request_Indicator",
+      "to": "Update_Type_IE",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include the Update Type IE."
+      }
+    },
+       {
+      "from": "Update_Type_IE",
+      "to": "Service_level_AA_container",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include Service level AA container IE."
+      }
+    },
+    {
+      "from": "Service_level_AA_container",
+      "to": "NAS_message_container",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include NAS message container IE."
+      }
+    },
+    {
+      "from": "NAS_message_container",
+      "to": "Unavailability_information_2",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include Unavailability information IE."
+      }
+    },
+    {
+      "from": "Unavailability_information_2",
+      "to": "UE_request_type_IE",
+      "action": "Configure Message",
+      "properties": {
+        "description": "Conditionally include UE request type IE."
+      }
+    },
+    {
+      "from": "UE_request_type_IE",
+      "to": "Send_REGISTRATION_REQUEST",
+      "action": "Complete Message Preparation",
+      "properties": {
+        "description": "All conditions and optional fields configured, send message. The message flows back to the step responsible for sending the REGISTRATION REQUEST after all conditional elements have been evaluated."
+      }
+    }
+  ]
+}

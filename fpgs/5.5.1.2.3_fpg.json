@@ -1,0 +1,134 @@
+{
+  "procedure_name": "5GMM Common Procedures Initiation during Registration",
+  "description": "This FPG describes the initiation of 5GMM common procedures by the network (AMF) during the 5G registration procedure.",
+  "nodes": [
+    {
+      "id": "Registration_Request_Received",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": ["SUCI", "5GS Registration Type", "Other Information"]
+    },
+    {
+      "id": "AMF_Decision_Point",
+      "type": "state",
+      "properties": {
+        "description": "AMF determines if 5GMM common procedures are required based on REGISTRATION REQUEST content."
+      }
+    },
+    {
+      "id": "Initiate_5GMM_Common_Procedures",
+      "type": "action",
+      "properties": {
+        "description": "AMF initiates 5GMM common procedures (e.g., identification, authentication, security procedures)."
+      }
+    },
+    {
+      "id": "NAS_Security_Mode_Control_Required",
+      "type": "state",
+      "properties": {
+        "description": "Entire unciphered REGISTRATION REQUEST was signaled; selected EPS NAS security algorithms need to be applied."
+      }
+    },
+    {
+      "id": "Initiate_Two_NAS_Security_Mode_Control_Procedures",
+      "type": "action",
+      "properties": {
+        "description": "Initiate two NAS security mode control procedures as part of 5GMM common procedures."
+      },
+      "related_specification": "3GPP TS 23.502 subclause 5.4.2.4 (assumed)"
+    },
+    {
+      "id": "Emergency_Registration",
+      "type": "state",
+      "properties": {
+        "description": "5GS registration type IE is set to 'emergency registration'."
+      }
+    },
+    {
+      "id": "AMF_Supports_Unauthenticated_SUCI_Emergency",
+      "type": "state",
+      "properties": {
+        "description": "AMF is configured to support emergency registration for unauthenticated SUCIs."
+      }
+    },
+    {
+      "id": "Skip_Authentication_Procedure",
+      "type": "action",
+      "properties": {
+        "description": "AMF skips the authentication procedure (optimization for emergency)."
+      }
+    },
+    {
+      "id": "Proceed_to_Security_Mode_Control",
+      "type": "action",
+      "properties": {
+        "description": "AMF proceeds directly to the security mode control procedure."
+      }
+    },
+    {
+      "id": "Standard_Security_Procedures",
+      "type": "action",
+      "properties": {
+        "description": "AMF executes the standard 5G security procedures."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Registration_Request_Received",
+      "to": "AMF_Decision_Point",
+      "action": "Receive Registration Request",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Decision_Point",
+      "to": "Initiate_5GMM_Common_Procedures",
+      "event": "Common Procedures Required",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_5GMM_Common_Procedures",
+      "to": "NAS_Security_Mode_Control_Required",
+      "event": "Unciphered Request and EPS NAS Security",
+      "properties": {}
+    },
+    {
+      "from": "NAS_Security_Mode_Control_Required",
+      "to": "Initiate_Two_NAS_Security_Mode_Control_Procedures",
+      "action": "Initiate NAS Security Mode Control",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_5GMM_Common_Procedures",
+      "to": "Emergency_Registration",
+      "event": "Emergency Registration Indicated",
+      "properties": {}
+    },
+    {
+      "from": "Emergency_Registration",
+      "to": "AMF_Supports_Unauthenticated_SUCI_Emergency",
+      "event": "AMF Configured for Emergency SUCI",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Supports_Unauthenticated_SUCI_Emergency",
+      "to": "Skip_Authentication_Procedure",
+      "action": "Skip Authentication",
+      "properties": {}
+    },
+    {
+      "from": "Skip_Authentication_Procedure",
+      "to": "Proceed_to_Security_Mode_Control",
+      "action": "Go to Security Mode Control",
+      "properties": {}
+    },
+    {
+      "from": "Initiate_5GMM_Common_Procedures",
+      "to": "Standard_Security_Procedures",
+      "event": "No Special Conditions Met",
+      "properties": {}
+    }
+  ]
+}

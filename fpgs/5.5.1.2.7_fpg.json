@@ -1,0 +1,417 @@
+{
+  "procedure_name": "Initial Registration - Abnormal Cases",
+  "description": "UE actions when encountering error scenarios during initial registration.",
+  "nodes": [
+    {
+      "id": "T3346_Running",
+      "type": "state",
+      "properties": {
+        "description": "Timer T3346 is running"
+      }
+    },
+    {
+      "id": "Access_Barred",
+      "type": "state",
+      "properties": {
+        "description": "Lower layers indicate access is barred"
+      }
+    },
+    {
+      "id": "Access_Barred_Specific_Categories",
+      "type": "state",
+      "properties": {
+        "description": "Lower layers indicate access barring for specific categories"
+      }
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "condition",
+      "properties": {
+        "description": "REGISTRATION REQUEST has been sent"
+      }
+    },
+    {
+      "id": "T3510_Timeout",
+      "type": "state",
+      "properties": {
+        "description": "Timer T3510 timeout"
+      }
+    },
+    {
+      "id": "Registration_Reject",
+      "type": "state",
+      "properties": {
+        "description": "Received REGISTRATION REJECT message (or specific 5GMM cause values)"
+      }
+    },
+    {
+      "id": "Lower_Layer_Failure",
+      "type": "state",
+      "properties": {
+        "description": "Lower layer failure/release of NAS signalling connection"
+      }
+    },
+    {
+      "id": "UE_Deregistration_Required",
+      "type": "state",
+      "properties": {
+        "description": "UE-initiated de-registration required"
+      }
+    },
+    {
+      "id": "Deregistration_Collision",
+      "type": "state",
+      "properties": {
+        "description": "De-registration procedure collision"
+      }
+    },
+    {
+      "id": "TAI_Change",
+      "type": "state",
+      "properties": {
+        "description": "Change in current TAI"
+      }
+    },
+    {
+      "id": "Registration_Complete_Transmission_Failure_TAI_Change",
+      "type": "state",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION COMPLETE with TAI change"
+      }
+    },
+    {
+      "id": "Registration_Complete_Transmission_Failure_No_TAI_Change",
+      "type": "state",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION COMPLETE without TAI change"
+      }
+    },
+    {
+      "id": "Registration_Request_Transmission_Failure",
+      "type": "state",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION REQUEST"
+      }
+    },
+    {
+      "id": "T3447_Running",
+      "type": "state",
+      "properties": {
+        "description": "Timer T3447 is running"
+      }
+    },
+    {
+      "id": "Access_Not_Registered_Other",
+      "type": "state",
+      "properties": {
+        "description": "UE is not registered to the access other than the access the REGISTRATION ACCEPT message is received"
+      }
+    },
+    {
+      "id": "Localized_Services_Not_Allowed",
+      "type": "state",
+      "properties": {
+        "description": "Access for localized services in current SNPN is no longer allowed"
+      }
+    },
+    {
+      "id": "Do_Not_Start_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Do not start the initial registration procedure"
+      }
+    },
+    {
+      "id": "Normal_Cell_Reselection",
+      "type": "action",
+      "properties": {
+        "description": "Perform normal cell reselection"
+      }
+    },
+    {
+      "id": "Abort_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Abort the initial registration procedure"
+      }
+    },
+    {
+      "id": "Release_NAS_Connection",
+      "type": "action",
+      "properties": {
+        "description": "Release the NAS signalling connection (if any)"
+      }
+    },
+    {
+      "id": "Common_Actions",
+      "type": "action",
+      "properties": {
+        "description": "Execute the common actions (stop timer T3510, increment registration attempt counter, start T3511 or T3502 based on counter value, update status, etc.)"
+      }
+    },
+    {
+      "id": "Perform_UE_Deregistration",
+      "type": "action",
+      "properties": {
+        "description": "Perform the UE-initiated de-registration procedure"
+      }
+    },
+    {
+      "id": "Continue_Initial_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Continue the initial registration procedure"
+      }
+    },
+    {
+      "id": "Immediately_Reinitiate_Registration",
+      "type": "action",
+      "properties": {
+        "description": "Immediately re-initiate the initial registration procedure"
+      }
+    },
+    {
+      "id": "Start_Mobility_Registration_Update",
+      "type": "action",
+      "properties": {
+        "description": "Start the mobility registration update procedure"
+      }
+    },
+     {
+      "id": "Resend_Registration_Complete",
+      "type": "action",
+      "properties": {
+        "description": "Resend the REGISTRATION COMPLETE message"
+      }
+    },
+   {
+      "id": "Implementation_Specific",
+      "type": "action",
+      "properties": {
+        "description": "Implementation-specific action"
+      }
+    },
+   {
+      "id": "Consider_Registered_Access",
+      "type": "action",
+      "properties": {
+        "description": "The UE shall consider itself as being registered to only the access where the REGISTRATION ACCEPT message is received."
+      }
+    },
+   {
+      "id": "SNPN_Selection",
+      "type": "action",
+      "properties": {
+        "description": "perform SNPN selection according to 3GPP TS 23.122 [5]."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "T3346_Running",
+      "to": "Do_Not_Start_Registration",
+      "action": "Do_Not_Start_Registration",
+      "properties": {
+        "condition": "Unless exception applies (high priority access, emergency services, re-registration required indication, exception data reporting for NB-N1, emergency PDU session)"
+      }
+    },
+    {
+      "from": "T3346_Running",
+      "to": "Normal_Cell_Reselection",
+      "action": "Normal_Cell_Reselection",
+      "properties": {}
+    },
+    {
+      "from": "Access_Barred",
+      "to": "Do_Not_Start_Registration",
+      "action": "Do_Not_Start_Registration",
+      "properties": {}
+    },
+    {
+      "from": "Access_Barred",
+      "to": "Normal_Cell_Reselection",
+      "action": "Normal_Cell_Reselection",
+      "properties": {}
+    },
+    {
+      "from": "Access_Barred_Specific_Categories",
+      "to": "Registration_Request_Sent",
+      "type": "conditional",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Do_Not_Start_Registration",
+      "action": "Do_Not_Start_Registration",
+      "properties": {
+        "condition": "REGISTRATION REQUEST not sent"
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {
+        "condition": "REGISTRATION REQUEST has been sent"
+      }
+    },
+    {
+      "from": "T3510_Timeout",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {
+        "condition": "Unless for emergency services or initiating emergency PDU session"
+      }
+    },
+    {
+      "from": "T3510_Timeout",
+      "to": "Release_NAS_Connection",
+      "action": "Release_NAS_Connection",
+      "properties": {
+        "condition": "Unless for emergency services or initiating emergency PDU session"
+      }
+    },
+    {
+      "from": "T3510_Timeout",
+      "to": "Common_Actions",
+      "action": "Common_Actions",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Reject",
+      "to": "Common_Actions",
+      "action": "Common_Actions",
+      "properties": {
+        "condition": "If not for emergency services or establishing an emergency PDU session, and upon reception of the 5GMM causes #95, #96, #97, #99 and #111 the UE should set the registration attempt counter to 5."
+      }
+    },
+    {
+      "from": "Lower_Layer_Failure",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {}
+    },
+    {
+      "from": "Lower_Layer_Failure",
+      "to": "Common_Actions",
+      "action": "Common_Actions",
+      "properties": {}
+    },
+    {
+      "from": "UE_Deregistration_Required",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {}
+    },
+    {
+      "from": "UE_Deregistration_Required",
+      "to": "Perform_UE_Deregistration",
+      "action": "Perform_UE_Deregistration",
+      "properties": {}
+    },
+    {
+      "from": "Deregistration_Collision",
+      "to": "Continue_Initial_Registration",
+      "action": "Continue_Initial_Registration",
+      "properties": {
+        "condition": "DEREGISTRATION REQUEST message indicates the access type over which the initial registration procedure is attempted"
+      }
+    },
+    {
+      "from": "TAI_Change",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {}
+    },
+    {
+      "from": "TAI_Change",
+      "to": "Immediately_Reinitiate_Registration",
+      "action": "Immediately_Reinitiate_Registration",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Complete_Transmission_Failure_TAI_Change",
+      "to": "Resend_Registration_Complete",
+      "action": "Resend_Registration_Complete",
+      "properties": {
+        "condition": "If the current TAI is still in the TAI list"
+      }
+    },
+     {
+      "from": "Registration_Complete_Transmission_Failure_TAI_Change",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {
+         "condition": "Otherwise"
+      }
+    },
+   {
+      "from": "Registration_Complete_Transmission_Failure_TAI_Change",
+      "to": "Start_Mobility_Registration_Update",
+      "action": "Start_Mobility_Registration_Update",
+      "properties": {
+         "condition": "Otherwise"
+      }
+    },
+    {
+      "from": "Registration_Complete_Transmission_Failure_No_TAI_Change",
+      "to": "Implementation_Specific",
+      "action": "Implementation_Specific",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Request_Transmission_Failure",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {}
+    },
+    {
+      "from": "Registration_Request_Transmission_Failure",
+      "to": "Immediately_Reinitiate_Registration",
+      "action": "Immediately_Reinitiate_Registration",
+      "properties": {}
+    },
+      {
+      "from": "T3447_Running",
+      "to": "Do_Not_Start_Registration",
+      "action": "Do_Not_Start_Registration",
+      "properties": {
+        "condition": "Unless exception applies (high priority access, emergency services)"
+      }
+    },
+       {
+      "from": "T3447_Running",
+      "to": "Normal_Cell_Reselection",
+      "action": "Normal_Cell_Reselection",
+      "properties": {}
+    },
+     {
+      "from": "Access_Not_Registered_Other",
+      "to": "Consider_Registered_Access",
+      "action": "Consider_Registered_Access",
+      "properties": {}
+    },
+    {
+      "from": "Localized_Services_Not_Allowed",
+      "to": "Abort_Registration",
+      "action": "Abort_Registration",
+      "properties": {
+        "condition": "If the initial registration request is neither for emergency services nor for initiating a PDU session for emergency services with request type set to \"existing emergency PDU session\", the selected SNPN is an SNPN selected for localized services in SNPN and: access for localized services in SNPN is disabled; or the validity information for the selected SNPN is no longer met"
+      }
+    },
+      {
+      "from": "Localized_Services_Not_Allowed",
+      "to": "Release_NAS_Connection",
+      "action": "Release_NAS_Connection",
+      "properties": {
+        "condition": "If the initial registration request is neither for emergency services nor for initiating a PDU session for emergency services with request type set to \"existing emergency PDU session\", the selected SNPN is an SNPN selected for localized services in SNPN and: access for localized services in SNPN is disabled; or the validity information for the selected SNPN is no longer met"
+      }
+    },
+     {
+      "from": "Localized_Services_Not_Allowed",
+      "to": "SNPN_Selection",
+      "action": "SNPN_Selection",
+      "properties": {}
+    }
+  ]
+}
