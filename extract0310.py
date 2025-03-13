@@ -30,7 +30,7 @@ def extract_sections():
     cursor.execute('''
     SELECT section_id, section_name
     FROM sections
-    WHERE section_level IN (1, 2, 3)
+    WHERE section_level IN (1, 2, 3,4)
     ''')
 
     # Fetch all results
@@ -67,7 +67,7 @@ def find_section_with_procedure_info():
     {output_content}
 
     as you can see section heading has different levels, and section is nested structure.based on your knowledge about 3GPP specification document structure,
-    Please based on the text i provided above to list the sections (which heading level is 3.for example 1.1.1 is heading level 3) that contain procedures.only return section id and name 
+    Please based on the text i provided above to list the sections  that contain procedures.only return section id and name .only return  section heading is level2(like 1.1, 2.2,x.x)
     """
 
     # Assuming you have an LLM client or API for interacting with Google AI Gemini

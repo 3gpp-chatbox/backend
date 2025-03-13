@@ -1,0 +1,5 @@
+Section ID, Section Name
+6.5, 5GSM status procedure
+6.5.1, General
+6.5.2, 5GSM status received in the UE
+6.5.3, 5GSM status received in the SMF

@@ -1,0 +1,8 @@
+Section ID, Section Name
+5.6.1.2.1, UE is not using 5GS services with control plane CIoT 5GS optimization
+5.6.1.2.2, UE is using 5GS services with control plane CIoT 5GS optimization
+5.6.1.4.1, UE is not using 5GS services with control plane CIoT 5GS optimization
+5.6.1.4.2, UE is using 5GS services with control plane CIoT 5GS optimization
+5.6.2.2.1, General
+5.6.2.2.2, Abnormal cases on the network side
+5.6.2.2.3, Abnormal cases in the UE

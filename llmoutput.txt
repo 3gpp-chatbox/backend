@@ -1,26 +1,16 @@
-Okay, based on the provided table of contents of a 3GPP NAS specification document, here's a list of sections with heading level 3 that explicitly discuss procedures:
+Okay, based on the provided table of contents, here are the sections that describe procedures, focusing on level 2 headings (x.x):
 
-*   **4.4.2**, Handling of 5G NAS security contexts
-*   **5.4.1**, Primary authentication and key agreement procedure
-*   **5.4.2**, Security mode control procedure
-*   **5.4.3**, Identification procedure
-*   **5.4.4**, Generic UE configuration update procedure
-*   **5.4.5**, NAS transport procedure(s)
-*   **5.4.6**, 5GMM status procedure
-*   **5.4.7**, Network slice-specific authentication and authorization procedure
-*   **5.5.1**, Registration procedure
-*   **5.5.2**, De-registration procedure
-*   **5.5.3**, eCall inactivity procedure
-*   **5.5.4**, Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
-*   **5.6.1**, Service request procedure
-*   **5.6.2**, Paging procedure
-*   **5.6.3**, Notification procedure
-*   **6.3.1**, PDU session authentication and authorization procedure
-*   **6.3.2**, Network-requested PDU session modification procedure
-*   **6.3.3**, Network-requested PDU session release procedure
-*   **6.4.1**, UE-requested PDU session establishment procedure
-*   **6.4.2**, UE-requested PDU session modification procedure
-*   **6.4.3**, UE-requested PDU session release procedure
-*   **6.5.1**, General
-*   **6.6.1**, Exchange of extended protocol configuration options
-*   **6.6.2**, Remote UE report procedure
+*   **5, Elementary procedures for 5GS mobility management**
+*   **5.1, Overview**
+*   **5.2, Behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED**
+*   **5.3, General on elementary 5GMM procedures**
+*   **5.4, 5GMM common procedures**
+*   **5.5, 5GMM specific procedures**
+*   **5.6, 5GMM connection management procedures**
+*   **6, Elementary procedures for 5GS session management**
+*   **6.1, Overview**
+*   **6.2, General on elementary 5GSM procedures**
+*   **6.3, Network-requested 5GSM procedures**
+*   **6.4, UE-requested 5GSM procedures**
+*   **6.5, 5GSM status procedure**
+*   **6.6, Miscellaneous procedures**
