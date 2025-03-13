@@ -1,0 +1,291 @@
+{
+  "nodes": [
+    {
+      "id": "state_connected",
+      "label": "5GMM-CONNECTED mode with RRC inactive indication",
+      "type": "state",
+      "properties": {
+        "current_state": "5GMM-CONNECTED mode with RRC inactive indication",
+        "conditions": "UE is in 5GMM-CONNECTED mode and RRC is inactive",
+        "next_states": [
+          "idle"
+        ],
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "state_nbn1",
+      "label": "NBN1 mode",
+      "type": "state",
+      "properties": {
+        "current_state": "NBN1 mode",
+        "conditions": "UE is in NBN1 mode",
+        "next_states": [
+          "idle"
+        ],
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_rrc_inactive",
+      "label": "UE in 5GMM-CONNECTED mode with RRC inactive indication and no pending uplink user data",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in 5GMM-CONNECTED mode with RRC inactive and no pending uplink data",
+        "related_states": [
+          "5GMM-CONNECTED mode with RRC inactive indication"
+        ],
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3"
+      }
+    },
+    {
+      "id": "trigger_exceptional_event",
+      "label": "UE receives request from upper layers to transmit user data related to an exceptional event in NBN1 mode",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "Upper layer request for exceptional event data in NBN1, exception data reporting allowed, T3346 not running",
+        "related_states": [
+          "NBN1 mode"
+        ],
+        "spec_references": "24501-j11.md, Section 5.3.20.2, 3GPP TS 24.368, 3GPP TS 31.102"
+      }
+    },
+    {
+      "id": "trigger_ran_sync",
+      "label": "UE receives indication of a change in the RAN timing synchronization status",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE supports reconnection due to RAN timing synchronization status change and receives an indication of a change in the RAN timing synchronization status",
+        "related_states": [
+          "5GMM-CONNECTED mode with RRC inactive indication",
+          "NBN1 mode"
+        ],
+        "spec_references": "24501-j11.md, Section 5.3.1.4"
+      }
+    },
+    {
+      "id": "action_send_registration_request",
+      "label": "Send REGISTRATION REQUEST message",
+      "type": "action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "One of the triggers is activated",
+        "outcomes": "Network receives registration request",
+        "error_cases": "Registration request is rejected by the network",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "message_registration_request",
+      "label": "REGISTRATION REQUEST",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "5GS registration type IE set to mobility registration updating",
+        "optional_ies": "Uplink data status IE",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "outcome_successful_registration",
+      "label": "Successful registration update",
+      "type": "outcome",
+      "properties": {
+        "description": "UE successfully updates its registration with the network."
+      }
+    },
+    {
+      "id": "error_handling_cause_11",
+      "label": "Handle 5GMM cause #11",
+      "type": "error_handling",
+      "properties": {
+        "description": "If 5GMM cause value received is #11 and the UE is operating in singleregistration mode handle the EMM parameters"
+      }
+    },
+    {
+      "id": "error_handling_cause_73",
+      "label": "Handle 5GMM cause #73",
+      "type": "error_handling",
+      "properties": {
+        "description": "if the 5GMM cause value received is #73 and the UE is operating in singleregistration mode the UE shall in addition set the EPS update status to EU3 ROAMING NOT ALLOWED"
+      }
+    },
+    {
+      "id": "flow_start",
+      "label": "Start Periodic Registration",
+      "type": "flow_start",
+      "properties": {}
+    },
+    {
+      "id": "flow_end",
+      "label": "End Periodic Registration",
+      "type": "flow_end",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_state_trigger_connected",
+      "source": "state_connected",
+      "target": "trigger_rrc_inactive",
+      "label": "Triggered by RRC Inactive",
+      "type": "transition",
+      "properties": {
+        "trigger": "RRC Inactive Indication",
+        "conditions": "UE in 5GMM-CONNECTED mode and RRC inactive",
+        "success_criteria": "UE initiates registration procedure",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_state_trigger_nbn1",
+      "source": "state_nbn1",
+      "target": "trigger_exceptional_event",
+      "label": "Triggered by Exceptional Event",
+      "type": "transition",
+      "properties": {
+        "trigger": "Exceptional Event Data Reporting Request",
+        "conditions": "Upper layer requests exceptional event data",
+        "success_criteria": "UE initiates registration procedure",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_state_trigger_ran",
+      "source": "state_connected",
+      "target": "trigger_ran_sync",
+      "label": "Triggered by RAN Sync",
+      "type": "transition",
+      "properties": {
+        "trigger": "RAN Timing Sync Change",
+        "conditions": "Indication of RAN Timing Sync change",
+        "success_criteria": "UE initiates registration procedure",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_state_trigger_ran_nbn1",
+      "source": "state_nbn1",
+      "target": "trigger_ran_sync",
+      "label": "Triggered by RAN Sync in NBN1",
+      "type": "transition",
+      "properties": {
+        "trigger": "RAN Timing Sync Change",
+        "conditions": "Indication of RAN Timing Sync change",
+        "success_criteria": "UE initiates registration procedure",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_trigger_action",
+      "source": "trigger_rrc_inactive",
+      "target": "action_send_registration_request",
+      "label": "Initiates REGISTRATION REQUEST",
+      "type": "execution",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_action_event",
+      "source": "trigger_exceptional_event",
+      "target": "action_send_registration_request",
+      "label": "Initiates REGISTRATION REQUEST",
+      "type": "execution",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_action_ran",
+      "source": "trigger_ran_sync",
+      "target": "action_send_registration_request",
+      "label": "Initiates REGISTRATION REQUEST",
+      "type": "execution",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_message",
+      "source": "action_send_registration_request",
+      "target": "message_registration_request",
+      "label": "Sends",
+      "type": "message_flow",
+      "properties": {
+        "sequence_number": 1,
+        "timing": "Immediate",
+        "retry_behavior": "Implementation dependent",
+        "error_handling": "See Error Handling Nodes"
+      }
+    },
+    {
+      "id": "edge_message_outcome",
+      "source": "message_registration_request",
+      "target": "outcome_successful_registration",
+      "label": "Results in",
+      "type": "result",
+      "properties": {}
+    },
+    {
+      "id": "edge_flow_start_trigger_connected",
+      "source": "flow_start",
+      "target": "trigger_rrc_inactive",
+      "label": "Trigger 1",
+      "type": "flow",
+      "properties": {}
+    },
+    {
+      "id": "edge_flow_start_trigger_event",
+      "source": "flow_start",
+      "target": "trigger_exceptional_event",
+      "label": "Trigger 2",
+      "type": "flow",
+      "properties": {}
+    },
+    {
+      "id": "edge_flow_start_trigger_ran",
+      "source": "flow_start",
+      "target": "trigger_ran_sync",
+      "label": "Trigger 3",
+      "type": "flow",
+      "properties": {}
+    },
+    {
+      "id": "edge_outcome_end",
+      "source": "outcome_successful_registration",
+      "target": "flow_end",
+      "label": "Ends",
+      "type": "flow",
+      "properties": {}
+    },
+    {
+      "id": "edge_message_error_11",
+      "source": "message_registration_request",
+      "target": "error_handling_cause_11",
+      "label": "Results in error",
+      "type": "error",
+      "properties": {}
+    },
+    {
+      "id": "edge_message_error_73",
+      "source": "message_registration_request",
+      "target": "error_handling_cause_73",
+      "label": "Results in error",
+      "type": "error",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "procedure_id": "periodic_registration",
+    "doc_id": "24501-j11.md",
+    "spec_sections": [
+      "Section 5.2.3.2.3",
+      "5.3.1.4",
+      "5.3.20.2"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": "Periodic Registration Update",
+    "procedure_name": "Periodic Registration",
+    "total_nodes": 12,
+    "total_edges": 15
+  }
+}
