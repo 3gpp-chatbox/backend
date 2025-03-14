@@ -1,59 +1,83 @@
 ```text
-- **Procedure Name:** Initial Registration
+- **Procedure Name:** Initial Registration Initiation
+
 - **Triggering Conditions:**
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration for 5GS services.
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration for emergency services.
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration for SMS over NAS.
-    - The UE is in state 5GMM-DEREGISTERED and moves from GERAN/UTRAN to NG-RAN coverage after a GPRS attach/routing area update or 5G-SRVCC to UTRAN without a subsequent EPS attach/TAU or registration procedure.
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration for onboarding services in SNPN.
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration for disaster roaming services.
-    - The UE is in state 5GMM-DEREGISTERED and performs initial registration to come out of unavailability period and resume normal services.
+
+    - The UE is in the 5GMM-DEREGISTERED state.
+    - The UE performs initial registration for 5GS services.
+    - The UE performs initial registration for emergency services.
+    - The UE performs initial registration for SMS over NAS.
+    - The UE moves from GERAN to NG-RAN coverage or the UE moves from a UTRAN to NG-RAN coverage, and either:
+        - the UE initiated a GPRS attach or routing area updating procedure while in A/Gb mode or Iu mode; or
+        - the UE has performed 5G-SRVCC from NG-RAN to UTRAN, and has not performed a successful EPS attach or tracking area updating procedure in S1 mode or registration procedure in N1 mode since then.
+    - The UE performs initial registration for onboarding services in SNPN.
+    - The UE performs initial registration for disaster roaming services.
+    - The UE performs initial registration to come out of unavailability period and resume normal services.
+
 - **Steps:**
+
     1. The UE sends a REGISTRATION REQUEST message to the AMF.
     2. The UE starts timer T3510.
-    3. If timer T3502 is running, the UE stops timer T3502.
-    4. If timer T3511 is running, the UE stops timer T3511.
+    3. If timer T3502 is currently running, the UE stops timer T3502.
+    4. If timer T3511 is currently running, the UE stops timer T3511.
+    5. The UE handles the 5GS mobile identity IE according to the specified conditions (related to previously assigned 5G-GUTI, SUCI, PEI, or onboarding SUCI).
+    6. If the SUCI is included in the 5GS mobile identity IE and timer T3519 is not running, the UE starts timer T3519 and stores the value of the SUCI sent in the REGISTRATION REQUEST message. The UE includes the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running.
+    7. If the UE is operating in the dual-registration mode and it is in EMM state EMM-REGISTERED, the UE includes the UE status IE with the EMM registration status set to "UE is in EMM-REGISTERED state".
+    8. If the last visited registered TAI is available, the UE includes it in the REGISTRATION REQUEST message.
+    9. If the UE requests the use of SMS over NAS, the UE includes the 5GS update type IE in the REGISTRATION REQUEST message with the SMS requested bit set to "SMS over NAS supported". Otherwise, if the 5GS update type IE is included in the REGISTRATION REQUEST for other reasons, and the UE does not need to register for SMS over NAS, the UE sets the SMS requested bit of the 5GS update type IE to "SMS over NAS not supported" in the REGISTRATION REQUEST message.
+    10. If the UE supports and requests MICO mode, the UE includes the MICO indication IE in the REGISTRATION REQUEST message. If the UE requests to use an active time value, it includes the active time value in the T3324 IE in the REGISTRATION REQUEST message. If the UE includes the T3324 IE, it may also request a particular T3512 value by including the Requested T3512 IE in the REGISTRATION REQUEST message. If the UE supports strictly periodic registration timer, the UE shall set the Strictly Periodic Registration Timer Indication bit of the MICO indication IE in the REGISTRATION REQUEST message to "strictly periodic registration timer supported".
+    11. If the UE needs to use the UE specific DRX parameters, the UE includes the Requested DRX parameters IE in the REGISTRATION REQUEST message.
+    12. If the UE is in NB-N1 mode and needs to use the UE specific DRX parameters for NB-N1 mode, the UE includes the Requested NB-N1 mode DRX parameters IE in the REGISTRATION REQUEST message.
+    13. If the UE supports and requests eDRX, the UE includes the Requested extended DRX parameters IE in the REGISTRATION REQUEST message.
+    14. If the UE needs to request LADN information, the UE includes the LADN indication IE in the REGISTRATION REQUEST message, either requesting specific LADN DNNs or indicating a general request for LADN information.
+    15. The UE includes the requested NSSAI (and mapped S-NSSAI(s) if available) in the REGISTRATION REQUEST message based on configured and/or allowed NSSAI. Specific rules apply for cases with rejected or partially rejected NSSAI, and the availability of S-NSSAI time validity information. The UE shall not include the Requested NSSAI IE in the REGISTRATION REQUEST message, if the UE initiates an initial registration for onboarding services in SNPN.
+    16. If the UE supports NSAG, the UE sets the NSAG bit in the 5GMM capability IE.  If the UE supports sending of REGISTRATION COMPLETE message for acknowledging the reception of NSAG information IE in the REGISTRATION ACCEPT message, the UE shall set the RCMAN bit to "Sending of REGISTRATION COMPLETE message for NSAG information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message.
+    17. If the UE initiates an initial registration for emergency services or needs to prolong the established NAS signalling connection after the completion of the initial registration procedure (e.g. due to uplink signalling pending), the UE sets the Follow-on request indicator to "Follow-on request pending".
+    18. If the UE supports S1 mode, hasn't disabled E-UTRA capability and is not performing disaster roaming initial registration, the UE sets the S1 mode bit in the 5GMM capability IE, includes the S1 UE network capability IE and may set the HO attach bit. If the UE supports EPS-UPIP, the UE sets the EPS-UPIP bit to "EPS-UPIP supported" in the S1 UE network capability IE in the REGISTRATION REQUEST message.
+    19. The UE sets various capability bits in the 5GMM capability IE based on supported features like LPP, LCS, user plane positioning (LCS-UPP, SUPL), Network verified UE location over satellite NG-RAN, Control plane CIoT optimization, Multiple user-plane resources, 5G-SRVCC from NG-RAN to UTRAN, service gap control, restriction on use of enhanced coverage, network slice-specific authentication and authorization, CAG, extended CAG information list, enhanced CAG information, network slice replacement, sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information, RACS, V2X, ER-NSSAI, NSSRG, UAS services, 5G ProSe, MUSIM features, MINT, SBNS, SBTS, Event notification, SSNPNSI, ESI, UN-PER, Reconnection to the network due to RAN timing synchronization status change, LADN-DS, MPSIU, MCSIU, RSLP, PNS, NSUC, TempNS, SLVI, RATUC.
+    20. The UE includes UE policy information in the Payload container IE if applicable.
+    21. If the UE doesn't have a valid 5G NAS security context, the UE sends the REGISTRATION REQUEST message without including the NAS message container IE. The UE includes the entire REGISTRATION REQUEST message in the NAS message container IE that is sent as part of the SECURITY MODE COMPLETE message. Otherwise, if the UE has a valid 5G NAS security context and needs to send non-cleartext IEs, the UE sends a REGISTRATION REQUEST message including the NAS message container IE. If the UE does not need to send non-cleartext IEs, the UE sends a REGISTRATION REQUEST message without including the NAS message container IE.
+    22. If the UE supports ciphered broadcast assistance data and needs new ciphering keys, the UE includes the Additional information requested IE.
+    23. The UE indicates WUS and PEIPS support in the 5GMM capability IE and may include UE paging probability information in the Requested WUS/PEIPS assistance information IE, respectively.
+    24. The W-AGF/5G-RG acting on behalf of the N5GC/AUN3 device shall include the N5GC/AUN3 indication IE with the device indication bit set to "N5GC/AUN3 device registration is requested" in the REGISTRATION REQUEST message.
+    25. If the UE initiates the registration procedure for disaster roaming services, the UE has determined the UE determined PLMN with disaster condition and the UE meets certain conditions regarding GUTI availability, the UE shall include in the REGISTRATION REQUEST message the UE determined PLMN with disaster condition IE indicating the UE determined PLMN with disaster condition.
+    26. The UE sets bits in the 5GMM capability IE based on supported features.
+    27. When the UE supporting UAS services initiates an initial registration for UAS services, the UE shall include the service-level device ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and set the value to the CAA-level UAV ID. The UE shall include the service-level-AA server address in the Service-level-AA container IE of the REGISTRATION REQUEST message and set the value to the USS address, if it is provided by the upper layers. The UE shall include the service-level-AA payload in the Service-level-AA container IE of the REGISTRATION REQUEST message and shall set the service-level-AA payload type, if the service-level-AA payload is provided by upper layers.
+
 - **Decision Points:**
-    - UE was previously registered in S1 mode before entering EMM-DEREGISTERED, received "interworking without N26 interface not supported", and has a valid native 4G-GUTI and EPS security context? → Yes: create a 5G-GUTI mapped from the native 4G-GUTI, include it in the 5GS mobile identity IE, include the UE status IE with the EMM registration status set to "UE is not in EMM-REGISTERED state", and include an ATTACH REQUEST message in the EPS NAS message container IE / No: continue to the next decision point.
-    - UE is registering with a PLMN and holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by the same PLMN with which the UE is performing the registration? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - UE is registering with a SNPN, the UE holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by the same SNPN with which the UE is performing the registration, and the UE is not initiating the initial registration for onboarding services in SNPN? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - UE is registering with a PLMN and holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by an equivalent PLMN? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - UE is registering with an SNPN, the UE holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by an equivalent SNPN identified by a globally unique SNPN identity, and the UE is not initiating the initial registration for onboarding services in SNPN? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE and include the NID of the equivalent SNPN in the NID IE / No: continue to the next decision point.
-   - UE is registering with a PLMN and holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by any other PLMN? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - UE is registering with an SNPN, the UE holds a valid 5G-GUTI that was previously assigned, over 3GPP access or non-3GPP access, by any other SNPN identified by a globally unique SNPN identity, and the UE is not initiating the initial registration for onboarding services in SNPN? → Yes: indicate the 5G-GUTI in the 5GS mobile identity IE and include the NID of the other SNPN in the NID IE / No: continue to the next decision point.
-    - A SUCI other than an onboarding SUCI is available, and the UE is not initiating the initial registration for onboarding services in SNPN? → Yes: include the SUCI other than an onboarding SUCI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - The UE does not hold a valid 5G-GUTI or SUCI other than an onboarding SUCI, and is initiating the initial registration for emergency services? → Yes: include the PEI in the 5GS mobile identity IE / No: continue to the next decision point.
-    - The UE is initiating the initial registration for onboarding services in SNPN? → Yes: include an onboarding SUCI in the 5GS mobile identity IE. / No: continue.
-    - The SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running? → Yes: the UE shall start timer T3519 and store the value of the SUCI sent in the REGISTRATION REQUEST message. The UE shall include the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running / No: continue.
-    - The UE is operating in the dual-registration mode and it is in EMM state EMM-REGISTERED? → Yes: include the UE status IE with the EMM registration status set to "UE is in EMM-REGISTERED state" / No: continue.
-    - UE supports NSAG? -> Yes: Set the NSAG bit to "NSAG supported" in the 5GMM capability IE. / No: continue
-    - UE supports sending of REGISTRATION COMPLETE message for acknowledging the reception of NSAG information IE in the REGISTRATION ACCEPT message? -> Yes: Set the RCMAN bit to "Sending of REGISTRATION COMPLETE message for NSAG information supported" in the 5GMM capability IE. / No: continue.
-    - The 5GS registration type IE in the REGISTRATION REQUEST message is not set to "disaster roaming initial registration" and the UE supports S1 mode and the UE has not disabled its E-UTRA capability? -> Yes: set the S1 mode bit to "S1 mode supported" in the 5GMM capability IE, include the S1 UE network capability IE, if the UE supports EPS-UPIP, set the EPS-UPIP bit to "EPS-UPIP supported" in the S1 UE network capability IE. If the UE supports sending an ATTACH REQUEST message containing a PDN CONNECTIVITY REQUEST message with request type set to "handover" to transfer a PDU session from N1 mode to S1 mode, set the HO attach bit to "attach request message containing PDN connectivity request with request type set to handover to transfer PDU session from N1 mode to S1 mode supported" in the 5GMM capability IE / No: continue.
+
+    - Inclusion of 5GS mobile identity IE: Based on availability and validity of 5G-GUTI, SUCI, PEI, and the type of registration (PLMN or SNPN).
+    - Inclusion of UE status IE: Based on the UE's EMM registration status (EMM-REGISTERED) when operating in dual-registration mode.
+    - Inclusion of S1 mode related IEs:  Based on UE support for S1 mode and whether E-UTRA capability has been disabled.
+    - Inclusion of NAS message container IE: Based on the validity of the 5G NAS security context and the need to send non-cleartext IEs.
+    - Inclusion of UE policy container: Based on whether the UE has stored UE policy sections, or the UE needs to send a UE policy container to the network.
 
 - **State Transitions:**
-    - N/A (This section only describes the initial steps of the procedure).
+
+    - Initial state: 5GMM-DEREGISTERED
+    - After sending the REGISTRATION REQUEST and starting timer T3510, the UE enters a state where it is awaiting a response from the network. (The exact state is not explicitly defined in this section, but it would likely be a 5GMM-REGISTERED-INITIATED state).
+
 - **Important Information Elements:**
-    - 5GS registration type IE: Indicates the type of registration (initial, emergency, SNPN onboarding, disaster roaming).
-    - 5GS mobile identity IE: Contains the UE's identity (5G-GUTI, SUCI, or PEI).
-    - Requested NSSAI IE: Contains the S-NSSAI(s) corresponding to the slice(s) to which the UE intends to register with.
-    - 5GMM capability IE: Indicates the UE's supported features and capabilities.
-    - UE status IE: Indicates the EMM registration status when the UE is in dual-registration mode.
-    - Last visited registered TAI:  Indicates the last tracking area the UE was registered in.
-    - 5GS update type IE:  Indicates whether the UE requests SMS over NAS.
-    - MICO indication IE:  Indicates whether the UE supports MICO mode and whether it requests the use of MICO mode.
-    - T3324 IE: Indicates the active time value requested by the UE.
-    - Requested DRX parameters IE: Indicates the UE specific DRX parameters.
-    - Requested extended DRX parameters IE: Indicates the eDRX parameters that the UE requests to use.
-    - LADN indication IE: Indicates whether the UE needs to request LADN information for specific LADN DNN(s) or indicates a request for LADN information
-    - S1 UE network capability IE: indicates the UE's E-UTRA network capabilities
-    - UE radio capability ID IE: contains the network-assigned or manufacturer-assigned UE radio capability ID.
-    - Payload container IE: contains the UE STATE INDICATION message carrying the UE policy container.
-    - NAS message container IE: Contains the REGISTRATION REQUEST message for security purposes.
-    - Additional information requested IE: Indicates whether the UE needs to obtain new ciphering keys for ciphered broadcast assistance data.
-    - Requested WUS assistance information IE:  Contains the UE paging probability information for WUS
-    - Requested PEIPS assistance information IE:  Contains the UE paging probability information for PEIPS.
-    - N5GC indication IE: Indicates whether the W-AGF acting on behalf of an N5GC device initiates an initial registration.
-    - AUN3 indication IE: Indicates whether the 5G-RG acting on behalf of an AUN3 device initiates an initial registration.
-    - Service-level-AA container IE: Contains service-level-AA container information.
-    - UE determined PLMN with disaster condition IE:  Indicates the UE determined PLMN with disaster condition
+
+    - 5GS registration type IE: Indicates "initial registration", "emergency registration", "SNPN onboarding registration", or "disaster roaming initial registration".
+    - 5GS mobile identity IE: Contains the UE's identity (5G-GUTI, SUCI, PEI, onboarding SUCI).
+    - Additional GUTI IE: Contains a previously assigned 5G-GUTI.
+    - UE status IE: Indicates the UE's EMM registration status.
+    - Last visited registered TAI:  The TAI of the last registered cell.
+    - 5GS update type IE: Indicates support for SMS over NAS.
+    - MICO indication IE: Indicates the UE's request to use MICO mode.
+    - T3324 IE:  Contains the active time value.
+    - Requested DRX parameters IE: Contains UE-specific DRX parameters.
+    - Requested extended DRX parameters IE: Contains UE-specific eDRX parameters.
+    - LADN indication IE: Contains LADN DNN values for which LADN information is requested.
+    - Requested NSSAI IE:  Contains the S-NSSAIs to which the UE intends to register.
+    - 5GMM capability IE: Contains various bits indicating supported features (NSAG, S1 mode, LPP, LCS, etc.).
+    - NAS message container IE: Contains the encrypted REGISTRATION REQUEST message.
+    - Additional information requested IE: Contains the CipherKey bit.
+    - Requested WUS assistance information IE: Contains UE paging probability information.
+    - Requested PEIPS assistance information IE: Contains UE paging probability information.
+    - N5GC indication IE: Indicates the registration request is from an N5GC device.
+    - AUN3 indication IE: Indicates the registration request is from an AUN3 device.
+    - UE determined PLMN with disaster condition IE: Indicates the UE determined PLMN with disaster condition.
+    - Service-level-AA container IE: Contains information for UAS services.
 ```

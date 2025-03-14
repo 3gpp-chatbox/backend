@@ -1,0 +1,91 @@
+Okay, I'm ready to analyze the provided text and extract the procedure for "Initial registration accepted by the network".
+
+```
+- **Procedure Name:** Initial Registration Accepted by the Network
+
+- **Triggering Conditions:**
+
+    - The initial registration request is accepted by the network.
+
+- **Steps:**
+
+    1. The AMF sends a REGISTRATION ACCEPT message to the UE.
+    2. The AMF shall assign and include a TAI list as a registration area the UE is registered to in the REGISTRATION ACCEPT message. The AMF shall not assign a TAI list containing both tracking areas in NB-N1 mode and tracking areas not in NB-N1 mode.
+    3. The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI list. If the REGISTRATION REQUEST message was received over non-3GPP access, the AMF shall include a single TAI in the TAI list.
+    4. The AMF may include service area restrictions in the Service area list IE in the REGISTRATION ACCEPT message. The UE, upon receiving a REGISTRATION ACCEPT message with the service area restrictions shall act as described in subclause 5.3.5.
+    5. The AMF may also include a list of equivalent PLMNs in the REGISTRATION ACCEPT message. Each entry in the list contains a PLMN code (MCC+MNC).
+    6.  The UE shall store the list as provided by the network, and if the initial registration procedure is not for emergency services, the UE shall remove from the list any PLMN code that is already in the forbidden PLMN list as specified in subclause 5.3.13A. In addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list. The UE shall replace the stored list on each receipt of the REGISTRATION ACCEPT message. If the REGISTRATION ACCEPT message does not contain a list, then the UE shall delete the stored list. The AMF of a PLMN shall not include a list of equivalent SNPNs.
+    7. If the ESI bit of the 5GMM capability IE of the REGISTRATION REQUEST message is set to "equivalent SNPNs supported", the AMF of a SNPN may include a list of equivalent SNPNs in the REGISTRATION ACCEPT message.
+    8. The UE shall store the list as provided by the network. The UE shall add to the stored list the SNPN identity of the registered SNPN that sent the list. The UE shall replace the stored list on each receipt of the REGISTRATION ACCEPT message. If the REGISTRATION ACCEPT message does not contain a list, then the UE shall delete the stored list. The AMF of an SNPN shall not include a list of equivalent PLMNs.
+    9. If the initial registration procedure is not for emergency services, the UE is not registered for disaster roaming services, and if the PLMN identity of the registered PLMN is a member of the forbidden PLMN list as specified in subclause 5.3.13A, any such PLMN identity shall be deleted from the corresponding list(s).
+    10. The AMF shall include the LADN information which consists of the determined LADN DNNs for the UE and LADN service area(s) available in the current registration area in the LADN information IE of the REGISTRATION ACCEPT message.
+    11. The 5G-GUTI reallocation shall be part of the initial registration procedure. During the initial registration procedure, if the AMF has not allocated a new 5G-GUTI by the generic UE configuration update procedure, the AMF shall include in the REGISTRATION ACCEPT message the new assigned 5G-GUTI together with the assigned TAI list.
+    12. If the UE has set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and the AMF needs to update the "CAG information list" stored in the UE, the AMF shall include the CAG information list IE or the Extended CAG information list IE in the REGISTRATION ACCEPT message.
+    13. If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3.
+    14. Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
+    15. If the UE receives the REGISTRATION ACCEPT message from a PLMN, then the UE shall reset the PLMN-specific attempt counter for that PLMN for the specific access type for which the message was received. If the UE receives the REGISTRATION ACCEPT message from an SNPN, then the UE shall reset the SNPN-specific attempt counter for the current SNPN for the specific access type for which the message was received.
+    16. If the REGISTRATION ACCEPT message included a T3512 value IE, the UE shall use the value in the T3512 value IE as periodic registration update timer (T3512).
+    17. If the REGISTRATION ACCEPT message include a T3324 value IE, the UE shall use the value in the T3324 value IE as active timer (T3324).
+    18. If the REGISTRATION ACCEPT message included a non-3GPP de-registration timer value IE, the UE shall use the value in non-3GPP de-registration timer value IE as non-3GPP de-registration timer.
+    19. If the REGISTRATION ACCEPT message contains network slicing information changes, NSAG information IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information.
+    20. If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall:
+        a)  replace the "CAG information list" stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN;
+        b)  replace the serving VPLMN's entry of the "CAG information list" stored in the UE with the serving VPLMN's entry of the received CAG information list IE or the Extended CAG information list IE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN; or
+        c)  remove the serving VPLMN's entry of the "CAG information list" stored in the UE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN and the CAG information list IE or the Extended CAG information list IE does not contain the serving VPLMN's entry.
+    21. If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the "CAG information list".
+    22. If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE.
+    23. If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE.
+    24. The UE shall proceed with the behavior specified depending on the the SOR transparent container IE content as specified in 3GPP TS 23.122 [5] annex C.
+    25. If the REGISTRATION REQUEST message includes the 5GS registration type IE set to "SNPN onboarding registration" or the network determines that the UE's subscription only allows for configuration of SNPN subscription parameters in PLMN via the user plane, the AMF may start an implementation specific timer for onboarding services.
+
+- **Decision Points:**
+
+    - If the REGISTRATION REQUEST message was received over non-3GPP access → The AMF shall include a single TAI in the TAI list.
+    - If the REGISTRATION ACCEPT message contains a list of equivalent PLMNs → The UE shall store the list. Otherwise, the UE shall delete the stored list.
+    - If the UE is also registered over another access to the same PLMN → the UE considers the value indicated by the SMS allowed bit of the 5GS registration result IE as applicable for both accesses over which the UE is registered.
+    - If the UE has NSSAI inclusion mode for the current PLMN or SNPN and access type stored in the UE → the UE shall operate in the stored NSSAI inclusion mode. Otherwise, the UE shall operate in a default NSSAI inclusion mode based on the access type.
+
+- **State Transitions:**
+
+    - After the AMF sends the REGISTRATION ACCEPT message, the AMF may enter state 5GMM-COMMON-PROCEDURE-INITIATED (if certain IEs are included).
+    - After the UE receives the REGISTRATION ACCEPT message, the UE enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED.
+
+- **Important Information Elements:**
+
+    - REGISTRATION ACCEPT message:  Message sent by the AMF to the UE to indicate that the registration request was accepted.
+    - TAI list: List of Tracking Area Identities the UE is registered to.
+    - Service area list IE: Contains service area restrictions.
+    - List of equivalent PLMNs: List of PLMNs considered equivalent to the registered PLMN.
+    - List of equivalent SNPNs: List of SNPNs considered equivalent to the registered SNPN.
+    - LADN information IE: Contains the determined LADN DNNs for the UE and LADN service area(s).
+    - 5G-GUTI:  5G Globally Unique Temporary Identity.
+    - CAG information list IE/Extended CAG information list IE: Contains the "CAG information list".
+    - SOR transparent container IE: steering of roaming information
+    - T3512 value IE: periodic registration update timer
+    - T3324 value IE: active timer value
+    - non-3GPP de-registration timer value IE: non-3GPP de-registration timer value
+    - Operator-defined access category definitions IE: Contains operator-defined access category definitions.
+    - Extended emergency number list IE: Contains extended local emergency numbers list.
+    - UE radio capability ID IE/UE radio capability ID deletion indication IE: UE radio capability information.
+    - 5GS registration result IE: Indicates whether the UE is registered to 3GPP access, non-3GPP access, or both.
+    - Allowed NSSAI: The allowed NSSAI for the current PLMN or SNPN.
+    - Rejected NSSAI: The rejected NSSAI for the current PLMN or SNPN.
+    - Partially rejected NSSAI: The partially rejected NSSAI for the current PLMN or SNPN.
+    - Pending NSSAI: The pending NSSAI for the current PLMN or SNPN.
+    - Configured NSSAI IE: A new configured NSSAI for the current PLMN or SNPN
+    - NSSRG information IE: The NSSRG information
+    - S-NSSAI time validity information IE: The S-NSSAI time validity information
+    - On-demand NSSAI IE: The on-demand NSSAI
+    - NSAG information IE: The NSAG information
+    - Alternative NSSAI IE: The Alternative NSSAI information
+    - Partially allowed NSSAI IE: The Partially allowed NSSAI information
+    - Negotiated PEIPS assistance information IE: The Negotiated PEIPS assistance information
+    - MICO indication IE: The MICO indication
+    - List of PLMNs to be used in disaster condition IE: list of PLMNs to be used in disaster condition
+    - Disaster roaming wait range IE: disaster roaming wait range
+    - Disaster return wait range IE: disaster return wait range
+    - Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming" IE: TAI(s) belonging to the serving PLMN or equivalent PLMN(s) and ignore the TAI(s) which do not belong to the serving PLMN or equivalent PLMN(s) included in the IE, if not already stored, into the list of "5GS forbidden tracking areas for roaming"
+    - Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service" IE: TAI(s) belonging to the serving PLMN or equivalent PLMN(s) and ignore the TAI(s) which do not belong to the serving PLMN or equivalent PLMN(s) included in the IE, if not already stored, into the list of "5GS forbidden tracking areas for regional provision of service"
+    - RAN timing synchronization IE: RecReq bit set to "Reconnection requested"
+    -RAT utilization control IE: RAT utilization control
+```

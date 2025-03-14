@@ -1,33 +1,12 @@
 
-    You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.  
-    Below is a **hierarchical section structure**, including parent sections for context.  
+    You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.
 
-    Your task: **Extract a structured procedure** by identifying:  
-    - **Triggering Conditions:** When and why the procedure starts.  
-    - **Signaling Steps:** Include specific **NAS messages** (e.g., REGISTRATION REQUEST, AUTHENTICATION RESPONSE).  
-    - **Decision Points:** Clearly define logical branches (e.g., authentication required? → Yes/No).  
-    - **Information Elements (IEs):** Extract key elements that impact the procedure.  
-      
-    **Hierarchical Section Context:**  
-    Section 5.5.1.2.1: General
-This procedure can be used by a UE for initial registration for 5GS services.
+    Below is a **hierarchical section structure**, including parent sections for context.
 
-When the UE initiates the registration procedure for initial registration, the UE shall indicate "initial registration" in the 5GS registration type IE. When the UE initiates the registration procedure for emergency services, the UE shall indicate "emergency registration" in the 5GS registration type IE. When the UE initiates the initial registration for onboarding services in SNPN, the UE shall indicate "SNPN onboarding registration" in the 5GS registration type IE. When the UE initiates the initial registration procedure for disaster roaming services, the UE shall indicate "disaster roaming initial registration" in the 5GS registration type IE.
+    our target section to extract procedure is: 5.5.1.2.2 Initial registration initiation,
 
-If the MUSIM UE initiates the registration procedure for initial registration and indicates "emergency registration" in the 5GS registration type IE in the REGISTRATION REQUEST message, the network shall not indicate the support of:
-
-a)	the N1 NAS signalling connection release;
-
-b)	the paging indication for voice services;
-
-c)	the reject paging request; or
-
-d)	the paging restriction;
-
-in the REGISTRATION ACCEPT message.
-
-Section 5.5.1.2.2: Initial registration initiation
-The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF,
+    its content is:
+    The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF,
 
 a)	when the UE performs initial registration for 5GS services;
 
@@ -393,33 +372,67 @@ If the UE supports RAT utilization control, the UE shall set the RATUC bit to "R
 
 Figure 5.5.1.2.2.1: Registration procedure for initial registration
 
-Section 5.5.1.2: Registration procedure for initial registration
-
-
-Section 5.5.1: Registration procedure
+    above is our main target sections content to extract procedure, and then below is **Hierarchical Section Context surrounding it, i send them to you for you to understand the relationship and document strcuture and may contain some info you need for help you to extract procedure in the target section better:**
+    
+Section 5: Elementary procedures for 5GS mobility management
 
 
 Section 5.5: 5GMM specific procedures
 
 
-Section 5: Elementary procedures for 5GS mobility management
+Section 5.5.1: Registration procedure
 
+
+Section 5.5.1.2: Registration procedure for initial registration
+
+
+Section 5.5.1.2.1: General
+This procedure can be used by a UE for initial registration for 5GS services.
+
+When the UE initiates the registration procedure for initial registration, the UE shall indicate "initial registration" in the 5GS registration type IE. When the UE initiates the registration procedure for emergency services, the UE shall indicate "emergency registration" in the 5GS registration type IE. When the UE initiates the initial registration for onboarding services in SNPN, the UE shall indicate "SNPN onboarding registration" in the 5GS registration type IE. When the UE initiates the initial registration procedure for disaster roaming services, the UE shall indicate "disaster roaming initial registration" in the 5GS registration type IE.
+
+If the MUSIM UE initiates the registration procedure for initial registration and indicates "emergency registration" in the 5GS registration type IE in the REGISTRATION REQUEST message, the network shall not indicate the support of:
+
+a)	the N1 NAS signalling connection release;
+
+b)	the paging indication for voice services;
+
+c)	the reject paging request; or
+
+d)	the paging restriction;
+
+in the REGISTRATION ACCEPT message.
 
 
     **Expected Output Format:**
+
     - **Procedure Name:** <Name>
+
     - **Triggering Conditions:**
+
         - Condition 1
+
         - Condition 2
+
     - **Steps:**
+
         1. Step description
+
         2. Step description
+
     - **Decision Points:**
+
         - Decision 1 → Outcome A / Outcome B
+
     - **State Transitions:**
+
         - After step 1, the state is <STATE>
+
         - After step 3, the state is <STATE>
+
     - **Important Information Elements:**
+
         - IE 1: Description
+
         - IE 2: Description
     

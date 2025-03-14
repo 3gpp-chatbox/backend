@@ -1,13 +1,34 @@
-```text
-- **Procedure Name:** Registration procedure for initial registration
+Okay, I understand. I'm ready to analyze the provided 3GPP NAS specification text and extract the 5GMM common procedure initiation as described in section 5.5.1.2.3.
+
+Here's the extracted procedure based on the information provided:
+
+- **Procedure Name:** 5GMM Common Procedure Initiation (during Registration)
+
 - **Triggering Conditions:**
-    - UE initiates registration for 5GS services.
+
+    - The network needs to initiate common 5GMM procedures (e.g., identification, authentication, security procedures) during the registration procedure.
+    - The triggering depends on the information received in the REGISTRATION REQUEST message.
+    - Two NAS security mode control procedures are needed to signal an entire unciphered REGISTRATION REQUEST message followed by signalling of selected EPS NAS security algorithms as part of 5GMM common procedures of the ongoing registration procedure (see subclause 5.4.2.4).
+    - During a registration procedure with 5GS registration type IE set to "emergency registration", the AMF is configured to support emergency registration for unauthenticated SUCIs
+
 - **Steps:**
-    1. UE sends REGISTRATION REQUEST message.
+
+    1. The network evaluates the information received in the REGISTRATION REQUEST message.
+    2. The network initiates the necessary 5GMM common procedures (identification, authentication, security mode control).
+
 - **Decision Points:**
-    - 5GS registration type IE in REGISTRATION REQUEST set to "emergency registration" and AMF configured to support emergency registration for unauthenticated SUCIs and no 5G NAS security context is available? → Yes / No
-        - Yes: AMF may skip the authentication procedure and proceed directly to the execution of the security mode control procedure.
-        - No: Network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures.
+
+    - *Information in REGISTRATION REQUEST* →  Initiate Identification / Skip Identification
+    - *Information in REGISTRATION REQUEST* →  Initiate Authentication / Skip Authentication
+    - *Information in REGISTRATION REQUEST* →  Initiate Security Mode Control / Skip Security Mode Control
+    - *Emergency Registration with Unauthenticated SUCI supported?* → Initiate Authentication / Skip Authentication and Proceed to Security Mode Control
+
+- **State Transitions:**
+
+    -  The provided text does not give clear state transition information
+
 - **Important Information Elements:**
-    - 5GS registration type IE: Indicates the type of registration (initial, emergency, SNPN onboarding, disaster roaming initial).
-```
+
+    - REGISTRATION REQUEST message: Contains information that triggers the common procedures.
+    - 5GS registration type IE: Indicates the type of registration (initial, emergency, SNPN onboarding, disaster roaming initial). The value "emergency registration" can influence the decision to skip authentication.
+    - SUCI: Subscriber Concealed Identifier. An unauthenticated SUCI can be used under specific emergency registration configurations.
