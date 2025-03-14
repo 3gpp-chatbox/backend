@@ -1,0 +1,98 @@
+{
+  "procedure_name": "5GMM Common Procedure Initiation (during Registration)",
+  "description": "Initiation of common 5GMM procedures during the registration procedure based on information received in the REGISTRATION REQUEST message.",
+  "nodes": [
+    {
+      "id": "UE_Sending_Registration_Request",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "NAS REGISTRATION REQUEST"
+      },
+      "parameters": ["5GS registration type IE", "SUCI"]
+    },
+    {
+      "id": "Network_Evaluating_Registration_Request",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Identification_Procedure_Initiated",
+      "type": "event",
+      "properties": {
+        "procedure_type": "Identification"
+      }
+    },
+    {
+      "id": "Authentication_Procedure_Initiated",
+      "type": "event",
+      "properties": {
+        "procedure_type": "Authentication"
+      }
+    },
+    {
+      "id": "Security_Mode_Control_Procedure_Initiated",
+      "type": "event",
+      "properties": {
+        "procedure_type": "Security Mode Control"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Sending_Registration_Request",
+      "to": "Registration_Request_Sent",
+      "action": "Send_Registration_Request",
+      "properties": {
+        "metadata": {},
+        "parameters": ["5GS registration type IE", "SUCI"]
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Network_Evaluating_Registration_Request",
+      "event": "Registration_Request_Received",
+      "properties": {}
+    },
+    {
+      "from": "Network_Evaluating_Registration_Request",
+      "to": "Identification_Procedure_Initiated",
+      "event": "Trigger_Identification",
+      "properties": {}
+    },
+    {
+      "from": "Network_Evaluating_Registration_Request",
+      "to": "Authentication_Procedure_Initiated",
+      "event": "Trigger_Authentication",
+      "properties": {}
+    },
+    {
+      "from": "Network_Evaluating_Registration_Request",
+      "to": "Security_Mode_Control_Procedure_Initiated",
+      "event": "Trigger_Security_Mode_Control",
+      "properties": {}
+    }
+  ],
+  "conditionals": [
+    {
+      "condition": "Information in REGISTRATION REQUEST requires Identification",
+      "next_state": "Identification_Procedure_Initiated"
+    },
+    {
+      "condition": "Information in REGISTRATION REQUEST requires Authentication",
+      "next_state": "Authentication_Procedure_Initiated"
+    },
+    {
+      "condition": "Information in REGISTRATION REQUEST requires Security Mode Control",
+      "next_state": "Security_Mode_Control_Procedure_Initiated"
+    },
+    {
+      "condition": "Emergency Registration with Unauthenticated SUCI is supported",
+      "next_state": "Security_Mode_Control_Procedure_Initiated"
+    }
+  ]
+}

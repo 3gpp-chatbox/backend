@@ -22,57 +22,84 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel('gemini-2.0-flash')
 
 # Function to generate Flow Property Graph (FPG) using LLM based on procedure content
+import re
+
 def generate_flow_property_graph(procedure_content):
     prompt = f"""
-    You are a **3GPP NAS expert** converting structured procedural steps into a JSON-based **Flow Property Graph (FPG)**.
-    
-    **Instructions:**  
-    1. **Identify Key Nodes:** Extract distinct procedural steps as **Nodes**, classified as:  
-       - **Event:** When something occurs (e.g., "UE sends REGISTRATION REQUEST").  
-       - **Decision:** When a condition determines different paths (e.g., "Is authentication required?").  
-       - **Action:** A specific operation performed by an entity (e.g., "AMF starts authentication"). 
-       - **State:** A defined state of an entity (e.g., "UE in DEREGISTERED state").   
-      
-    2. **Define Transitions (Edges):** Ensure logical links between nodes with **clear conditions**.  
+    "Analyze the 3GPP NAS procedure text I provided first:
 
-    **Procedure Steps:**
     {procedure_content}
 
-    **Expected JSON Output Format:**  
+    Remember, all your analysis should be based on the chunk text i provided, and you should not make any assumptions.
+    and then extract a Flow Property Graph (FPG) in JSON format. The FPG should represent the following core components:
+
+    States: UE and Network states during the procedure (e.g., EMM-Registered, EMM-Deregistered).
+    Events: NAS message exchanges or internal events that cause transitions.
+    Actions: Operations triggered by events (e.g., sending Attach Request).
+    Parameters: NAS message fields (e.g., IMSI, TAI, GUTI).
+    Conditionals: Branching logic or decision points based on NAS information.
+    Flow of Execution: Sequence of state transitions.
+    Metadata: Message types, timestamps, or UE IDs.
+    The JSON format should follow this exact structure:
+
+
     {{
-      "procedure_name": "<Procedure Name>",
-      "nodes": [
+    "procedure_name": "Attach Procedure",
+    "description": "The initial attach procedure in 5G NAS.",
+    "nodes": [
         {{
-          "id": "<Node_ID>",
-          "type": "<Event/Decision/Action>",
-          "entity": "<UE/AMF/etc.>",
-          "description": "<Step description>"
-        }}
-      ],
-      "edges": [
+        "id": "UE_Powered_On",
+        "type": "state",
+        "properties": {{}}
+        }},
         {{
-          "source": "<Node_ID>",
-          "target": "<Node_ID>",
-          "condition": "<Condition for transition>"
+        "id": "Attach_Request_Sent",
+        "type": "event",
+        "properties": {{
+            "message_type": "NAS Attach Request"
+        }},
+        "parameters": ["IMSI", "GUTI"]
+        }},
+        {{
+        "id": "MME_Processing",
+        "type": "state",
+        "properties": {{}}
         }}
-      ]
+    ],
+    "edges": [
+        {{
+        "from": "UE_Powered_On",
+        "to": "Attach_Request_Sent",
+        "action": "Send_Attach_Request",
+        "properties": {{
+            "metadata": {{
+            "timestamp": "T0"
+            }},
+            "parameters": ["IMSI", "GUTI"]
+        }}
+        }},
+        {{
+        "from": "Attach_Request_Sent",
+        "to": "MME_Processing",
+        "event": "Attach_Request_Received",
+        "properties": {{}}
+        }}
+    ],
+    "conditionals": [
+        {{
+        "condition": "If IMSI is valid",
+        "next_state": "Authentication Procedure"
+        }}
+        ]
     }}
-    
-    **Key Considerations:**
-    - **Use correct NAS messages** (e.g., AUTHENTICATION REQUEST, SECURITY MODE COMMAND).  
-    - **Ensure all decision nodes have at least two outcomes** (e.g., "Yes → Node A, No → Node B").  
-    - **Maintain logical flow** so that procedures do not break.  
 
+    only return json in your response.
     """
-
-
-    # Send the prompt to LLM
-      
-    response = model.generate_content(prompt).text.strip()
-
-    # Clean up the response by removing ```json and the closing ```
-    response_cleaned = re.sub(r"^```json\s*", "", response)  # Remove leading ```json
-    response_cleaned = re.sub(r"```$", "", response_cleaned)  # Remove trailing ```
+    # Assuming 'model' is defined somewhere (like an LLM API client)
+    response = model.generate_content(prompt).text.strip() # Example, replace with your actual LLM call.
+   
+    response_cleaned = re.sub(r"^```json\s*", "", response)
+    response_cleaned = re.sub(r"```$", "", response_cleaned)
 
     response_cleaned = response_cleaned.strip()
 

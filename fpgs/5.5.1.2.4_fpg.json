@@ -1,0 +1,132 @@
+{
+  "procedure_name": "Initial Registration Accepted by the Network",
+  "description": "The procedure for when the initial registration request is accepted by the network.",
+  "nodes": [
+    {
+      "id": "UE_Initial_State",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Accepted_Event",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT"
+      },
+      "parameters": []
+    },
+    {
+      "id": "AMF_Sends_Registration_Accept",
+      "type": "action",
+      "properties": {
+        "description": "AMF sends REGISTRATION ACCEPT message"
+      }
+    },
+    {
+      "id": "AMF_Registered",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Receives_Registration_Accept",
+      "type": "action",
+      "properties": {
+        "description": "UE Receives REGISTRATION ACCEPT message"
+      }
+    },
+    {
+      "id": "UE_Registered",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "UE_Sends_Registration_Complete",
+      "type": "action",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message (conditional)"
+      }
+    },
+    {
+      "id": "AMF_Receives_Registration_Complete",
+      "type": "state",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_Initial_State",
+      "to": "AMF_Sends_Registration_Accept",
+      "event": "Initial_Registration_Request_Accepted",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Sends_Registration_Accept",
+      "to": "AMF_Registered",
+      "properties": {}
+    },
+    {
+      "from": "AMF_Registered",
+      "to": "Registration_Accepted_Event",
+      "action": "Send REGISTRATION ACCEPT",
+      "properties": {
+        "metadata": {
+          "timestamp": "T1"
+        },
+        "parameters": ["TAI list", "Service area list", "List of equivalent PLMNs", "List of equivalent SNPNs", "LADN information", "5G-GUTI", "CAG information list", "SOR transparent container IE", "T3512 value IE", "T3324 value IE", "non-3GPP de-registration timer value IE","Operator-defined access category definitions IE", "Extended emergency number list IE", "UE radio capability ID IE", "UE radio capability ID deletion indication IE","Negotiated PEIPS assistance information IE","NSAG information IE"]
+      }
+    },
+    {
+      "from": "Registration_Accepted_Event",
+      "to": "UE_Receives_Registration_Accept",
+      "event": "REGISTRATION ACCEPT Received",
+      "properties": {}
+    },
+    {
+      "from": "UE_Receives_Registration_Accept",
+      "to": "UE_Registered",
+      "action": "Store data and reset counters",
+      "properties": {}
+    },
+    {
+      "from": "UE_Registered",
+      "to": "UE_Sends_Registration_Complete",
+      "event": "Network slicing information changes, CAG information, operator defined access category definitions, Extended emergency number list, UE radio capability ID or Negotiated PEIPS assistance information received",
+      "properties": {}
+    },
+    {
+      "from": "UE_Sends_Registration_Complete",
+      "to": "AMF_Receives_Registration_Complete",
+      "properties": {}
+    }
+  ],
+  "conditionals": [
+    {
+      "condition": "REGISTRATION REQUEST message received over non-3GPP access",
+      "action": "The AMF shall include a single TAI in the TAI list."
+    },
+    {
+      "condition": "REGISTRATION ACCEPT message contains a list of equivalent PLMNs",
+      "action": "The UE shall store the list."
+    },
+     {
+      "condition": "REGISTRATION ACCEPT message contains network slicing information changes, NSAG information IE",
+      "action": "The UE shall return a REGISTRATION COMPLETE message."
+    },
+    {
+      "condition": "REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to CAG supported in the 5GMM capability IE",
+      "action": "The UE shall replace the CAG information list or remove the serving VPLMN's entry"
+    },
+    {
+      "condition": "REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE ,the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+      "action": "The UE shall return a REGISTRATION COMPLETE message to the AMF"
+    },
+    {
+      "condition": "UE has set the RCMAP bit to Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported and REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE",
+      "action": "The UE shall return REGISTRATION COMPLETE message to the AMF"
+    },
+    {
+      "condition": "REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+      "action": "The UE shall return a REGISTRATION COMPLETE message to the AMF"
+    }
+  ]
+}

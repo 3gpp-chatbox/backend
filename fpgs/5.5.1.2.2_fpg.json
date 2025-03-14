@@ -1,0 +1,84 @@
+{
+  "procedure_name": "Initial Registration Initiation",
+  "description": "The initial registration procedure in 5G NAS.",
+  "nodes": [
+    {
+      "id": "5GMM_DEREGISTERED",
+      "type": "state",
+      "properties": {}
+    },
+    {
+      "id": "Registration_Request_Sent",
+      "type": "event",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST"
+      },
+      "parameters": [
+        "5GS mobile identity IE",
+        "UE status IE",
+        "Last visited registered TAI",
+        "5GS update type IE",
+        "MICO indication IE",
+        "T3324 IE",
+        "Requested DRX parameters IE",
+        "Requested extended DRX parameters IE",
+        "LADN indication IE",
+        "Requested NSSAI IE",
+        "5GMM capability IE",
+        "NAS message container IE",
+        "Additional information requested IE",
+        "Requested WUS assistance information IE",
+        "Requested PEIPS assistance information IE",
+        "N5GC indication IE",
+        "AUN3 indication IE",
+        "UE determined PLMN with disaster condition IE",
+        "Service-level-AA container IE"
+      ]
+    },
+    {
+      "id": "Awaiting_Network_Response",
+      "type": "state",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM_DEREGISTERED",
+      "to": "Registration_Request_Sent",
+      "action": "Send REGISTRATION REQUEST",
+      "properties": {
+        "metadata": {
+          "timestamp": "T0"
+        }
+      }
+    },
+    {
+      "from": "Registration_Request_Sent",
+      "to": "Awaiting_Network_Response",
+      "event": "Timer T3510 started",
+      "properties": {}
+    }
+  ],
+  "conditionals": [
+    {
+      "condition": "If UE is operating in dual-registration mode and is in EMM state EMM-REGISTERED",
+      "next_action": "Include UE status IE with EMM registration status"
+    },
+    {
+      "condition": "If the UE supports and requests MICO mode",
+      "next_action": "Include the MICO indication IE"
+    },
+    {
+      "condition": "If UE supports S1 mode, hasn't disabled E-UTRA capability and is not performing disaster roaming initial registration",
+      "next_action": "Include the S1 mode bit in the 5GMM capability IE"
+    },
+    {
+      "condition": "If UE doesn't have a valid 5G NAS security context",
+      "next_action": "Send the REGISTRATION REQUEST message without including the NAS message container IE"
+    },
+    {
+      "condition": "If SUCI is included in the 5GS mobile identity IE and timer T3519 is not running",
+      "next_action": "Start timer T3519 and store the SUCI"
+    }
+  ]
+}
