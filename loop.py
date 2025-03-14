@@ -20,24 +20,39 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 # Initialize Gemini model
 model = genai.GenerativeModel('gemini-2.0-flash')
 
-# Function to retrieve hierarchical content from the database
+import sqlite3
+
 def get_hierarchical_content(section_id):
     conn = sqlite3.connect('section_content_0310.db')
     cursor = conn.cursor()
-    
-    # Extract hierarchy (parents, grandparents, etc.)
+
     levels = section_id.split('.')
     related_sections = []
-    
+
+    # Find sibling "General" sections
+    if len(levels) > 1:
+        parent_level = '.'.join(levels[:-1]) + '.%' # create parent level wildcard
+        cursor.execute('''
+            SELECT section_id, section_name, content_chunk
+            FROM content
+            WHERE section_id LIKE ? AND section_name = 'General'
+        ''', (parent_level,))
+        sibling_general_results = cursor.fetchall() #Fetch all results
+        if sibling_general_results:
+            related_sections.extend(sibling_general_results) # add all found general sections
+
+    # Extract the regular hierarchy (parents, grandparents, etc.)
     for i in range(len(levels), 0, -1):
         section_prefix = '.'.join(levels[:i])
         cursor.execute('''
-            SELECT section_id, section_name, content_chunk FROM content WHERE section_id = ?
+            SELECT section_id, section_name, content_chunk
+            FROM content
+            WHERE section_id = ?
         ''', (section_prefix,))
         result = cursor.fetchone()
         if result:
             related_sections.append(result)
-    
+
     conn.close()
     return related_sections
 

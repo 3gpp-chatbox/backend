@@ -1,6 +1,29 @@
 1.db-init-insert.py
 2.extract-sections.py
 3.improve-extracte-sections.py
-3.extract-level2.py
-4.loop.py
+4.extract-subsections.py
+5.loop.py
 5.extract-json.py
+
+
+
+
+Making a List of Chapters:
+
+First, the robot goes through the manual and makes a list of all the main chapter titles (like a table of contents).
+It asks a super-smart AI to help it figure out which chapters have step-by-step instructions (called "procedures").
+Double-Checking the List:
+
+Then, the robot asks the AI to double-check its work and make sure the list of chapters with procedures is really accurate.
+Organizing the Chapters:
+
+Next, for each chapter that has procedures, the robot makes a separate little "notebook" (file) with a list of all the smaller sections inside that chapter.
+Becoming a Detective:
+
+Now, the robot becomes a detective! For each small section, it gathers all the related information from the manual.
+It asks the AI to read the information and figure out exactly how the procedure works, like a step-by-step story.
+Drawing Maps:
+
+Finally, the robot asks the AI to turn each procedure story into a visual map.
+These maps show all the events, choices, and rules of the procedure, so it's easy to see how it works.
+It saves these maps in a special computer language so they can be used by other programs.

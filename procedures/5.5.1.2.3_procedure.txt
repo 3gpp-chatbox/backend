@@ -1,0 +1,13 @@
+```text
+- **Procedure Name:** Registration procedure for initial registration
+- **Triggering Conditions:**
+    - UE initiates registration for 5GS services.
+- **Steps:**
+    1. UE sends REGISTRATION REQUEST message.
+- **Decision Points:**
+    - 5GS registration type IE in REGISTRATION REQUEST set to "emergency registration" and AMF configured to support emergency registration for unauthenticated SUCIs and no 5G NAS security context is available? → Yes / No
+        - Yes: AMF may skip the authentication procedure and proceed directly to the execution of the security mode control procedure.
+        - No: Network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures.
+- **Important Information Elements:**
+    - 5GS registration type IE: Indicates the type of registration (initial, emergency, SNPN onboarding, disaster roaming initial).
+```

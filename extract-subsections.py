@@ -23,7 +23,7 @@ def query_sections(section_id_prefix):
     cursor.execute('''
         SELECT section_id, section_name
         FROM sections
-        WHERE section_id LIKE ? and section_level= 5
+        WHERE section_id LIKE ? and (section_level= 5 or section_level=4)
     ''', (f'{section_id_prefix}%',))  
     
     sections = cursor.fetchall()
