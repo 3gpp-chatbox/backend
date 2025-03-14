@@ -33,7 +33,7 @@ def find_section_with_procedure_info():
 
     {content}
 
-    you are 3gpp specification expert, please analyze the result above, then return your refined list of sections ,only return sections that contain procedures,only return correct section id and name in your response,do not include any other words in your response.
+    you are 3gpp specification expert, please analyze the result above, then return your refined list of sections ,only return sections that contain procedures,only return correct section id and section name in your response(use , to split id and name),do not include any other words in your response.
     """
 
     # Assuming you have an LLM client or API for interacting with Google AI Gemini

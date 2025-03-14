@@ -1,0 +1,25 @@
+Section ID, Section Name
+6.3.1, PDU session authentication and authorization procedure
+6.3.1.1, General
+6.3.1.2, PDU EAP message reliable transport procedure
+6.3.1.2.1, PDU EAP message reliable transport procedure initiation
+6.3.1.2.2, PDU EAP message reliable transport procedure accepted by the UE
+6.3.1.2.3, Abnormal cases on the network side
+6.3.1.2.4, Abnormal cases in the UE
+6.3.1.3, PDU EAP result message transport procedure
+6.3.1.3.1, PDU EAP result message transport procedure initiation
+6.3.1.3.2, Abnormal cases in the UE
+6.3.2, Network-requested PDU session modification procedure
+6.3.2.1, General
+6.3.2.2, Network-requested PDU session modification procedure initiation
+6.3.2.3, Network-requested PDU session modification procedure accepted by the UE
+6.3.2.4, Network-requested PDU session modification procedure not accepted by the UE
+6.3.2.5, Abnormal cases on the network side
+6.3.2.6, Abnormal cases in the UE
+6.3.3, Network-requested PDU session release procedure
+6.3.3.1, General
+6.3.3.2, Network-requested PDU session release procedure initiation
+6.3.3.3, Network-requested PDU session release procedure accepted by the UE
+6.3.3.4, N1 SM delivery skipped
+6.3.3.5, Abnormal cases on the network side
+6.3.3.6, Abnormal cases in the UE

@@ -1,0 +1,8 @@
+Section ID, Section Name
+6.6.1, Exchange of extended protocol configuration options
+6.6.2, Remote UE report procedure
+6.6.2.1, General
+6.6.2.2, Remote UE report procedure initiation
+6.6.2.3, Remote UE report procedure accepted by the network
+6.6.2.4, Abnormal cases in the UE
+6.6.2.5, Abnormal cases on the network side
