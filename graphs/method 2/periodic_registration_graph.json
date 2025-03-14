@@ -1,0 +1,251 @@
+{
+  "nodes": [
+    {
+      "id": "Trigger1",
+      "label": "Trigger: Exceptional Event Data Reporting",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in NBN1 mode, request from upper layers to transmit user data related to an exceptional event, UE allowed to use exception data reporting, timer T3346 is not running for MO exception data, even if timer T3502 or timer T3511 is running",
+        "related_states": [],
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Trigger2",
+      "label": "Trigger: RAN Timing Synchronization Status Change",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE supports the reconnection to the network due to RAN timing synchronization status change, receives an indication of a change in the RAN timing synchronization status even if timer T3502 is running",
+        "related_states": [],
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Trigger3",
+      "label": "Trigger: RRC Inactive Indication",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "5GMM-CONNECTED mode with RRC inactive indication",
+        "related_states": [],
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Action1",
+      "label": "Action: Initiate Registration Procedure",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "One of the triggers is met",
+        "outcomes": "Registration procedure is initiated",
+        "error_cases": "Network rejects the registration",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Action2",
+      "label": "Action: Transition to RRC_CONNECTED and Include Uplink Data Status",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "UE requests lower layers to transition to RRC_CONNECTED state at initiation of registration procedure",
+        "outcomes": "UE enters 5GMMIDLE mode, continues registration, includes Uplink data status IE if conditions are met",
+        "error_cases": "Transition to RRC_CONNECTED fails",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Flow1",
+      "label": "Flow: Establish N1 NAS Signalling Connection",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "Flow2",
+      "label": "Flow: Send REGISTRATION REQUEST Message",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "Flow3",
+      "label": "Flow: Receive REGISTRATION ACCEPT or REJECT Message",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "Flow4",
+      "label": "Flow: Release N1 NAS Signalling Connection",
+      "type": "Flow",
+      "properties": {}
+    },
+    {
+      "id": "Message1",
+      "label": "Message: REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "5GMM capability, UE security capabilities, Requested NSSAI",
+        "optional_ies": "UE request type, Uplink data status",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Message2",
+      "label": "Message: REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "Network→UE",
+        "mandatory_ies": "Registration result",
+        "optional_ies": "5G-GUTI, Allowed NSSAI",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "Message3",
+      "label": "Message: REGISTRATION REJECT",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REJECT",
+        "direction": "Network→UE",
+        "mandatory_ies": "5GMM cause",
+        "optional_ies": "None",
+        "spec_references": "24501-j11.md"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "Edge1",
+      "source": "Trigger1",
+      "target": "Action1",
+      "label": "Triggers Action",
+      "type": "Trigger_Action",
+      "properties": {}
+    },
+    {
+      "id": "Edge2",
+      "source": "Trigger2",
+      "target": "Action1",
+      "label": "Triggers Action",
+      "type": "Trigger_Action",
+      "properties": {}
+    },
+    {
+      "id": "Edge3",
+      "source": "Trigger3",
+      "target": "Action1",
+      "label": "Triggers Action",
+      "type": "Trigger_Action",
+      "properties": {}
+    },
+    {
+      "id": "Edge4",
+      "source": "Action1",
+      "target": "Action2",
+      "label": "Conditional Action",
+      "type": "Action_Action",
+      "properties": {
+        "condition": "UE requests lower layers to transition to RRC_CONNECTED state"
+      }
+    },
+    {
+      "id": "Edge5",
+      "source": "Action1",
+      "target": "Flow1",
+      "label": "Initiates Flow",
+      "type": "Action_Flow",
+      "properties": {}
+    },
+    {
+      "id": "Edge6",
+      "source": "Flow1",
+      "target": "Flow2",
+      "label": "Next Step",
+      "type": "Flow_Flow",
+      "properties": {
+        "sequence_number": 1
+      }
+    },
+    {
+      "id": "Edge7",
+      "source": "Flow2",
+      "target": "Message1",
+      "label": "Sends Message",
+      "type": "Flow_Message",
+      "properties": {}
+    },
+    {
+      "id": "Edge8",
+      "source": "Message1",
+      "target": "Flow3",
+      "label": "Causes Next Step",
+      "type": "Message_Flow",
+      "properties": {}
+    },
+    {
+      "id": "Edge9",
+      "source": "Flow3",
+      "target": "Message2",
+      "label": "Receives Message",
+      "type": "Flow_Message",
+      "properties": {}
+    },
+    {
+      "id": "Edge10",
+      "source": "Flow3",
+      "target": "Message3",
+      "label": "Receives Message",
+      "type": "Flow_Message",
+      "properties": {}
+    },
+    {
+      "id": "Edge11",
+      "source": "Message2",
+      "target": "Flow4",
+      "label": "Triggers Flow",
+      "type": "Message_Flow",
+      "properties": {
+        "success_criteria": "Registration Accepted"
+      }
+    },
+    {
+      "id": "Edge12",
+      "source": "Message3",
+      "target": "Flow4",
+      "label": "Triggers Flow",
+      "type": "Message_Flow",
+      "properties": {
+        "failure_handling": "Registration Rejected"
+      }
+    },
+    {
+      "id": "Edge13",
+      "source": "Flow4",
+      "target": "Action1",
+      "label": "Feedback Loop",
+      "type": "Flow_Action",
+      "properties": {
+        "condition": "Registration Rejected",
+        "retry_behavior": "Retry with modifications or backoff"
+      }
+    }
+  ],
+  "metadata": {
+    "procedure_id": "PeriodicRegistration",
+    "doc_id": "24501-j11.md",
+    "spec_sections": [
+      "5.2.3.2.3",
+      "5.3.1.4"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": "Periodic Registration Update",
+    "procedure_name": "Periodic Registration",
+    "total_nodes": 12,
+    "total_edges": 13
+  }
+}

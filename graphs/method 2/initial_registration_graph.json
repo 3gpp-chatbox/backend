@@ -1,0 +1,335 @@
+{
+  "nodes": [
+    {
+      "id": "trigger_1",
+      "label": "Network-initiated deregistration requiring re-registration",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "Network initiated",
+        "conditions": "Network requests UE to re-register",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_2",
+      "label": "UE configured for high priority access",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE is configured for high priority access in selected PLMN or SNPN",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_3",
+      "label": "Registration for emergency services",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE needs to register for emergency services",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_4",
+      "label": "Exception data reporting in NBN1 mode",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in NBN1 mode requested to transmit user data related to an exceptional event",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_5",
+      "label": "Emergency PDU session establishment",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "Upper layers request to establish emergency PDU session",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_6",
+      "label": "Deregistration completion and Tsorcm timers stopped",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "After network initiated deregistration procedure completion and release of NAS signaling connection and Tsorcm timers have stopped",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "trigger_7",
+      "label": "Deregistration completion",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "After deregistration procedure completion and release of NAS signaling connection",
+        "related_states": "Any",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "state_1",
+      "label": "5GMM-CONNECTED to 5GMM-IDLE",
+      "type": "state",
+      "properties": {
+        "current_state": "5GMM-CONNECTED",
+        "conditions": "RRC inactive indication",
+        "next_states": "5GMM-IDLE",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "state_2",
+      "label": "EMMDEREGISTERED",
+      "type": "state",
+      "properties": {
+        "current_state": "EMMDEREGISTERED",
+        "conditions": "UE was previously registered in S1 mode",
+        "next_states": "N/A",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "action_1",
+      "label": "Provide GUAMI mapped from 4GGUTI",
+      "type": "action",
+      "properties": {
+        "actor": "UE NAS",
+        "prerequisites": "UE has a 4GGUTI",
+        "outcomes": "Lower layers receive GUAMI mapped from 4GGUTI",
+        "error_cases": "Mapping fails",
+        "spec_references": "24501-j11.md, 23.003"
+      }
+    },
+    {
+      "id": "action_2",
+      "label": "Provide 5GSTMSI",
+      "type": "action",
+      "properties": {
+        "actor": "UE NAS",
+        "prerequisites": "UE has a 5GSTMSI",
+        "outcomes": "Lower layers receive 5GSTMSI, but not GUAMI",
+        "error_cases": "N/A",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "action_3",
+      "label": "Provide GUAMI of 5GGUTI",
+      "type": "action",
+      "properties": {
+        "actor": "UE NAS",
+        "prerequisites": "UE has selected a 5GGUTI",
+        "outcomes": "Lower layers receive GUAMI, but not 5GSTMSI",
+        "error_cases": "N/A",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "message_1",
+      "label": "REGISTRATION REQUEST",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "Registration Type, 5GMM Capability",
+        "optional_ies": "Requested NSSAI, UE security capabilities",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "message_2",
+      "label": "REGISTRATION ACCEPT",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "Network→UE",
+        "mandatory_ies": "5G-GUTI",
+        "optional_ies": "PLMN list, T3550 value",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "message_3",
+      "label": "REGISTRATION REJECT",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION REJECT",
+        "direction": "Network→UE",
+        "mandatory_ies": "5GMM cause",
+        "optional_ies": "T3550 value",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "flow_1",
+      "label": "Establish N1 NAS signaling connection",
+      "type": "flow",
+      "properties": {
+        "prerequisites": "Initial Registration triggered",
+        "outcomes": "N1 NAS signaling connection established",
+        "spec_references": "24501-j11.md"
+      }
+    },
+    {
+      "id": "flow_2",
+      "label": "Release N1 NAS signaling connection",
+      "type": "flow",
+      "properties": {
+        "prerequisites": "Registration completed or rejected",
+        "outcomes": "N1 NAS signaling connection released",
+        "spec_references": "24501-j11.md"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_1",
+      "source": "trigger_1",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_2",
+      "source": "trigger_2",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_3",
+      "source": "trigger_3",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_4",
+      "source": "trigger_4",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_5",
+      "source": "trigger_5",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_6",
+      "source": "trigger_6",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_7",
+      "source": "trigger_7",
+      "target": "flow_1",
+      "label": "Triggers",
+      "type": "trigger",
+      "properties": {}
+    },
+    {
+      "id": "edge_8",
+      "source": "state_1",
+      "target": "flow_1",
+      "label": "State Change",
+      "type": "state_change",
+      "properties": {}
+    },
+    {
+      "id": "edge_9",
+      "source": "state_2",
+      "target": "flow_1",
+      "label": "State Change",
+      "type": "state_change",
+      "properties": {}
+    },
+    {
+      "id": "edge_10",
+      "source": "flow_1",
+      "target": "message_1",
+      "label": "Execution Flow",
+      "type": "execution",
+      "properties": {
+        "sequence_number": 1
+      }
+    },
+    {
+      "id": "edge_11",
+      "source": "message_1",
+      "target": "message_2",
+      "label": "Message Flow",
+      "type": "message_flow",
+      "properties": {
+        "sequence_number": 2
+      }
+    },
+    {
+      "id": "edge_12",
+      "source": "message_1",
+      "target": "message_3",
+      "label": "Message Flow",
+      "type": "message_flow",
+      "properties": {
+        "sequence_number": 2
+      }
+    },
+    {
+      "id": "edge_13",
+      "source": "message_2",
+      "target": "flow_2",
+      "label": "Execution Flow",
+      "type": "execution",
+      "properties": {
+        "sequence_number": 3
+      }
+    },
+    {
+      "id": "edge_14",
+      "source": "message_3",
+      "target": "flow_2",
+      "label": "Execution Flow",
+      "type": "execution",
+      "properties": {
+        "sequence_number": 3
+      }
+    }
+  ],
+  "metadata": {
+    "procedure_id": "Initial Registration",
+    "doc_id": "24501-j11.md",
+    "spec_sections": [
+      "Section 5.5.1.2.7",
+      "Section 5.3.1.3",
+      "Section 5.3.1.1",
+      "Section 5.5.2.3.2",
+      "Section 5.5.2.2.6"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": null,
+    "procedure_name": "Initial Registration",
+    "total_nodes": 17,
+    "total_edges": 14
+  }
+}

@@ -1,0 +1,110 @@
+{
+    "procedureName": "Initial registration procedure",
+    "nodes": [
+        {
+            "id": "5GMM-DEREGISTERED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-DEREGISTERED",
+                "description": "UE is in 5GMM-DEREGISTERED state and starts initial registration procedure."
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.1.3.2.1.2.2"
+            }
+        },
+        {
+            "id": "Registration Request (Initial Registration)",
+            "type": "Event",
+            "entity": "UE",
+            "properties": {
+                "eventType": "Send",
+                "description": "UE sends Registration Request for initial registration."
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.5.1.2.2"
+            }
+        },
+        {
+            "id": "5GMM-REGISTERED-INITIATED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-REGISTERED-INITIATED",
+                "description": "UE enters 5GMM-REGISTERED-INITIATED state after sending Registration Request."
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.1.3.2.1.2.3"
+            }
+        },
+        {
+            "id": "Registration Accept",
+            "type": "Event",
+            "entity": "AMF",
+            "properties": {
+                "eventType": "Receive",
+                "description": "AMF sends Registration Accept message."
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.5.1.2.4"
+            }
+        },
+        {
+            "id": "5GMM-REGISTERED",
+            "type": "State",
+            "entity": "UE",
+            "properties": {
+                "state": "5GMM-REGISTERED",
+                "description": "UE enters 5GMM-REGISTERED state after successful registration."
+            },
+            "metadata": {
+                "document_id": "3GPP TS 24.501",
+                "section_reference": "5.1.3.2.1.2.4"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "Edge1",
+            "from": "5GMM-DEREGISTERED",
+            "to": "Registration Request (Initial Registration)",
+            "type": "Transition",
+            "properties": {
+                "messageType": "Registration Request",
+                "description": "UE initiates initial registration procedure."
+            }
+        },
+        {
+            "id": "Edge2",
+            "from": "Registration Request (Initial Registration)",
+            "to": "5GMM-REGISTERED-INITIATED",
+            "type": "Action",
+            "properties": {
+                "description": "UE waits for response from network."
+            }
+        },
+        {
+            "id": "Edge3",
+            "from": "5GMM-REGISTERED-INITIATED",
+            "to": "Registration Accept",
+            "type": "Transition",
+            "properties": {
+                "messageType": "Registration Accept",
+                "description": "AMF accepts registration request."
+            }
+        },
+        {
+            "id": "Edge4",
+            "from": "Registration Accept",
+            "to": "5GMM-REGISTERED",
+            "type": "Action",
+            "properties": {
+                "description": "UE stores registration information."
+            }
+        }
+    ]
+}

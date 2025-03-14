@@ -38,7 +38,10 @@ EXTRACTION_PROMPT = '''You are an expert in 5G NAS signaling procedures as defin
 
 For each trigger of the Initial Registration Procedure, you must provide:
 1. Network Elements involved (UE, gNB, AMF, etc.)
-2. States that the system goes through
+2. States that each Network Element goes through, including:
+   - UE States: 5GMM-DEREGISTERED, 5GMM-REGISTERED, etc.
+   - RRC States: RRC_IDLE, RRC_CONNECTED
+   - AMF States: Connection Management IDLE, Connection Management CONNECTED
 3. Events that occur during the procedure
 4. Edges connecting states and events
 
@@ -52,32 +55,94 @@ The output should follow this exact structure:
     { "id": "N2", "label": "gNB (gNodeB)", "type": "NetworkElement" },
     { "id": "N3", "label": "AMF", "type": "NetworkElement" },
 
-    // States (at least 4)
-    { "id": "S1", "label": "Initial State", "type": "State" },
-    { "id": "S2", "label": "Intermediate State", "type": "State" },
-    // ... more states ...
+    // States for each Network Element (at least 2 states per element)
+    { 
+      "id": "S1", 
+      "label": "UE:5GMM-DEREGISTERED", 
+      "type": "State",
+      "element": "UE",
+      "state_type": "5GMM"
+    },
+    { 
+      "id": "S2", 
+      "label": "UE:5GMM-REGISTERED", 
+      "type": "State",
+      "element": "UE",
+      "state_type": "5GMM"
+    },
+    { 
+      "id": "S3", 
+      "label": "UE:RRC_IDLE", 
+      "type": "State",
+      "element": "UE",
+      "state_type": "RRC"
+    },
+    { 
+      "id": "S4", 
+      "label": "UE:RRC_CONNECTED", 
+      "type": "State",
+      "element": "UE",
+      "state_type": "RRC"
+    },
+    { 
+      "id": "S5", 
+      "label": "AMF:CM-IDLE", 
+      "type": "State",
+      "element": "AMF",
+      "state_type": "CM"
+    },
+    { 
+      "id": "S6", 
+      "label": "AMF:CM-CONNECTED", 
+      "type": "State",
+      "element": "AMF",
+      "state_type": "CM"
+    },
 
-    // Events (at least 3)
-    { "id": "E1", "label": "Event Description", "type": "Event" },
-    { "id": "E2", "label": "Event Description", "type": "Event" }
-    // ... more events ...
+    // Events with detailed state transitions
+    { 
+      "id": "E1", 
+      "label": "RRC Connection Request", 
+      "type": "Event",
+      "from_state": "RRC_IDLE",
+      "to_state": "RRC_CONNECTED"
+    },
+    { 
+      "id": "E2", 
+      "label": "Initial Registration Request", 
+      "type": "Event",
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-REGISTERED-INITIATED"
+    }
   ],
   "edges": [
-    { "from": "N1", "to": "N2", "label": "Description of transition" },
-    { "from": "N2", "to": "N3", "label": "Description of transition" },
-    { "from": "N3", "to": "S1", "label": "Description of transition" },
-    { "from": "S1", "to": "E1", "label": "Description of transition" },
-    { "from": "E1", "to": "S2", "label": "Description of transition" },
-    { "from": "S2", "to": "E2", "label": "Description of transition" },
-    { "from": "E2", "to": "S3", "label": "Description of transition" },
-    { "from": "S3", "to": "N4", "label": "Description of transition" },
-    
+    {
+      "from": "N1",
+      "to": "N2",
+      "label": "Sends RRC Connection Request",
+      "from_state": "RRC_IDLE",
+      "to_state": "RRC_CONNECTED"
+    },
+    {
+      "from": "S1",
+      "to": "E1",
+      "label": "UE initiates connection",
+      "state_change": "UE: 5GMM-DEREGISTERED -> 5GMM-REGISTERED-INITIATED"
+    }
   ],
   "metadata": {
     "procedureName": "Initial Registration",
     "specReference": "3GPP TS 24.501",
     "protocol": "5G NAS",
     "trigger": "<TRIGGER_NAME>",
+    "initialStates": {
+      "UE": ["5GMM-DEREGISTERED", "RRC_IDLE"],
+      "AMF": ["CM-IDLE"]
+    },
+    "finalStates": {
+      "UE": ["5GMM-REGISTERED", "RRC_CONNECTED"],
+      "AMF": ["CM-CONNECTED"]
+    },
     "mandatoryMessages": [
       "Registration Request",
       "Registration Accept",
@@ -104,6 +169,8 @@ Requirements:
 4. Include all mandatory NAS messages in the flow
 5. Include security and authentication steps
 6. Edges must accurately describe the transition or message being sent
+7. States must be explicitly labeled with the network element they belong to
+8. State transitions must be clearly shown in edges
 
 Extract the complete flow for the given text, ensuring all requirements are met.'''
 
@@ -877,84 +944,36 @@ def verify_registration_trigger(trigger: str) -> bool:
     )
 
 def save_results(results: List[Dict], output_file: str):
-    """Save results to JSON file with better error handling."""
-    try:
-        # First, check if we have valid results
-        if not results:
-            console.print("[yellow]No results to save[/yellow]")
-            return
-
-        # Process results to ensure they can be serialized
-        processed_results = []
-        for result in results:
-            if isinstance(result, dict):
-                if "error" not in result:
-                    try:
-                        # Validate using Pydantic model
-                        procedure = RegistrationProcedure(**result)
-                        processed_results.append(procedure.model_dump())
-                    except ValidationError as ve:
-                        console.print(f"[yellow]Skipping invalid result: {str(ve)}[/yellow]")
-                else:
-                    console.print(f"[yellow]Skipping result with error: {result['error']}[/yellow]")
-            elif hasattr(result, 'model_dump'):
-                processed_results.append(result.model_dump())
-            else:
-                console.print(f"[yellow]Warning: Skipping invalid result of type {type(result)}[/yellow]")
-
-        # Create output data structure
-        output_data = ExtractionResult(
-            procedures=processed_results,
-            total_procedures=len(results),
-            successful_extractions=len(processed_results)
-        )
-
-        # Debug info
-        console.print(f"\n[blue]Saving {len(processed_results)} processed results to {output_file}[/blue]")
+    """
+    Save extraction results to a JSON file, including both parsed data and raw LLM responses.
+    
+    Args:
+        results: List of dictionaries containing parsed data and raw responses
+        output_file: Path to save the JSON file
+    """
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    
+    # Prepare data structure
+    output_data = {
+        "results": results,
+        "timestamp": datetime.now().isoformat(),
+        "summary": {
+            "total_chunks": len(results),
+            "successful_parses": len([r for r in results if "parsed_data" in r and not "error" in r]),
+            "errors": len([r for r in results if "error" in r])
+        }
+    }
+    
+    # Save to file
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False)
         
-        # Create directory if it doesn't exist
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Save JSON
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(output_data.model_dump(), f, indent=2, ensure_ascii=False)
-            
-        # Verify file was saved correctly
-        if os.path.exists(output_file):
-            file_size = os.path.getsize(output_file)
-            console.print(f"[green]✓ Results saved successfully ({file_size} bytes)[/green]")
-            
-            # Show first few lines of saved file for debugging
-            try:
-                with open(output_file, 'r', encoding='utf-8') as f:
-                    first_lines = ''.join([next(f) for _ in range(10)])
-                console.print("[blue]Preview of saved file:[/blue]")
-                console.print(first_lines)
-            except Exception as e:
-                console.print(f"[yellow]Warning: Could not read back file for verification: {str(e)}[/yellow]")
-        else:
-            console.print("[red]Error: File not created[/red]")
-
-    except Exception as e:
-        console.print(f"[red]Error saving results: {str(e)}[/red]")
-        console.print(traceback.format_exc())
-        
-        # Try to save backup with error info
-        try:
-            backup_file = output_file.replace('.json', '_backup.json')
-            with open(backup_file, 'w', encoding='utf-8') as f:
-                json.dump({
-                    'error': str(e),
-                    'metadata': {
-                        'timestamp': datetime.now().isoformat(),
-                        'total_results': len(results),
-                        'successful_results': len(processed_results)
-                    },
-                    'raw_results': results
-                }, f, indent=2, ensure_ascii=False)
-            console.print(f"[yellow]Saved backup to {backup_file}[/yellow]")
-        except Exception as backup_error:
-            console.print(f"[red]Failed to save backup: {str(backup_error)}[/red]")
+    console.print(f"\n[green]✓ Saved {len(results)} results to {output_file}[/green]")
+    console.print(f"Summary:")
+    console.print(f"- Total chunks processed: {output_data['summary']['total_chunks']}")
+    console.print(f"- Successful parses: {output_data['summary']['successful_parses']}")
+    console.print(f"- Errors: {output_data['summary']['errors']}")
 
 def save_intermediate_results(results: List[ValidatedData], output_dir: str):
     """Save already validated results"""

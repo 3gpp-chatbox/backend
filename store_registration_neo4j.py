@@ -18,8 +18,8 @@ console = Console()
 load_dotenv()
 
 # Neo4j Configuration
-URI = os.getenv("NEO4J_URI")
-USERNAME = os.getenv("NEO4J_USERNAME")
+URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
 PASSWORD = os.getenv("NEO4J_PASSWORD")
 
 # Cache file for Neo4j state
@@ -28,7 +28,6 @@ NEO4J_CACHE_FILE = "neo4j_cache.json"
 # Input files configuration
 INTERMEDIATE_PATTERN = "intermediate_results_*.json"
 PROCESSED_FILES_CACHE = "processed_neo4j_files.json"
-BATCH_SIZE = 100  # Number of operations to batch together
 
 def load_processed_files() -> Set[str]:
     """Load the set of already processed intermediate files."""
@@ -82,59 +81,7 @@ def convert_to_relationship_type(description: str) -> str:
     words = re.sub(r'[^\w\s]', '', text).split()[:3]  # Take first 3 words max
     return '_'.join(words).upper()
 
-def batch_neo4j_operations(session, operations: List[Dict]):
-    """Execute Neo4j operations in batches for better performance."""
-    try:
-        if not operations:
-            return
-            
-        operation_type = operations[0]['type']
-        
-        if operation_type == 'network_element':
-            cypher = """
-            MERGE (n:NetworkElement {name: $name})
-            SET n.type = $element_type,
-                n.description = $description
-            """
-        elif operation_type == 'relationship':
-            cypher = """
-            MATCH (source:NetworkElement {name: $element1})
-            MATCH (target:NetworkElement {name: $element2})
-            MERGE (source)-[r:SENDS_MESSAGE {
-                procedure: $procedure,
-                sequence_number: $sequence_number,
-                message: $message
-            }]->(target)
-            ON CREATE SET r.description = $description,
-                r.source_state = $source_state,
-                r.target_state = $target_state,
-                r.trigger = $trigger,
-                r.conditions = $conditions,
-                r.timing = $timing
-            ON MATCH SET r.description = CASE 
-                WHEN r.description IS NULL THEN $description 
-                ELSE r.description END,
-                r.source_state = CASE 
-                WHEN r.source_state IS NULL THEN $source_state 
-                ELSE r.source_state END,
-                r.target_state = CASE 
-                WHEN r.target_state IS NULL THEN $target_state 
-                ELSE r.target_state END,
-                r.trigger = CASE 
-                WHEN r.trigger IS NULL THEN $trigger 
-                ELSE r.trigger END,
-                r.conditions = CASE 
-                WHEN r.conditions IS NULL THEN $conditions 
-                ELSE r.conditions END,
-                r.timing = CASE 
-                WHEN r.timing IS NULL THEN $timing 
-                ELSE r.timing END
-            """
-            
-        session.run(cypher, operations=operations)
-        
-    except Exception as e:
-        console.print(f"[red]Error in batch operation: {str(e)}[/red]")
+
 
 def validate_neo4j_data(data: dict) -> bool:
     """Validate data against Pydantic models"""
@@ -359,426 +306,422 @@ def read_registration_data(file_path: str) -> Dict:
 
 def create_unique_constraints(session):
     """Create unique constraints for nodes."""
-    constraints = [
-        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
-        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.name IS UNIQUE"
-    ]
-    
-    for constraint in constraints:
+    try:
+        # First, remove all existing constraints to start fresh
         try:
-            session.run(constraint)
-        except Exception as e:
-            console.print(f"[yellow]Warning creating constraint: {str(e)}[/yellow]")
+            session.run("DROP CONSTRAINT ON (n:State) ASSERT n.name IS UNIQUE")
+            console.print("[green]Dropped name constraint on State nodes[/green]")
+        except Exception:
+            pass  # Ignore if constraint doesn't exist
+            
+        try:
+            session.run("DROP CONSTRAINT ON (n:NetworkElement) ASSERT n.name IS UNIQUE")
+            console.print("[green]Dropped name constraint on NetworkElement nodes[/green]")
+        except Exception:
+            pass  # Ignore if constraint doesn't exist
+            
+        try:
+            session.run("DROP CONSTRAINT ON (n:State) ASSERT n.id IS UNIQUE")
+            console.print("[green]Dropped id constraint on State nodes[/green]")
+        except Exception:
+            pass  # Ignore if constraint doesn't exist
 
-def generate_content_hash(data: dict) -> str:
-    """Generate a hash for content deduplication."""
-    # Sort dictionary to ensure consistent hashing
-    content_str = json.dumps(data, sort_keys=True)
-    return hashlib.md5(content_str.encode()).hexdigest()
+        # Create new constraints
+        constraints = [
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Event) REQUIRE n.id IS UNIQUE"
+        ]
+        
+        for constraint in constraints:
+            session.run(constraint)
+            console.print(f"[green]Created constraint: {constraint}[/green]")
+            
+    except Exception as e:
+        console.print(f"[red]Error creating constraints: {str(e)}[/red]")
+        raise
+
+def store_states(session, states: List[Dict], trigger: str):
+    """Store states in Neo4j with element and state type information."""
+    try:
+        for state in states:
+            # Create a unique ID that includes the trigger, element, and state name
+            state_name = state['label'].split(':')[-1].strip()
+            state_id = hashlib.md5(f"{state_name}_{state['element']}_{trigger}".encode()).hexdigest()
+            
+            # First ensure the network element exists
+            session.run("""
+                MERGE (e:NetworkElement {name: $element})
+            """, {'element': state.get('element')})
+            
+            # Then create or update the state with its unique ID
+            session.run("""
+                MERGE (s:State {id: $id})
+                ON CREATE SET
+                    s.label = $label,
+                    s.name = $name,
+                    s.type = $type,
+                    s.element = $element,
+                    s.state_type = $state_type,
+                    s.trigger = $trigger
+                ON MATCH SET
+                    s.label = $label,
+                    s.name = $name,
+                    s.type = $type,
+                    s.element = $element,
+                    s.state_type = $state_type,
+                    s.trigger = $trigger
+                WITH s
+                MATCH (e:NetworkElement {name: $element})
+                MERGE (e)-[r:HAS_STATE]->(s)
+            """, {
+                'id': state_id,
+                'label': state['label'],
+                'name': f"{state_name}_{state.get('element')}_{trigger}",
+                'type': state['type'],
+                'element': state.get('element'),
+                'state_type': state.get('state_type'),
+                'trigger': trigger
+            })
+            console.print(f"[green]✓ Stored state: {state_name} for {state.get('element')}[/green]")
+            
+        console.print(f"[green]✓ Stored {len(states)} states for trigger: {trigger}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error storing states: {str(e)}[/red]")
+        raise
+
+def store_events(session, events: List[Dict], trigger: str):
+    """Store events in Neo4j with state transition information."""
+    try:
+        for event in events:
+            # Create a unique ID that includes the trigger
+            event_id = f"{event['id']}_{trigger}".replace(' ', '_')
+            
+            session.run("""
+                MERGE (e:Event {id: $id})
+                SET e.label = $label,
+                    e.type = $type,
+                    e.from_state = $from_state,
+                    e.to_state = $to_state,
+                    e.trigger = $trigger
+            """, {
+                'id': event_id,
+                'label': event['label'],
+                'type': event['type'],
+                'from_state': event.get('from_state'),
+                'to_state': event.get('to_state'),
+                'trigger': trigger
+            })
+        console.print(f"[green]✓ Stored {len(events)} events for trigger: {trigger}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error storing events: {str(e)}[/red]")
+        raise
+
+def store_transitions(session, edges: List[Dict], trigger: str):
+    """Store transitions between nodes with state change information."""
+    try:
+        for edge in edges:
+            # Create unique IDs for the nodes that include the trigger
+            from_id = f"{edge['from']}_{trigger}".replace(' ', '_')
+            to_id = f"{edge['to']}_{trigger}".replace(' ', '_')
+            
+            # Create the relationship with state transition info
+            session.run("""
+                MATCH (from) WHERE from.id = $from_id OR from.name = $from_id
+                MATCH (to) WHERE to.id = $to_id OR to.name = $to_id
+                MERGE (from)-[r:TRANSITIONS {
+                    trigger: $trigger,
+                    label: $label
+                }]->(to)
+                SET r.from_state = $from_state,
+                    r.to_state = $to_state,
+                    r.state_change = $state_change
+            """, {
+                'from_id': from_id,
+                'to_id': to_id,
+                'trigger': trigger,
+                'label': edge['label'],
+                'from_state': edge.get('from_state'),
+                'to_state': edge.get('to_state'),
+                'state_change': edge.get('state_change', '')
+            })
+        console.print(f"[green]✓ Stored {len(edges)} transitions for trigger: {trigger}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error storing transitions: {str(e)}[/red]")
+        console.print(f"[yellow]Edge data: {json.dumps(edge, indent=2)}[/yellow]")
+        raise
 
 def store_network_elements(session, elements: List[Dict]):
     """Store network elements with deduplication."""
-    processed_elements = set()
-    for element in elements:
-        # Generate hash for deduplication
-        element_hash = generate_content_hash(element)
-        
-        if element_hash not in processed_elements:
+    try:
+        for element in elements:
+            # Get the name from either 'name' or 'label' field
+            element_name = element.get('label', '').split('(')[0].strip()  # Extract name before parentheses
+            if not element_name:
+                console.print(f"[yellow]Warning: Skipping element with no name/label: {element}[/yellow]")
+                continue
+
+            # Create or update the network element
             cypher = """
             MERGE (n:NetworkElement {name: $name})
             SET n.type = $type,
-                n.description = $description,
-                n.content_hash = $content_hash
+                n.label = $label,
+                n.description = $description
             """
             session.run(cypher, 
-                       name=element['name'],
-                       type=element.get('type', ''),
-                       description=element.get('description', ''),
-                       content_hash=element_hash)
-            processed_elements.add(element_hash)
-            console.print(f"[green]Stored network element: {element['name']}[/green]")
-        else:
-            console.print(f"[yellow]Skipped duplicate network element: {element['name']}[/yellow]")
+                       name=element_name,
+                       type=element.get('type', 'NetworkElement'),
+                       label=element.get('label', element_name),
+                       description=element.get('description', ''))
+            console.print(f"[green]Stored network element: {element_name}[/green]")
 
-def store_states(session, states: List[Dict]):
-    """Store states with their properties."""
-    for state in states:
-        cypher = """
-        MERGE (s:State {name: $name})
-        SET s.type = $type,
-            s.description = $description
-        """
-        session.run(cypher, 
-                   name=state['name'],
-                   type=state.get('type', ''),
-                   description=state.get('description', ''))
+    except Exception as e:
+        console.print(f"[red]Error storing network element: {str(e)}[/red]")
+        console.print(f"[yellow]Element data: {json.dumps(element, indent=2)}[/yellow]")
+        raise
 
-def store_events(session, events: List[Dict]):
-    """Store events as nodes."""
-    for event in events:
-        cypher = """
-        MERGE (e:Event {name: $name})
-        SET e.description = $description
-        """
-        session.run(cypher, 
-                   name=event['name'],
-                   description=event.get('description', ''))
-
-def store_transitions(session, transitions: List[Dict]):
-    """Store transitions as relationships with deduplication."""
-    processed_hashes = set()
-    for transition in transitions:
-        content_hash = generate_content_hash(transition)
-        if content_hash in processed_hashes:
-            continue
-            
-        # Create relationship between network elements for the message
-        cypher_message = """
-        MATCH (from:NetworkElement {name: $from_element})
-        MATCH (to:NetworkElement {name: $to_element})
-        MERGE (from)-[r:SENDS_MESSAGE {
-            step: $step,
-            message: $message
-        }]->(to)
-        SET r.trigger = $trigger,
-            r.condition = $condition,
-            r.timing = $timing,
-            r.content_hash = $content_hash
-        """
-        session.run(cypher_message,
-                   from_element=transition['from_element'],
-                   to_element=transition['to_element'],
-                   step=transition.get('step', 0),
-                   message=transition['message'],
-                   trigger=transition.get('trigger', ''),
-                   condition=transition.get('condition', ''),
-                   timing=transition.get('timing', ''),
-                   content_hash=content_hash)
+def store_procedure_flow(session, trigger: str, procedure: str, flow_steps: List[Dict]):
+    """Store procedure flow information in Neo4j."""
+    try:
+        # First create trigger node if it doesn't exist
+        session.run("""
+            MERGE (t:Trigger {name: $trigger})
+            SET t.procedure = $procedure,
+                t.type = $procedure
+        """, {
+            'trigger': trigger,
+            'procedure': procedure
+        })
         
-        # Create relationship between states for the transition
-        cypher_state = """
-        MATCH (from:State {name: $from_state})
-        MATCH (to:State {name: $to_state})
-        MERGE (from)-[r:TRANSITIONS_TO {
-            step: $step,
-            message: $message
-        }]->(to)
-        SET r.trigger = $trigger,
-            r.condition = $condition,
-            r.timing = $timing,
-            r.content_hash = $content_hash
-        """
-        session.run(cypher_state,
-                   from_state=transition['from_state'],
-                   to_state=transition['to_state'],
-                   step=transition.get('step', 0),
-                   message=transition['message'],
-                   trigger=transition.get('trigger', ''),
-                   condition=transition.get('condition', ''),
-                   timing=transition.get('timing', ''),
-                   content_hash=content_hash)
-        processed_hashes.add(content_hash)
-
-def store_element_relationships(session, relationships: List[Dict]):
-    """Store relationships between network elements with deduplication."""
-    processed_hashes = set()
-    for rel in relationships:
-        content_hash = generate_content_hash(rel)
-        if content_hash in processed_hashes:
-            continue
+        # Create step nodes and relationships
+        for i, step in enumerate(flow_steps):
+            step_id = f"{procedure}_{trigger}_STEP_{i+1}"
             
-        rel_type = convert_to_relationship_type(rel['relationship'])
-        cypher = """
-        MATCH (e1:NetworkElement {name: $element1})
-        MATCH (e2:NetworkElement {name: $element2})
-        MERGE (e1)-[r:RELATES_TO {
-            element1: $element1,
-            element2: $element2,
-            type: $rel_type
-        }]->(e2)
-        SET r.description = $description,
-            r.content_hash = $content_hash
-        """
-        session.run(cypher,
-                   element1=rel['element1'],
-                   element2=rel['element2'],
-                   rel_type=rel_type,
-                   description=rel['relationship'],
-                   content_hash=content_hash)
-        processed_hashes.add(content_hash)
-
-def store_triggers(session, triggers: List[Dict]):
-    """Store triggers."""
-    for trigger in triggers:
-        cypher = """
-        MATCH (s:State {name: $state})
-        MERGE (t:Trigger {name: $trigger})
-        MERGE (s)-[r:HAS_TRIGGER]->(t)
-        """
-        session.run(cypher,
-                   state=trigger['state'],
-                   trigger=trigger['trigger'])
-
-def store_conditions(session, conditions: List[Dict]):
-    """Store conditions."""
-    for condition in conditions:
-        cypher = """
-        MATCH (s:State {name: $state})
-        MERGE (c:Condition {description: $condition})
-        MERGE (s)-[r:HAS_CONDITION]->(c)
-        """
-        session.run(cypher,
-                   state=condition['state'],
-                   condition=condition['condition'])
-
-def store_timing(session, timings: List[Dict]):
-    """Store timing information."""
-    for timing in timings:
-        cypher = """
-        MATCH (s:State {name: $state})
-        MERGE (t:Timing {description: $timing})
-        MERGE (s)-[r:HAS_TIMING]->(t)
-        """
-        session.run(cypher,
-                   state=timing['state'],
-                   timing=timing['timing'])
-
-def store_registration_flow(session, flow_items: List[Dict]):
-    """Store registration flow items with all their properties."""
-    for item in flow_items:
-        try:
-            # Create or merge source and destination elements if they exist
-            if item.get('source_element') and item.get('destination_element'):
-                cypher_elements = """
-                MERGE (source:NetworkElement {name: $source_name})
-                MERGE (dest:NetworkElement {name: $dest_name})
-                """
-                session.run(cypher_elements, 
-                        source_name=item['source_element'],
-                        dest_name=item['destination_element'])
-
-            # Create or merge source and destination states if they exist
-            if item.get('source_state') and item.get('destination_state'):
-                cypher_states = """
-                MERGE (source_state:State {name: $source_state})
-                MERGE (dest_state:State {name: $dest_state})
-                """
-                session.run(cypher_states,
-                        source_state=item['source_state'],
-                        dest_state=item['destination_state'])
-
-            # Create the message relationship between elements if they exist
-            if item.get('source_element') and item.get('destination_element'):
-                cypher_message = """
-                MATCH (source:NetworkElement {name: $source_name})
-                MATCH (dest:NetworkElement {name: $dest_name})
-                MERGE (source)-[r:SENDS_MESSAGE]->(dest)
-                SET r.step = $sequence_number,
-                    r.message = $message,
-                    r.step_name = $step_name,
-                    r.description = $description,
-                    r.trigger = $trigger,
-                    r.conditions = $conditions,
-                    r.timing = $timing
-                """
-                session.run(cypher_message,
-                        source_name=item['source_element'],
-                        dest_name=item['destination_element'],
-                        sequence_number=item['sequence_number'],
-                        message=item.get('message', ''),
-                        step_name=item.get('step_name', ''),
-                        description=item.get('description', ''),
-                        trigger=item.get('trigger', ''),
-                        conditions=item.get('conditions', []),
-                        timing=item.get('timing', ''))
-
-            # Create the state transition relationship if states exist
-            if item.get('source_state') and item.get('destination_state'):
-                cypher_transition = """
-                MATCH (source_state:State {name: $source_state})
-                MATCH (dest_state:State {name: $dest_state})
-                MERGE (source_state)-[t:TRANSITIONS_TO]->(dest_state)
-                SET t.step = $sequence_number,
-                    t.message = $message,
-                    t.trigger = $trigger,
-                    t.conditions = $conditions,
-                    t.timing = $timing
-                """
-                session.run(cypher_transition,
-                        source_state=item['source_state'],
-                        dest_state=item['destination_state'],
-                        sequence_number=item['sequence_number'],
-                        message=item.get('message', ''),
-                        trigger=item.get('trigger', ''),
-                        conditions=item.get('conditions', []),
-                        timing=item.get('timing', ''))
-        except Exception as e:
-            console.print(f"[yellow]Warning: Error processing flow item {item.get('sequence_number', 'unknown')}: {str(e)}[/yellow]")
-            continue
-
-def store_procedure_flow(session, flow_steps: List[Dict]):
-    """Store procedure flow steps with deduplication."""
-    processed_steps = set()
-    for step in flow_steps:
-        try:
-            # Determine source and target based on message type or default values
-            message = step.get('message', '').lower()
-            source = step.get('source_element') or step.get('source')
-            target = step.get('destination_element') or step.get('target')
-            
-            if not source or not target:
-                # If source/target missing, try to infer from message
-                if 'request' in message:
-                    source = source or 'UE'
-                    target = target or 'AMF'
-                elif 'response' in message or 'accept' in message:
-                    source = source or 'AMF'
-                    target = target or 'UE'
-                else:
-                    # Default values if we can't infer
-                    source = source or 'UE'
-                    target = target or 'AMF'
-
-            # Generate hash for deduplication
-            step_hash = generate_content_hash({
-                'source': source,
-                'target': target,
-                'message': message,
-                'sequence_number': step.get('sequence_number', 0)
+            # Create or update the step node
+            session.run("""
+                MERGE (step:Step {id: $step_id})
+                SET step.sequence_number = $seq_num,
+                    step.message = $message,
+                    step.procedure = $procedure,
+                    step.from_state = $from_state,
+                    step.to_state = $to_state,
+                    step.state_change = $state_change
+            """, {
+                'step_id': step_id,
+                'seq_num': step['sequence_number'],
+                'message': step['message'],
+                'procedure': procedure,
+                'from_state': step.get('from_state'),
+                'to_state': step.get('to_state'),
+                'state_change': step.get('state_change')
             })
             
-            if step_hash not in processed_steps:
-                # First ensure network elements exist
-                session.run(
-                    """
-                    MERGE (source:NetworkElement {name: $source})
-                    MERGE (target:NetworkElement {name: $target})
-                    """,
-                    source=source,
-                    target=target
-                )
+            # Create relationships between network elements and steps
+            if step['source'] and step['target']:
+                session.run("""
+                    MATCH (step:Step {id: $step_id})
+                    MATCH (source:NetworkElement {name: $source})
+                    MATCH (target:NetworkElement {name: $target})
+                    MERGE (source)-[r1:PARTICIPATES_IN]->(step)
+                    MERGE (target)-[r2:PARTICIPATES_IN]->(step)
+                    SET r1.role = 'source',
+                        r2.role = 'target'
+                """, {
+                    'step_id': step_id,
+                    'source': step['source'],
+                    'target': step['target']
+                })
+        
+        # Create flow relationships between steps
+        for i in range(len(flow_steps) - 1):
+            current_step_id = f"{procedure}_{trigger}_STEP_{i+1}"
+            next_step_id = f"{procedure}_{trigger}_STEP_{i+2}"
+            
+            session.run("""
+                MATCH (current:Step {id: $current_id})
+                MATCH (next:Step {id: $next_id})
+                MERGE (current)-[r:NEXT]->(next)
+                SET r.procedure = $procedure,
+                    r.trigger = $trigger
+            """, {
+                'current_id': current_step_id,
+                'next_id': next_step_id,
+                'procedure': procedure,
+                'trigger': trigger
+            })
+        
+        # Link trigger to first step
+        first_step_id = f"{procedure}_{trigger}_STEP_1"
+        session.run("""
+            MATCH (t:Trigger {name: $trigger})
+            MATCH (start:Step {id: $first_step_id})
+            MERGE (t)-[:INITIATES]->(start)
+        """, {
+            'trigger': trigger,
+            'first_step_id': first_step_id
+        })
+        
+        console.print(f"[green]✓ Stored procedure flow for {procedure} - {trigger}[/green]")
+        
+    except Exception as e:
+        console.print(f"[red]Error storing procedure flow: {str(e)}[/red]")
+        raise
 
-                # Then create the relationship using MERGE to avoid duplicates
-                cypher = """
-                MATCH (source:NetworkElement {name: $source})
-                MATCH (target:NetworkElement {name: $target})
-                MERGE (source)-[r:SENDS_MESSAGE {
-                    procedure: $procedure,
-                    sequence_number: $sequence_number,
-                    message: $message
-                }]->(target)
-                ON CREATE SET r.description = $description,
-                    r.source_state = $source_state,
-                    r.target_state = $target_state,
-                    r.trigger = $trigger,
-                    r.conditions = $conditions,
-                    r.timing = $timing,
-                    r.content_hash = $content_hash
-                ON MATCH SET r.description = CASE 
-                    WHEN r.description IS NULL THEN $description 
-                    ELSE r.description END,
-                    r.source_state = CASE 
-                    WHEN r.source_state IS NULL THEN $source_state 
-                    ELSE r.source_state END,
-                    r.target_state = CASE 
-                    WHEN r.target_state IS NULL THEN $target_state 
-                    ELSE r.target_state END,
-                    r.trigger = CASE 
-                    WHEN r.trigger IS NULL THEN $trigger 
-                    ELSE r.trigger END,
-                    r.conditions = CASE 
-                    WHEN r.conditions IS NULL THEN $conditions 
-                    ELSE r.conditions END,
-                    r.timing = CASE 
-                    WHEN r.timing IS NULL THEN $timing 
-                    ELSE r.timing END
-                """
-                session.run(cypher,
-                           source=source,
-                           target=target,
-                           sequence_number=step.get('sequence_number', 0),
-                           message=step.get('message', ''),
-                           description=step.get('description', ''),
-                           source_state=step.get('source_state', ''),
-                           target_state=step.get('target_state', ''),
-                           trigger=step.get('trigger', ''),
-                           conditions=step.get('conditions', []),
-                           timing=step.get('timing', ''),
-                           procedure='Initial_Registration',
-                           content_hash=step_hash)
-                processed_steps.add(step_hash)
-                console.print(f"[green]Stored step {step.get('sequence_number', '?')}: {step.get('message', 'Unknown')} ({source} -> {target})[/green]")
-            else:
-                console.print(f"[yellow]Skipped duplicate step {step.get('sequence_number', '?')}: {step.get('message', 'Unknown')}[/yellow]")
-
-        except Exception as e:
-            console.print(f"[yellow]Warning: Error processing step {step.get('sequence_number', '?')}: {str(e)}[/yellow]")
-            console.print(f"[yellow]Step data: {json.dumps(step, indent=2)}[/yellow]")
-            continue
-
-def process_registration_data(file_path: str = "processed_data/registration_analysis.json"):
-    """Process and store registration analysis data with deduplication."""
+def store_metadata(session, metadata: Dict):
+    """Store metadata information in Neo4j.
+    
+    Args:
+        session: Neo4j session
+        metadata (Dict): Dictionary containing metadata information
+    """
     try:
-        # Test Neo4j connection first
-        console.print("[blue]Testing Neo4j connection...[/blue]")
-        success, message = test_neo4j_connection(URI, USERNAME, PASSWORD)
-        if not success:
-            console.print(f"[red]Neo4j connection failed: {message}[/red]")
-            return
+        # Create metadata node with timestamp
+        metadata_props = {
+            'type': 'Registration_Metadata',
+            'timestamp': metadata.get('timestamp', ''),
+            'version': metadata.get('version', '1.0'),
+            'source': metadata.get('source', ''),
+            'parser_version': metadata.get('parser_version', '1.0')
+        }
 
-        console.print(f"[blue]Reading data from {file_path}...[/blue]")
+        # Create metadata node
+        session.run("""
+            MERGE (m:Metadata {type: $type})
+            ON CREATE SET m += $props
+            ON MATCH SET m += $props
+        """, {'type': metadata_props['type'], 'props': metadata_props})
+
+        console.print("[green]✓ Stored metadata[/green]")
+
+    except Exception as e:
+        console.print(f"[red]Error storing metadata: {str(e)}[/red]")
+        raise
+
+def store_procedure(session, procedure_name: str, trigger: str, description: str = ""):
+    """Store procedure information in Neo4j."""
+    try:
+        session.run("""
+            MERGE (p:Procedure {name: $name})
+            SET p.description = $description,
+                p.type = 'Registration'
+            WITH p
+            MATCH (t:Trigger {name: $trigger})
+            MERGE (t)-[:BELONGS_TO]->(p)
+        """, {
+            'name': procedure_name,
+            'description': description,
+            'trigger': trigger
+        })
+        console.print(f"[green]✓ Stored procedure: {procedure_name}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error storing procedure: {str(e)}[/red]")
+        raise
+
+def process_registration_data(file_path: str = "processed_data/registration_analysis_backup.json"):
+    """Process and store registration data in Neo4j."""
+    try:
+        # Read the JSON file
+        console.print(f"[blue]Reading data from: {file_path}[/blue]")
         with open(file_path, 'r') as f:
             data = json.load(f)
 
-        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+        # Connect to Neo4j
+        if not all([URI, USERNAME, PASSWORD]):
+            raise ValueError("Missing Neo4j credentials. Check .env file.")
             
-        # Process each result in the results array
-        for result in data.get('results', []):
+        driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
+        
+        try:
             with driver.session() as session:
                 # Create constraints
                 create_unique_constraints(session)
                 
-                # Store network elements with deduplication
-                if 'network_elements' in result:
-                    console.print(f"[blue]Processing {len(result['network_elements'])} network elements...[/blue]")
-                    store_network_elements(session, result['network_elements'])
-
-                # Store states
-                if 'states' in result:
-                    console.print(f"[blue]Storing {len(result['states'])} states...[/blue]")
-                    store_states(session, result['states'])
-
-                # Store registration flow with deduplication
-                if 'procedure_flow' in result:
-                    console.print(f"[blue]Processing {len(result['procedure_flow'])} procedure steps...[/blue]")
-                    store_procedure_flow(session, result['procedure_flow'])
-
-                # Store metadata
-                if 'metadata' in result:
-                    console.print("[blue]Storing metadata...[/blue]")
-                    cypher_metadata = """
-                    MERGE (m:Metadata {procedure: 'Initial_Registration'})
-                    ON CREATE SET m += $metadata
-                    ON MATCH SET m += $metadata
-                    """
-                    session.run(cypher_metadata, metadata=result['metadata'])
-
-        # Verify final data counts
-        with driver.session() as session:
-            node_count = session.run("MATCH (n) RETURN count(n) as count").single()["count"]
-            rel_count = session.run("MATCH ()-[r]->() RETURN count(r) as count").single()["count"]
-            
-            console.print(f"[green]✓ Data stored successfully in Neo4j[/green]")
-            console.print(f"[blue]Total nodes: {node_count}[/blue]")
-            console.print(f"[blue]Total relationships: {rel_count}[/blue]")
-            
-    except Exception as e:
-        console.print(f"[red]Error storing data in Neo4j: {str(e)}[/red]")
-        console.print(traceback.format_exc())
-        raise
-    finally:
-        if 'driver' in locals():
+                # Process each result
+                results = data.get('raw_results', [])
+                console.print(f"[blue]Found {len(results)} results to process[/blue]")
+                
+                for i, result in enumerate(results, 1):
+                    console.print(f"\n[blue]Processing result {i} of {len(results)}[/blue]")
+                    
+                    # Get raw_data, handling both error and success cases
+                    raw_data = result.get('raw_data')
+                    if not raw_data:
+                        console.print("[yellow]Skipping result with no raw_data[/yellow]")
+                        continue
+                    
+                    if not isinstance(raw_data, dict):
+                        console.print("[yellow]Skipping result with invalid raw_data format[/yellow]")
+                        continue
+                    
+                    # Extract procedure and trigger information
+                    procedure = raw_data.get('procedure', 'Initial Registration')
+                    trigger = raw_data.get('trigger', 'default')
+                    description = raw_data.get('description', '')
+                    console.print(f"\n[blue]Processing {procedure} data for trigger: {trigger}[/blue]")
+                    
+                    # Store the procedure node first
+                    store_procedure(session, procedure, trigger, description)
+                    
+                    # Store network elements
+                    network_elements = [n for n in raw_data.get('nodes', []) 
+                                     if n['type'] == 'NetworkElement']
+                    console.print(f"[blue]Found {len(network_elements)} network elements[/blue]")
+                    store_network_elements(session, network_elements)
+                    
+                    # Store states with trigger information
+                    states = [n for n in raw_data.get('nodes', []) 
+                            if n['type'] == 'State']
+                    console.print(f"[blue]Found {len(states)} states[/blue]")
+                    store_states(session, states, trigger)
+                    
+                    # Store events with trigger information
+                    events = [n for n in raw_data.get('nodes', []) 
+                            if n['type'] == 'Event']
+                    console.print(f"[blue]Found {len(events)} events[/blue]")
+                    store_events(session, events, trigger)
+                    
+                    # Store transitions/edges with trigger information
+                    edges = raw_data.get('edges', [])
+                    console.print(f"[blue]Found {len(edges)} edges[/blue]")
+                    
+                    # Create procedure flow steps from edges
+                    flow_steps = []
+                    for idx, edge in enumerate(edges, 1):
+                        step = {
+                            'sequence_number': idx,
+                            'source': edge.get('from'),
+                            'target': edge.get('to'),
+                            'message': edge.get('label', ''),
+                            'from_state': edge.get('from_state'),
+                            'to_state': edge.get('to_state'),
+                            'state_change': edge.get('state_change'),
+                            'procedure': procedure
+                        }
+                        flow_steps.append(step)
+                    
+                    # Store the procedure flow
+                    store_procedure_flow(session, trigger, procedure, flow_steps)
+                    
+                    # Store metadata if available
+                    if 'metadata' in raw_data:
+                        metadata = raw_data['metadata']
+                        metadata['timestamp'] = datetime.now().isoformat()
+                        store_metadata(session, metadata)
+                    
+                    console.print(f"[green]✓ Completed processing trigger: {trigger}[/green]")
+                        
+                console.print("\n[green]✓ Successfully stored all registration data[/green]")
+                
+        finally:
             driver.close()
+            
+    except FileNotFoundError:
+        console.print(f"[red]Error: File not found: {file_path}[/red]")
+    except json.JSONDecodeError:
+        console.print(f"[red]Error: Invalid JSON in file: {file_path}[/red]")
+    except Exception as e:
+        console.print(f"[red]Error processing data: {str(e)}[/red]")
+        console.print(traceback.format_exc())
 
 if __name__ == "__main__":
     process_registration_data()
