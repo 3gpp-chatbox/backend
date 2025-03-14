@@ -15,22 +15,8 @@ Section ID, Section Name
 4.4, NAS security
 4.4.1, General
 4.4.2, Handling of 5G NAS security contexts
-4.4.2.1, General
-4.4.2.2, Establishment of a mapped 5G NAS security context during inter-system change from S1 mode to N1 mode in 5GMM-CONNECTED mode
-4.4.2.3, Establishment of a 5G NAS security context during N1 mode to N1 mode handover
-4.4.2.4, Establishment of an EPS security context during inter-system change from N1 mode to S1 mode in 5GMM-CONNECTED mode
-4.4.2.5, Establishment of secure exchange of NAS messages
-4.4.2.6, Change of security keys
 4.4.3, Handling of NAS COUNT and NAS sequence number
-4.4.3.1, General
-4.4.3.2, Replay protection
-4.4.3.3, Integrity protection and verification
-4.4.3.4, Ciphering and deciphering
-4.4.3.5, NAS COUNT wrap around
 4.4.4, Integrity protection of NAS signalling messages
-4.4.4.1, General
-4.4.4.2, Integrity checking of NAS signalling messages in the UE
-4.4.4.3, Integrity checking of NAS signalling messages in the AMF
 4.4.5, Ciphering of NAS signalling messages
 4.4.6, Protection of initial NAS signalling messages
 4.4.7, Protection of NAS IEs
@@ -39,47 +25,21 @@ Section ID, Section Name
 4.5.2, Determination of the access identities and access category associated with a request for access for UEs not operating in SNPN access operation mode over 3GPP access
 4.5.3, Operator-defined access categories
 4.5.4, Access control and checking
-4.5.4.1, Access control and checking in 5GMM-IDLE mode and in 5GMM-IDLE mode with suspend indication
-4.5.4.2, Access control and checking in 5GMM-CONNECTED mode and in 5GMM-CONNECTED mode with RRC inactive indication
 4.5.5, Exception handling and avoiding double barring
 4.5.6, Mapping between access categories/access identities and RRC establishment cause
 4.6, Network slicing
 4.6.1, General
 4.6.2, Mobility management aspects
-4.6.2.1, General
-4.6.2.2, NSSAI storage
-4.6.2.3, Provision of NSSAI to lower layers in 5GMM-IDLE mode
-4.6.2.4, Network slice-specific authentication and authorization
-4.6.2.5, Mobility management based network slice admission control
-4.6.2.6, Provision of NSAG information to lower layers
-4.6.2.7, Mobility management based network slice replacement
-4.6.2.8, Mobility management for optimised handling of temporarily available network slices
-4.6.2.9, Mobility management based network slice usage control
-4.6.2.10, Mobility management aspects of handling network slices with NS-AoS not matching deployed tracking areas
-4.6.2.11, Mobility management for partial network slice
 4.6.3, Session management aspects
-4.6.3.0, General
-4.6.3.1, Session management based network slice admission control
-4.6.3.2, Support of network slice admission control and interworking with EPC
-4.6.3.3, Session management based network slice data rate limitation control
-4.6.3.4, Session management based network slice replacement
-4.6.3.5, Session management for optimized handling of temporarily available network slices
-4.6.3.6, Session management for partial network slice
-4.6.3.7, Session management aspect of handling network slices with NS-AoS not matching deployed tracking areas
 4.7, NAS over non-3GPP access
 4.7.1, General
 4.7.2, 5GS mobility management aspects
-4.7.2.1, General
-4.7.2.2, Establishment cause for non-3GPP access
 4.7.3, 5GS session management aspects
 4.7.4, Limited service state over non-3GPP access
 4.7.5, NAS signalling using trusted WLAN access network
 4.8, Interworking with E-UTRAN connected to EPC
 4.8.1, General
 4.8.2, Single-registration mode
-4.8.2.1, General
-4.8.2.2, Single-registration mode with N26 interface
-4.8.2.3, Single-registration mode without N26 interface
 4.8.3, Dual-registration mode
 4.8.4, Core Network selection for UEs not using CIoT 5GS optimizations
 4.9, Disabling and re-enabling of UE's N1 mode capability
@@ -98,9 +58,6 @@ Section ID, Section Name
 4.15, Time synchronization and time sensitive communication
 4.15.1, General
 4.15.2, Void
-4.15.2.1, Void
-4.15.2.2, Void
-4.15.2.3, Void
 4.15.3, Time synchronization
 4.15.4, User plane node management
 4.16, UE radio capability signalling optimisation
@@ -133,37 +90,18 @@ Section ID, Section Name
 5.1.1, General
 5.1.2, Types of 5GMM procedures
 5.1.3, 5GMM sublayer states
-5.1.3.1, General
-5.1.3.2, 5GMM sublayer states
 5.1.4, Coordination between 5GMM and EMM
-5.1.4.1, General
-5.1.4.2, Coordination between 5GMM for 3GPP access and EMM with N26 interface
-5.1.4.3, Coordination between 5GMM for 3GPP access and EMM without N26 interface
 5.1.5, Coordination between 5GMM and GMM
 5.2, Behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED
 5.2.1, General
 5.2.2, UE behaviour in state 5GMM-DEREGISTERED
-5.2.2.1, General
-5.2.2.2, Primary substate selection
-5.2.2.3, Detailed description of UE behaviour in state 5GMM-DEREGISTERED
-5.2.2.4, Substate when back to state 5GMM-DEREGISTERED from another 5GMM state
 5.2.3, UE behaviour in state 5GMM-REGISTERED
-5.2.3.1, General
-5.2.3.2, Detailed description of UE behaviour in state 5GMM-REGISTERED
 5.3, General on elementary 5GMM procedures
 5.3.1, 5GMM modes and N1 NAS signalling connection
-5.3.1.1, Establishment of the N1 NAS signalling connection
-5.3.1.2, Re-establishment of the N1 NAS signalling connection
-5.3.1.3, Release of the N1 NAS signalling connection
-5.3.1.4, 5GMM-CONNECTED mode with RRC inactive indication
-5.3.1.5, Suspend and resume of the N1 NAS signalling connection
 5.3.2, Permanent identifiers
 5.3.3, Temporary identities
 5.3.4, Registration areas
 5.3.5, Service area restrictions
-5.3.5.1, General
-5.3.5.2, 3GPP access service area restrictions
-5.3.5.3, Wireline access service area restrictions
 5.3.6, Mobile initiated connection only mode
 5.3.7, Handling of the periodic registration update timer and mobile reachable timer
 5.3.8, Handling of timer T3502
@@ -179,9 +117,6 @@ Section ID, Section Name
 5.3.18, Restriction on use of enhanced coverage
 5.3.19, Handling of congestion control for transport of user data via the control plane
 5.3.20, Specific requirements for UE when receiving non-integrity protected reject messages
-5.3.20.1, General
-5.3.20.2, Requirements for UE in a PLMN
-5.3.20.3, Requirements for UE in an SNPN
 5.3.21, CIoT 5GS optimizations
 5.3.22, Interaction between MICO mode with active time and extended idle mode DRX cycle
 5.3.23, Forbidden wireline access area
@@ -190,111 +125,38 @@ Section ID, Section Name
 5.3.26, Support for unavailability period
 5.4, 5GMM common procedures
 5.4.1, Primary authentication and key agreement procedure
-5.4.1.1, General
-5.4.1.2, EAP based primary authentication and key agreement procedure
-5.4.1.3, 5G AKA based primary authentication and key agreement procedure
 5.4.2, Security mode control procedure
-5.4.2.1, General
-5.4.2.2, NAS security mode control initiation by the network
-5.4.2.3, NAS security mode command accepted by the UE
-5.4.2.4, NAS security mode control completion by the network
-5.4.2.5, NAS security mode command not accepted by the UE
-5.4.2.6, Abnormal cases in the UE
-5.4.2.7, Abnormal cases on the network side
 5.4.3, Identification procedure
-5.4.3.1, General
-5.4.3.2, Identification initiation by the network
-5.4.3.3, Identification response by the UE
-5.4.3.4, Identification completion by the network
-5.4.3.5, Abnormal cases in the UE
-5.4.3.6, Abnormal cases on the network side
 5.4.4, Generic UE configuration update procedure
-5.4.4.1, General
-5.4.4.2, Generic UE configuration update procedure initiated by the network
-5.4.4.3, Generic UE configuration update accepted by the UE
-5.4.4.4, Generic UE configuration update completion by the network
-5.4.4.5, Abnormal cases in the UE
-5.4.4.6, Abnormal cases on the network side
 5.4.5, NAS transport procedure(s)
-5.4.5.1, General
-5.4.5.2, UE-initiated NAS transport procedure
-5.4.5.3, Network-initiated NAS transport procedure
 5.4.6, 5GMM status procedure
-5.4.6.1, General
-5.4.6.2, 5GMM status received in the UE
-5.4.6.3, 5GMM status received in the network
 5.4.7, Network slice-specific authentication and authorization procedure
-5.4.7.1, General
-5.4.7.2, Network slice-specific EAP message reliable transport procedure
-5.4.7.3, Network slice-specific EAP result message transport procedure
 5.5, 5GMM specific procedures
 5.5.1, Registration procedure
-5.5.1.1, General
-5.5.1.2, Registration procedure for initial registration
-5.5.1.3, Registration procedure for mobility and periodic registration update
 5.5.2, De-registration procedure
-5.5.2.1, General
-5.5.2.2, UE-initiated de-registration procedure
-5.5.2.3, Network-initiated de-registration procedure
 5.5.3, eCall inactivity procedure
 5.5.4, Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
-5.5.4.1, General
-5.5.4.2, ProSe relay transaction identity (PRTI)
-5.5.4.3, UE-initiated authentication and key agreement procedure initiation
-5.5.4.4, UE-initiated authentication and key agreement procedure accepted by the network
-5.5.4.5, UE-initiated authentication and key agreement procedure not accepted by the network
-5.5.4.6, Abnormal cases in the UE
-5.5.4.7, Abnormal cases on the network side
 5.6, 5GMM connection management procedures
 5.6.1, Service request procedure
-5.6.1.1, General
-5.6.1.2, Service request procedure initiation
-5.6.1.3, Common procedure initiation
-5.6.1.4, Service request procedure accepted by the network
-5.6.1.5, Service request procedure not accepted by the network
-5.6.1.6, Service request procedure for initiating an emergency PDU session not accepted by the network
-5.6.1.7, Abnormal cases in the UE
-5.6.1.8, Abnormal cases on the network side
 5.6.2, Paging procedure
-5.6.2.1, General
-5.6.2.2, Paging for 5GS services
 5.6.3, Notification procedure
-5.6.3.1, General
-5.6.3.2, Notification procedure initiation
-5.6.3.3, Notification procedure completion
-5.6.3.4, Abnormal cases on the network side
-5.6.3.5, Abnormal cases on the UE side
 6, Elementary procedures for 5GS session management
 6.1, Overview
 6.1.1, General
 6.1.2, Types of 5GSM procedures
 6.1.3, 5GSM sublayer states
-6.1.3.1, General
-6.1.3.2, 5GSM sublayer states in the UE
-6.1.3.3, 5GSM sublayer states in the network side
 6.1.4, Coordination between 5GSM and ESM
-6.1.4.1, Coordination between 5GSM and ESM with N26 interface
-6.1.4.2, Coordination between 5GSM and ESM without N26 interface
 6.1.5, Coordination for interworking with ePDG connected to EPC
 6.2, General on elementary 5GSM procedures
 6.2.1, Principles of PTI handling for 5GSM procedures
 6.2.2, PDU session types
 6.2.3, PDU session management
 6.2.4, IP address allocation
-6.2.4.1, General
-6.2.4.2, IP address allocation via NAS signalling
-6.2.4.3, Additional RG related requirements for IP address allocation
-6.2.4.4, Additional requirements of the UE acting as 5G ProSe layer-3 UE-to-network relay UE for IP address allocation
 6.2.5, Quality of service
-6.2.5.1, General
-6.2.5.2, QoS in MA PDU session
 6.2.6, Local area data network (LADN)
 6.2.7, Handling of DNN based congestion control
 6.2.8, Handling of S-NSSAI based congestion control
 6.2.9, Interaction with upper layers
-6.2.9.1, General
-6.2.9.2, URSP
-6.2.9.3, ProSeP
 6.2.10, Handling of 3GPP PS data off
 6.2.11, Multi-homed IPv6 PDU session
 6.2.12, Handling of network rejection not due to congestion control
@@ -308,46 +170,12 @@ Section ID, Section Name
 6.2.20, Support of UL PDU set handling
 6.3, Network-requested 5GSM procedures
 6.3.1, PDU session authentication and authorization procedure
-6.3.1.1, General
-6.3.1.2, PDU EAP message reliable transport procedure
-6.3.1.3, PDU EAP result message transport procedure
 6.3.2, Network-requested PDU session modification procedure
-6.3.2.1, General
-6.3.2.2, Network-requested PDU session modification procedure initiation
-6.3.2.3, Network-requested PDU session modification procedure accepted by the UE
-6.3.2.4, Network-requested PDU session modification procedure not accepted by the UE
-6.3.2.5, Abnormal cases on the network side
-6.3.2.6, Abnormal cases in the UE
 6.3.3, Network-requested PDU session release procedure
-6.3.3.1, General
-6.3.3.2, Network-requested PDU session release procedure initiation
-6.3.3.3, Network-requested PDU session release procedure accepted by the UE
-6.3.3.4, N1 SM delivery skipped
-6.3.3.5, Abnormal cases on the network side
-6.3.3.6, Abnormal cases in the UE
 6.4, UE-requested 5GSM procedures
 6.4.1, UE-requested PDU session establishment procedure
-6.4.1.1, General
-6.4.1.2, UE-requested PDU session establishment procedure initiation
-6.4.1.3, UE-requested PDU session establishment procedure accepted by the network
-6.4.1.4, UE-requested PDU session establishment procedure not accepted by the network
-6.4.1.5, Handling the maximum number of established PDU sessions
-6.4.1.6, Abnormal cases in the UE
-6.4.1.7, Abnormal cases on the network side
 6.4.2, UE-requested PDU session modification procedure
-6.4.2.1, General
-6.4.2.2, UE-requested PDU session modification procedure initiation
-6.4.2.3, UE-requested PDU session modification procedure accepted by the network
-6.4.2.4, UE-requested PDU session modification procedure not accepted by the network
-6.4.2.5, Abnormal cases in the UE
-6.4.2.6, Abnormal cases on the network side
 6.4.3, UE-requested PDU session release procedure
-6.4.3.1, General
-6.4.3.2, UE-requested PDU session release procedure initiation
-6.4.3.3, UE-requested PDU session release procedure accepted by the network
-6.4.3.4, UE-requested PDU session release procedure not accepted by the network
-6.4.3.5, Abnormal cases in the UE
-6.4.3.6, Abnormal cases on the network side
 6.5, 5GSM status procedure
 6.5.1, General
 6.5.2, 5GSM status received in the UE
@@ -355,11 +183,6 @@ Section ID, Section Name
 6.6, Miscellaneous procedures
 6.6.1, Exchange of extended protocol configuration options
 6.6.2, Remote UE report procedure
-6.6.2.1, General
-6.6.2.2, Remote UE report procedure initiation
-6.6.2.3, Remote UE report procedure accepted by the network
-6.6.2.4, Abnormal cases in the UE
-6.6.2.5, Abnormal cases on the network side
 7, Handling of unknown, unforeseen, and erroneous protocol data
 7.1, General
 7.2, Message too short or too long
@@ -378,499 +201,73 @@ Section ID, Section Name
 7.6.2, Out of sequence IEs
 7.6.3, Repeated IEs
 7.6.4, Unknown and unforeseen IEs in a Type 6 IE container information element
-7.6.4.1, IEIs unknown in the Type 6 IE container information element
-7.6.4.2, Out of sequence IEs
-7.6.4.3, Repeated IEs
 7.7, Non-imperative message part errors
 7.7.1, Syntactically incorrect optional IEs
 7.7.2, Conditional IE errors
 7.7.3, Errors in a Type 6 IE container information element
-7.7.3.1, Syntactically incorrect optional IEs
-7.7.3.2, Conditional IE errors
 7.8, Messages with semantically incorrect contents
 8, Message functional definitions and contents
 8.1, Overview
 8.2, 5GS mobility management messages
 8.2.1, Authentication request
-8.2.1.1, Message definition
-8.2.1.2, Authentication parameter RAND
-8.2.1.3, Authentication parameter AUTN
-8.2.1.4, Void
-8.2.1.5, EAP message
 8.2.2, Authentication response
-8.2.2.1, Message definition
-8.2.2.2, Authentication response parameter
-8.2.2.3, EAP message
 8.2.3, Authentication result
-8.2.3.1, Message definition
-8.2.3.2, ABBA
-8.2.3.3, AUN3 device security key
 8.2.4, Authentication failure
-8.2.4.1, Message definition
-8.2.4.2, Authentication failure parameter
 8.2.5, Authentication reject
-8.2.5.1, Message definition
-8.2.5.2, EAP message
 8.2.6, Registration request
-8.2.6.1, Message definition
-8.2.6.2, Non-current native NAS key set identifier
-8.2.6.3, 5GMM capability
-8.2.6.4, UE security capability
-8.2.6.5, Requested NSSAI
-8.2.6.6, Last visited registered TAI
-8.2.6.7, S1 UE network capability
-8.2.6.8, Uplink data status
-8.2.6.9, PDU session status
-8.2.6.10, MICO indication
-8.2.6.11, UE status
-8.2.6.12, Additional GUTI
-8.2.6.13, Allowed PDU session status
-8.2.6.14, UE's usage setting
-8.2.6.15, Requested DRX parameters
-8.2.6.16, EPS NAS message container
-8.2.6.17, LADN indication
-8.2.6.18, Payload container
-8.2.6.19, Network slicing indication
-8.2.6.20, 5GS update type
-8.2.6.21, NAS message container
-8.2.6.22, Requested extended DRX parameters
-8.2.6.23, EPS bearer context status
-8.2.6.24, T3324 value
-8.2.6.25, Mobile station classmark 2
-8.2.6.26, Supported codecs
-8.2.6.27, UE radio capability ID
-8.2.6.28, Requested mapped NSSAI
-8.2.6.29, Additional information requested
-8.2.6.30, Requested WUS assistance information
-8.2.6.31, Void
-8.2.6.32, N5GC indication
-8.2.6.33, Requested NB-N1 mode DRX parameters
-8.2.6.34, UE request type
-8.2.6.35, Paging restriction
-8.2.6.36, NID
-8.2.6.37, UE determined PLMN with disaster condition
-8.2.6.38, Requested PEIPS assistance information
-8.2.6.39, Requested T3512 value
-8.2.6.40, Unavailability information
-8.2.6.41, Non-3GPP path switching information
-8.2.6.42, AUN3 indication
 8.2.7, Registration accept
-8.2.7.1, Message definition
-8.2.7.2, 5G-GUTI
-8.2.7.3, Equivalent PLMNs
-8.2.7.4, TAI list
-8.2.7.5, Allowed NSSAI
-8.2.7.6, Rejected NSSAI
-8.2.7.7, Configured NSSAI
-8.2.7.8, 5GS network feature support
-8.2.7.9, PDU session status
-8.2.7.10, PDU session reactivation result
-8.2.7.11, PDU session reactivation result error cause
-8.2.7.12, LADN information
-8.2.7.13, MICO indication
-8.2.7.14, Network slicing indication
-8.2.7.15, Service area list
-8.2.7.16, T3512 value
-8.2.7.17, Non-3GPP de-registration timer value
-8.2.7.18, T3502 value
-8.2.7.19, Emergency number list
-8.2.7.20, Extended emergency number list
-8.2.7.21, SOR transparent container
-8.2.7.22, EAP message
-8.2.7.23, NSSAI inclusion mode
-8.2.7.24, Operator-defined access category definitions
-8.2.7.25, Negotiated DRX parameters
-8.2.7.26, Non-3GPP NW policies
-8.2.7.27, Negotiated extended DRX parameters
-8.2.7.28, T3447 value
-8.2.7.29, T3448 value
-8.2.7.30, T3324 value
-8.2.7.31, EPS bearer context status
-8.2.7.32, UE radio capability ID
-8.2.7.33, UE radio capability ID deletion indication
-8.2.7.34, Pending NSSAI
-8.2.7.35, Ciphering key data
-8.2.7.36, CAG information list
-8.2.7.37, Truncated 5G-S-TMSI configuration
-8.2.7.38, Negotiated NB-N1 mode DRX parameters
-8.2.7.39, Negotiated WUS assistance information
-8.2.7.40, Extended rejected NSSAI
-8.2.7.41, Service-level-AA container
-8.2.7.42, Negotiated PEIPS assistance information
-8.2.7.43, 5GS additional request result
-8.2.7.44, NSSRG information
-8.2.7.45, Disaster roaming wait range
-8.2.7.46, Disaster return wait range
-8.2.7.47, List of PLMNs to be used in disaster condition
-8.2.7.48, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
-8.2.7.49, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
-8.2.7.50, Extended CAG information list
-8.2.7.51, NSAG information
-8.2.7.52, Equivalent SNPNs
-8.2.7.53, NID
-8.2.7.54, Registration accept type 6 IE container
-8.2.7.55, RAN timing synchronization
-8.2.7.56, Alternative NSSAI
-8.2.7.57, Maximum time offset
-8.2.7.58, S-NSSAI time validity information
-8.2.7.59, Unavailability configuration
-8.2.7.61, On-demand NSSAI
-8.2.7.62, RAT utilization control
 8.2.8, Registration complete
-8.2.8.1, Message definition
-8.2.8.2, SOR transparent container
 8.2.9, Registration reject
-8.2.9.1, Message definition
-8.2.9.2, T3346 value
-8.2.9.3, T3502 value
-8.2.9.4, EAP message
-8.2.9.5, Rejected NSSAI
-8.2.9.6, CAG information list
-8.2.9.7, Extended rejected NSSAI
-8.2.9.8, Disaster return wait range
-8.2.9.9, Extended CAG information list
-8.2.9.10, Lower bound timer value
-8.2.9.11, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
-8.2.9.12, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
-8.2.9.13, N3IWF identifier
-8.2.9.14, TNAN information
-8.2.9.15, Extended 5GMM cause
-8.2.9.16, RAT utilization control
 8.2.10, UL NAS transport
-8.2.10.1, Message definition
-8.2.10.2, PDU session ID
-8.2.10.3, Old PDU session ID
-8.2.10.4, Request type
-8.2.10.5, S-NSSAI
-8.2.10.6, DNN
-8.2.10.7, Additional information
-8.2.10.8, MA PDU session information
-8.2.10.9, Release assistance indication
-8.2.10.10, Non-3GPP access path switching indication
-8.2.10.11, Alternative S-NSSAI
-8.2.10.12, Payload container information
 8.2.11, DL NAS transport
-8.2.11.1, Message definition
-8.2.11.2, PDU session ID
-8.2.11.3, Additional information
-8.2.11.4, 5GMM cause
-8.2.11.5, Back-off timer value
-8.2.11.6, Lower bound timer value
 8.2.12, De-registration request (UE originating de-registration)
-8.2.12.1, Message definition
-8.2.12.2, Unavailability information
-8.2.12.3, NAS message container
 8.2.13, De-registration accept (UE originating de-registration)
-8.2.13.1, Message definition
 8.2.14, De-registration request (UE terminated de-registration)
-8.2.14.1, Message definition
-8.2.14.2, 5GMM cause
-8.2.14.3, T3346 value
-8.2.14.4, Rejected NSSAI
-8.2.14.5, CAG information list
-8.2.14.6, Extended rejected NSSAI
-8.2.14.7, Disaster return wait range
-8.2.14.8, Lower bound timer value
-8.2.14.9, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
-8.2.14.10, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
-8.2.14.11, RAT utilization control
 8.2.15, De-registration accept (UE terminated de-registration)
-8.2.15.1, Message definition
 8.2.16, Service request
-8.2.16.1, Message definition
-8.2.16.2, Uplink data status
-8.2.16.3, PDU session status
-8.2.16.4, Allowed PDU session status
-8.2.16.5, NAS message container
-8.2.16.6, UE request type
-8.2.16.7, Paging restriction
 8.2.17, Service accept
-8.2.17.1, Message definition
-8.2.17.2, PDU session status
-8.2.17.3, PDU session reactivation result
-8.2.17.4, PDU session reactivation result error cause
-8.2.17.5, EAP message
-8.2.17.6, T3448 value
-8.2.17.7, 5GS additional request result
-8.2.17.8, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
-8.2.17.9, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
 8.2.18, Service reject
-8.2.18.1, Message definition
-8.2.18.2, PDU session status
-8.2.18.3, T3346 value
-8.2.18.4, EAP message
-8.2.18.5, T3448 value
-8.2.18.6, CAG information list
-8.2.18.7, Disaster return wait range
-8.2.18.8, Extended CAG information list
-8.2.18.9, Lower bound timer value
-8.2.18.10, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for roaming"
-8.2.18.11, Forbidden TAI(s) for the list of "5GS forbidden tracking areas for regional provision of service"
 8.2.19, Configuration update command
-8.2.19.1, Message definition
-8.2.19.2, Configuration update indication
-8.2.19.3, 5G-GUTI
-8.2.19.4, TAI list
-8.2.19.5, Allowed NSSAI
-8.2.19.6, Service area list
-8.2.19.7, Full name for network
-8.2.19.8, Short name for network
-8.2.19.9, Local time zone
-8.2.19.10, Universal time and local time zone
-8.2.19.11, Network daylight saving time
-8.2.19.12, LADN information
-8.2.19.13, MICO indication
-8.2.19.14, Network slicing indication
-8.2.19.15, Configured NSSAI
-8.2.19.16, Rejected NSSAI
-8.2.19.17, Operator-defined access category definitions
-8.2.19.18, SMS indication
-8.2.19.19, T3447 value
-8.2.19.20, CAG information list
-8.2.19.21, UE radio capability ID
-8.2.19.22, UE radio capability ID deletion indication
-8.2.19.23, 5GS registration result
-8.2.19.24, Truncated 5G-S-TMSI configuration
-8.2.19.25, Additional configuration indication
-8.2.19.26, Extended rejected NSSAI
-8.2.19.27, Service-level-AA container
-8.2.19.28, NSSRG information
-8.2.19.29, Disaster roaming wait range
-8.2.19.30, Disaster return wait range
-8.2.19.31, List of PLMNs to be used in disaster condition
-8.2.19.32, Extended CAG information list
-8.2.19.33, Updated PEIPS assistance information
-8.2.19.34, NSAG information
-8.2.19.35, Priority indicator
-8.2.19.36, RAN timing synchronization
-8.2.19.37, Extended LADN information
-8.2.19.38, Alternative NSSAI
-8.2.19.39, S-NSSAI location validity information
-8.2.19.40, S-NSSAI time validity information
-8.2.19.41, Maximum time offset
-8.2.19.42, Partially allowed NSSAI
-8.2.19.43, Partially rejected NSSAI
-8.2.19.44, Feature authorization indication
-8.2.19.45, On-demand NSSAI
-8.2.19.46, RAT utilization control
 8.2.20, Configuration update complete
-8.2.20.1, Message definition
-8.2.20.2, Void
 8.2.21, Identity request
-8.2.21.1, Message definition
 8.2.22, Identity response
-8.2.22.1, Message definition
 8.2.23, Notification
-8.2.23.1, Message definition
 8.2.24, Notification response
-8.2.24.1, Message definition
-8.2.24.2, PDU session status
 8.2.25, Security mode command
-8.2.25.1, Message definition
-8.2.25.2, IMEISV request
-8.2.25.3, Void
-8.2.25.4, Selected EPS NAS security algorithms
-8.2.25.5, Additional 5G security information
-8.2.25.6, EAP message
-8.2.25.7, ABBA
-8.2.25.8, Replayed S1 UE security capabilities
-8.2.25.9, AUN3 device security key
 8.2.26, Security mode complete
-8.2.26.1, Message definition
-8.2.26.2, IMEISV
-8.2.26.3, NAS message container
-8.2.26.4, non-IMEISV PEI
 8.2.27, Security mode reject
-8.6.27.1, Message definition
 8.2.28, Security protected 5GS NAS message
-8.2.28.1, Message definition
 8.2.29, 5GMM status
-8.2.29.1, Message definition
 8.2.30, Control Plane Service request
-8.2.30.1, Message definition
-8.2.30.2, CIoT small data container
-8.2.30.3, Payload container type
-8.2.30.4, Payload container
-8.2.30.5, PDU session ID
-8.2.30.6, PDU session status
-8.2.30.7, Release assistance indication
-8.2.30.8, Uplink data status
-8.2.30.9, NAS message container
-8.2.30.10, Additional information
-8.2.30.11, Allowed PDU session status
-8.2.30.12, UE request type
-8.2.30.13, Paging restriction
 8.2.31, Network slice-specific authentication command
-8.2.31.1, Message definition
 8.2.32, Network slice-specific authentication complete
-8.2.32.1, Message definition
 8.2.33, Network slice-specific authentication result
-8.2.33.1, Message definition
 8.2.34, Relay key request
-8.2.34.1, Message definition
 8.2.35, Relay key accept
-8.2.35.1, Message definition
-8.2.35.2, EAP message
 8.2.36, Relay key reject
-8.2.36.1, Message definition
-8.2.36.2, EAP message
 8.2.37, Relay authentication request
-8.2.37.1, Message definition
 8.2.38, Relay authentication response
-8.2.38.1, Message definition
 8.3, 5GS session management messages
 8.3.1, PDU session establishment request
-8.3.1.1, Message definition
-8.3.1.2, PDU session type
-8.3.1.3, SSC mode
-8.3.1.4, Maximum number of supported packet filters
-8.3.1.5, 5GSM capability
-8.3.1.6, Void
-8.3.1.7, Always-on PDU session requested
-8.3.1.8, SM PDU DN request container
-8.3.1.9, Extended protocol configuration options
-8.3.1.10, IP header compression configuration
-8.3.1.11, DS-TT Ethernet port MAC address
-8.3.1.12, UE-DS-TT residence time
-8.3.1.13, Port management information container
-8.3.1.14, Ethernet header compression configuration
-8.3.1.15, Suggested interface identifier
-8.3.1.16, Service-level-AA container
-8.3.1.17, Requested MBS container
-8.3.1.18, PDU session pair ID
-8.3.1.19, RSN
-8.3.1.20, URSP rule enforcement reports
 8.3.2, PDU session establishment accept
-8.3.2.1, Message definition
-8.3.2.2, 5GSM cause
-8.3.2.3, PDU address
-8.3.2.4, RQ timer value
-8.3.2.5, S-NSSAI
-8.3.2.6, Always-on PDU session indication
-8.3.2.7, Mapped EPS bearer contexts
-8.3.2.8, EAP message
-8.3.2.9, Authorized QoS flow descriptions
-8.3.2.10, Extended protocol configuration options
-8.3.2.11, DNN
-8.3.2.12, 5GSM network feature support
-8.3.2.13, Void
-8.3.2.14, Serving PLMN rate control
-8.3.2.15, ATSSS container
-8.3.2.16, Control plane only indication
-8.3.2.17, IP header compression configuration
-8.3.2.18, Ethernet header compression configuration
-8.3.2.19, Service-level-AA container
-8.3.2.20, Received MBS container
-8.3.2.21, N3QAI
-8.3.2.22, Protocol description
-8.3.2.23, ECN marking for L4S indication
 8.3.3, PDU session establishment reject
-8.3.3.1, Message definition
-8.3.3.2, Back-off timer value
-8.3.3.3, Allowed SSC mode
-8.3.3.4, EAP message
-8.3.3.5, Extended protocol configuration options
-8.3.3.6, Re-attempt indicator
-8.3.3.7, Service-level-AA container
 8.3.4, PDU session authentication command
-8.3.4.1, Message definition
-8.3.4.2, Extended protocol configuration options
-8.3.4.3, Void
 8.3.5, PDU session authentication complete
-8.3.5.1, Message definition
-8.3.5.2, Extended protocol configuration options
-8.3.5.3, Void
 8.3.6, PDU session authentication result
-8.3.6.1, Message definition
-8.3.6.2, EAP message
-8.3.6.3, Extended protocol configuration options
 8.3.7, PDU session modification request
-8.3.7.1, Message definition
-8.3.7.2, 5GSM capability
-8.3.7.3, 5GSM cause
-8.3.7.4, Maximum number of supported packet filters
-8.3.7.5, Always-on PDU session requested
-8.3.7.6, Integrity protection maximum data rate
-8.3.7.7, Requested QoS rules
-8.3.7.8, Requested QoS flow descriptions
-8.3.7.9, Extended protocol configuration options
-8.3.7.10, Mapped EPS bearer contexts
-8.3.7.11, Port management information container
-8.3.7.12, IP header compression configuration
-8.3.7.13, Ethernet header compression configuration
-8.3.7.14, Requested MBS container
-8.3.7.15, Service-level-AA container
-8.3.7.16, Non-3GPP delay budget
-8.3.7.17, URSP rule enforcement reports
 8.3.8, PDU session modification reject
-8.3.8.1, Message definition
-8.3.8.2, Back-off timer value
-8.3.8.3, Extended protocol configuration options
-8.3.8.4, Re-attempt indicator
 8.3.9, PDU session modification command
-8.3.9.1, Message definition
-8.3.9.2, 5GSM cause
-8.3.9.3, Session-AMBR
-8.3.9.4, RQ timer value
-8.3.9.5, Always-on PDU session indication
-8.3.9.6, Authorized QoS rules
-8.3.9.7, Mapped EPS bearer contexts
-8.3.9.8, Authorized QoS flow descriptions
-8.3.9.9, Extended protocol configuration options
-8.3.9.10, Void
-8.3.9.11, ATSSS container
-8.3.9.12, IP header compression configuration
-8.3.9.13, Port management information container
-8.3.9.14, Serving PLMN rate control
-8.3.9.15, Ethernet header compression configuration
-8.3.9.16, Received MBS container
-8.3.9.17, Service-level-AA container
-8.3.9.18, Alternative S-NSSAI
-8.3.9.19, N3QAI
-8.3.9.20, Protocol description
-8.3.9.21, ECN marking for L4S indication
 8.3.10, PDU session modification complete
-8.3.10.1, Message definition
-8.3.10.2, Extended protocol configuration options
-8.3.10.3, Port management information container
 8.3.11, PDU session modification command reject
-8.3.11.1, Message definition
-8.3.11.2, Extended protocol configuration options
 8.3.12, PDU session release request
-8.3.12.1, Message definition
-8.3.12.2, 5GSM cause
-8.3.12.3, Extended protocol configuration options
 8.3.13, PDU session release reject
-8.3.13.1, Message definition
-8.3.13.2, Extended protocol configuration options
 8.3.14, PDU session release command
-8.3.14.1, Message definition
-8.3.14.2, Back-off timer value
-8.3.14.3, EAP message
-8.3.14.4, Extended protocol configuration options
-8.3.14.5, 5GSM congestion re-attempt indicator
-8.3.14.6, Access type
-8.3.14.7, Service-level-AA container
-8.3.14.8, Alternative S-NSSAI
 8.3.15, PDU session release complete
-8.3.15.1, Message definition
-8.3.15.2, 5GSM cause
-8.3.15.3, Extended protocol configuration options
 8.3.16, 5GSM status
-8.3.16.1, Message definition
 8.3.17, Service-level authentication command
-8.3.17.1, Message definition
 8.3.18, Service-level authentication complete
-8.3.18.1, Message definition
 8.3.19, Remote UE report
-8.3.19.1, Message definition
-8.3.19.2, Remote UE context connected
-8.3.19.3, Remote UE context disconnected
 8.3.20, Remote UE report response
-8.3.20.1, Message definition
-8.3.20.2, Void
-8.3.20.3, Void
-8.3.20.4, Void
 9, General message format and information elements coding
 9.1, Overview
 9.1.1, NAS message format
@@ -887,178 +284,8 @@ Section ID, Section Name
 9.11, Other information elements
 9.11.1, General
 9.11.2, Common information elements
-9.11.2.1, Additional information
-9.11.2.2, EAP message
-9.11.2.3, GPRS timer
-9.11.2.4, GPRS timer 2
-9.11.2.5, GPRS timer 3
-9.11.2.6, Intra N1 mode NAS transparent container
-9.11.2.7, N1 mode to S1 mode NAS transparent container
-9.11.2.8, S-NSSAI
-9.11.2.9, S1 mode to N1 mode NAS transparent container
-9.11.2.10, Service-level-AA container
-9.11.2.11, Service-level device ID
-9.11.2.12, Service-level-AA server address
-9.11.2.13, Service-level-AA payload
-9.11.2.14, Service-level-AA response
-9.11.2.15, Service-level-AA payload type
-9.11.2.16, Void
-9.11.2.17, Service-level-AA pending indication
-9.11.2.18, Service-level-AA service status indication
-9.11.2.19, Time duration
-9.11.2.20, Unavailability information
-9.11.2.21, Unavailability configuration
 9.11.3, 5GS mobility management (5GMM) information elements
-9.11.3.1, 5GMM capability
-9.11.3.2, 5GMM cause
-9.11.3.3, 5GS identity type
-9.11.3.4, 5GS mobile identity
-9.11.3.5, 5GS network feature support
-9.11.3.6, 5GS registration result
-9.11.3.7, 5GS registration type
-9.11.3.8, 5GS tracking area identity
-9.11.3.9, 5GS tracking area identity list
-9.11.3.10, ABBA
-9.11.3.11, Void
-9.11.3.12, Additional 5G security information
-9.11.3.13, Allowed PDU session status
-9.11.3.14, Authentication failure parameter
-9.11.3.15, Authentication parameter AUTN
-9.11.3.16, Authentication parameter RAND
-9.11.3.17, Authentication response parameter
-9.11.3.18, Configuration update indication
-9.11.3.19, Daylight saving time
-9.11.3.20, De-registration type
-9.11.3.21, Void
-9.11.3.22, Void
-9.11.3.23, Emergency number list
-9.11.3.24, EPS NAS message container
-9.11.3.25, EPS NAS security algorithms
-9.11.3.26, Extended emergency number list
-9.11.3.27, Void
-9.11.3.28, IMEISV request
-9.11.3.29, LADN indication
-9.11.3.30, LADN information
-9.11.3.31, MICO indication
-9.11.3.32, NAS key set identifier
-9.11.3.33, NAS message container
-9.11.3.34, NAS security algorithms
-9.11.3.35, Network name
-9.11.3.36, Network slicing indication
-9.11.3.37, NSSAI
-9.11.3.38, Operator-defined access category definitions
-9.11.3.39, Payload container
-9.11.3.40, Payload container type
-9.11.3.41, PDU session identity 2
-9.11.3.42, PDU session reactivation result
-9.11.3.43, PDU session reactivation result error cause
-9.11.3.44, PDU session status
-9.11.3.45, PLMN list
-9.11.3.46, Rejected NSSAI
-9.11.3.47, Request type
-9.11.3.48, S1 UE network capability
-9.11.3.49, Service area list
-9.11.3.50, Service type
-9.11.3.51, SOR transparent container
-9.11.3.52, Time zone
-9.11.3.53, Time zone and time
-9.11.3.54, UE security capability
-9.11.3.55, UE's usage setting
-9.11.3.56, UE status
-9.11.3.57, Uplink data status
-9.11.3.58, Void
-9.11.3.59, Void
-9.11.3.60, Void
-9.11.3.61, Void
-9.11.3.62, Void
-9.11.3.63, Void
-9.11.3.64, Void
-9.11.3.65, Void
-9.11.3.66, Void
-9.11.3.67, Void
-9.11.3.68, UE radio capability ID
-9.11.3.69, UE radio capability ID deletion indication
-9.11.3.70, Truncated 5G-S-TMSI configuration
-9.11.3.71, WUS assistance information
-9.11.3.72, N5GC indication
-9.11.3.73, NB-N1 mode DRX parameters
-9.11.3.74, Additional configuration indication
-9.11.3.75, Extended rejected NSSAI
-9.11.3.76, UE request type
-9.11.3.77, Paging restriction
-9.11.3.78, Void
-9.11.3.79, NID
-9.11.3.80, PEIPS assistance information
-9.11.3.81, 5GS additional request result
-9.11.3.82, NSSRG information
-9.11.3.83, List of PLMNs to be used in disaster condition
-9.11.3.84, Registration wait range
-9.11.3.85, PLMN identity
-9.11.3.86, Extended CAG information list
-9.11.3.87, NSAG information
-9.11.3.88, ProSe relay transaction identity
-9.11.3.89, Relay key request parameters
-9.11.3.90, Relay key response parameters
-9.11.3.91, Priority indicator
-9.11.3.92, SNPN list
-9.11.3.93, N3IWF identifier
-9.11.3.94, TNAN information
-9.11.3.95, RAN timing synchronization
-9.11.3.96, Extended LADN information
-9.11.3.97, Alternative NSSAI
-9.11.3.98, Type 6 IE container
-9.11.3.99, Non-3GPP access path switching indication
-9.11.3.100, S-NSSAI location validity information
-9.11.3.101, S-NSSAI time validity information
-9.11.3.102, Non-3GPP path switching information
-9.11.3.103, Partial NSSAI
-9.11.3.104, AUN3 indication
-9.11.3.106, Payload container information
-9.11.3.107, AUN3 device security key
-9.11.3.108, On-demand NSSAI
-9.11.3.109, Extended 5GMM cause
-9.11.3.110, RAT utilization control
 9.11.4, 5GS session management (5GSM) information elements
-9.11.4.1, 5GSM capability
-9.11.4.2, 5GSM cause
-9.11.4.3, Always-on PDU session indication
-9.11.4.4, Always-on PDU session requested
-9.11.4.5, Allowed SSC mode
-9.11.4.6, Extended protocol configuration options
-9.11.4.7, Integrity protection maximum data rate
-9.11.4.8, Mapped EPS bearer contexts
-9.11.4.9, Maximum number of supported packet filters
-9.11.4.10, PDU address
-9.11.4.11, PDU session type
-9.11.4.12, QoS flow descriptions
-9.11.4.13, QoS rules
-9.11.4.14, Session-AMBR
-9.11.4.15, SM PDU DN request container
-9.11.4.16, SSC mode
-9.11.4.17, Re-attempt indicator
-9.11.4.18, 5GSM network feature support
-9.11.4.19, Void
-9.11.4.20, Serving PLMN rate control
-9.11.4.21, 5GSM congestion re-attempt indicator
-9.11.4.22, ATSSS container
-9.11.4.23, Control plane only indication
-9.11.4.24, IP header compression configuration
-9.11.4.25, DS-TT Ethernet port MAC address
-9.11.4.26, UE-DS-TT residence time
-9.11.4.27, Port management information container
-9.11.4.28, Ethernet header compression configuration
-9.11.4.29, Remote UE context list
-9.11.4.30, Requested MBS container
-9.11.4.31, Received MBS container
-9.11.4.32, PDU session pair ID
-9.11.4.33, RSN
-9.11.4.34, ECS address
-9.11.4.35, Void
-9.11.4.36, N3QAI
-9.11.4.37, Non-3GPP delay budget
-9.11.4.38, URSP rule enforcement reports
-9.11.4.39, Protocol description
-9.11.4.40, ECN marking for L4S indication
 9.12, 3GPP specific coding information defined within present document
 9.12.1, Serving network name (SNN)
 10, List of system parameters

@@ -1,0 +1,16 @@
+Okay, based on the provided table of contents, here are the sections that describe procedures, focusing on level 2 headings (x.x):
+
+*   **5, Elementary procedures for 5GS mobility management**
+*   **5.1, Overview**
+*   **5.2, Behaviour of the UE in state 5GMM-DEREGISTERED and state 5GMM-REGISTERED**
+*   **5.3, General on elementary 5GMM procedures**
+*   **5.4, 5GMM common procedures**
+*   **5.5, 5GMM specific procedures**
+*   **5.6, 5GMM connection management procedures**
+*   **6, Elementary procedures for 5GS session management**
+*   **6.1, Overview**
+*   **6.2, General on elementary 5GSM procedures**
+*   **6.3, Network-requested 5GSM procedures**
+*   **6.4, UE-requested 5GSM procedures**
+*   **6.5, 5GSM status procedure**
+*   **6.6, Miscellaneous procedures**
