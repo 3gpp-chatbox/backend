@@ -100,10 +100,6 @@ class ProcedureExtractor:
                 generation_config=self.generation_config
             )
 
-        # Log token usage
-            if hasattr(response, 'candidates'):
-                print(f"\nToken usage:")
-                print(f"Total tokens: {response.candidates[0].token_count}")
                 
             if response.text:
                 return self._parse_response(response.text, doc_title)
@@ -141,8 +137,6 @@ class ProcedureExtractor:
         2. **All information must be derived exclusively from the provided context.**
         3. Ensure all references point to **only** the given context.
         4. For the `sub_features` section, provide short content of the triggers, states, causes, expected outcomes, error handling, and feedback loops.
-        5. Don't include excessive direct references to specific sections within `sub_features` section.
-        **Do not generate information from your pre-existing knowledge.**
         """
 
     def _parse_response(self, response_text: str, doc_title: str) -> List[Dict]:

@@ -25,3 +25,22 @@
                 - Intra-AMF Handover
 
             """
+            refinements: 
+            #preprocess:
+            clean document: 
+                remove intermediate reproduct --done
+                before converting to md remove 
+            #chunking: 
+                instead of store chunks in rdb, store them in vector db---done
+            #embeddings: 
+                creating embeddings handle in embedding handler -- done
+                Use hybrid search combining semantic and keyword matching --done
+            #extracting: 
+                
+                instead of extracting information and graph data in two times, extract graph data 	directly (within one prompt)
+                refine the prompt
+                validation
+                count the tokens
+
+            visualization: 
+                visualize flow property diagram more precisely

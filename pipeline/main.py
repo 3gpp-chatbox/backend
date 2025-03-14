@@ -1,7 +1,6 @@
 from preprocessor import process_docx
-from chunker import create_chunks
-from db_handler import DBHandler
-from embeddings import process_embeddings
+from chunker import create_chunks, DocumentChunker
+from embedding_handler import DBHandler
 from extractor import ProcedureExtractor
 from extractGraphData import extract_nodes_and_edges
 import time
@@ -23,132 +22,91 @@ def main():
     root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     docx_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.docx")
     final_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.md")
-    db_path = os.path.join(root_folder, "DB", "chunks.db")
     persist_directory = os.path.join(root_folder, "DB", "chroma_db")
     output_directory = os.path.join(root_folder, "output")
     graph_directory = os.path.join(root_folder, "graphs")
 
     try:
-        # Initialize database handler
-        db_handler = DBHandler(db_path=db_path, persist_directory=persist_directory)
+        # Initialize database handler with ChromaDB
+        db_handler = DBHandler(persist_directory=persist_directory)
         doc_id = os.path.basename(final_md_path)
         
         # Process document if needed
         if not os.path.exists(final_md_path):
             print("\n[1/3] Processing DOCX file...")
-            return_code = process_docx(docx_path, final_md_path, db_path)
+            return_code = process_docx(docx_path, final_md_path)
             if return_code != 0:
                 print("✗ Processing failed. Stopping process.")
                 return
         else:
             print(f"\nUsing existing markdown file: {final_md_path}")
             if not db_handler.get_chunks(doc_id):
-                create_chunks(final_md_path, db_path)
+                print("Creating new chunks...")
+                with open(final_md_path, 'r', encoding='utf-8') as f:
+                    markdown_text = f.read()
+                chunker = DocumentChunker()
+                chunks = chunker.process_document(markdown_text)
+                stored_count = db_handler.store_chunks(chunks, doc_id)
+                print(f"Created and stored {stored_count} new chunks")
             else:
-                print("→ Using existing chunks from database")
+                print("→ Using existing chunks from vector database")
 
-        # Get or create ChromaDB collection
-        collection = process_embeddings(db_handler, doc_id)
-        if not collection:
-            print("✗ Failed to process embeddings. Stopping.")
+        # Get collection and verify it exists
+        try:
+            collection = db_handler._create_or_get_collection(doc_id)
+            if collection.count() == 0:
+                print("✗ No documents found in collection. Stopping.")
+                return
+            print(f"✓ Using collection with {collection.count()} documents")
+        except Exception as e:
+            print(f"✗ Failed to get collection: {e}")
             return
 
         # Extract procedures using Gemini API
         if Gemini_API_KEY:
             procedure_extractor = ProcedureExtractor(api_key=Gemini_API_KEY)
             
-            # Define the structured query
+            # Define a single query for both search and extraction
             query = """
-            Extract structured details specifically for these procedures within **Registration Procedures**.
-            Ensure the output follows a structured format, capturing the following key fields:
+            Find and extract information about Registration Procedures in 5G NAS:
 
-            **Procedure Name:**  
-            - "Initial Registration"
-            - "Periodic Registration"
+            1. Initial Registration procedure:
+            2. Periodic Registration update procedure:
 
-            **Sub-Features to Retrieve:**  
-            1. **Triggers:**  
-            - Capture key events that cause the UE to initiate the registration procedure.  
-            - Include deregistration scenarios and intersystem changes leading to registration.  
+            Extract all relevant details about the procedures from the context provided:
+               - Triggers and causes
+               - State transitions (5GMM/EMM)
+               - Message flows and NAS exchanges
+               - Error handling and retries
+               - Expected outcomes
 
-            2. **States:**  
-            - Extract relevant **5GMM** and **EMM** states before, during, and after registration.  
-            - Include conditions for each state transition.  
-
-            3. **Actions:**  
-            - List the explicit steps UE takes to initiate registration.  
-            - Capture NAS message exchange sequences.  
-
-            4. **Flow of Execution:**  
-            - Detail sequential steps in the registration process.  
-            - Include key interactions between UE and network.  
-
-            5. **Causes:**  
-            - Identify reasons leading to initial registration.  
-            - Differentiate between voluntary and network-initiated causes.  
-
-            6. **Expected Outcomes:**  
-            - Outline possible successful registration results.  
-            - Include GUTI assignment and access to services.  
-
-            7. **Error Handling:**  
-            - Capture steps taken when registration fails.  
-            - Include scenarios for message rejection and security failures.  
-
-            8. **Feedback Loops:**  
-            - Document UE behavior when registration is rejected.  
-            - Include mechanisms like retry logic and alternative access methods.  
-
-            **Metadata:**  
-            - Constraints & Requirements (if applicable)  
-            - Relevant NAS Message Types (e.g., REGISTRATION REQUEST, REGISTRATION ACCEPT, DEREGISTRATION ACCEPT)  
-            - References to 3GPP documentation sections.  
-            - Extract key excerpts that explain registration initiation conditions.  
-
-            **Instructions for Data Extraction:**  
-            - Exclude unrelated MM procedures and background information.  
-            - Prioritize accuracy and completeness.  
-            - Ensure minimal redundancy while maintaining all essential details.  
-        """
-
+            """
             
             os.makedirs(output_directory, exist_ok=True)
             print(f"\nProcessing procedures...")
             
-            # Use ChromaDB's semantic search
-            results = collection.query(
-                query_texts=[query],
-                n_results=15,  # Increased for better coverage
-                include=["documents", "metadatas", "distances"]
+            # Use hybrid search with adjusted parameters
+            relevant_chunks = db_handler.hybrid_search(
+                doc_id=doc_id,
+                query=query,
+                n_results=20,  # Increased number of results
+                min_similarity=0.3  # Lowered similarity threshold
             )
             
-            if not results['documents'][0]:
+            if not relevant_chunks:
                 print("✗ No relevant chunks found")
                 return
 
-            # Convert results to chunks format with similarity filtering
-            relevant_chunks = []
-            for doc, metadata, distance in zip(
-                results['documents'][0], 
-                results['metadatas'][0],
-                results['distances'][0]
-            ):
-                similarity = 1 - distance
-                if similarity >= 0.5:  # Similarity threshold
-                    relevant_chunks.append({
-                        'title': metadata['title'],
-                        'content': doc,
-                        'index': metadata['index'],
-                        'similarity': similarity
-                    })
-
-            if not relevant_chunks:
-                print("✗ No chunks met similarity threshold")
-                return
-
             print(f"→ Found {len(relevant_chunks)} relevant chunks")
+            print("\nTop 3 chunks with scores:")
+            for i, chunk in enumerate(relevant_chunks[:3], 1):
+                print(f"\n{i}. Title: {chunk['title']}")
+                print(f"   Content Preview: {chunk['content'][:150]}...")
+                print(f"   Semantic Score: {chunk['semantic_score']:.3f}")
+                print(f"   Keyword Score: {chunk['keyword_score']:.3f}")
+                print(f"   Combined Score: {chunk['combined_score']:.3f}")
             
-            # Extract procedures from relevant chunks
+            # Use the same query for procedure extraction
             procedures = procedure_extractor.extract_procedures_from_query(
                 query, relevant_chunks, doc_id
             )

@@ -1,0 +1,400 @@
+{
+  "nodes": [
+    {
+      "id": "state_emmderegistered",
+      "label": "EMMDEREGISTERED",
+      "type": "state",
+      "properties": {
+        "current_state": "EMMDEREGISTERED",
+        "conditions": "UE which was previously registered in S1 mode",
+        "next_states": [
+          "Registration Procedure Initiated"
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "trigger_initial_registration",
+      "label": "Initial Registration Trigger",
+      "type": "trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in EMMDEREGISTERED state after S1 mode registration",
+        "related_states": [
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "action_guami_mapping",
+      "label": "GUAMI Mapping",
+      "type": "action",
+      "properties": {
+        "actor": "UE NAS",
+        "prerequisites": "UE is in EMMDEREGISTERED state and needs to initiate registration.",
+        "outcomes": "Lower layers are provided with a GUAMI part of the 5GGUTI mapped from 4GGUTI with an indication that the GUAMI is mapped from EPS",
+        "error_cases": null,
+        "spec_references": "3GPP TS 23.003"
+      }
+    },
+    {
+      "id": "message_registration_request",
+      "label": "REGISTRATION REQUEST",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": null,
+        "optional_ies": null,
+        "spec_references": null
+      }
+    },
+    {
+      "id": "action_amf_authentication",
+      "label": "AMF Authentication",
+      "type": "action",
+      "properties": {
+        "actor": "AMF",
+        "prerequisites": "REGISTRATION REQUEST received from UE",
+        "outcomes": "UE is authenticated by the AMF.",
+        "error_cases": "Authentication failure.",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "action_amf_context_establishment",
+      "label": "5GMM Context Establishment",
+      "type": "action",
+      "properties": {
+        "actor": "AMF",
+        "prerequisites": "UE authentication successful.",
+        "outcomes": "A 5GMM context is established for the UE in the AMF.",
+        "error_cases": "Context establishment failure.",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "message_registration_accept",
+      "label": "REGISTRATION ACCEPT",
+      "type": "message",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "Network→UE",
+        "mandatory_ies": null,
+        "optional_ies": null,
+        "spec_references": null
+      }
+    },
+    {
+      "id": "outcome_successful_registration",
+      "label": "Successful Registration",
+      "type": "outcome",
+      "properties": {
+        "description": "UE is successfully registered with the 5G network.",
+        "conditions": "Registration Accept message received",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "outcome_5gmm_context_established",
+      "label": "5GMM Context Established",
+      "type": "outcome",
+      "properties": {
+        "description": "A 5GMM context is established for the UE in the AMF.",
+        "conditions": "Context establishment action completed",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "error_integrity_check_failed",
+      "label": "Integrity Check Failed",
+      "type": "error",
+      "properties": {
+        "description": "REGISTRATION REQUEST message fails the integrity check",
+        "handling_procedure": "AMF shall take actions as specified in subclause 4.4.4.3.",
+        "spec_references": "Subclause 4.4.4.3"
+      }
+    },
+    {
+      "id": "feedback_loop_rinmr_set",
+      "label": "RINMR Feedback Loop",
+      "type": "feedback",
+      "properties": {
+        "description": "AMF requests retransmission of initial NAS message with RINMR bit set.",
+        "conditions": "REGISTRATION REQUEST integrity check fails or NAS message container cannot be deciphered.",
+        "actions": [
+          "AMF includes Additional 5G security information IE with RINMR bit set to Retransmission of the initial NAS message requested in the SECURITY MODE COMMAND message",
+          "UE sends the entire REGISTRATION REQUEST message in the SECURITY MODE COMPLETE message."
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "message_security_mode_command",
+      "label": "SECURITY MODE COMMAND",
+      "type": "message",
+      "properties": {
+        "message_type": "SECURITY MODE COMMAND",
+        "direction": "Network -> UE",
+        "mandatory_ies": null,
+        "optional_ies": "Additional 5G security information IE (RINMR bit)",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "message_security_mode_complete",
+      "label": "SECURITY MODE COMPLETE",
+      "type": "message",
+      "properties": {
+        "message_type": "SECURITY MODE COMPLETE",
+        "direction": "UE -> Network",
+        "mandatory_ies": null,
+        "optional_ies": "REGISTRATION REQUEST (entire message)",
+        "spec_references": null
+      }
+    },
+    {
+      "id": "state_registration_procedure_initiated",
+      "label": "Registration Procedure Initiated",
+      "type": "state",
+      "properties": {
+        "current_state": "Registration Procedure Initiated",
+        "conditions": "UE has triggered the initial registration procedure",
+        "next_states": [
+          "AMF Authentication"
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "state_amf_authentication",
+      "label": "AMF Authentication",
+      "type": "state",
+      "properties": {
+        "current_state": "AMF Authentication",
+        "conditions": "REGISTRATION REQUEST received",
+        "next_states": [
+          "5GMM Context Establishment",
+          "Integrity Check Failed"
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "state_5gmm_context_establishment",
+      "label": "5GMM Context Establishment",
+      "type": "state",
+      "properties": {
+        "current_state": "5GMM Context Establishment",
+        "conditions": "Authentication successful",
+        "next_states": [
+          "Successful Registration"
+        ],
+        "spec_references": null
+      }
+    },
+    {
+      "id": "state_successful_registration",
+      "label": "Successful Registration",
+      "type": "state",
+      "properties": {
+        "current_state": "Successful Registration",
+        "conditions": "REGISTRATION ACCEPT received",
+        "next_states": [],
+        "spec_references": null
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_state_trigger",
+      "source": "state_emmderegistered",
+      "target": "trigger_initial_registration",
+      "label": "triggered_by",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_action",
+      "source": "trigger_initial_registration",
+      "target": "action_guami_mapping",
+      "label": "triggers",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_message",
+      "source": "action_guami_mapping",
+      "target": "message_registration_request",
+      "label": "sends",
+      "type": "relationship",
+      "properties": {
+        "sequence_number": 1,
+        "timing": null,
+        "retry_behavior": null,
+        "error_handling": null
+      }
+    },
+    {
+      "id": "edge_message_action_authentication",
+      "source": "message_registration_request",
+      "target": "action_amf_authentication",
+      "label": "triggers",
+      "type": "relationship",
+      "properties": {
+        "sequence_number": 2
+      }
+    },
+    {
+      "id": "edge_action_authentication_context",
+      "source": "action_amf_authentication",
+      "target": "action_amf_context_establishment",
+      "label": "triggers",
+      "type": "relationship",
+      "properties": {
+        "sequence_number": 3
+      }
+    },
+    {
+      "id": "edge_action_context_message",
+      "source": "action_amf_context_establishment",
+      "target": "message_registration_accept",
+      "label": "sends",
+      "type": "relationship",
+      "properties": {
+        "sequence_number": 4,
+        "timing": null,
+        "retry_behavior": null,
+        "error_handling": null
+      }
+    },
+    {
+      "id": "edge_message_outcome",
+      "source": "message_registration_accept",
+      "target": "outcome_successful_registration",
+      "label": "results_in",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_action_outcome",
+      "source": "action_amf_context_establishment",
+      "target": "outcome_5gmm_context_established",
+      "label": "results_in",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_error_handling",
+      "source": "action_amf_authentication",
+      "target": "error_integrity_check_failed",
+      "label": "on_error",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_feedback_loop",
+      "source": "error_integrity_check_failed",
+      "target": "feedback_loop_rinmr_set",
+      "label": "triggers",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_feedback_security_command",
+      "source": "feedback_loop_rinmr_set",
+      "target": "message_security_mode_command",
+      "label": "sends",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_security_complete",
+      "source": "message_security_mode_command",
+      "target": "message_security_mode_complete",
+      "label": "replies_with",
+      "type": "relationship",
+      "properties": {}
+    },
+    {
+      "id": "edge_emmderegistered_registration_initiated",
+      "source": "state_emmderegistered",
+      "target": "state_registration_procedure_initiated",
+      "label": "transitions_to",
+      "type": "state_transition",
+      "properties": {
+        "trigger": "trigger_initial_registration",
+        "conditions": null,
+        "success_criteria": "UE starts the registration procedure",
+        "failure_handling": null
+      }
+    },
+    {
+      "id": "edge_registration_initiated_amf_authentication",
+      "source": "state_registration_procedure_initiated",
+      "target": "state_amf_authentication",
+      "label": "transitions_to",
+      "type": "state_transition",
+      "properties": {
+        "trigger": "message_registration_request",
+        "conditions": null,
+        "success_criteria": "AMF starts the authentication procedure",
+        "failure_handling": null
+      }
+    },
+    {
+      "id": "edge_amf_authentication_context_establishment",
+      "source": "state_amf_authentication",
+      "target": "state_5gmm_context_establishment",
+      "label": "transitions_to",
+      "type": "state_transition",
+      "properties": {
+        "trigger": "action_amf_authentication",
+        "conditions": "Authentication successful",
+        "success_criteria": "Authentication passes",
+        "failure_handling": "Integrity check fails"
+      }
+    },
+    {
+      "id": "edge_context_establishment_success",
+      "source": "state_5gmm_context_establishment",
+      "target": "state_successful_registration",
+      "label": "transitions_to",
+      "type": "state_transition",
+      "properties": {
+        "trigger": "action_amf_context_establishment",
+        "conditions": "Context established",
+        "success_criteria": "REGISTRATION ACCEPT sent",
+        "failure_handling": null
+      }
+    },
+    {
+      "id": "edge_amf_authentication_integrity_failed",
+      "source": "state_amf_authentication",
+      "target": "error_integrity_check_failed",
+      "label": "transitions_to",
+      "type": "state_transition",
+      "properties": {
+        "trigger": "error_integrity_check_failed",
+        "conditions": "Integrity Check failed",
+        "success_criteria": "N/A",
+        "failure_handling": "AMF takes corrective action"
+      }
+    }
+  ],
+  "metadata": {
+    "procedure_id": "Initial Registration Procedure",
+    "doc_id": null,
+    "spec_sections": [
+      "Section 5.5.1.2.4 Initial registration accepted by the network",
+      "Section 5.3.1.1 Establishment of the N1 NAS signalling connection",
+      "Section 5.5.1.2.3 5GMM common procedure initiation"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": null,
+    "procedure_name": "Initial Registration procedure",
+    "total_nodes": 17,
+    "total_edges": 17
+  }
+}

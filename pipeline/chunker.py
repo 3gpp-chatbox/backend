@@ -7,7 +7,7 @@ import re
 from typing import List, Dict
 import spacy
 from spacy.language import Language
-from db_handler import DBHandler
+from embedding_handler import DBHandler
 import os
 
 class DocumentChunker:
@@ -103,16 +103,17 @@ class DocumentChunker:
         return semantic_chunks
 
 def create_chunks(markdown_file: str, db_path: str = None) -> List[Dict]:
-    """Main function to create chunks from a markdown file and store them in DB."""
+    """Main function to create chunks from a markdown file and store them in vector DB."""
     try:
+        # Initialize DB handler with ChromaDB
+        db_handler = DBHandler(persist_directory="DB/chroma_db")
+        doc_id = os.path.basename(markdown_file)
+        
         # Check if chunks already exist
-        if db_path:
-            db_handler = DBHandler(db_path)
-            doc_id = os.path.basename(markdown_file)
-            existing_chunks = db_handler.get_chunks(doc_id)
-            if existing_chunks:
-                print(f"Found {len(existing_chunks)} existing chunks")
-                return existing_chunks
+        existing_chunks = db_handler.get_chunks(doc_id)
+        if existing_chunks:
+            print(f"Found {len(existing_chunks)} existing chunks")
+            return existing_chunks
 
         # Create new chunks if none exist
         print("Creating new chunks...")
@@ -122,11 +123,8 @@ def create_chunks(markdown_file: str, db_path: str = None) -> List[Dict]:
         chunker = DocumentChunker()
         chunks = chunker.process_document(markdown_text)
         
-        if db_path:
-            stored_count = db_handler.store_chunks(chunks, doc_id)
-            print(f"Created and stored {stored_count} new chunks")
-        else:
-            print(f"Created {len(chunks)} new chunks")
+        stored_count = db_handler.store_chunks(chunks, doc_id)
+        print(f"Created and stored {stored_count} new chunks")
             
         return chunks
         

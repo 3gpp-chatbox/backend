@@ -1,109 +1,97 @@
 [
   {
-    "procedure_name": "Initial Registration",
+    "procedure_name": "Initial Registration procedure",
     "sub_features": {
       "Triggers": [
-        "Network-initiated deregistration requiring re-registration",
-        "UE configured for high priority access in selected PLMN or SNPN",
-        "Registration for emergency services",
-        "UE in NBN1 mode requested by upper layer to transmit user data related to an exceptional event and the UE is allowed to use exception data reporting and timer T3346 was not started when N1 NAS signalling connection was established with RRC establishment cause set to moExceptionData",
-        "Initiating of an emergency PDU session upon request of the upper layers to establish the emergency PDU session",
-        "Completion of the deregistration procedure and the release of the existing NAS signalling connection if any Tsorcm timers were running and have stopped the UE shall attempt to obtain service on a higher priority PLMN see 3GPP TS 23.122 on 3GPP access otherwise initiate an initial registration over both 3GPP access and non3GPP access.",
-        "After the completion of the deregistration procedure and the release of the existing NAS signalling connection initiate an initial registration over non3GPP."
+        "UE which was previously registered in S1 mode before entering state EMMDEREGISTERED performs an initial registration procedure"
       ],
       "States": [
-        "5GMMDEREGISTERED (after network-initiated deregistration)",
-        "EMMDEREGISTERED (after intersystem change from S1 mode to N1 mode)"
+        "EMMDEREGISTERED"
       ],
       "Actions": [
-        "Send REGISTRATION REQUEST message",
-        "Provide lower layers with GUAMI mapped from 4G GUTI (in specific intersystem change scenarios)",
-        "Abort the registration procedure for initial registration and proceed as described below if Lower layer failure or release of the NAS signalling connection received from lower layers before the REGISTRATION ACCEPT or REGISTRATION REJECT message is received.",
-        "Abort the registration procedure for initial registration and the UE initiated deregistration procedure shall be performed if UE initiated deregistration required."
+        "UE NAS provides the lower layers with a GUAMI part of the 5GGUTI mapped from 4GGUTI as specified in 3GPP TS 23.003 with an indication that the GUAMI is mapped from EPS"
       ],
       "Flow_of_execution": [
-        "UE determines need for initial registration based on triggers.",
-        "UE sends REGISTRATION REQUEST message to the network.",
-        "UE may provide GUAMI mapped from 4G GUTI in specific intersystem change scenarios.",
-        "Lower layers handle NAS signalling connection establishment.",
-        "If the access type included in the DEREGISTRATION REQUEST message sent by the UE is not same as access type sent by the network the UE shall initiate the registration procedure for initial registration for the access type not indicated in the DEREGISTRATION REQUEST message sent by the UE but indicated by the network."
+        "UE sends REGISTRATION REQUEST message.",
+        "AMF authenticates the UE.",
+        "AMF establishes a 5GMM context for the UE.",
+        "AMF sends REGISTRATION ACCEPT message to the UE."
       ],
       "Causes": [
-        "Network-initiated deregistration with re-registration required.",
-        "UE configuration for high priority access.",
-        "Emergency services registration.",
-        "Exceptional event data reporting in NBN1 mode.",
-        "Emergency PDU session establishment.",
-        "The UE which was previously registered in S1 mode before entering state EMMDEREGISTERED performs an initial registration procedure the UE has received the interworking without N26 interface indicator set to interworking without N26 interface not supported from the network and the UE holds a 4GGUTI"
+        "UE needs to register with the network for the first time after being in EMMDEREGISTERED state after S1 registration."
       ],
       "Expected_Outcomes": [
-        "Successful registration with the network.",
-        "Access to network services.",
-        "Potential GUTI assignment."
+        "UE is successfully registered with the 5G network.",
+        "A 5GMM context is established for the UE in the AMF."
       ],
       "Error_Handling": [
-        "Lower layer failure or release of NAS signalling connection before REGISTRATION ACCEPT/REJECT: Abort registration.",
-        "UE-initiated deregistration required: Abort registration and perform deregistration procedure."
+        "If the REGISTRATION REQUEST message fails the integrity check, the AMF shall take actions as specified in subclause 4.4.4.3."
       ],
       "Feedback_Loops": [
-        "If registration is rejected, UE may retry based on network configuration and UE capabilities.",
-        "If the access type included in the DEREGISTRATION REQUEST message sent by the UE is same as access type sent by the network the UE need not initiate the registration procedure for initial registration or If the access type included in the DEREGISTRATION REQUEST message sent by the UE is not same as access type sent by the network the UE shall initiate the registration procedure for initial registration for the access type not indicated in the DEREGISTRATION REQUEST message sent by the UE but indicated by the network."
+        "If the REGISTRATION REQUEST message does not successfully pass the integrity check at the AMF or the AMF can not decipher the value part of the NAS message container IE in the REGISTRATION REQUEST message the AMF shall include the Additional 5G security information IE with the RINMR bit set to Retransmission of the initial NAS message requested in the SECURITY MODE COMMAND message requesting the UE to send the entire REGISTRATION REQUEST message in the SECURITY MODE COMPLETE message."
       ]
     },
     "metadata": {
       "Constraints_Requirements": null,
-      "Message_Types": "REGISTRATION REQUEST, REGISTRATION ACCEPT, REGISTRATION REJECT, DEREGISTRATION REQUEST",
-      "References": "24501-j11.md, Section 5.5.2.3.2, 5.5.1.2.7, 5.3.1.3, 5.5.2.2.6",
-      "Excerpts": "The UE shall not start the registration procedure for initial registration unless 1 the UE is a UE configured for high priority access in selected PLMN or SNPN 2 the UE needs to perform the registration procedure for initial registration for emergency services 3 the UE receives a DEREGISTRATION REQUEST message with the reregistration required indication",
+      "Message_Types": "REGISTRATION REQUEST, REGISTRATION ACCEPT, SECURITY MODE COMMAND, SECURITY MODE COMPLETE",
+      "References": "Section 5.5.1.2.4 Initial registration accepted by the network, Section 5.3.1.1 Establishment of the N1 NAS signalling connection, Section 5.5.1.2.3 5GMM common procedure initiation",
+      "Excerpts": "If the UE is authorized to use 5G ProSe services based on a at least one of the following bits in the 5GMM capability IE of the REGISTRATION REQUEST message set by the UE or already stored in the 5GMM context in the AMF during the previous registration procedure as follows 1 the 5G ProSe direct discovery bit to 5G ProSe direct discovery supported or 2 the 5G ProSe direct communication bit to 5G ProSe direct communication supported and b the users subscription context obtained from the UDM as defined in 3GPP TS 23.304 6E the AMF should not immediately release the NAS signalling connection after the completion of the registration procedure.",
       "Identifiers": null
     },
     "procedure_category": "Registration Procedures"
   },
   {
-    "procedure_name": "Periodic Registration",
+    "procedure_name": "Periodic Registration update procedure",
     "sub_features": {
       "Triggers": [
-        "UE in 5GMM-CONNECTED mode with RRC inactive indication and the UE does not have pending uplink user data for PDU sessions with userplane resources already established initiate the registration procedure for mobility and periodic registration update used for mobility i.e. the 5GS registration type IE set to mobility registration updating in the REGISTRATION REQUEST message for N1 NAS signalling connection recovery as specified for case f in subclause 5.5.1.3.2",
-        "UE may initiate a registration procedure for mobility and periodic registration update for UE in NBN1 mode upon receiving a request from upper layers to transmit user data related to an exceptional event and the UE is allowed to use exception data reporting see the ExceptionDataReportingAllowed leaf of the NAS configuration MO in 3GPP TS 24.368 or the USIM file EFNASCONFIG in 3GPP TS 31.102 if timer T3346 is not already running for MO exception data and even if timer T3502 or timer T3511 is running",
-        "UE shall initiate a registration procedure for mobility and periodic registration update if the UE supports the reconnection to the network due to RAN timing synchronization status change and receives an indication of a change in the RAN timing synchronization status even if timer T3502 is running."
+        "UE needs to request the use of SMS over NAS transport or the current requirements to use SMS over NAS transport change in the UE.",
+        "UE used the old default configured NSSAI to create the requested NSSAI in a REGISTRATION REQUEST message because the UE does not have a configured NSSAI for the current PLMN or SNPN and the UE has an stored allowed NSSAI for the current PLMN or SNPN which contains one or more SNSSAIs that are not included in the new default configured NSSAI",
+        "UE operating in the singleregistration mode performs a registration procedure for mobility and periodic registration update indicating mobility registration updating following an intersystem change from S1 mode to N1 mode",
+        "Registration procedure was initiated to recover the NAS signalling connection due to RRC Connection failure from the lower layers",
+        "Registration procedure was initiated when the UE in 5GMMCONNECTED mode over 3GPP access or 5GMMCONNECTED mode with RRC inactive indication receives a fallback indication from lower layers",
+        "Registration procedure was initiated by the UE in 5GMMCONNECTED mode with RRC inactive indication entering a cell in the current registration area belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN and none of the other reasons for initiating the registration updating procedure listed in subclause 5.5.1.3.2 was applicable"
       ],
       "States": [
-        "5GMM-CONNECTED mode with RRC inactive indication",
-        "NBN1 mode"
+        "5GMMIDLE",
+        "5GMMCONNECTED"
       ],
       "Actions": [
-        "Send REGISTRATION REQUEST message with 5GS registration type IE set to mobility registration updating",
-        "Include Uplink data status IE in the REGISTRATION REQUEST message indicating the PDU sessions without active userplane resources for which the UE has pending user data to be sent if any and the PDU sessions for which userplane resources were active prior to receiving the fallback indication if any see subclauses 5.5.1.3 and 5.6.1 for further details."
+        "UE sends REGISTRATION REQUEST message to the AMF.",
+        "AMF integrity checks the REGISTRATION REQUEST message.",
+        "AMF sends REGISTRATION ACCEPT message to the UE.",
+        "AMF may initiate the release of the NAS signalling connection after the completion of the registration procedure for mobility and periodic registration update."
       ],
       "Flow_of_execution": [
-        "UE determines need for periodic registration based on triggers.",
-        "UE sends REGISTRATION REQUEST message with appropriate registration type.",
-        "Lower layers handle NAS signalling connection establishment."
+        "UE determines the need for periodic registration update.",
+        "UE sends REGISTRATION REQUEST message.",
+        "AMF processes the REGISTRATION REQUEST message.",
+        "AMF sends REGISTRATION ACCEPT message.",
+        "UE updates its registration status."
       ],
       "Causes": [
-        "Mobility registration update after RRC inactive indication.",
-        "Exceptional event data reporting in NBN1 mode.",
-        "RAN timing synchronization status change."
+        "Periodic timer expiry.",
+        "Mobility (e.g., change of TA).",
+        "UE needs to request the use of SMS over NAS transport or the current requirements to use SMS over NAS transport change in the UE.",
+        "UE used the old default configured NSSAI to create the requested NSSAI in a REGISTRATION REQUEST message because the UE does not have a configured NSSAI for the current PLMN or SNPN and the UE has an stored allowed NSSAI for the current PLMN or SNPN which contains one or more SNSSAIs that are not included in the new default configured NSSAI"
       ],
       "Expected_Outcomes": [
-        "Successful registration update with the network.",
-        "Continued access to network services.",
-        "Maintenance of registration area."
+        "UE's registration is updated in the network.",
+        "UE remains registered with the network.",
+        "Periodic registration timer is reset."
       ],
       "Error_Handling": [
-        "If 5GMM cause value received is #11 and the UE is operating in singleregistration mode handle the EMM parameters EMM state EPS update status EPS attach attempt counter tracking area updating attempt counter or service request attempt counter 4GGUTI TAI list eKSI as specified in 3GPP TS 24.301 for the case when the EPS attach tracking area updating procedure or service request procedure is rejected with the EMM cause of the same value in a NAS message without integrity protection",
-        "if the 5GMM cause value received is #73 and the UE is operating in singleregistration mode the UE shall in addition set the EPS update status to EU3 ROAMING NOT ALLOWED and shall delete any 4GGUTI last visited registered TAI TAI list and eKSI."
+        "If the AMF cannot retrieve the current 5G NAS security context as indicated by the ngKSI and 5GGUTI sent by the UE the AMF shall treat the REGISTRATION REQUEST message fails the integrity check and take actions as specified in subclause 4.4.4.3",
+        "If the UE has not included an Additional GUTI IE the AMF may treat the REGISTRATION REQUEST message as in the previous item i.e. as if it cannot retrieve the current 5G NAS security context."
       ],
       "Feedback_Loops": [
-        "UE resets registration attempt counter after successful registration.",
-        "UE handles EMM parameters based on received 5GMM cause values."
+        "If during an ongoing registration procedure the AMF is initiating a SECURITY MODE COMMAND i.e. after receiving the REGISTRATION REQUEST message but before sending a response to that message and a the REGISTRATION REQUEST message does not successfully pass the integrity check at the AMF or b the AMF can not decipher the value part of the NAS message container IE in the REGISTRATION REQUEST message the AMF shall include the Additional 5G security information IE with the RINMR bit set to Retransmission of the initial NAS message requested in the SECURITY MODE COMMAND message requesting the UE to send the entire REGISTRATION REQUEST message in the SECURITY MODE COMPLETE message as described in 3GPP TS 33.501 ."
       ]
     },
     "metadata": {
       "Constraints_Requirements": null,
-      "Message_Types": "REGISTRATION REQUEST",
-      "References": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2",
-      "Excerpts": "may initiate a registration procedure for mobility and periodic registration update for UE in NBN1 mode upon receiving a request from upper layers to transmit user data related to an exceptional event and the UE is allowed to use exception data reporting see the ExceptionDataReportingAllowed leaf of the NAS configuration MO in 3GPP TS 24.368 or the USIM file EFNASCONFIG in 3GPP TS 31.102 if timer T3346 is not already running for MO exception data and even if timer T3502 or timer T3511 is running",
+      "Message_Types": "REGISTRATION REQUEST, REGISTRATION ACCEPT, SECURITY MODE COMMAND, SECURITY MODE COMPLETE",
+      "References": "Section 5.5.1.3.4 Mobility and periodic registration update accepted by the network, Section 5.5.1.3.2 Mobility and periodic registration update initiation, Section 5.4.5.3.3 Network-initiated NAS transport of messages accepted by the UE, Section 4.4.2.5 Establishment of secure exchange of NAS messages, Section 5.5.1.3.7 Abnormal cases in the UE, Section 5.4.2.3 NAS security mode command accepted by the UE, Section 5.4.2.2 NAS security mode control initiation by the network",
+      "Excerpts": "If the UE is authorized to use 5G ProSe services based on a at least one of the following bits in the 5GMM capability IE of the REGISTRATION REQUEST message set by the UE or already stored in the 5GMM context in the AMF during the previous registration procedure as follows 1 the 5G ProSe direct discovery bit to 5G ProSe direct discovery supported or 2 the 5G ProSe direct communication bit to 5G ProSe direct communication supported and b the users subscription context obtained from the UDM as defined in 3GPP TS 23.304 6E the AMF should not immediately release the NAS signalling connection after the completion of the registration procedure.",
       "Identifiers": null
     },
     "procedure_category": "Registration Procedures"

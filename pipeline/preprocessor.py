@@ -3,7 +3,6 @@ import time
 from docling.document_converter import DocumentConverter
 import re
 from chunker import create_chunks
-from db_handler import DBHandler
 
 def process_docx(docx_file: str, output_path: str, db_path: str):
     """
@@ -98,6 +97,7 @@ def filter_markdown_content(markdown_text):
 def _is_table_line(line):
     return line.startswith('|') or (line and all(c == '-' or c == '|' for c in line))
 
+# Remove the last line if the heading is empty or contains only void
 def _process_previous_heading(output_lines, current_heading, heading_content):
     if current_heading and (not heading_content or ''.join(heading_content).strip().lower() == "void"):
         output_lines.pop()

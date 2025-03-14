@@ -1,0 +1,257 @@
+{
+  "nodes": [
+    {
+      "id": "state_5GMMIDLE",
+      "label": "5GMMIDLE",
+      "type": "State",
+      "properties": {
+        "current_state": "5GMMIDLE",
+        "conditions": "UE is in idle mode.",
+        "next_states": [
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "state_5GMMCONNECTED",
+      "label": "5GMMCONNECTED",
+      "type": "State",
+      "properties": {
+        "current_state": "5GMMCONNECTED",
+        "conditions": "UE is in connected mode.",
+        "next_states": [
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "trigger_periodic_timer_expiry",
+      "label": "Periodic Timer Expiry",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "Timer",
+        "conditions": "Periodic registration timer expires.",
+        "related_states": [
+          "5GMMIDLE",
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.2"
+      }
+    },
+    {
+      "id": "trigger_mobility",
+      "label": "Mobility",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "Mobility",
+        "conditions": "UE moves to a new Tracking Area (TA).",
+        "related_states": [
+          "5GMMIDLE",
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.2"
+      }
+    },
+    {
+      "id": "trigger_sms_over_nas",
+      "label": "SMS over NAS Request",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE needs to request the use of SMS over NAS transport or the current requirements to use SMS over NAS transport change in the UE.",
+        "related_states": [
+          "5GMMIDLE",
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.2"
+      }
+    },
+    {
+      "id": "trigger_nssai",
+      "label": "NSSAI Change",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE used the old default configured NSSAI to create the requested NSSAI in a REGISTRATION REQUEST message because the UE does not have a configured NSSAI for the current PLMN or SNPN and the UE has an stored allowed NSSAI for the current PLMN or SNPN which contains one or more SNSSAIs that are not included in the new default configured NSSAI",
+        "related_states": [
+          "5GMMIDLE",
+          "5GMMCONNECTED"
+        ],
+        "spec_references": "Section 5.5.1.3.2"
+      }
+    },
+    {
+      "id": "action_ue_send_registration_request",
+      "label": "UE sends REGISTRATION REQUEST",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "UE determines the need for periodic registration update.",
+        "outcomes": "REGISTRATION REQUEST message is sent to the AMF.",
+        "error_cases": "Lower layer failure to transmit the message.",
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "action_amf_process_registration_request",
+      "label": "AMF processes REGISTRATION REQUEST",
+      "type": "Action",
+      "properties": {
+        "actor": "AMF",
+        "prerequisites": "AMF receives REGISTRATION REQUEST message.",
+        "outcomes": "AMF validates and processes the registration request.",
+        "error_cases": "Integrity check failure, invalid information.",
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "action_amf_send_registration_accept",
+      "label": "AMF sends REGISTRATION ACCEPT",
+      "type": "Action",
+      "properties": {
+        "actor": "AMF",
+        "prerequisites": "AMF successfully processes the REGISTRATION REQUEST.",
+        "outcomes": "REGISTRATION ACCEPT message is sent to the UE.",
+        "error_cases": "Lower layer failure to transmit the message.",
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "message_registration_request",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "5GMM Capability, UE Security Capability",
+        "optional_ies": "Requested NSSAI, Additional GUTI",
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    },
+    {
+      "id": "message_registration_accept",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "Network→UE",
+        "mandatory_ies": "5G-GUTI, Registration Result",
+        "optional_ies": "Allowed NSSAI, PDU Session Status",
+        "spec_references": "Section 5.5.1.3.4"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_state_idle_to_action_trigger",
+      "source": "state_5GMMIDLE",
+      "target": "action_ue_send_registration_request",
+      "label": "Triggered",
+      "type": "Transition",
+      "properties": {
+        "trigger": "trigger_periodic_timer_expiry, trigger_mobility, trigger_sms_over_nas, trigger_nssai",
+        "conditions": "One of the triggers is activated.",
+        "success_criteria": "UE initiates the registration procedure.",
+        "failure_handling": "UE retries after backoff timer."
+      }
+    },
+    {
+      "id": "edge_state_connected_to_action_trigger",
+      "source": "state_5GMMCONNECTED",
+      "target": "action_ue_send_registration_request",
+      "label": "Triggered",
+      "type": "Transition",
+      "properties": {
+        "trigger": "trigger_periodic_timer_expiry, trigger_mobility, trigger_sms_over_nas, trigger_nssai",
+        "conditions": "One of the triggers is activated.",
+        "success_criteria": "UE initiates the registration procedure.",
+        "failure_handling": "UE retries after backoff timer."
+      }
+    },
+    {
+      "id": "edge_action_send_registration_request",
+      "source": "action_ue_send_registration_request",
+      "target": "message_registration_request",
+      "label": "Sends",
+      "type": "MessageFlow",
+      "properties": {
+        "sequence_number": 1,
+        "timing": "Immediately after trigger",
+        "retry_behavior": "Retry after backoff timer if no response",
+        "error_handling": "Handles lower layer failures."
+      }
+    },
+    {
+      "id": "edge_receive_registration_request",
+      "source": "message_registration_request",
+      "target": "action_amf_process_registration_request",
+      "label": "Receives",
+      "type": "MessageFlow",
+      "properties": {
+        "sequence_number": 2,
+        "timing": "Upon receipt of REGISTRATION REQUEST",
+        "retry_behavior": "N/A",
+        "error_handling": "See error handling in Section 4.4.4.3"
+      }
+    },
+    {
+      "id": "edge_action_process_to_send_accept",
+      "source": "action_amf_process_registration_request",
+      "target": "action_amf_send_registration_accept",
+      "label": "Processes and Sends Accept",
+      "type": "Action",
+      "properties": {
+        "trigger": "Successful processing of REGISTRATION REQUEST",
+        "conditions": "AMF is able to validate the REGISTRATION REQUEST.",
+        "success_criteria": "AMF sends REGISTRATION ACCEPT message.",
+        "failure_handling": "AMF sends REGISTRATION REJECT message."
+      }
+    },
+    {
+      "id": "edge_send_registration_accept",
+      "source": "action_amf_send_registration_accept",
+      "target": "message_registration_accept",
+      "label": "Sends",
+      "type": "MessageFlow",
+      "properties": {
+        "sequence_number": 3,
+        "timing": "After processing REGISTRATION REQUEST",
+        "retry_behavior": "Lower layer handles retry",
+        "error_handling": "Handles lower layer failures."
+      }
+    },
+    {
+      "id": "edge_registration_accept_to_state_connected",
+      "source": "message_registration_accept",
+      "target": "state_5GMMCONNECTED",
+      "label": "Registration complete",
+      "type": "Transition",
+      "properties": {
+        "trigger": "Reception of REGISTRATION ACCEPT message.",
+        "conditions": "UE receives REGISTRATION ACCEPT message.",
+        "success_criteria": "UE updates registration status.",
+        "failure_handling": "UE re-initiates registration procedure."
+      }
+    }
+  ],
+  "metadata": {
+    "procedure_id": "periodic_registration_update",
+    "doc_id": "3GPP TS 23.502",
+    "spec_sections": [
+      "Section 5.5.1.3.4",
+      "Section 5.5.1.3.2",
+      "Section 5.4.5.3.3",
+      "Section 4.4.2.5",
+      "Section 5.5.1.3.7",
+      "Section 5.4.2.3",
+      "Section 5.4.2.2"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": "Periodic Registration Update",
+    "procedure_name": "Periodic Registration update procedure",
+    "total_nodes": 11,
+    "total_edges": 7
+  }
+}
