@@ -1,6 +1,9 @@
 import sqlite3
 import re
 import os
+import sqlite3
+import re
+import os
 
 # Function to read LLM output and extract only Level 2 sections (e.g., 5.4, 5.5, 6.4, 6.6)
 def extract_level2_sections(llm_output_file):
@@ -21,16 +24,32 @@ def query_sections(section_id_prefix):
     conn = sqlite3.connect('section_content_0310.db')
     cursor = conn.cursor()
     
+    # Query for subsections (e.g., 5.4, 5.4.1, 5.4.2, etc.)
     cursor.execute('''
         SELECT section_id, section_name
         FROM sections
-        WHERE section_id LIKE ? and section_level IN (3, 4, 5)
+        WHERE section_id LIKE ? AND section_level IN (2, 3, 4, 5, 6, 7)
     ''', (f'{section_id_prefix}%',))
     
-    sections = cursor.fetchall()
+    subsections = cursor.fetchall()
+    
+    # Query for the parent section (e.g., 5)
+    parent_section_id = section_id_prefix.split('.')[0]  # Extract parent ID (e.g., 5 from 5.4)
+    cursor.execute('''
+        SELECT section_id, section_name
+        FROM sections
+        WHERE section_id = ? AND section_level = 1
+    ''', (parent_section_id,))
+    
+    parent_section = cursor.fetchone()
+    
     conn.close()
     
-    return sections
+    # Combine parent section and subsections
+    if parent_section:
+        return [parent_section] + subsections
+    else:
+        return subsections
 
 # Save query results to file
 def save_to_file(section_id_prefix, sections, output_dir):
@@ -43,14 +62,15 @@ def save_to_file(section_id_prefix, sections, output_dir):
 
 # Main function to process
 def process_sections_from_llm(output_dir="initial_extracted_subsection"):
-    os.makedirs(output_dir, exist_ok=True) #creates the folder if it does not exist.
+    os.makedirs(output_dir, exist_ok=True)  # Creates the folder if it does not exist.
+    
     # Step 1: Extract Level 2 sections from LLM output
-    level2_sections = extract_level2_sections('llmoutput.txt')
+    level2_sections = extract_level2_sections('refined-llmoutput.txt')
 
     # Step 2: Query DB and save to file for each Level 2 section
     for section in level2_sections:
-        subsections = query_sections(section)
-        save_to_file(section, subsections, output_dir)
+        sections = query_sections(section)
+        save_to_file(section, sections, output_dir)
 
 # Run the process
 process_sections_from_llm()

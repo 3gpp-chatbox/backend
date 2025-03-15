@@ -1,0 +1,48 @@
+Section ID, Section Name
+5, Elementary procedures for 5GS mobility management
+5.5, 5GMM specific procedures
+5.5.1, Registration procedure
+5.5.1.1, General
+5.5.1.2, Registration procedure for initial registration
+5.5.1.2.1, General
+5.5.1.2.2, Initial registration initiation
+5.5.1.2.3, 5GMM common procedure initiation
+5.5.1.2.4, Initial registration accepted by the network
+5.5.1.2.5, Initial registration not accepted by the network
+5.5.1.2.6, Initial registration for emergency services not accepted by the network
+5.5.1.2.7, Abnormal cases in the UE
+5.5.1.2.8, Abnormal cases on the network side
+5.5.1.3, Registration procedure for mobility and periodic registration update
+5.5.1.3.1, General
+5.5.1.3.2, Mobility and periodic registration update initiation
+5.5.1.3.3, 5GMM common procedure initiation
+5.5.1.3.4, Mobility and periodic registration update accepted by the network
+5.5.1.3.5, Mobility and periodic registration update not accepted by the network
+5.5.1.3.6, Mobility and periodic registration update for initiating an emergency PDU session not accepted by the network
+5.5.1.3.7, Abnormal cases in the UE
+5.5.1.3.8, Abnormal cases on the network side
+5.5.2, De-registration procedure
+5.5.2.1, General
+5.5.2.2, UE-initiated de-registration procedure
+5.5.2.2.1, UE-initiated de-registration procedure initiation
+5.5.2.2.2, UE-initiated de-registration procedure completion
+5.5.2.2.3, UE-initiated de-registration procedure completion for 5GS services over 3GPP access
+5.5.2.2.4, UE-initiated de-registration procedure completion for 5GS services over non-3GPP access
+5.5.2.2.5, UE-initiated de-registration procedure completion for 5GS services over both 3GPP access and non-3GPP access
+5.5.2.2.6, Abnormal cases in the UE
+5.5.2.2.7, Abnormal cases in the network side
+5.5.2.3, Network-initiated de-registration procedure
+5.5.2.3.1, Network-initiated de-registration procedure initiation
+5.5.2.3.2, Network-initiated de-registration procedure completion by the UE
+5.5.2.3.3, Network-initiated de-registration procedure completion by the network
+5.5.2.3.4, Abnormal cases in the UE
+5.5.2.3.5, Abnormal cases in the network side
+5.5.3, eCall inactivity procedure
+5.5.4, Authentication and key agreement procedure for 5G ProSe UE-to-network relay and 5G ProSe UE-to-UE relay
+5.5.4.1, General
+5.5.4.2, ProSe relay transaction identity (PRTI)
+5.5.4.3, UE-initiated authentication and key agreement procedure initiation
+5.5.4.4, UE-initiated authentication and key agreement procedure accepted by the network
+5.5.4.5, UE-initiated authentication and key agreement procedure not accepted by the network
+5.5.4.6, Abnormal cases in the UE
+5.5.4.7, Abnormal cases on the network side

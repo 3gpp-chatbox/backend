@@ -27,12 +27,13 @@ A sub-procedure is defined as:
 2. It can be logically separated and described on its own.
 3. It is not a standalone procedure but is a significant component of a larger process.
 
-Please list **all sections** that meet this definition, including those at deeper hierarchical levels 
+
+Please list **all sections** that meet this definition, where the child sections do not describle subprocedure that we defined above, which means, the sections you are going to list contain the lowest level sub-procedure. the section you need extract and list, they might have child section (sub section),but their child sections cannot be the sections that describle sub-procedures we defined above.
 
 Here is the list of sections:
 {sections_str}
 
-Please return only the sections that meet the criteria for sub-procedures.
+Please return only the sections that meet the criteria .
 """
     response = model.generate_content(prompt).text.strip()
     return response

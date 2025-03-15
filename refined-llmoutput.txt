@@ -1,0 +1,9 @@
+5, Elementary procedures for 5GS mobility management
+5.4, 5GMM common procedures
+5.5, 5GMM specific procedures
+5.6, 5GMM connection management procedures
+6, Elementary procedures for 5GS session management
+6.3, Network-requested 5GSM procedures
+6.4, UE-requested 5GSM procedures
+6.5, 5GSM status procedure
+6.6, Miscellaneous procedures

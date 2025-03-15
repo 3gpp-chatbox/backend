@@ -1,0 +1,7 @@
+Based on the provided sections and the definition of a sub-procedure, the following sections describe sub-procedures:
+
+*   **6.6.2, Remote UE report procedure**
+
+Rationale:
+
+Section 6.6 covers miscellaneous procedures within 5GS session management. Section 6.6.2 focuses specifically on the "Remote UE report procedure." Sections 6.6.2.1 to 6.6.2.5 further break down the stages and exceptional cases within this procedure which can be seen as independent steps. Since sections 6.6.2.1 to 6.6.2.5 describle the steps or phases, 6.6.2 meets the requirement of sub-procedures
