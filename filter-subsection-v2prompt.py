@@ -20,31 +20,31 @@ def read_sections_from_file(file_name):
 def classify_sections_with_llm(sections):
     sections_str = "\n".join(sections)
     prompt = f"""
-You are a 3GPP specification procedure expert, well-versed in hierarchical structures and procedural extraction. Below is a list of sections from the NAS specification. Your task is to identify and list all sections that describe **sub-procedures**.
+You are a 3GPP specification procedure expert. Your task is to identify and list all leaf-level sub-procedures from the following sections of the NAS specification.
 
-### **Definition of a Sub-Procedure**
-A **sub-procedure** in 3GPP specifications is:  
-1. A **logically self-contained but context-dependent** step within a larger procedure.  
-2. It contributes **specific procedural functionality** that supports the execution of the main procedure.  
-3. It **does not function independently** as a full procedure but plays a critical role in completing the parent procedure.  
-4. **If a section has further sub-procedures, only extract its lowest valid sub-procedures** to avoid redundant selection.
+Definition of a Leaf-Level Sub-Procedure
+A leaf-level sub-procedure in 3GPP specifications is:
 
-### **Task Instructions**
-- **Identify all sections that meet this definition.**
-- **Only select the lowest-level valid sub-procedures**, meaning:
-  - If a section has child sections that also qualify as sub-procedures, **do not select the parent**.  
-  - The selected sections may have child sections, but these child sections **should not themselves describe sub-procedures.**
-
-### **Sections to Analyze:**
+A logically self-contained, context-dependent step within a larger procedure.
+It contributes specific procedural functionality to the parent procedure but does not function independently as a complete procedure.
+It is at the end of the hierarchical chain, meaning there are no further subdivisions that describe additional sub-procedures within it.
+If a section has child sections, they may describe steps or exception cases but do not constitute new sub-procedures.
+Task Instructions
+Identify and list only the leaf-level sub-procedures.
+These are the sub-procedures that are not subdivided further into independent sub-procedures.
+If a section has children that provide more details or edge cases, it still counts as a leaf-level sub-procedure.
+Sections List to Analyze:
 {sections_str}
 
-Please return **only** the section numbers that meet the criteria, with no additional text.
+Please return only the section ID and name of the leaf-level subprocedures, without any additional explanation or text.
+
+
 """
     response = model.generate_content(prompt).text.strip()
     return response
 
 # Main function to process files in a directory
-def process_all_section_files(input_dir="initial_extracted_subsection", output_dir="filtered_subsections-v1prompt"):
+def process_all_section_files(input_dir="initial_extracted_subsection", output_dir="filtered_subsections_promptv2"):
     os.makedirs(output_dir, exist_ok=True)
     if not os.path.exists(input_dir):
         print(f"Error: Input directory '{input_dir}' not found.")
