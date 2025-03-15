@@ -1,0 +1,10 @@
+Based on the provided sections and the definition of a sub-procedure, here's the list of sections that describe sub-procedures:
+
+*   **6.3.1.2, PDU EAP message reliable transport procedure**
+*   **6.3.1.3, PDU EAP result message transport procedure**
+*   **6.3.2.2, Network-requested PDU session modification procedure initiation**
+*   **6.3.2.3, Network-requested PDU session modification procedure accepted by the UE**
+*   **6.3.2.4, Network-requested PDU session modification procedure not accepted by the UE**
+*   **6.3.3.2, Network-requested PDU session release procedure initiation**
+*   **6.3.3.3, Network-requested PDU session release procedure accepted by the UE**
+*   **6.3.3.4, N1 SM delivery skipped**

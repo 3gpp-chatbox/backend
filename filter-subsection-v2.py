@@ -24,19 +24,19 @@ You are a 3GPP specification procedure expert. Your task is to identify and list
 
 Definition of a Leaf-Level Sub-Procedure
 A leaf-level sub-procedure in 3GPP specifications is:
+1. A logically self-contained, context-dependent step within a larger procedure.
+2. It contributes specific procedural functionality to the parent procedure but does not function independently as a complete procedure.
+3. It is at the **end of the hierarchical chain** or as close as possible to the end, meaning it has no further divisions that describe additional independent sub-procedures within it.
+4. If a section has child sections that describe specific steps or edge cases, these are still part of the leaf-level sub-procedure if they do not introduce new independent sub-procedures.
 
-A logically self-contained, context-dependent step within a larger procedure.
-It contributes specific procedural functionality to the parent procedure but does not function independently as a complete procedure.
-It is at the end of the hierarchical chain, meaning there are no further subdivisions that describe additional sub-procedures within it.
-If a section has child sections, they may describe steps or exception cases but do not constitute new sub-procedures.
-Task Instructions
-Identify and list only the leaf-level sub-procedures.
-These are the sub-procedures that are not subdivided further into independent sub-procedures.
-If a section has children that provide more details or edge cases, it still counts as a leaf-level sub-procedure.
+Task Instructions:
+Identify and list only the leaf-level sub-procedures. These are the sections that do not have any further independent sub-procedures within them, even if they have child sections describing steps, edge cases, or abnormal situations.
+
 Sections List to Analyze:
 {sections_str}
 
-Please return only the section ID and name of the leaf-level subprocedures, without any additional explanation or text.
+Please return only the section ID and name of the leaf-level sub-procedures, without any additional explanation or text.
+
 
 
 """
@@ -44,7 +44,7 @@ Please return only the section ID and name of the leaf-level subprocedures, with
     return response
 
 # Main function to process files in a directory
-def process_all_section_files(input_dir="initial_extracted_subsection", output_dir="filtered_subsections_promptv2"):
+def process_all_section_files(input_dir="initial_extracted_subsection", output_dir="filtered_subsections-v2"):
     os.makedirs(output_dir, exist_ok=True)
     if not os.path.exists(input_dir):
         print(f"Error: Input directory '{input_dir}' not found.")

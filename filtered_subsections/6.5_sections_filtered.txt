@@ -1,8 +1,2 @@
-Based on the provided definitions and the given section list, the following sections describe sub-procedures:
-
-*   **6.5.2, 5GSM status received in the UE**
-*   **6.5.3, 5GSM status received in the SMF**
-
-**Explanation:**
-
-Section 6.5 describes the 5GSM status procedure. Sections 6.5.2 and 6.5.3 detail what happens when a 5GSM status message is received in the UE and SMF, respectively. These are clearly distinct parts of the overall 5GSM status procedure. They are not standalone procedures but are specific reactions or actions taken based on the received 5GSM status message. Thus they qualify as sub-procedures. The child section of 6.5.2 and 6.5.3 are not sub-procedures.
+6.5.2, 5GSM status received in the UE
+6.5.3, 5GSM status received in the SMF
