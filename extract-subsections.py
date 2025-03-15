@@ -1,5 +1,6 @@
 import sqlite3
 import re
+import os
 
 # Function to read LLM output and extract only Level 2 sections (e.g., 5.4, 5.5, 6.4, 6.6)
 def extract_level2_sections(llm_output_file):
@@ -24,7 +25,7 @@ def query_sections(section_id_prefix):
         SELECT section_id, section_name
         FROM sections
         WHERE section_id LIKE ? and section_level IN (3, 4, 5)
-    ''', (f'{section_id_prefix}%',))  
+    ''', (f'{section_id_prefix}%',))
     
     sections = cursor.fetchall()
     conn.close()
@@ -32,8 +33,8 @@ def query_sections(section_id_prefix):
     return sections
 
 # Save query results to file
-def save_to_file(section_id_prefix, sections):
-    filename = f"{section_id_prefix}_sections.txt"
+def save_to_file(section_id_prefix, sections, output_dir):
+    filename = os.path.join(output_dir, f"{section_id_prefix}_sections.txt")
     with open(filename, 'w', encoding='utf-8') as file:
         file.write("Section ID, Section Name\n")
         for section_id, section_name in sections:
@@ -41,14 +42,15 @@ def save_to_file(section_id_prefix, sections):
     print(f"✅ Saved to {filename}")
 
 # Main function to process
-def process_sections_from_llm():
+def process_sections_from_llm(output_dir="initial_extracted_subsection"):
+    os.makedirs(output_dir, exist_ok=True) #creates the folder if it does not exist.
     # Step 1: Extract Level 2 sections from LLM output
     level2_sections = extract_level2_sections('llmoutput.txt')
 
     # Step 2: Query DB and save to file for each Level 2 section
     for section in level2_sections:
         subsections = query_sections(section)
-        save_to_file(section, subsections)
+        save_to_file(section, subsections, output_dir)
 
 # Run the process
 process_sections_from_llm()

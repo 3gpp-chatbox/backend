@@ -1,36 +1,13 @@
 import sqlite3
-
-import sqlite3
 import re
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-import json
-import json
-import os
-from pydantic import BaseModel, ValidationError, Field,model_validator
-from typing import List, Dict, Optional, Any 
-import sys
-import time
-from enum import Enum
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Initialize Gemini model
-model = genai.GenerativeModel('gemini-2.0-flash')
-
-import sqlite3
-
-import sqlite3
-import sqlite3
-import os
-import google.generativeai as genai
-from dotenv import load_dotenv
-
-load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
 model = genai.GenerativeModel('gemini-2.0-flash')
 
 def get_hierarchical_content(section_id):
@@ -40,7 +17,6 @@ def get_hierarchical_content(section_id):
     levels = section_id.split('.')
     related_sections = []
 
-    # Get the target section's content
     cursor.execute('''
         SELECT section_name, content_chunk
         FROM content
@@ -50,10 +26,9 @@ def get_hierarchical_content(section_id):
 
     if not target_section:
         conn.close()
-        return None, []  # Return None and empty list if target section not found
+        return None, []
 
-    # Extract the regular hierarchy (parents, grandparents, etc.) in correct order
-    for i in range(1, len(levels) + 1): #change the range to get the correct order.
+    for i in range(1, len(levels) + 1):
         section_prefix = '.'.join(levels[:i])
         cursor.execute('''
             SELECT section_id, section_name, content_chunk
@@ -64,7 +39,6 @@ def get_hierarchical_content(section_id):
         if result:
             related_sections.append(result)
 
-    # Find sibling "General" sections
     if len(levels) > 1:
         parent_level = '.'.join(levels[:-1]) + '.%'
         cursor.execute('''
@@ -85,57 +59,56 @@ def extract_procedure_from_llm(section_id, target_section, content_hierarchy):
 
     target_name, target_content = target_section
     prompt = f"""
-    You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.
+        You are a **3GPP NAS specification expert** analyzing procedural flows from technical documentation.
 
-    Below is a **hierarchical section structure**, including parent sections for context.
+        Below is a **hierarchical section structure**, including parent sections for context.
 
-    our target section to extract procedure is: {section_id} {target_name},
+        our target section to extract procedure is: {section_id} {target_name},
 
-    its content is:
-    {target_content}
+        its content is:
+        {target_content}
 
-    above is our main target sections content to extract procedure, and then below is **Hierarchical Section Context surrounding it, i send them to you for you to understand the relationship and document strcuture and may contain some info you need for help you to extract procedure in the target section better:**
-    """
+        above is our main target sections content to extract procedure, and then below is **Hierarchical Section Context surrounding it, i send them to you for you to understand the relationship and document strcuture and may contain some info you need for help you to extract procedure in the target section better:**
+        """
 
-    # Exclude the target section from the hierarchy
     for sec_id, sec_name, content_chunk in content_hierarchy:
-        if sec_id != section_id: #add this line to exclude the target section.
+        if sec_id != section_id:
             prompt += f"\nSection {sec_id}: {sec_name}\n{content_chunk}\n"
 
     prompt += """
 
-    **Expected Output Format:**
+        **Expected Output Format:**
 
-    - **Procedure Name:** <Name>
+        - **Procedure Name:** <Name>
 
-    - **Triggering Conditions:**
+        - **Triggering Conditions:**
 
-        - Condition 1
+            - Condition 1
 
-        - Condition 2
+            - Condition 2
 
-    - **Steps:**
+        - **Steps:**
 
-        1. Step description
+            1. Step description
 
-        2. Step description
+            2. Step description
 
-    - **Decision Points:**
+        - **Decision Points:**
 
-        - Decision 1 → Outcome A / Outcome B
+            - Decision 1 → Outcome A / Outcome B
 
-    - **State Transitions:**
+        - **State Transitions:**
 
-        - After step 1, the state is <STATE>
+            - After step 1, the state is <STATE>
 
-        - After step 3, the state is <STATE>
+            - After step 3, the state is <STATE>
 
-    - **Important Information Elements:**
+        - **Important Information Elements:**
 
-        - IE 1: Description
+            - IE 1: Description
 
-        - IE 2: Description
-    """
+            - IE 2: Description
+        """
 
     prompt_file = f"prompts/{section_id}_prompt.txt"
     os.makedirs("prompts", exist_ok=True)
@@ -145,7 +118,13 @@ def extract_procedure_from_llm(section_id, target_section, content_hierarchy):
     response = model.generate_content(prompt).text.strip()
     return response
 
-def process_sections_from_file(file_path):
+def process_sections_from_file(file_path, base_output_dir="filtered_section_procedures"):
+    os.makedirs(base_output_dir, exist_ok=True)
+    filename = os.path.basename(file_path)
+    section_folder = os.path.splitext(filename)[0]
+    output_dir = os.path.join(base_output_dir, section_folder)
+    os.makedirs(output_dir, exist_ok=True)
+
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()[1:]
 
@@ -162,12 +141,20 @@ def process_sections_from_file(file_path):
 
         procedure_info = extract_procedure_from_llm(section_id, target_section, hierarchy)
 
-        output_file = f"procedures/{section_id}_procedure.txt"
-        os.makedirs("procedures", exist_ok=True)
+        output_file = os.path.join(output_dir, f"{section_id}_procedure.txt")
         with open(output_file, 'w', encoding='utf-8') as out_file:
             out_file.write(procedure_info)
 
         print(f"✅ Saved procedure for {section_id} in {output_file}")
 
-test_file = "5.5_sections.txt"
-process_sections_from_file(test_file)
+def process_all_filtered_files(directory="filtered_subsections"): #Change directory here.
+    if not os.path.exists(directory):
+        print(f"Error: Input directory '{directory}' not found.")
+        return
+
+    for filename in os.listdir(directory):
+        if filename.endswith('_filtered.txt'):
+            file_path = os.path.join(directory, filename)
+            process_sections_from_file(file_path)
+
+process_all_filtered_files()
