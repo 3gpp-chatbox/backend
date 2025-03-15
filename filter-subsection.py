@@ -20,20 +20,25 @@ def read_sections_from_file(file_name):
 def classify_sections_with_llm(sections):
     sections_str = "\n".join(sections)
     prompt = f"""
-You are a 3GPP specification procedure expert, and you understand procedures and specification structure very well. Below is a list of sections from the NAS specification. Your task is to identify and list all sections that describe **sub-procedures**.
+You are a 3GPP specification procedure expert, well-versed in hierarchical structures and procedural extraction. Below is a list of sections from the NAS specification. Your task is to identify and list all sections that describe **sub-procedures**.
 
-A sub-procedure is defined as:
-1. An independent step or phase within a larger procedure.
-2. It can be logically separated and described on its own.
-3. It is not a standalone procedure but is a significant component of a larger process.
+### **Definition of a Sub-Procedure**
+A **sub-procedure** in 3GPP specifications is:  
+1. A **logically self-contained but context-dependent** step within a larger procedure.  
+2. It contributes **specific procedural functionality** that supports the execution of the main procedure.  
+3. It **does not function independently** as a full procedure but plays a critical role in completing the parent procedure.  
+4. **If a section has further sub-procedures, only extract its lowest valid sub-procedures** to avoid redundant selection.
 
+### **Task Instructions**
+- **Identify all sections that meet this definition.**
+- **Only select the lowest-level valid sub-procedures**, meaning:
+  - If a section has child sections that also qualify as sub-procedures, **do not select the parent**.  
+  - The selected sections may have child sections, but these child sections **should not themselves describe sub-procedures.**
 
-Please list **all sections** that meet this definition, where the child sections do not describle subprocedure that we defined above, which means, the sections you are going to list contain the lowest level sub-procedure. the section you need extract and list, they might have child section (sub section),but their child sections cannot be the sections that describle sub-procedures we defined above.
-
-Here is the list of sections:
+### **Sections to Analyze:**
 {sections_str}
 
-Please return only the sections that meet the criteria .
+Please return **only** the section numbers that meet the criteria, with no additional text.
 """
     response = model.generate_content(prompt).text.strip()
     return response
