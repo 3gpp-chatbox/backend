@@ -27,7 +27,7 @@ async def get_graph_data(result_set: str, procedure_name: str):
         graphs_dir = get_graphs_directory(result_set)
         graph_path = os.path.join(
             graphs_dir,
-            f"{procedure_name.lower().replace(' ', '_')}_graph.json"
+            f"{procedure_name.lower()}.json"
         )
         
         # Read graph data
@@ -78,9 +78,9 @@ async def list_available_graphs(result_set: str):
         
         # List all graph files
         graph_files = [
-            f.replace("_graph.json", "")
+            f.replace(".json", "")
             for f in os.listdir(graphs_dir)
-            if f.endswith("_graph.json")
+            if f.endswith(".json")
         ]
         
         return {
