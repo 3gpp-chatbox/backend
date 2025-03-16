@@ -5,8 +5,8 @@ uvicorn main:app --reload
 GET /graphs/result-sets
 # Returns: ["method_1", "method_2", "method_3"]
 
-GET /graphs/{result_set}
+GET /graphs/result_set/{result_set}
 # Returns (eg:method_2): ["periodic_registration_graph.json", "initial_registration_graph.json"]
 
-GET /graphs/result-sets/Shehara/{procedure_name}
+GET /graphs/result-sets/{result_set}/{procedure_name}
 # Returns: {"status": "success", "data": {"nodes": [...], "edges": [...]}}..
