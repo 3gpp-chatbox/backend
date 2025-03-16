@@ -2,17 +2,52 @@ from preprocessor import process_docx
 from chunker import create_chunks, DocumentChunker
 from embedding_handler import DBHandler
 from extractor import ProcedureExtractor
-from extractGraphData import extract_nodes_and_edges
 import time
 import os
 import sys
 import json
+from typing import List, Dict
 
 # Add parent directory to path for config import
 root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_folder)
 from config import Gemini_API_KEY
 
+
+def save_procedure_by_type(procedures: List[Dict], output_directory: str, api_key: str):
+    """Dynamically save procedures based on their types"""
+    
+    # Group procedures by type
+    procedure_groups = {}
+    for proc in procedures:
+        # Get procedure type from procedure name 
+        proc_type = proc.get('procedure_name', '').lower().replace(' ', '_')
+        if not proc_type:  # Skip if no procedure name found
+            print(f"Warning: Procedure found without name: {proc}")
+            continue
+            
+        if proc_type not in procedure_groups:
+            procedure_groups[proc_type] = []
+        procedure_groups[proc_type].append(proc)
+    
+    # Create directories if they don't exist
+    os.makedirs(output_directory, exist_ok=True)
+    
+    # Save each procedure group
+    for proc_type, procs in procedure_groups.items():
+        # Save procedures
+        output_path = os.path.join(output_directory, f"{proc_type}.json")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(procs, f, indent=2, ensure_ascii=False)
+        print(f"→ Saved {proc_type} procedures to {output_path}")
+        
+        # Generate and save graph
+        # graphs = extract_nodes_and_edges(procs, api_key)
+        # if graphs:
+        #     graph_path = os.path.join(graph_directory, f"{safe_name}_graph.json")
+        #     with open(graph_path, 'w', encoding='utf-8') as f:
+        #         json.dump(graphs, f, indent=2, ensure_ascii=False)
+        #     print(f"→ Saved {proc_type} graph to {graph_path}")
 
 def main():
     total_start_time = time.time()
@@ -23,8 +58,7 @@ def main():
     docx_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.docx")
     final_md_path = os.path.join(root_folder, "3GPP_Documents", "TS_24_501", "24501-j11.md")
     persist_directory = os.path.join(root_folder, "DB", "chroma_db")
-    output_directory = os.path.join(root_folder, "output")
-    graph_directory = os.path.join(root_folder, "graphs")
+    output_directory = os.path.join(root_folder, "graphs", "method_2")
 
     try:
         # Initialize database handler with ChromaDB
@@ -66,19 +100,25 @@ def main():
         if Gemini_API_KEY:
             procedure_extractor = ProcedureExtractor(api_key=Gemini_API_KEY)
             
-            # Define a single query for both search and extraction
+            # query for both search and extraction
             query = """
-            Find and extract information about Registration Procedures in 5G NAS:
+            Search for and extract all relevant details on **Registration Procedures** for **5G Mobility Management**, focusing on the **Initial Registration** and **Periodic Registration Update** procedures.
 
-            1. Initial Registration procedure:
-            2. Periodic Registration update procedure:
+            ### Retrieval Details:
+            Look for passages that describe:
+            - **States**: The different User Equipment (UE) and network (AMF) states before, during, and after the registration process.
+            - **Transitions**: Descriptions of how the UE moves between states, triggered by events, conditions, and other factors. Include transitions involving different triggers and states.
+            - **Events**: Specific triggers that initiate or modify the registration process (e.g., power-on, periodic updates, intersystem changes).
+            - **Initial State**: The starting point or initial state in the registration procedure.
+            - **Final States**: The outcome states after a successful or failed registration process.
+            - **Actions**: Any operations performed by UE/AMF during registration (e.g., message exchanges, authentication).
+            - **Timers**: Timers influencing the procedure, especially those related to timeouts or retries.
+            - **Error Handling & Failure States**: Details on how registration failures (e.g., congestion, rejection) are handled and the resulting failure states.
+            - **NAS Messages**: The key NAS messages exchanged during registration (e.g., REGISTRATION REQUEST, REGISTRATION ACCEPT, REGISTRATION REJECT).
+            - **Loops & Iterations**: Information on retry mechanisms, periodic updates, and any iterations that occur during the registration process.
 
-            Extract all relevant details about the procedures from the context provided:
-               - Triggers and causes
-               - State transitions (5GMM/EMM)
-               - Message flows and NAS exchanges
-               - Error handling and retries
-               - Expected outcomes
+            ### Semantic Similarity:
+            Ensure that the retrieval captures **semantically similar** passages, even if the exact terminology is different. For instance, "initial registration" might be referred to as "first-time registration" or "registration initiation." The extraction should handle such variations.  
 
             """
             
@@ -112,44 +152,7 @@ def main():
             )
             
             if procedures:
-                # Organize procedures by category
-                categorized = {}
-                for proc in procedures:
-                    category = proc['procedure_category']
-                    if category not in categorized:
-                        categorized[category] = []
-                    categorized[category].append(proc)
-
-                # Save results by category
-                for category, procs in categorized.items():
-                    output_path = os.path.join(
-                        output_directory, 
-                        f"{category.lower().replace(' ', '_')}.json"
-                    )
-                    with open(output_path, 'w', encoding='utf-8') as f:
-                        json.dump(procs, f, indent=2, ensure_ascii=False)
-                    print(f"→ Saved {len(procs)} {category} procedures to {output_path}")
-
-                    # Extract and store graph data for each procedure
-                    print(f"\nProcessing graph data for {category}...")
-                    procedure_graphs = extract_nodes_and_edges(procs, Gemini_API_KEY)
-                    
-                    # Save individual graph files
-                    for proc_name, graph_data in procedure_graphs.items():
-                        if graph_data and graph_data.get("nodes"):
-                            # Create graphs directory if it doesn't exist
-                            os.makedirs(graph_directory, exist_ok=True)
-                            
-                            # Save to JSON file
-                            graph_path = os.path.join(
-                                graph_directory, 
-                                f"{proc_name.lower().replace(' ', '_')}_graph.json"
-                            )
-                            with open(graph_path, 'w', encoding='utf-8') as f:
-                                json.dump(graph_data, f, indent=2, ensure_ascii=False)
-                            print(f"→ Saved graph for {proc_name} with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
-                        else:
-                            print(f"✗ No valid graph data generated for {proc_name}")
+                save_procedure_by_type(procedures, output_directory, Gemini_API_KEY)
             else:
                 print("✗ No procedures found")
         else:

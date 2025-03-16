@@ -1,0 +1,134 @@
+[
+  {
+    "procedure_name": "Periodic Registration Update",
+    "procedure_type": "Periodic Registration Update",
+    "nodes": [
+      {
+        "id": "UE_REGISTERED_IDLE",
+        "type": "state",
+        "label": "5GMMIDLE",
+        "properties": {
+          "description": "UE is in 5GMMIDLE mode.",
+          "actor": "UE",
+          "reference": "5.5.1.3.2",
+          "conditions": null,
+          "timers": null,
+          "messages": null
+        }
+      },
+      {
+        "id": "EVENT_PERIODIC_UPDATE",
+        "type": "event",
+        "label": "Periodic Registration Update Trigger",
+        "properties": {
+          "description": "Periodic registration update is triggered by T3512 expiry, TAI change, CONFIGURATION UPDATE COMMAND, paging, intersystem change, RRC connection failure, 5GMM capability change, usage setting change, slice change, service reject, eDRX change, request from upper layers to establish an emergency PDU session or perform emergency services fallback, need to register for SMS over NAS, need to indicate PDU session status, change in radio capability, fallback indication, request new LADN information, request the use of MICO mode, enter a cell in the current registration area belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN.",
+          "actor": "UE",
+          "reference": "5.5.1.3.2",
+          "conditions": [
+            "T3512 expiry",
+            "TAI change",
+            "CONFIGURATION UPDATE COMMAND",
+            "paging",
+            "intersystem change",
+            "RRC connection failure",
+            "5GMM capability change",
+            "usage setting change",
+            "slice change",
+            "service reject",
+            "eDRX change",
+            "request from upper layers to establish an emergency PDU session or perform emergency services fallback",
+            "need to register for SMS over NAS",
+            "need to indicate PDU session status",
+            "change in radio capability",
+            "fallback indication",
+            "request new LADN information",
+            "request the use of MICO mode",
+            "enter a cell in the current registration area belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN"
+          ],
+          "timers": [
+            "T3512"
+          ],
+          "messages": null
+        }
+      },
+      {
+        "id": "MSG_REG_REQUEST_PERIODIC",
+        "type": "message",
+        "label": "REGISTRATION REQUEST (Periodic)",
+        "properties": {
+          "description": "UE sends a REGISTRATION REQUEST message to the AMF to initiate periodic registration update. May include PDU session status IE, Uplink data status IE, 5GMM capability IE, S1 UE network capability IE, UE status IE.",
+          "actor": "UE",
+          "reference": "5.5.1.3.2",
+          "conditions": null,
+          "timers": null,
+          "messages": [
+            "REGISTRATION REQUEST"
+          ]
+        }
+      },
+      {
+        "id": "UE_REGISTERED_NORMAL",
+        "type": "state",
+        "label": "5GMMREGISTERED.NORMALSERVICE",
+        "properties": {
+          "description": "UE is in registered state with normal service.",
+          "actor": "UE",
+          "reference": "5.3.7",
+          "conditions": null,
+          "timers": null,
+          "messages": null
+        }
+      },
+      {
+        "id": "UE_ATTEMPTING_REG_UPDATE",
+        "type": "state",
+        "label": "5GMMREGISTERED.ATTEMPTINGREGISTRATIONUPDATE",
+        "properties": {
+          "description": "UE is in attempting registration update state.",
+          "actor": "UE",
+          "reference": "5.1.3.2.1.4.4",
+          "conditions": null,
+          "timers": null,
+          "messages": null
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE_4",
+        "source": "UE_REGISTERED_IDLE",
+        "target": "EVENT_PERIODIC_UPDATE",
+        "type": "triggers",
+        "label": "Triggers"
+      },
+      {
+        "id": "EDGE_5",
+        "source": "EVENT_PERIODIC_UPDATE",
+        "target": "MSG_REG_REQUEST_PERIODIC",
+        "type": "sends",
+        "label": "Sends"
+      },
+      {
+        "id": "EDGE_6",
+        "source": "MSG_REG_REQUEST_PERIODIC",
+        "target": "UE_REGISTERED_NORMAL",
+        "type": "transition",
+        "label": "Transition to Registered Normal"
+      },
+      {
+        "id": "EDGE_7",
+        "source": "UE_REGISTERED_IDLE",
+        "target": "UE_ATTEMPTING_REG_UPDATE",
+        "type": "transition",
+        "label": "Transition to Attempting Registration Update"
+      },
+      {
+        "id": "EDGE_8",
+        "source": "UE_ATTEMPTING_REG_UPDATE",
+        "target": "EVENT_PERIODIC_UPDATE",
+        "type": "triggers",
+        "label": "Triggers"
+      }
+    ]
+  }
+]

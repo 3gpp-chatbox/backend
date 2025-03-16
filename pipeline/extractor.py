@@ -1,87 +1,104 @@
 import google.generativeai as genai
-import os
 import json
 from typing import List, Dict, Optional, Any
 import chromadb
 from pydantic import BaseModel, Field, ValidationError
 
-# Define Pydantic models
-class SubFeatures(BaseModel):
-    Triggers: List[str] = Field(
-        ...,
-        description="Triggers causing transitions between states."
-    )
-    States: List[str] = Field(
-        ...,
-        description="Different conditions or statuses of the UE and network elements."
-    )
-    Actions: List[str] = Field(
-        ...,
-        description="Actions taken by the UE and network elements."
-    )
-    Flow_of_execution: List[str] = Field(
-        ...,
-        description="Sequence of steps in the procedure"
-    )
-    Causes: List[str] = Field(
-        ...,
-        description="Cause of the procedure"
-    )   
-    Expected_Outcomes: List[str] = Field(
-        ...,
-        description="Expected outcomes of the procedure"
-    )
-    Error_Handling: List[str] = Field(
-        ...,
-        description="Error handling for the procedure"
-    )
-    Feedback_Loops: List[str] = Field(
-        ...,
-        description="Feedback loops for the procedure"
-    )
+# Define Pydantic models for property graph
+class Properties(BaseModel):
+    description: str = Field(..., description="Description of the node or edge")
+    actor: Optional[str] = Field(None, description="Actor involved (UE or Network)")
+    reference: str = Field(..., description="Reference to the 3GPP specification section")
+    conditions: Optional[List[str]] = Field(None, description="Conditions that must be met")
+    timers: Optional[List[str]] = Field(None, description="Timers affecting this element")
+    messages: Optional[List[str]] = Field(None, description="NAS messages involved")
 
-class Metadata(BaseModel):
-    Constraints_Requirements: Optional[str] = Field(
-        None, 
-        description="Network availability, resource allocation"
-    )
-    Message_Types: Optional[str] = Field(
-        None,
-        description="Types of messages exchanged during the procedure"
-    )
-    References: Optional[str] = Field(
-        None,
-        description="relevant document name and section titles of the given context"
-    )
-    Excerpts: Optional[str] = Field(
-        None,
-        description="Direct quotes from the given context"
-    )
-    Identifiers: Optional[str] = Field(
-        None,
-        description="Unique procedure IDs"
-    )
+class Node(BaseModel):
+    id: str = Field(..., description="Unique identifier for the node")
+    type: str = Field(..., description="Node type (state, event, message)")
+    label: str = Field(..., description="Display label for the node")
+    properties: Properties = Field(..., description="Node properties")
 
-class Procedure(BaseModel):
-    procedure_name: str 
-    sub_features: SubFeatures
-    metadata: Metadata
+class Edge(BaseModel):
+    id: str = Field(..., description="Unique identifier for the edge")
+    source: str = Field(..., description="Source node ID")
+    target: str = Field(..., description="Target node ID")
+    type: str = Field(..., description="Edge type (transition, triggers, sends)")
+    label: str = Field(..., description="Display label for the edge")
+class RegistrationProcedure(BaseModel):
+    procedure_name: str = Field(..., description="Name of the procedure (Initial Registration or Periodic Registration Update)")
+    nodes: List[Node] = Field(..., description="Graph nodes")
+    edges: List[Edge] = Field(..., description="Graph edges")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional procedure metadata")
 
-class ProcedureCategory(BaseModel):
-    category_name: str 
-    procedures: List[Procedure]
+class RegistrationProcedures(BaseModel):
+    procedures: List[RegistrationProcedure] = Field(..., description="List of registration procedures")
 
-class ProceduresSchema(BaseModel):
-    level_1_procedures: List[ProcedureCategory]
+    def __init__(self, **data):
+        # Ensure we have both procedure types
+        if 'procedures' in data:
+            proc_names = {p['procedure_name'] for p in data['procedures']}
+            if 'Initial Registration' not in proc_names:
+                data['procedures'].append({
+                    'procedure_name': 'Initial Registration',
+                    'nodes': [], 'edges': []
+                })
+            if 'Periodic Registration Update' not in proc_names:
+                data['procedures'].append({
+                    'procedure_name': 'Periodic Registration Update',
+                    'nodes': [], 'edges': []
+                })
+        super().__init__(**data)
+
+class PropertyGraph(BaseModel):
+    procedure_name: str = Field(..., description="Name of the procedure")
+    procedure_type: str = Field(..., description="Type of procedure")
+    nodes: List[Node] = Field(..., description="Graph nodes")
+    edges: List[Edge] = Field(..., description="Graph edges")
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'PropertyGraph':
+        """Create PropertyGraph from raw dictionary, handling missing fields"""
+        # Ensure required fields exist
+        if 'procedure_name' not in data:
+            raise ValueError("procedure_name is required")
+            
+        # Set procedure_type from name if not provided
+        if 'procedure_type' not in data:
+            data['procedure_type'] = data['procedure_name']
+            
+        # Initialize empty lists if not provided
+        if 'nodes' not in data:
+            data['nodes'] = []
+        if 'edges' not in data:
+            data['edges'] = []
+            
+        return cls(**data)
 
 class ExtractionResponse(BaseModel):
-    procedures: List[Procedure]
-    metadata: Dict[str, Any]
+    procedures: List[PropertyGraph]
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'ExtractionResponse':
+        """Create ExtractionResponse from raw dictionary"""
+        if isinstance(data, dict):
+            # If single procedure
+            if 'procedure_name' in data:
+                return cls(procedures=[PropertyGraph.from_dict(data)])
+            # If list of procedures in different format
+            if 'procedures' in data:
+                return cls(procedures=[PropertyGraph.from_dict(p) for p in data['procedures']])
+            
+        # If list of procedures directly
+        if isinstance(data, list):
+            return cls(procedures=[PropertyGraph.from_dict(p) for p in data])
+            
+        raise ValueError("Invalid data format")
 
 class ProcedureExtractor:
     def __init__(self, api_key: str, model_name: str = "gemini-2.0-flash"):
         """Initialize Gemini API and configure the model"""
-        genai.configure(api_key=api_key) 
+        genai.configure(api_key=api_key)
         self.client = genai.GenerativeModel(model_name)
         self.generation_config = {
             "temperature": 0,
@@ -90,53 +107,28 @@ class ProcedureExtractor:
             # "max_output_tokens": 8000
         }
 
-    def extract_procedures_from_query(self, query: str, relevant_chunks: List[Dict], doc_title: str) -> List[Procedure]:
-        """Extract procedures based on query and relevant chunks"""
-        prompt = self._create_query_based_prompt(query, relevant_chunks, doc_title)
-        
-        try:
-            response = self.client.generate_content(
-                contents=prompt,
-                generation_config=self.generation_config
-            )
-
-                
-            if response.text:
-                return self._parse_response(response.text, doc_title)
-            return []
-            
-        except Exception as e:
-            print(f"Error extracting procedures for query: {e}")
-            return []
-
     def _create_query_based_prompt(self, query: str, chunks: List[Dict], doc_title: str) -> str:
-        """Create a prompt that incorporates the query and relevant chunks"""
         chunks_text = "\n\n".join([
             f"Section {chunk['title']}\nContent: {chunk['content']}"
             for chunk in chunks
         ])
         
-        # Add debug printing
-        print("\n=== Chunks Text ===")
-        print(chunks_text)
-        print("=== End Chunks Text ===\n")
-        
-        # Use model_json_schema 
-        schema = json.dumps(ProceduresSchema.model_json_schema(), indent=2)
-        
-        return f"""
-        You are a 3GPP specification expert. Your task is to analyze the provided 
-        {query} procedure taxonomy and metadata structure and generate a JSON representation of it.  
-        The JSON should capture the hierarchical relationships between categories, procedures, and their sub-features,
-        as well as incorporate the metadata elements.
-        Context: {chunks_text}
-        document: {doc_title}
-        **Output Format (Valid JSON Schema)**:
-        {schema}
-        1. Ensure the output is valid JSON and follows the above schema.
-        2. **All information must be derived exclusively from the provided context.**
-        3. Ensure all references point to **only** the given context.
-        4. For the `sub_features` section, provide short content of the triggers, states, causes, expected outcomes, error handling, and feedback loops.
+        return f"""You are a 3GPP specification expert. Extract mentioned procedures as property graphs.
+
+        For EACH procedure mentioned in the query:
+        {query}
+
+        Context:
+        {chunks_text}
+
+        Return procedures in this exact JSON schema:
+        {json.dumps(RegistrationProcedures.model_json_schema(), indent=2)}
+
+        Ensure:
+        1. Each node has a unique ID
+        2. Edges connect nodes using their IDs
+        3. All properties include section references
+        4. Message flows are properly captured
         """
 
     def _parse_response(self, response_text: str, doc_title: str) -> List[Dict]:
@@ -148,17 +140,18 @@ class ProcedureExtractor:
                 cleaned_text = cleaned_text[:-3]
 
             data = json.loads(cleaned_text.strip())
-            validated_data = ProceduresSchema(**data)
             
-            procedures_list = []
-            for category in validated_data.level_1_procedures:
-                for procedure in category.procedures:
-                    procedure_dict = procedure.dict()
-                    procedure_dict['procedure_category'] = category.category_name  # Add category dynamically
-                    procedures_list.append(procedure_dict)
-
-            print(f"Successfully parsed {len(procedures_list)} procedures")
-            return procedures_list
+            # Use the new from_dict methods to handle various response formats
+            try:
+                validated_data = ExtractionResponse.from_dict(data)
+                return [proc.dict() for proc in validated_data.procedures]
+            except ValidationError as e:
+                print(f"First validation attempt failed: {e}")
+                # Try wrapping in procedures list if single procedure
+                if isinstance(data, dict) and 'procedure_name' in data:
+                    validated_data = ExtractionResponse(procedures=[PropertyGraph.from_dict(data)])
+                    return [proc.dict() for proc in validated_data.procedures]
+                raise
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing error: {e}")
@@ -167,7 +160,27 @@ class ProcedureExtractor:
         except ValidationError as e:
             print(f"Validation error: {e}")
             return []
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return []
 
+    def extract_procedures_from_query(self, query: str, relevant_chunks: List[Dict], doc_title: str) -> List[Dict]:
+        """Extract property graph representation of procedures"""
+        prompt = self._create_query_based_prompt(query, relevant_chunks, doc_title)
+        
+        try:
+            response = self.client.generate_content(
+                contents=prompt,
+                generation_config=self.generation_config
+            )
+            
+            if response.text:
+                return self._parse_response(response.text, doc_title)
+            return []
+            
+        except Exception as e:
+            print(f"Error extracting procedures: {e}")
+            return []
 
     def perform_similarity_search(
         self,
@@ -253,7 +266,7 @@ class ProcedureExtractor:
 
             extracted_procedures = self.extract_procedures_from_query(query, chunks, doc_id)
             return ExtractionResponse(procedures=extracted_procedures, metadata={"source": doc_id})
-        
+
         except Exception as e:
             print(f"Error extracting procedures: {e}")
             return ExtractionResponse(procedures=[], metadata={"error": str(e)})

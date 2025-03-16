@@ -1,0 +1,93 @@
+[
+  {
+    "procedure_name": "Initial Registration",
+    "procedure_type": "Initial Registration",
+    "nodes": [
+      {
+        "id": "UE_DEREGISTERED",
+        "type": "state",
+        "label": "5GMMDEREGISTERED",
+        "properties": {
+          "description": "UE is in deregistered state.",
+          "actor": "UE",
+          "reference": "5.5.1.2.2",
+          "conditions": null,
+          "timers": null,
+          "messages": null
+        }
+      },
+      {
+        "id": "EVENT_INITIAL_REG",
+        "type": "event",
+        "label": "Initial Registration Trigger",
+        "properties": {
+          "description": "UE triggers initial registration for 5GS services, emergency services, or SMS over NAS, onboarding services in SNPN, disaster roaming services, or to come out of unavailability period.",
+          "actor": "UE",
+          "reference": "5.5.1.2.2",
+          "conditions": [
+            "Initial registration for 5GS services",
+            "Initial registration for emergency services",
+            "Initial registration for SMS over NAS",
+            "Move from GERAN/UTRAN to NGRAN coverage after GPRS attach/routing area update or 5GSRVCC",
+            "Initial registration for onboarding services in SNPN",
+            "Initial registration for disaster roaming services",
+            "Initial registration to come out of unavailability period"
+          ],
+          "timers": null,
+          "messages": null
+        }
+      },
+      {
+        "id": "MSG_REG_REQUEST_INITIAL",
+        "type": "message",
+        "label": "REGISTRATION REQUEST (Initial)",
+        "properties": {
+          "description": "UE sends a REGISTRATION REQUEST message to the AMF to initiate initial registration.",
+          "actor": "UE",
+          "reference": "5.5.1.2.2",
+          "conditions": null,
+          "timers": null,
+          "messages": [
+            "REGISTRATION REQUEST"
+          ]
+        }
+      },
+      {
+        "id": "UE_REGISTERED",
+        "type": "state",
+        "label": "5GMMREGISTERED",
+        "properties": {
+          "description": "UE is in registered state.",
+          "actor": "UE",
+          "reference": "5.5.1.1",
+          "conditions": null,
+          "timers": null,
+          "messages": null
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE_1",
+        "source": "UE_DEREGISTERED",
+        "target": "EVENT_INITIAL_REG",
+        "type": "triggers",
+        "label": "Triggers"
+      },
+      {
+        "id": "EDGE_2",
+        "source": "EVENT_INITIAL_REG",
+        "target": "MSG_REG_REQUEST_INITIAL",
+        "type": "sends",
+        "label": "Sends"
+      },
+      {
+        "id": "EDGE_3",
+        "source": "MSG_REG_REQUEST_INITIAL",
+        "target": "UE_REGISTERED",
+        "type": "transition",
+        "label": "Transition to Registered"
+      }
+    ]
+  }
+]
