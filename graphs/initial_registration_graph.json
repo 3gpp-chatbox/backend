@@ -1,0 +1,362 @@
+{
+  "nodes": [
+    {
+      "id": "state_deregistered_5gmm",
+      "label": "5GMMDEREGISTERED",
+      "type": "State",
+      "properties": {
+        "current_state": "5GMMDEREGISTERED",
+        "conditions": "After network-initiated deregistration",
+        "next_states": [
+          "Sending REGISTRATION REQUEST"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "state_deregistered_emm",
+      "label": "EMMDEREGISTERED",
+      "type": "State",
+      "properties": {
+        "current_state": "EMMDEREGISTERED",
+        "conditions": "After intersystem change from S1 mode to N1 mode",
+        "next_states": [
+          "Sending REGISTRATION REQUEST"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_network_deregistration",
+      "label": "Network-initiated deregistration requiring re-registration",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "Network initiated",
+        "conditions": "Network requires UE to re-register",
+        "related_states": [
+          "5GMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_high_priority_access",
+      "label": "UE configured for high priority access in selected PLMN or SNPN",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE configuration allows for high priority access",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_emergency_services",
+      "label": "Registration for emergency services",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE needs to register for emergency services",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_exception_data_reporting",
+      "label": "Exceptional event data reporting in NBN1 mode",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in NBN1 mode needs to transmit user data related to an exceptional event",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_emergency_pdu_session",
+      "label": "Initiating of an emergency PDU session",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE needs to establish an emergency PDU session",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_completion_deregistration_3gpp",
+      "label": "Completion of deregistration 3GPP",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE completes deregistration procedure and releases NAS signaling connection",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "trigger_completion_deregistration_non3gpp",
+      "label": "Completion of deregistration Non-3GPP",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE completes deregistration procedure and releases NAS signaling connection",
+        "related_states": [
+          "5GMMDEREGISTERED",
+          "EMMDEREGISTERED"
+        ],
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "action_send_registration_request",
+      "label": "Send REGISTRATION REQUEST message",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "UE in deregistered state and need for initial registration",
+        "outcomes": "Initiation of registration procedure",
+        "error_cases": "Lower layer failure, UE-initiated deregistration required",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "message_registration_request",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "Registration type",
+        "optional_ies": "5G-GUTI, SUCI, Requested NSSAI, Capability parameters",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "message_registration_accept",
+      "label": "REGISTRATION ACCEPT",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION ACCEPT",
+        "direction": "Network→UE",
+        "mandatory_ies": "5G-GUTI",
+        "optional_ies": "Allowed NSSAI, Configured NSSAI",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "message_registration_reject",
+      "label": "REGISTRATION REJECT",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REJECT",
+        "direction": "Network→UE",
+        "mandatory_ies": "Cause",
+        "optional_ies": "None",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "action_abort_registration",
+      "label": "Abort registration procedure",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "Lower layer failure or UE-initiated deregistration required",
+        "outcomes": "Registration procedure is stopped",
+        "error_cases": "N/A",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "action_provide_guami",
+      "label": "Provide GUAMI mapped from 4G GUTI",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "Specific intersystem change scenarios (S1 to N1)",
+        "outcomes": "Informs network of the UE's previously used GUAMI",
+        "error_cases": "N/A",
+        "spec_references": "24501"
+      }
+    },
+    {
+      "id": "message_deregistration_request",
+      "label": "DEREGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "message_type": "DEREGISTRATION REQUEST",
+        "direction": "UE->Network",
+        "mandatory_ies": "Deregistration Type",
+        "optional_ies": "UE security capability",
+        "spec_references": "24501"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_dereg_5gmm_to_send_reg_req",
+      "source": "state_deregistered_5gmm",
+      "target": "action_send_registration_request",
+      "label": "Initiate Registration",
+      "type": "Transition",
+      "properties": {
+        "trigger": "Any registration trigger",
+        "conditions": "UE needs to register",
+        "success_criteria": "REGISTRATION REQUEST message is sent",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_dereg_emm_to_send_reg_req",
+      "source": "state_deregistered_emm",
+      "target": "action_send_registration_request",
+      "label": "Initiate Registration",
+      "type": "Transition",
+      "properties": {
+        "trigger": "Any registration trigger",
+        "conditions": "UE needs to register",
+        "success_criteria": "REGISTRATION REQUEST message is sent",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_trigger_net_dereg_to_state",
+      "source": "trigger_network_deregistration",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_hp_to_state",
+      "source": "trigger_high_priority_access",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_emerg_serv_to_state",
+      "source": "trigger_emergency_services",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_excep_data_to_state",
+      "source": "trigger_exception_data_reporting",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_emerg_pdu_to_state",
+      "source": "trigger_emergency_pdu_session",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_send_reg_req_to_message",
+      "source": "action_send_registration_request",
+      "target": "message_registration_request",
+      "label": "Sends",
+      "type": "Communication",
+      "properties": {
+        "sequence_number": 1,
+        "timing": "Immediate",
+        "retry_behavior": "Based on network configuration",
+        "error_handling": "Abort registration"
+      }
+    },
+    {
+      "id": "edge_registration_request_to_accept",
+      "source": "message_registration_request",
+      "target": "message_registration_accept",
+      "label": "Response",
+      "type": "Communication",
+      "properties": {
+        "sequence_number": 2,
+        "timing": "After network processing",
+        "retry_behavior": "None",
+        "error_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_registration_request_to_reject",
+      "source": "message_registration_request",
+      "target": "message_registration_reject",
+      "label": "Response",
+      "type": "Communication",
+      "properties": {
+        "sequence_number": 2,
+        "timing": "After network processing",
+        "retry_behavior": "Based on network configuration",
+        "error_handling": "UE may retry"
+      }
+    },
+    {
+      "id": "edge_action_abort_to_state",
+      "source": "action_abort_registration",
+      "target": "state_deregistered_5gmm",
+      "label": "Returns to state",
+      "type": "Transition",
+      "properties": {
+        "trigger": "Lower Layer Failure or UE initiated deregistration required",
+        "conditions": "N/A",
+        "success_criteria": "Registration procedure aborted",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_trigger_completion_deregistration_3gpp_to_state",
+      "source": "trigger_completion_deregistration_3gpp",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    },
+    {
+      "id": "edge_trigger_completion_deregistration_non3gpp_to_state",
+      "source": "trigger_completion_deregistration_non3gpp",
+      "target": "state_deregistered_5gmm",
+      "label": "Causes Deregistration",
+      "type": "Causation",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "procedure_id": "initial_registration",
+    "doc_id": "24501-j11.md",
+    "spec_sections": [
+      "5.5.2.3.2",
+      "5.5.1.2.7",
+      "5.3.1.3",
+      "5.5.2.2.6"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": "Initial Registration",
+    "procedure_name": "Initial Registration",
+    "total_nodes": 16,
+    "total_edges": 13
+  }
+}

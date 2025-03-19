@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "id": "state_connected_inactive",
+      "label": "5GMM-CONNECTED mode with RRC inactive indication",
+      "type": "State",
+      "properties": {
+        "current_state": "5GMM-CONNECTED mode with RRC inactive indication",
+        "conditions": "UE is in connected mode but RRC is inactive",
+        "next_states": [
+          "registration_request_sent"
+        ],
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2"
+      }
+    },
+    {
+      "id": "state_nbn1",
+      "label": "NBN1 mode",
+      "type": "State",
+      "properties": {
+        "current_state": "NBN1 mode",
+        "conditions": "UE is in NBN1 mode",
+        "next_states": [
+          "registration_request_sent"
+        ],
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2"
+      }
+    },
+    {
+      "id": "trigger_mobility_periodic",
+      "label": "Mobility and Periodic Registration Update",
+      "type": "Trigger",
+      "properties": {
+        "trigger_type": "UE initiated",
+        "conditions": "UE in 5GMM-CONNECTED mode with RRC inactive indication and no pending uplink user data for PDU sessions with established userplane resources or UE in NBN1 mode with request from upper layers to transmit user data related to an exceptional event or RAN timing synchronization status change",
+        "related_states": [
+          "5GMM-CONNECTED mode with RRC inactive indication",
+          "NBN1 mode"
+        ],
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2"
+      }
+    },
+    {
+      "id": "action_send_registration_request",
+      "label": "Send REGISTRATION REQUEST",
+      "type": "Action",
+      "properties": {
+        "actor": "UE",
+        "prerequisites": "UE in appropriate state and trigger condition met",
+        "outcomes": "Registration request sent to the network",
+        "error_cases": "Network rejects registration request",
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2"
+      }
+    },
+    {
+      "id": "message_registration_request",
+      "label": "REGISTRATION REQUEST",
+      "type": "Message",
+      "properties": {
+        "message_type": "REGISTRATION REQUEST",
+        "direction": "UE→Network",
+        "mandatory_ies": "5GS registration type IE (mobility registration updating)",
+        "optional_ies": "Uplink data status IE",
+        "spec_references": "24501-j11.md, Section 5.2.3.2.3, 5.3.1.4, 5.3.20.2"
+      }
+    },
+    {
+      "id": "registration_request_sent",
+      "label": "REGISTRATION REQUEST Sent",
+      "type": "State",
+      "properties": {
+        "current_state": "REGISTRATION REQUEST Sent",
+        "conditions": "REGISTRATION REQUEST message has been transmitted to the network",
+        "next_states": [],
+        "spec_references": "24501-j11.md"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_state_to_trigger",
+      "source": "state_connected_inactive",
+      "target": "trigger_mobility_periodic",
+      "label": "Triggers",
+      "type": "Transition",
+      "properties": {
+        "trigger": "UE in 5GMM-CONNECTED mode with RRC inactive indication",
+        "conditions": "UE in 5GMM-CONNECTED mode with RRC inactive indication",
+        "success_criteria": "Trigger activated",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_state_to_trigger_nbn1",
+      "source": "state_nbn1",
+      "target": "trigger_mobility_periodic",
+      "label": "Triggers",
+      "type": "Transition",
+      "properties": {
+        "trigger": "UE in NBN1 mode",
+        "conditions": "UE is in NBN1 mode",
+        "success_criteria": "Trigger activated",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_trigger_to_action",
+      "source": "trigger_mobility_periodic",
+      "target": "action_send_registration_request",
+      "label": "Initiates",
+      "type": "Transition",
+      "properties": {
+        "trigger": "Registration required",
+        "conditions": "Trigger conditions met",
+        "success_criteria": "Action initiated",
+        "failure_handling": "N/A"
+      }
+    },
+    {
+      "id": "edge_action_to_message",
+      "source": "action_send_registration_request",
+      "target": "message_registration_request",
+      "label": "Sends",
+      "type": "MessageFlow",
+      "properties": {
+        "sequence_number": 1,
+        "timing": "As soon as possible after trigger",
+        "retry_behavior": "Based on lower layer procedures",
+        "error_handling": "Based on 5GMM cause values"
+      }
+    },
+    {
+      "id": "edge_message_to_state",
+      "source": "message_registration_request",
+      "target": "registration_request_sent",
+      "label": "Results in",
+      "type": "Transition",
+      "properties": {
+        "trigger": "REGISTRATION REQUEST sent",
+        "conditions": "REGISTRATION REQUEST has been transmitted",
+        "success_criteria": "REGISTRATION REQUEST is successfully transmitted",
+        "failure_handling": "Retry at lower layers or re-initiate registration later"
+      }
+    }
+  ],
+  "metadata": {
+    "procedure_id": "PeriodicRegistration",
+    "doc_id": "24501-j11.md",
+    "spec_sections": [
+      "Section 5.2.3.2.3",
+      "5.3.1.4",
+      "5.3.20.2"
+    ],
+    "category": "Registration Procedures",
+    "sub_category": "Mobility and Periodic Registration Update",
+    "procedure_name": "Periodic Registration",
+    "total_nodes": 6,
+    "total_edges": 5
+  }
+}
