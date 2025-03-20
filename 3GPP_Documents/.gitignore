@@ -2,3 +2,7 @@ __pycache__/
 myenv/
 config.py
 .db
+node_modules/
+output/
+
+

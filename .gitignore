@@ -5,3 +5,7 @@ config.py
 .db
 venv/
 .env
+node_modules/
+output/
+
+
