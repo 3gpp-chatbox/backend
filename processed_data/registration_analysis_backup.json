@@ -1,0 +1,6494 @@
+{
+  "error": "Object of type datetime is not JSON serializable",
+  "metadata": {
+    "timestamp": "2025-03-13T11:16:10.563282",
+    "total_results": 431,
+    "successful_results": 0
+  },
+  "raw_results": [
+    {
+      "error": "Validation failed: 1 validation error for RegistrationProcedure\nnodes\n  Value error, Must have at least 3 events [type=value_error, input_value=[{'id': 'N1', 'label': 'U...te': '5GMM-REGISTERED'}], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.10/v/value_error",
+      "raw_data": {
+        "procedure": "Initial Registration",
+        "trigger": "Security Context Change",
+        "nodes": [
+          {
+            "id": "N1",
+            "label": "User Equipment (UE)",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "N2",
+            "label": "gNB (gNodeB)",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "N3",
+            "label": "AMF",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "S1",
+            "label": "UE:5GMM-REGISTERED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "5GMM"
+          },
+          {
+            "id": "S2",
+            "label": "UE:RRC_CONNECTED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "RRC"
+          },
+          {
+            "id": "S3",
+            "label": "AMF:CM-CONNECTED",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "S4",
+            "label": "AMF:CM-CONNECTED (Old Security Context)",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "S5",
+            "label": "AMF:CM-CONNECTED (New Security Context)",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "E1",
+            "label": "Handover to NG-RAN command (with Intra N1 mode NAS transparent container IE)",
+            "type": "Event",
+            "from_state": "CM-CONNECTED (Old Security Context)",
+            "to_state": "CM-CONNECTED (New Security Context)"
+          },
+          {
+            "id": "E2",
+            "label": "UE derives new 5G NAS security context",
+            "type": "Event",
+            "from_state": "5GMM-REGISTERED",
+            "to_state": "5GMM-REGISTERED"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N3",
+            "to": "N2",
+            "label": "Sends Handover to NG-RAN command (with Intra N1 mode NAS transparent container IE)",
+            "from_state": "CM-CONNECTED (Old Security Context)",
+            "to_state": "RRC_CONNECTED"
+          },
+          {
+            "from": "S4",
+            "to": "E1",
+            "label": "AMF initiates handover with new security context information",
+            "state_change": "AMF: CM-CONNECTED (Old Security Context) -> CM-CONNECTED (New Security Context)"
+          },
+          {
+            "from": "S1",
+            "to": "E2",
+            "label": "UE receives handover command and derives new security context",
+            "state_change": "UE: 5GMM-REGISTERED (Old Security Context) -> 5GMM-REGISTERED (New Security Context)"
+          },
+          {
+            "from": "E1",
+            "to": "S5",
+            "label": "AMF transitions to using the new security context",
+            "state_change": "AMF: CM-CONNECTED (Old Security Context) -> CM-CONNECTED (New Security Context)"
+          },
+          {
+            "from": "E2",
+            "to": "S1",
+            "label": "UE transitions to using the new security context",
+            "state_change": "UE: 5GMM-REGISTERED (Old Security Context) -> 5GMM-REGISTERED (New Security Context)"
+          },
+          {
+            "from": "N2",
+            "to": "N1",
+            "label": "Sends Handover to NG-RAN command (with Intra N1 mode NAS transparent container IE)",
+            "from_state": "RRC_CONNECTED",
+            "to_state": "RRC_CONNECTED"
+          }
+        ],
+        "metadata": {
+          "procedureName": "Initial Registration",
+          "specReference": "3GPP TS 24.501",
+          "protocol": "5G NAS",
+          "trigger": "Security Context Change",
+          "initialStates": {
+            "UE": [
+              "5GMM-REGISTERED",
+              "RRC_CONNECTED"
+            ],
+            "AMF": [
+              "CM-CONNECTED"
+            ]
+          },
+          "finalStates": {
+            "UE": [
+              "5GMM-REGISTERED",
+              "RRC_CONNECTED"
+            ],
+            "AMF": [
+              "CM-CONNECTED"
+            ]
+          },
+          "mandatoryMessages": [
+            "Handover to NG-RAN command (with Intra N1 mode NAS transparent container IE)"
+          ]
+        }
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 191 column 6 (char 5251)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 69 column 2 (char 4363)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Network Slice Admission Control",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "NSACF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "AMF: Network Slice Admission Control",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Requested NSSAI)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "AMF determines NSAC is required",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "NSACF Interaction (if EAC mode is deactivated)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Accept (Allowed/Partially Allowed/Rejected NSSAI)",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Registration Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Generic UE Configuration Update (if NSAC fails after Registration Accept)",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Network-initiated Deregistration Request (if no default S-NSSAIs available)",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE initiates registration"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "S7",
+          "label": "AMF enters NSAC state"
+        },
+        {
+          "from_": "S7",
+          "to": "E3",
+          "label": "AMF checks NSAC requirements"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "AMF interacts with NSACF (if EAC deactivated)"
+        },
+        {
+          "from_": "E3",
+          "to": "E5",
+          "label": "AMF sends Registration Accept (Allowed/Partially Allowed/Rejected NSSAI)"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "AMF sends Registration Accept (Allowed/Partially Allowed/Rejected NSSAI)"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "Registration Accept (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "E6",
+          "label": "Registration Complete (NAS)"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "Registration Complete (NAS)"
+        },
+        {
+          "from_": "E5",
+          "to": "E7",
+          "label": "Generic UE Configuration Update"
+        },
+        {
+          "from_": "E5",
+          "to": "E8",
+          "label": "Network-initiated Deregistration Request"
+        },
+        {
+          "from_": "E6",
+          "to": "S2",
+          "label": "UE is registered"
+        },
+        {
+          "from_": "E6",
+          "to": "S6",
+          "label": "AMF is connected"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Network Slice Admission Control",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "AUSF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N5",
+          "label": "UDM",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-REGISTERED-INITIATED",
+          "type": "State"
+        },
+        {
+          "id": "S8",
+          "label": "AMF: Authentication Pending",
+          "type": "State"
+        },
+        {
+          "id": "S9",
+          "label": "AMF: Security Mode Control Pending",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Initial Registration Request (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete (NAS)",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "Sends RRC Connection Setup"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Initial Registration Request (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N4",
+          "label": "Authentication Request (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N4",
+          "label": "Authentication Response (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete (NAS)"
+        },
+        {
+          "from_": "S1",
+          "to": "E3",
+          "label": "UE initiates registration"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "S5",
+          "to": "E4",
+          "label": "AMF initiates authentication"
+        },
+        {
+          "from_": "S5",
+          "to": "E6",
+          "label": "AMF initiates security mode control"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "UE:5GMM-REGISTERED-INITIATED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Initial Registration)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S2",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "Sends RRC Connection Setup"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S1",
+          "to": "S5",
+          "label": "UE initiates registration"
+        },
+        {
+          "from_": "S4",
+          "to": "E3",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (Initial Registration)"
+        },
+        {
+          "from_": "S3",
+          "to": "S6",
+          "label": "AMF receives Registration Request"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "AMF initiates Authentication"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "UE responds to Authentication"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "AMF initiates Security Mode Setup"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "E7",
+          "label": "UE completes Security Mode Setup"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E7",
+          "to": "E8",
+          "label": "AMF sends Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "E9",
+          "label": "UE sends Registration Complete"
+        },
+        {
+          "from_": "S5",
+          "to": "S7",
+          "label": "Registration Successful"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "UE:5GMM-REGISTERED-INITIATED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "UE Power On",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Request (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Accept (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E10",
+          "label": "Registration Complete (NAS)",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE Power On"
+        },
+        {
+          "from_": "E1",
+          "to": "S2",
+          "label": "UE in RRC_IDLE"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "S2",
+          "to": "E2",
+          "label": "RRC Connection Request"
+        },
+        {
+          "from_": "E2",
+          "to": "S4",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "S4",
+          "to": "E4",
+          "label": "Registration Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E6",
+          "to": "E7",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E7",
+          "to": "E8",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept (NAS)"
+        },
+        {
+          "from_": "E8",
+          "to": "E9",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "S5",
+          "to": "S7",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete (NAS)"
+        },
+        {
+          "from_": "E9",
+          "to": "E10",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E10",
+          "to": "S6",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Extra data: line 68 column 4 (char 4511)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "AUSF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N5",
+          "label": "UDM",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Initial Registration Request (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept (NAS)",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete (NAS)",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Initial Registration Request (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N4",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N4",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept (NAS)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete (NAS)"
+        },
+        {
+          "from_": "S1",
+          "to": "E3",
+          "label": "UE initiates registration"
+        },
+        {
+          "from_": "E8",
+          "to": "S2",
+          "label": "Registration Accepted"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "E2",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S5",
+          "to": "E4",
+          "label": "AMF initiates Authentication"
+        },
+        {
+          "from_": "E9",
+          "to": "S6",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 58 column 4 (char 4070)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 62 column 4 (char 4202)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 65 column 4 (char 4143)"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Security Context Change",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "AMF initiates Security Mode Control",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "SECURITY MODE COMMAND (ngKSI, NAS security algorithms)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "UE checks and accepts Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "SECURITY MODE COMPLETE",
+          "type": "Event"
+        },
+        {
+          "id": "S3",
+          "label": "UE:5GMM-REGISTERED (New Security Context)",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "AMF:CM-CONNECTED (New Security Context)",
+          "type": "State"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "AMF decides to change security context"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "AMF sends SECURITY MODE COMMAND"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "SECURITY MODE COMMAND (ngKSI, NAS security algorithms)"
+        },
+        {
+          "from_": "E2",
+          "to": "E3",
+          "label": "UE receives and processes SECURITY MODE COMMAND"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "UE sends SECURITY MODE COMPLETE"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "SECURITY MODE COMPLETE"
+        },
+        {
+          "from_": "E4",
+          "to": "S3",
+          "label": "UE activates new security context"
+        },
+        {
+          "from_": "E4",
+          "to": "S4",
+          "label": "AMF activates new security context"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Security Context Change",
+        "mandatoryMessages": [
+          "SECURITY MODE COMMAND",
+          "SECURITY MODE COMPLETE"
+        ]
+      }
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (no integrity protection)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S2",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "E1",
+          "to": "N2",
+          "label": "RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E2",
+          "to": "S3",
+          "label": "UE enters RRC_CONNECTED"
+        },
+        {
+          "from_": "S1",
+          "to": "E3",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "E3",
+          "to": "N2",
+          "label": "Registration Request (Initial)"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "Registration Request (Initial)"
+        },
+        {
+          "from_": "S5",
+          "to": "N3",
+          "label": "AMF in CM-IDLE"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "S6",
+          "label": "AMF enters CM-CONNECTED"
+        },
+        {
+          "from_": "N1",
+          "to": "S4",
+          "label": "UE enters 5GMM-REGISTERED"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request",
+          "Authentication Response",
+          "Security Mode Command",
+          "Security Mode Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 188 column 6 (char 4772)"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request (Emergency)"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates RRC connection for emergency registration"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Request (Emergency)"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE initiates registration for emergency services"
+        },
+        {
+          "from_": "E2",
+          "to": "S5",
+          "label": "AMF receives Registration Request"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Authentication Request"
+        },
+        {
+          "from_": "S5",
+          "to": "E3",
+          "label": "AMF initiates Authentication"
+        },
+        {
+          "from_": "E3",
+          "to": "N1",
+          "label": "UE Receives Authentication Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Authentication Response"
+        },
+        {
+          "from_": "E4",
+          "to": "N3",
+          "label": "AMF Receives Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Security Mode Command"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "UE Receives Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Security Mode Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "AMF Receives Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "E7",
+          "to": "S2",
+          "label": "UE Receives Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "S6",
+          "label": "AMF Receives Registration Complete"
+        },
+        {
+          "from_": "S2",
+          "to": "N1",
+          "label": "UE is now Registered"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 56 column 4 (char 3906)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 63 column 4 (char 5108)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Resume of suspended N1 NAS signalling connection",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-IDLE with suspend indication",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "Request RRC Connection Resume",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Resume Success",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Initial NAS Message (e.g., Service Request)",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Requests RRC Connection Resume"
+        },
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE requests RRC connection resume"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Resume Success"
+        },
+        {
+          "from_": "S3",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S4",
+          "to": "E3",
+          "label": "UE sends Initial NAS Message"
+        },
+        {
+          "from_": "E3",
+          "to": "S2",
+          "label": "NAS message sent"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Initial NAS Message (e.g., Service Request)"
+        },
+        {
+          "from_": "S5",
+          "to": "S6",
+          "label": "AMF establishes CM connection"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Resume of suspended N1 NAS signalling connection",
+        "mandatoryMessages": [
+          "Initial NAS Message (e.g., Service Request)"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Extra data: line 68 column 4 (char 4220)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Enter 5G Coverage",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (NAS)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "UE sends Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "UE sends Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E7",
+          "to": "S2",
+          "label": "Registration Accepted"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "S6",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Enter 5G Coverage",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 46 column 135 (char 5295)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 56 column 4 (char 3725)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 70 column 2 (char 4285)"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "UPF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N5",
+          "label": "AUSF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N6",
+          "label": "UDM",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-REGISTERED-INITIATED",
+          "type": "State"
+        },
+        {
+          "id": "S8",
+          "label": "AMF: Authentication Pending",
+          "type": "State"
+        },
+        {
+          "id": "S9",
+          "label": "UE: Security Mode Control Pending",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Initial Registration)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "Sends RRC Connection Setup"
+        },
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Request"
+        },
+        {
+          "from_": "N3",
+          "to": "N5",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N5",
+          "to": "N6",
+          "label": "Requests User Data"
+        },
+        {
+          "from_": "N6",
+          "to": "N5",
+          "label": "Returns User Data"
+        },
+        {
+          "from_": "N5",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends Security Mode Complete"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "Forwards Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E9",
+          "to": "S2",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Extra data: line 65 column 4 (char 4969)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (initialRegType = 'Initial Registration')",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication/Security Procedure",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE Power On"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (initialRegType = 'Initial Registration')"
+        },
+        {
+          "from_": "E2",
+          "to": "E3",
+          "label": "Registration Request sent"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request/Response, Security Mode Command/Complete"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "Authentication and Security Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "Registration Accept received"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "S2",
+          "label": "Registration Complete sent"
+        },
+        {
+          "from_": "S5",
+          "to": "S6",
+          "label": "Registration Complete received"
+        },
+        {
+          "from_": "N1",
+          "to": "S4",
+          "label": "RRC Connection is maintained"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Re-establishment of N1 NAS signalling connection after fallback",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "Fallback Indication from Lower Layers",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Mobility and Periodic Update)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication/Security Procedure",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "Receives Fallback Indication"
+        },
+        {
+          "from_": "E1",
+          "to": "S2",
+          "label": "Enters 5GMM-IDLE"
+        },
+        {
+          "from_": "S2",
+          "to": "E2",
+          "label": "Initiates RRC Connection Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E2",
+          "to": "S3",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S3",
+          "to": "E3",
+          "label": "Sends Registration Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (Uplink Data Status IE)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication/Security Procedure"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "Initiates Authentication/Security"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "Completes Authentication/Security"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E5",
+          "to": "S1",
+          "label": "Receives Registration Accept"
+        },
+        {
+          "from_": "S1",
+          "to": "E6",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Re-establishment of N1 NAS signalling connection after fallback",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response (Conditional)",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "UAS Services Registration (CAA-level UAV ID)",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "USS",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE: CAA-level UAV ID Provided",
+          "type": "State"
+        },
+        {
+          "id": "S8",
+          "label": "AMF: UUAA-MM Triggered",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (with CAA-level UAV ID)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Procedure",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "UUAA-MM Procedure",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "RRC Connection Complete"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (CAA-level UAV ID)"
+        },
+        {
+          "from_": "N3",
+          "to": "E3",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E3",
+          "to": "N1",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "E4",
+          "label": "AMF triggers UUAA-MM"
+        },
+        {
+          "from_": "E4",
+          "to": "N4",
+          "label": "UUAA-MM Request to USS"
+        },
+        {
+          "from_": "N4",
+          "to": "N3",
+          "label": "UUAA-MM Response from USS"
+        },
+        {
+          "from_": "N3",
+          "to": "E5",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "E6",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "S2",
+          "label": "UE Registered"
+        },
+        {
+          "from_": "N1",
+          "to": "S7",
+          "label": "UE provides CAA-level UAV ID"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "UAS Services Registration (CAA-level UAV ID)",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Registration Area Change",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:TAI_OUT_OF_LIST",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "UE:TAI_IN_LIST",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "UE detects TAI not in TAI list",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Mobility Registration Updating)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE moves to a new Registration Area"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "RRC Connection Setup Complete"
+        },
+        {
+          "from_": "S1",
+          "to": "E3",
+          "label": "UE sends Registration Request (Mobility Registration Updating)"
+        },
+        {
+          "from_": "S3",
+          "to": "E4",
+          "label": "AMF sends Authentication Request"
+        },
+        {
+          "from_": "S1",
+          "to": "E5",
+          "label": "UE sends Authentication Response"
+        },
+        {
+          "from_": "S3",
+          "to": "E6",
+          "label": "AMF sends Security Mode Command"
+        },
+        {
+          "from_": "S1",
+          "to": "E7",
+          "label": "UE sends Security Mode Complete"
+        },
+        {
+          "from_": "S3",
+          "to": "E8",
+          "label": "AMF sends Registration Accept (with new TAI list)"
+        },
+        {
+          "from_": "S1",
+          "to": "E9",
+          "label": "UE sends Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Registration Area Change",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Enter 5G Coverage (Disaster Roaming)",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "PLMN Selection for Disaster Roaming",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Request (Disaster Roaming)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Procedure (if needed)",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE selects PLMN for disaster roaming"
+        },
+        {
+          "from_": "E1",
+          "to": "S3",
+          "label": "UE in RRC_IDLE"
+        },
+        {
+          "from_": "S3",
+          "to": "E2",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "Sends RRC Connection Setup"
+        },
+        {
+          "from_": "E2",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S4",
+          "to": "E4",
+          "label": "UE sends Registration Request (Disaster Roaming)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (Disaster Roaming)"
+        },
+        {
+          "from_": "E4",
+          "to": "S5",
+          "label": "AMF receives Registration Request"
+        },
+        {
+          "from_": "S5",
+          "to": "E5",
+          "label": "AMF initiates Authentication (if needed)"
+        },
+        {
+          "from_": "E5",
+          "to": "S5",
+          "label": "Authentication Procedure"
+        },
+        {
+          "from_": "S5",
+          "to": "E6",
+          "label": "AMF sends Security Mode Command"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E6",
+          "to": "S4",
+          "label": "UE receives Security Mode Command"
+        },
+        {
+          "from_": "S4",
+          "to": "E7",
+          "label": "UE sends Security Mode Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E7",
+          "to": "S6",
+          "label": "AMF receives Security Mode Complete"
+        },
+        {
+          "from_": "S6",
+          "to": "E8",
+          "label": "AMF sends Registration Accept"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E8",
+          "to": "S4",
+          "label": "UE receives Registration Accept"
+        },
+        {
+          "from_": "S4",
+          "to": "E9",
+          "label": "UE sends Registration Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E9",
+          "to": "S6",
+          "label": "AMF receives Registration Complete"
+        },
+        {
+          "from_": "E9",
+          "to": "S2",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Enter 5G Coverage (Disaster Roaming)",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 44 column 117 (char 4958)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 63 column 4 (char 4363)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 47 column 139 (char 5289)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Loss of Connection",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "Loss of 5G Coverage",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Request (initialRegType = 'Emergency' or 'Normal')",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E10",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "Coverage Loss"
+        },
+        {
+          "from_": "E1",
+          "to": "S2",
+          "label": "Enter 5GMM-DEREGISTERED"
+        },
+        {
+          "from_": "S4",
+          "to": "E2",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E2",
+          "to": "E3",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E3",
+          "to": "S3",
+          "label": "Enter RRC_CONNECTED"
+        },
+        {
+          "from_": "S2",
+          "to": "E4",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (initialRegType = 'Emergency' or 'Normal')"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "AMF initiates Authentication"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "UE responds to Authentication"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "E6",
+          "to": "E7",
+          "label": "AMF initiates Security Mode Setup"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E7",
+          "to": "E8",
+          "label": "UE completes Security Mode Setup"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "E9",
+          "label": "AMF accepts Registration"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E9",
+          "to": "E10",
+          "label": "UE confirms Registration"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E10",
+          "to": "S1",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E10",
+          "to": "S5",
+          "label": "Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Loss of Connection",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 58 column 6 (char 5076)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Power On / UE Startup",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "UE:5GMM-REGISTERED-INITIATED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Initial Registration)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E9",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S2",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "E1",
+          "to": "N2",
+          "label": "RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "Sends RRC Connection Setup"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "E2",
+          "to": "S4",
+          "label": "RRC connection established"
+        },
+        {
+          "from_": "S1",
+          "to": "E3",
+          "label": "UE initiates registration"
+        },
+        {
+          "from_": "E3",
+          "to": "N2",
+          "label": "Registration Request (Initial Registration)"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends Registration Request (Initial Registration)"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "Forwards Registration Request to AMF"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N3",
+          "to": "E4",
+          "label": "Sends Authentication Request"
+        },
+        {
+          "from_": "E4",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N1",
+          "to": "E5",
+          "label": "Sends Authentication Response"
+        },
+        {
+          "from_": "E5",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N3",
+          "to": "E6",
+          "label": "Sends Security Mode Command"
+        },
+        {
+          "from_": "E6",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "E7",
+          "label": "Sends Security Mode Complete"
+        },
+        {
+          "from_": "E7",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N3",
+          "to": "E8",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "E8",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "E9",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E9",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "S3",
+          "to": "S6",
+          "label": "AMF establishes connection"
+        },
+        {
+          "from_": "S5",
+          "to": "S7",
+          "label": "UE is registered"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Power On / UE Startup",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Extra data: line 62 column 4 (char 4786)"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 53 column 136 (char 5357)"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 65 column 4 (char 5091)"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 64 column 4 (char 5316)"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 65 column 4 (char 4391)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 47 column 141 (char 5262)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 62 column 4 (char 4060)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE sends Registration Request (Emergency)"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (Emergency) received"
+        },
+        {
+          "from_": "S5",
+          "to": "E3",
+          "label": "AMF initiates Authentication"
+        },
+        {
+          "from_": "E3",
+          "to": "N1",
+          "label": "Authentication Request sent"
+        },
+        {
+          "from_": "N1",
+          "to": "E4",
+          "label": "Sends Authentication Response"
+        },
+        {
+          "from_": "E4",
+          "to": "N3",
+          "label": "Authentication Response received"
+        },
+        {
+          "from_": "N3",
+          "to": "E5",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "Registration Accept received"
+        },
+        {
+          "from_": "N1",
+          "to": "E6",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "Registration Complete received"
+        },
+        {
+          "from_": "E2",
+          "to": "S2",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "S6",
+          "label": "Registration Accept"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 62 column 135 (char 5400)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Change in Subscription (Restriction on Enhanced Coverage)",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "SMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "E1",
+          "label": "AMF determines change in restriction on enhanced coverage",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Generic UE Configuration Update procedure (Registration Requested, N1 NAS release not requested)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (Mobility Registration Update)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Accept (Restriction Information)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "AMF updates SMF with extended NAS timer setting indication",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N3",
+          "to": "E1",
+          "label": "Determines change in restriction"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "Initiates Generic UE Configuration Update"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends NAS message via gNB"
+        },
+        {
+          "from_": "N1",
+          "to": "E3",
+          "label": "Sends Registration Request (Mobility Registration Update)"
+        },
+        {
+          "from_": "E3",
+          "to": "N3",
+          "label": "Receives Registration Request"
+        },
+        {
+          "from_": "N3",
+          "to": "E4",
+          "label": "Sends Registration Accept (Restriction Information)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends NAS message via gNB"
+        },
+        {
+          "from_": "N1",
+          "to": "E5",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "N3",
+          "label": "Receives Registration Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "E6",
+          "label": "Updates SMF with extended NAS timer setting indication"
+        },
+        {
+          "from_": "E6",
+          "to": "S5",
+          "label": "SMF updated"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Change in Subscription (Restriction on Enhanced Coverage)",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 67 column 4 (char 4784)"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Returning in coverage after discontinuous coverage",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Mobility Registration Update)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication/Security Procedure (if needed)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates RRC connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Request (Mobility Registration Update)"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE initiates Registration Update"
+        },
+        {
+          "from_": "E2",
+          "to": "S2",
+          "label": "Registration Request sent"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication/Security Procedure (if needed)"
+        },
+        {
+          "from_": "S2",
+          "to": "E3",
+          "label": "Authentication/Security completed"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "Registration Accept received"
+        },
+        {
+          "from_": "E4",
+          "to": "S1",
+          "label": "Registration Accept received"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "Registration Complete sent"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Returning in coverage after discontinuous coverage",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 41 column 124 (char 4583)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 56 column 2 (char 3665)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 47 column 141 (char 4984)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration (no valid 5G NAS security context)",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Security Mode Command (5G-IA0, 5G-EA0)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (Emergency)"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command (5G-IA0, 5G-EA0)"
+        },
+        {
+          "from_": "S5",
+          "to": "E3",
+          "label": "AMF sends Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "S2",
+          "to": "E4",
+          "label": "UE sends Security Mode Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration (no valid 5G NAS security context)",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Security Mode Command",
+          "Security Mode Complete"
+        ]
+      }
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 208 column 6 (char 4901)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 223 column 8 (char 5625)"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 55 column 4 (char 3911)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "JSON parse error: Extra data: line 67 column 4 (char 4226)"
+    },
+    {
+      "error": "Validation failed: 1 validation error for RegistrationProcedure\nnodes\n  Value error, Must have at least 3 events [type=value_error, input_value=[{'id': 'N1', 'label': 'U...state': 'CM-CONNECTED'}], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.10/v/value_error",
+      "raw_data": {
+        "procedure": "Initial Registration",
+        "trigger": "Emergency Registration",
+        "nodes": [
+          {
+            "id": "N1",
+            "label": "User Equipment (UE)",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "N3",
+            "label": "AMF",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "S1",
+            "label": "UE:5GMM-DEREGISTERED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "5GMM"
+          },
+          {
+            "id": "S2",
+            "label": "UE:5GMM-REGISTERED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "5GMM"
+          },
+          {
+            "id": "S5",
+            "label": "AMF:CM-IDLE",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "S6",
+            "label": "AMF:CM-CONNECTED",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "E2",
+            "label": "Initial Registration Request (Emergency)",
+            "type": "Event",
+            "from_state": "5GMM-DEREGISTERED",
+            "to_state": "5GMM-REGISTERED-INITIATED"
+          },
+          {
+            "id": "E3",
+            "label": "Registration Accept",
+            "type": "Event",
+            "from_state": "CM-IDLE",
+            "to_state": "CM-CONNECTED"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N3",
+            "label": "Sends Registration Request (Emergency)",
+            "from_state": "5GMM-DEREGISTERED",
+            "to_state": "CM-IDLE"
+          },
+          {
+            "from": "S1",
+            "to": "E2",
+            "label": "UE initiates registration",
+            "state_change": "UE: 5GMM-DEREGISTERED -> 5GMM-REGISTERED-INITIATED"
+          },
+          {
+            "from": "N3",
+            "to": "N1",
+            "label": "Sends Registration Accept",
+            "from_state": "CM-IDLE",
+            "to_state": "5GMM-REGISTERED"
+          },
+          {
+            "from": "S5",
+            "to": "E3",
+            "label": "AMF accepts registration",
+            "state_change": "AMF: CM-IDLE -> CM-CONNECTED"
+          },
+          {
+            "from": "E2",
+            "to": "S5",
+            "label": "Registration Request received",
+            "state_change": "AMF: CM-IDLE"
+          },
+          {
+            "from": "E3",
+            "to": "S2",
+            "label": "Registration Accept received",
+            "state_change": "UE: 5GMM-REGISTERED"
+          }
+        ],
+        "metadata": {
+          "procedureName": "Initial Registration",
+          "specReference": "3GPP TS 24.501",
+          "protocol": "5G NAS",
+          "trigger": "Emergency Registration",
+          "initialStates": {
+            "UE": [
+              "5GMM-DEREGISTERED"
+            ],
+            "AMF": [
+              "CM-IDLE"
+            ]
+          },
+          "finalStates": {
+            "UE": [
+              "5GMM-REGISTERED"
+            ],
+            "AMF": [
+              "CM-CONNECTED"
+            ]
+          },
+          "mandatoryMessages": [
+            "Registration Request",
+            "Registration Accept"
+          ]
+        }
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE sends Registration Request (Emergency)"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (Emergency) received"
+        },
+        {
+          "from_": "N3",
+          "to": "E3",
+          "label": "Sends Authentication Request"
+        },
+        {
+          "from_": "E3",
+          "to": "N1",
+          "label": "Authentication Request received"
+        },
+        {
+          "from_": "N1",
+          "to": "E4",
+          "label": "Sends Authentication Response"
+        },
+        {
+          "from_": "E4",
+          "to": "N3",
+          "label": "Authentication Response received"
+        },
+        {
+          "from_": "N3",
+          "to": "E5",
+          "label": "Sends Security Mode Command"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "Security Mode Command received"
+        },
+        {
+          "from_": "N1",
+          "to": "E6",
+          "label": "Sends Security Mode Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "Security Mode Complete received"
+        },
+        {
+          "from_": "N3",
+          "to": "E7",
+          "label": "Sends Registration Accept"
+        },
+        {
+          "from_": "E7",
+          "to": "N1",
+          "label": "Registration Accept received"
+        },
+        {
+          "from_": "N1",
+          "to": "E8",
+          "label": "Sends Registration Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "N3",
+          "label": "Registration Complete received"
+        },
+        {
+          "from_": "N1",
+          "to": "S2",
+          "label": "Registration successful"
+        },
+        {
+          "from_": "N3",
+          "to": "S6",
+          "label": "UE Context Established"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "Validation failed: 1 validation error for RegistrationProcedure\nnodes\n  Value error, Must have at least 3 events [type=value_error, input_value=[{'id': 'N1', 'label': 'U...CEPT', 'type': 'Event'}], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.10/v/value_error",
+      "raw_data": {
+        "procedure": "Initial Registration",
+        "trigger": "Explicit Deregistration",
+        "nodes": [
+          {
+            "id": "N1",
+            "label": "User Equipment (UE)",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "N3",
+            "label": "AMF",
+            "type": "NetworkElement"
+          },
+          {
+            "id": "S1",
+            "label": "UE:5GMM-REGISTERED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "5GMM"
+          },
+          {
+            "id": "S2",
+            "label": "UE:5GMM-DEREGISTERED",
+            "type": "State",
+            "element": "UE",
+            "state_type": "5GMM"
+          },
+          {
+            "id": "S5",
+            "label": "AMF:CM-CONNECTED",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "S6",
+            "label": "AMF:CM-IDLE",
+            "type": "State",
+            "element": "AMF",
+            "state_type": "CM"
+          },
+          {
+            "id": "E1",
+            "label": "DEREGISTRATION REQUEST (De-registration type != 'switch off')",
+            "type": "Event"
+          },
+          {
+            "id": "E2",
+            "label": "DEREGISTRATION ACCEPT",
+            "type": "Event"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N3",
+            "label": "Sends DEREGISTRATION REQUEST",
+            "from_state": "5GMM-REGISTERED",
+            "to_state": "CM-CONNECTED"
+          },
+          {
+            "from": "S1",
+            "to": "E1",
+            "label": "UE initiates deregistration",
+            "state_change": "UE: 5GMM-REGISTERED -> 5GMM-DEREGISTERED-INITIATED"
+          },
+          {
+            "from": "E1",
+            "to": "S5",
+            "label": "AMF receives DEREGISTRATION REQUEST",
+            "state_change": "AMF: CM-CONNECTED -> CM-CONNECTED"
+          },
+          {
+            "from": "N3",
+            "to": "N1",
+            "label": "Sends DEREGISTRATION ACCEPT",
+            "from_state": "CM-CONNECTED",
+            "to_state": "5GMM-DEREGISTERED-INITIATED"
+          },
+          {
+            "from": "E2",
+            "to": "S2",
+            "label": "UE receives DEREGISTRATION ACCEPT",
+            "state_change": "UE: 5GMM-DEREGISTERED-INITIATED -> 5GMM-DEREGISTERED"
+          },
+          {
+            "from": "S5",
+            "to": "S6",
+            "label": "AMF transitions to CM-IDLE",
+            "state_change": "AMF: CM-CONNECTED -> CM-IDLE"
+          }
+        ],
+        "metadata": {
+          "procedureName": "Initial Registration",
+          "specReference": "3GPP TS 24.501",
+          "protocol": "5G NAS",
+          "trigger": "Explicit Deregistration",
+          "initialStates": {
+            "UE": [
+              "5GMM-REGISTERED"
+            ],
+            "AMF": [
+              "CM-CONNECTED"
+            ]
+          },
+          "finalStates": {
+            "UE": [
+              "5GMM-DEREGISTERED"
+            ],
+            "AMF": [
+              "CM-IDLE"
+            ]
+          },
+          "mandatoryMessages": [
+            "DEREGISTRATION REQUEST",
+            "DEREGISTRATION ACCEPT"
+          ]
+        }
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Request",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Response",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE in RRC IDLE"
+        },
+        {
+          "from_": "E1",
+          "to": "N2",
+          "label": "RRC Connection Establishment"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "N2",
+          "to": "N3",
+          "label": "Initial UE Message (Registration Request)"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (Emergency)"
+        },
+        {
+          "from_": "N3",
+          "to": "E3",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "E3",
+          "to": "N1",
+          "label": "Authentication Request"
+        },
+        {
+          "from_": "N1",
+          "to": "E4",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "E4",
+          "to": "N3",
+          "label": "Authentication Response"
+        },
+        {
+          "from_": "N3",
+          "to": "E5",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "E5",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "E6",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "N3",
+          "to": "E7",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E7",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "E8",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E8",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "S2",
+          "to": "S4",
+          "label": "UE is now registered and connected"
+        },
+        {
+          "from_": "S6",
+          "to": "S2",
+          "label": "AMF is now connected"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Authentication Request/Response",
+          "Security Mode Command/Complete",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Expecting ',' delimiter: line 204 column 6 (char 5181)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "JSON parse error: Extra data: line 70 column 2 (char 4408)"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Inter-system change from S1 mode to N1 mode in 5GMM-CONNECTED mode",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N4",
+          "label": "MME",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S7",
+          "label": "UE:5GMM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S8",
+          "label": "MME: ECM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "RRC Connection Setup Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Registration Request (using mapped 5G NAS security context)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Authentication Procedure (if needed)",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E8",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "N2",
+          "to": "N1",
+          "label": "RRC Connection Setup"
+        },
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "RRC Connection Setup Complete"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Request (using mapped 5G NAS security context)"
+        },
+        {
+          "from_": "S1",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "E2",
+          "label": "RRC Connection Establishment"
+        },
+        {
+          "from_": "E2",
+          "to": "E3",
+          "label": "UE sends Registration Request"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "Network may initiate Authentication"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Authentication Request (if needed)"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Authentication Response (if needed)"
+        },
+        {
+          "from_": "E4",
+          "to": "E5",
+          "label": "Authentication completed (if needed)"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "Security Mode Setup"
+        },
+        {
+          "from_": "N3",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "N1",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E6",
+          "to": "E7",
+          "label": "Registration Accepted by Network"
+        },
+        {
+          "from_": "E7",
+          "to": "E8",
+          "label": "UE completes Registration"
+        },
+        {
+          "from_": "S4",
+          "to": "S2",
+          "label": "Registration Successful"
+        },
+        {
+          "from_": "S5",
+          "to": "S6",
+          "label": "AMF Connection Established"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Inter-system change from S1 mode to N1 mode in 5GMM-CONNECTED mode",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "procedure": "Initial Registration",
+      "trigger": "Emergency Registration",
+      "nodes": [
+        {
+          "id": "N1",
+          "label": "User Equipment (UE)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N2",
+          "label": "gNB (gNodeB)",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "N3",
+          "label": "AMF",
+          "type": "NetworkElement"
+        },
+        {
+          "id": "S1",
+          "label": "UE:5GMM-DEREGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S2",
+          "label": "UE:5GMM-REGISTERED",
+          "type": "State"
+        },
+        {
+          "id": "S3",
+          "label": "UE:RRC_IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S4",
+          "label": "UE:RRC_CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "S5",
+          "label": "AMF:CM-IDLE",
+          "type": "State"
+        },
+        {
+          "id": "S6",
+          "label": "AMF:CM-CONNECTED",
+          "type": "State"
+        },
+        {
+          "id": "E1",
+          "label": "RRC Connection Request",
+          "type": "Event"
+        },
+        {
+          "id": "E2",
+          "label": "Registration Request (Emergency)",
+          "type": "Event"
+        },
+        {
+          "id": "E3",
+          "label": "Authentication Procedure (if needed)",
+          "type": "Event"
+        },
+        {
+          "id": "E4",
+          "label": "Security Mode Command",
+          "type": "Event"
+        },
+        {
+          "id": "E5",
+          "label": "Security Mode Complete",
+          "type": "Event"
+        },
+        {
+          "id": "E6",
+          "label": "Registration Accept",
+          "type": "Event"
+        },
+        {
+          "id": "E7",
+          "label": "Registration Complete",
+          "type": "Event"
+        }
+      ],
+      "edges": [
+        {
+          "from_": "N1",
+          "to": "N2",
+          "label": "Sends RRC Connection Request"
+        },
+        {
+          "from_": "S3",
+          "to": "E1",
+          "label": "UE initiates connection"
+        },
+        {
+          "from_": "E1",
+          "to": "S4",
+          "label": "RRC Connection Established"
+        },
+        {
+          "from_": "S1",
+          "to": "E2",
+          "label": "UE sends Registration Request (Emergency)"
+        },
+        {
+          "from_": "E2",
+          "to": "N3",
+          "label": "Registration Request (Emergency) forwarded to AMF"
+        },
+        {
+          "from_": "S5",
+          "to": "E2",
+          "label": "AMF receives Registration Request"
+        },
+        {
+          "from_": "E2",
+          "to": "E3",
+          "label": "AMF may initiate Authentication"
+        },
+        {
+          "from_": "E3",
+          "to": "E4",
+          "label": "AMF sends Security Mode Command"
+        },
+        {
+          "from_": "E4",
+          "to": "N1",
+          "label": "Security Mode Command"
+        },
+        {
+          "from_": "N1",
+          "to": "E5",
+          "label": "UE sends Security Mode Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "N3",
+          "label": "Security Mode Complete"
+        },
+        {
+          "from_": "E5",
+          "to": "E6",
+          "label": "AMF sends Registration Accept"
+        },
+        {
+          "from_": "E6",
+          "to": "N1",
+          "label": "Registration Accept"
+        },
+        {
+          "from_": "E6",
+          "to": "S2",
+          "label": "UE receives Registration Accept"
+        },
+        {
+          "from_": "S2",
+          "to": "E7",
+          "label": "UE sends Registration Complete"
+        },
+        {
+          "from_": "E7",
+          "to": "N3",
+          "label": "Registration Complete"
+        },
+        {
+          "from_": "E7",
+          "to": "S6",
+          "label": "AMF receives Registration Complete"
+        }
+      ],
+      "metadata": {
+        "procedureName": "Initial Registration",
+        "specReference": "3GPP TS 24.501",
+        "protocol": "5G NAS",
+        "trigger": "Emergency Registration",
+        "mandatoryMessages": [
+          "Registration Request",
+          "Registration Accept",
+          "Registration Complete"
+        ]
+      }
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "No JSON found in response"
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    },
+    {
+      "error": "LLM error: 429 Resource has been exhausted (e.g. check quota)."
+    }
+  ]
+}
