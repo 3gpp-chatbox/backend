@@ -753,15 +753,34 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
                     console.print(f"[blue]Processing {len(result['procedure_flow'])} procedure steps...[/blue]")
                     store_procedure_flow(session, result['procedure_flow'])
 
-                # Store metadata
+                # Store metadata with flattened structure
                 if 'metadata' in result:
                     console.print("[blue]Storing metadata...[/blue]")
+                    metadata = result['metadata'].copy()  # Create a copy to modify
+                    
+                    # Flatten the parameters if they exist
+                    if 'parameters' in metadata:
+                        for key, value in metadata['parameters'].items():
+                            # Replace hyphens with underscores for Neo4j compatibility
+                            safe_key = key.replace('-', '_')
+                            metadata[f'param_{safe_key}'] = value
+                        del metadata['parameters']  # Remove the nested dictionary
+                    
+                    # Convert any remaining dictionaries to strings
+                    for key, value in metadata.items():
+                        if isinstance(value, dict):
+                            metadata[key] = json.dumps(value)
+                    
                     cypher_metadata = """
                     MERGE (m:Metadata {procedure: 'Initial_Registration'})
-                    ON CREATE SET m += $metadata
-                    ON MATCH SET m += $metadata
+                    SET m += $metadata
                     """
-                    session.run(cypher_metadata, metadata=result['metadata'])
+                    try:
+                        session.run(cypher_metadata, metadata=metadata)
+                        console.print("[green]✓ Metadata stored successfully[/green]")
+                    except Exception as e:
+                        console.print(f"[red]Error storing metadata: {str(e)}[/red]")
+                        console.print(f"[yellow]Attempted metadata: {json.dumps(metadata, indent=2)}[/yellow]")
 
         # Verify final data counts
         with driver.session() as session:
