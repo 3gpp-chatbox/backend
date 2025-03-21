@@ -3,6 +3,9 @@ from typing import Dict, List
 import os
 from pathlib import Path
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from rich.console import Console
+
+console = Console()
 
 def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
     """
@@ -106,25 +109,77 @@ def save_chunks_to_markdown(chunks: List[Dict[str, str]], output_file: str):
             
             file.write("\n" + "-" * 50 + "\n\n")  # Optional separator for clarity
 
+class StructuralChunker:
+    def __init__(self):
+        self.chunks = []
+        
+    def chunk_markdown_file(self, file_path: str) -> List[str]:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # First, preserve section numbers by converting them to a format that won't be affected by splitting
+            def preserve_section_numbers(match):
+                section = match.group(0)
+                # Keep the original section number and title
+                return f"SECTION_MARKER{section}"
+            
+            # Preserve section numbers before splitting
+            preserved_content = re.sub(r'^(\d+(?:\.\d+)*)\s+([^\n]+)', preserve_section_numbers, content, flags=re.MULTILINE)
+            
+            # Use RecursiveCharacterTextSplitter as before
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=2000,
+                chunk_overlap=200,
+                length_function=len,
+                separators=["\n\n", "\n", " ", ""]
+            )
+            
+            chunks = text_splitter.split_text(preserved_content)
+            
+            # Restore section numbers after splitting
+            processed_chunks = []
+            for chunk in chunks:
+                # Restore original section numbers
+                restored_chunk = chunk.replace("SECTION_MARKER", "")
+                processed_chunks.append(restored_chunk)
+            
+            self.chunks = processed_chunks
+            console.print(f"[green]Created {len(processed_chunks)} chunks[/green]")
+            return processed_chunks
+            
+        except Exception as e:
+            console.print(f"[red]Error during structural chunking: {str(e)}[/red]")
+            raise
+            
+    def save_chunks(self, chunks: List[str], output_file: str):
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                for i, chunk in enumerate(chunks, 1):
+                    f.write(f"\n{'='*80}\nChunk {i}:\n{'='*80}\n\n")
+                    f.write(chunk)
+                    f.write("\n\n")
+                    
+            console.print(f"[green]✓ Saved {len(chunks)} chunks to {output_file}[/green]")
+            
+        except Exception as e:
+            console.print(f"[red]Error saving chunks: {str(e)}[/red]")
+            raise
+
 if __name__ == "__main__":
-    # Get the backend directory path (two levels up from this script)
-    backend_dir = Path(__file__).parent.parent
-    
-    # Define input and output paths relative to backend directory
-    input_markdown = str(backend_dir / "processed_data" / "cleaned_TS_24.501.md")
-    output_markdown = str(backend_dir / "processed_data" / "chunked_TS_24.501.md")
-    
-    print(f"Reading cleaned markdown from: {input_markdown}")
-    print(f"Saving chunked markdown to: {output_markdown}")
-    
-    # Process the file
-    with open(input_markdown, "r", encoding="utf-8") as file:
-        text = file.read()
-    
-    # Chunk the text by headings and subheadings
-    chunks = chunk_text_by_headings(text)
-    
-    # Save the chunks to a markdown file
-    save_chunks_to_markdown(chunks, output_markdown)
-    
-    print(f"Successfully created {len(chunks)} chunks!")
+    try:
+        base_dir = Path(__file__).parent.parent
+        input_file = base_dir / "processed_data" / "cleaned_TS_24.501.md"
+        output_file = base_dir / "processed_data" / "chunked_TS_24.501.md"
+        
+        if not input_file.exists():
+            raise FileNotFoundError(f"Input file not found at: {input_file}")
+            
+        console.print(f"[yellow]Processing file: {input_file}[/yellow]")
+        
+        chunker = StructuralChunker()
+        chunks = chunker.chunk_markdown_file(str(input_file))
+        chunker.save_chunks(chunks, str(output_file))
+        
+    except Exception as e:
+        console.print(f"[red]Failed to execute structural chunking: {str(e)}[/red]")
