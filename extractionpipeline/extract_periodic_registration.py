@@ -10,7 +10,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 import traceback
 from pathlib import Path
-from pipeline.semantic_chunking import SemanticChunker, save_semantic_chunks
+from prepipeline.semantic_chunking import SemanticChunker, save_semantic_chunks
 from models import (
     NetworkElement, 
     PeriodicRegistrationData, 

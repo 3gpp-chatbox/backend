@@ -2,10 +2,12 @@ import re
 from typing import Dict, List
 import os
 from pathlib import Path
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
     """
-    Chunks the document into sections based on heading levels (e.g., headings, subheadings, etc.) using numeric headings.
+    Chunks the document into sections based on heading levels, then ensures each section
+    is within a reasonable size limit using RecursiveCharacterTextSplitter.
     
     Args:
         text (str): The cleaned text of the document.
@@ -22,13 +24,36 @@ def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
     # Split the document by newlines
     lines = text.split('\n')
     
+    # Initialize the splitter
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=2000,  # Maximum characters per chunk
+        chunk_overlap=200,  # Number of characters to overlap between chunks
+        separators=["\n\n", "\n", " ", ""]  # Try to split on paragraph breaks first
+    )
+    
     for line in lines:
+        # Skip lines that are just repeated dashes (--- or ------ etc)
+        if re.match(r'^-+$', line.strip()):
+            continue
+            
         heading_match = re.match(heading_pattern, line.strip())
         
         if heading_match:
-            # If we already have a current chunk, save it first
+            # If we have a current chunk, process and save it
             if current_chunk:
-                chunks.append(current_chunk)
+                # Split the content if it's too large
+                content_text = "\n".join(current_chunk['content'])
+                if len(content_text) > 2000:  # Only split if content is large
+                    split_chunks = text_splitter.split_text(content_text)
+                    # Create multiple chunks with same heading but split content
+                    for i, split_chunk in enumerate(split_chunks):
+                        chunks.append({
+                            'heading': f"{current_chunk['heading']} (Part {i+1})",
+                            'content': split_chunk.split('\n'),
+                            'level': current_chunk['level']
+                        })
+                else:
+                    chunks.append(current_chunk)
             
             # Extract the heading level and heading text
             heading_number = heading_match.group(1).strip()  # e.g., "5", "5.1", etc.
@@ -43,9 +68,19 @@ def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
             # Add the line to the current chunk's content
             current_chunk['content'].append(line.strip())
     
-    # Append the last chunk if exists
+    # Don't forget to process the last chunk
     if current_chunk:
-        chunks.append(current_chunk)
+        content_text = "\n".join(current_chunk['content'])
+        if len(content_text) > 2000:
+            split_chunks = text_splitter.split_text(content_text)
+            for i, split_chunk in enumerate(split_chunks):
+                chunks.append({
+                    'heading': f"{current_chunk['heading']} (Part {i+1})",
+                    'content': split_chunk.split('\n'),
+                    'level': current_chunk['level']
+                })
+        else:
+            chunks.append(current_chunk)
     
     return chunks
 
