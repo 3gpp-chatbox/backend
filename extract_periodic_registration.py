@@ -88,6 +88,7 @@ Triggers for Periodic Registration Procedure:
    - **Nodes** represent individual steps in the procedure (e.g., UE detects timer expiry, sends message, waits for response).  
    - **Edges** must explicitly define the transition between steps, including retry attempts if applicable.  
    - **Node IDs** must be structured as `"A1"`, `"A2"`, etc., maintaining logical sequencing.  
+   - **Nodes must include state type (5GMM-REGISTERED, 5GMM-DEREGISTERED, 5GMM-CONNECTED, 5GMM-DISCONNECTED, 5GMM-IDLE)**
 
 4. **Metadata Extraction:**  
    - Extract and include key parameters such as GUTI, TMSI, network slice information, and timer values.  
@@ -98,10 +99,10 @@ Triggers for Periodic Registration Procedure:
   "procedure": "Periodic Registration",
   "trigger": "T3512 Timer Expiry",
   "nodes": [
-    { "id": "A1", "label": "UE detects timer expiry", "source": "UE", "target": "UE" },
-    { "id": "A2", "label": "UE sends Registration Request", "messageType": "Registration Request", "source": "UE", "target": "AMF" },
-    { "id": "A3", "label": "AMF processes request", "source": "AMF", "target": "AMF" },
-    { "id": "A4", "label": "AMF decision point: Accept or Reject?", "source": "AMF", "target": "AMF", "type": "decision" },
+    { "id": "A1", "label": "UE detects timer expiry", "source": "UE", "target": "UE", "state_type": "5GMM-IDLE" },
+    { "id": "A2", "label": "UE sends Registration Request", "messageType": "Registration Request", "source": "UE", "target": "AMF", "state_type": "5GMM-IDLE" },
+    { "id": "A3", "label": "AMF processes request", "source": "AMF", "target": "AMF", "state_type": "5GMM-IDLE" },
+    { "id": "A4", "label": "AMF decision point: Accept or Reject?", "source": "AMF", "target": "AMF", "type": "decision", "state_type": "5GMM-IDLE" },
     
     { "id": "A5", "label": "AMF sends Registration Accept", "messageType": "Registration Accept", "source": "AMF", "target": "UE" },
     { "id": "A6", "label": "UE sends Registration Complete", "messageType": "Registration Complete", "source": "UE", "target": "AMF" },
@@ -229,6 +230,15 @@ def process_md_chunks(md_file_path: str, llm) -> List[Dict]:
 def validate_llm_output(data: dict) -> Optional[ValidatedData]:
     """Validate LLM output and clean data if needed"""
     try:
+        # Define valid state types
+        VALID_STATE_TYPES = {
+            "5GMM-REGISTERED",
+            "5GMM-DEREGISTERED",
+            "5GMM-CONNECTED",
+            "5GMM-DISCONNECTED",
+            "5GMM-IDLE"
+        }
+
         # Define valid periodic registration triggers
         VALID_TRIGGERS = {
             "T3512 Timer Expiry",
@@ -287,11 +297,11 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
                     "label": "UE sends Registration Request",
                     "source": "UE",
                     "target": "AMF",
-                    "messageType": "Registration Request"
+                    "messageType": "Registration Request",
+                    "state_type": "5GMM-REGISTERED"  # Initial state for registration request
                 })
             
             if not has_accept:
-                # Insert before Registration Complete if it exists
                 insert_pos = len(data["nodes"])
                 for i, node in enumerate(data["nodes"]):
                     if "registration complete" in node.get("messageType", "").lower():
@@ -302,7 +312,8 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
                     "label": "AMF sends Registration Accept",
                     "source": "AMF",
                     "target": "UE",
-                    "messageType": "Registration Accept"
+                    "messageType": "Registration Accept",
+                    "state_type": "5GMM-REGISTERED"  # State during registration accept
                 })
             
             if not has_complete:
@@ -311,7 +322,8 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
                     "label": "UE sends Registration Complete",
                     "source": "UE",
                     "target": "AMF",
-                    "messageType": "Registration Complete"
+                    "messageType": "Registration Complete",
+                    "state_type": "5GMM-REGISTERED"  # Final state after registration complete
                 })
 
         # Validate and clean nodes
@@ -325,6 +337,20 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
                 node["source"] = "UE" if "UE" in node["label"] else "AMF"
             if "target" not in node:
                 node["target"] = "AMF" if "AMF" in node["label"] else "UE"
+
+            # Validate and set state_type
+            if "state_type" not in node or node["state_type"] not in VALID_STATE_TYPES:
+                # Infer state type based on message type and context
+                msg_type = node.get("messageType", "").lower()
+                if "registration request" in msg_type:
+                    node["state_type"] = "5GMM-REGISTERED"
+                elif "registration accept" in msg_type:
+                    node["state_type"] = "5GMM-REGISTERED"
+                elif "registration complete" in msg_type:
+                    node["state_type"] = "5GMM-REGISTERED"
+                else:
+                    # Default to REGISTERED state for periodic registration procedure
+                    node["state_type"] = "5GMM-REGISTERED"
 
             # Set or validate message type
             if "messageType" not in node:
@@ -407,6 +433,15 @@ def validate_llm_output(data: dict) -> Optional[ValidatedData]:
 def verify_extraction(data: dict) -> bool:
     """Verify if all required nodes and edges are extracted for periodic registration"""
     
+    # Valid state types
+    VALID_STATE_TYPES = {
+        "5GMM-REGISTERED",
+        "5GMM-DEREGISTERED",
+        "5GMM-CONNECTED",
+        "5GMM-DISCONNECTED",
+        "5GMM-IDLE"
+    }
+    
     # Expected network elements for periodic registration (only UE and AMF needed)
     required_elements = {"UE", "AMF"}
     
@@ -432,14 +467,26 @@ def verify_extraction(data: dict) -> bool:
     
     # Check procedure flow and nodes with more flexible message matching
     extracted_messages = set()
-    for step in data.get("procedure_flow", []):
-        message = step["message"].lower()
+    missing_state_types = []
+    invalid_state_types = []
+    
+    # Check nodes for state types and messages
+    for node in data.get("nodes", []):
+        # Check message types
+        message = node.get("message", "").lower()
         if "registration request" in message:
             extracted_messages.add("Registration Request")
         elif "registration accept" in message:
             extracted_messages.add("Registration Accept")
         elif "registration complete" in message:
             extracted_messages.add("Registration Complete")
+            
+        # Check state types
+        state_type = node.get("state_type")
+        if not state_type:
+            missing_state_types.append(node.get("id", "unknown"))
+        elif state_type not in VALID_STATE_TYPES:
+            invalid_state_types.append(f"{node.get('id', 'unknown')}: {state_type}")
     
     missing_messages = required_messages - extracted_messages
     
@@ -449,6 +496,14 @@ def verify_extraction(data: dict) -> bool:
     
     # Print verification results
     console.print("\n[blue]Periodic Registration Verification Results:[/blue]")
+    
+    # Check state types
+    if missing_state_types:
+        console.print(f"[red]Missing state types in nodes: {', '.join(missing_state_types)}[/red]")
+    if invalid_state_types:
+        console.print(f"[red]Invalid state types found: {', '.join(invalid_state_types)}[/red]")
+    if not missing_state_types and not invalid_state_types:
+        console.print("[green]✓ All nodes have valid state types[/green]")
     
     # Check trigger
     trigger = data.get("trigger")
@@ -504,6 +559,8 @@ def verify_extraction(data: dict) -> bool:
                 has_nodes and 
                 has_edges and 
                 has_valid_trigger and 
+                not missing_state_types and 
+                not invalid_state_types and 
                 metadata is not None)
     
     if is_valid:

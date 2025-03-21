@@ -39,6 +39,18 @@ class PeriodicRegistrationNeo4j:
                     REQUIRE t.name IS UNIQUE
                 """)
                 
+                # Create constraints for State nodes
+                session.run("""
+                    CREATE CONSTRAINT IF NOT EXISTS FOR (s:State)
+                    REQUIRE s.name IS UNIQUE
+                """)
+                
+                # Add constraint for Procedure nodes
+                session.run("""
+                    CREATE CONSTRAINT IF NOT EXISTS FOR (p:Procedure)
+                    REQUIRE p.name IS UNIQUE
+                """)
+                
                 console.print("[green]Created database constraints successfully[/green]")
             except Exception as e:
                 console.print(f"[yellow]Warning creating constraints: {str(e)}[/yellow]")
@@ -65,6 +77,19 @@ class PeriodicRegistrationNeo4j:
                     })
                 except Exception as e:
                     console.print(f"[red]Error storing network element {element.get('name')}: {str(e)}[/red]")
+
+    def store_state(self, state_type: str):
+        """Store state type in Neo4j."""
+        try:
+            with self.driver.session() as session:
+                session.run("""
+                    MERGE (s:State {name: $state_type})
+                    ON CREATE SET s.type = 'State',
+                                s.description = 'NAS State'
+                """, {"state_type": state_type})
+                console.print(f"[green]✓ Stored state: {state_type}[/green]")
+        except Exception as e:
+            console.print(f"[red]Error storing state {state_type}: {str(e)}[/red]")
 
     def store_trigger(self, trigger_data: dict):
         """Store trigger information in Neo4j."""
@@ -98,41 +123,82 @@ class PeriodicRegistrationNeo4j:
         """Store procedure flow information in Neo4j."""
         try:
             with self.driver.session() as session:
+                # First create all step nodes
                 for i, step in enumerate(flow_steps):
-                    source = step.get('source')
-                    target = step.get('target')
-                    if not source or not target:
-                        continue
-
-                    message_props = {
+                    state_type = step.get('state_type', '5GMM-REGISTERED')
+                    step_id = f"STEP_{i+1}"
+                    
+                    # Ensure the state exists
+                    self.store_state(state_type)
+                    
+                    # Create step node with all properties
+                    session.run("""
+                        MERGE (step:Step {id: $step_id})
+                        SET step.name = $name,
+                            step.description = $description,
+                            step.step_number = $step_number,
+                            step.procedure = $procedure,
+                            step.trigger = $trigger,
+                            step.message_type = $message_type,
+                            step.source = $source,
+                            step.target = $target,
+                            step.state_type = $state_type
+                    """, {
+                        'step_id': step_id,
                         'name': step.get('message', ''),
+                        'description': step.get('description', ''),
                         'step_number': i + 1,
                         'procedure': 'Periodic_Registration',
                         'trigger': trigger,
-                        'description': step.get('description', ''),
-                        'specification': step.get('specification', ''),
-                        'section': step.get('section', '')
-                    }
+                        'message_type': step.get('message_type', ''),
+                        'source': step.get('source', ''),
+                        'target': step.get('target', ''),
+                        'state_type': state_type
+                    })
 
-                    # Use MERGE to avoid duplicates
+                    # Create relationships to network elements
                     session.run("""
+                        MATCH (step:Step {id: $step_id})
                         MATCH (source:NetworkElement {name: $source})
                         MATCH (target:NetworkElement {name: $target})
-                        MERGE (source)-[r:SENDS_MESSAGE {
-                            procedure: $procedure,
-                            trigger: $trigger,
-                            step_number: $step_number
-                        }]->(target)
-                        ON CREATE SET r += $props
-                        ON MATCH SET r += $props
+                        MATCH (state:State {name: $state_type})
+                        MERGE (source)-[:PARTICIPATES_IN]->(step)
+                        MERGE (target)-[:PARTICIPATES_IN]->(step)
+                        MERGE (step)-[:HAS_STATE]->(state)
                     """, {
-                        'source': source,
-                        'target': target,
-                        'procedure': 'Periodic_Registration',
-                        'trigger': trigger,
-                        'step_number': i + 1,
-                        'props': message_props
+                        'step_id': step_id,
+                        'source': step.get('source', ''),
+                        'target': step.get('target', ''),
+                        'state_type': state_type
                     })
+
+                # Create flow relationships between steps
+                for i in range(len(flow_steps) - 1):
+                    current_step_id = f"STEP_{i+1}"
+                    next_step_id = f"STEP_{i+2}"
+                    
+                    # Create NEXT relationship between steps
+                    session.run("""
+                        MATCH (current:Step {id: $current_id})
+                        MATCH (next:Step {id: $next_id})
+                        MERGE (current)-[r:NEXT]->(next)
+                        SET r.procedure = $procedure,
+                            r.trigger = $trigger
+                    """, {
+                        'current_id': current_step_id,
+                        'next_id': next_step_id,
+                        'procedure': 'Periodic_Registration',
+                        'trigger': trigger
+                    })
+
+                # Link to trigger node
+                session.run("""
+                    MATCH (t:Trigger {name: $trigger})
+                    MATCH (start:Step {id: 'STEP_1'})
+                    MERGE (t)-[:INITIATES]->(start)
+                """, {
+                    'trigger': trigger
+                })
 
                 console.print(f"[green]✓ Stored procedure flow for trigger: {trigger}[/green]")
 
@@ -170,6 +236,27 @@ class PeriodicRegistrationNeo4j:
             console.print(f"[red]Error storing metadata: {str(e)}[/red]")
             raise
 
+    def store_procedure(self, procedure_name: str, trigger: str, description: str = ""):
+        """Store procedure information in Neo4j."""
+        try:
+            with self.driver.session() as session:
+                session.run("""
+                    MERGE (p:Procedure {name: $name})
+                    SET p.description = $description,
+                        p.type = 'Periodic_Registration'
+                    WITH p
+                    MATCH (t:Trigger {name: $trigger})
+                    MERGE (t)-[:BELONGS_TO]->(p)
+                """, {
+                    'name': procedure_name,
+                    'description': description,
+                    'trigger': trigger
+                })
+                console.print(f"[green]✓ Stored procedure: {procedure_name}[/green]")
+        except Exception as e:
+            console.print(f"[red]Error storing procedure: {str(e)}[/red]")
+            raise
+
 def process_periodic_registration_data(file_path: str = "processed_data/periodic_registration_analysis.json"):
     """Process and store periodic registration data."""
     try:
@@ -190,6 +277,12 @@ def process_periodic_registration_data(file_path: str = "processed_data/periodic
                 return
 
             for result in results:
+                # Store procedure first
+                procedure_name = "Periodic Registration"
+                trigger = result.get('trigger', '')
+                description = result.get('description', '')
+                neo4j_handler.store_procedure(procedure_name, trigger, description)
+
                 # Store network elements
                 if 'network_elements' in result:
                     neo4j_handler.store_network_elements(result['network_elements'])
@@ -203,7 +296,7 @@ def process_periodic_registration_data(file_path: str = "processed_data/periodic
                 }
                 neo4j_handler.store_trigger(trigger_data)
 
-                # Store procedure flow
+                # Store procedure flow with state types
                 if 'procedure_flow' in result:
                     flow_steps = []
                     for step in result['procedure_flow']:
@@ -215,7 +308,8 @@ def process_periodic_registration_data(file_path: str = "processed_data/periodic
                             'message_type': step.get('message_type', ''),
                             'parameters': step.get('parameters', []),
                             'conditions': step.get('conditions', []),
-                            'outcome': step.get('outcome', '')
+                            'outcome': step.get('outcome', ''),
+                            'state_type': step.get('state_type', '5GMM-REGISTERED')  # Include state type
                         }
                         flow_steps.append(flow_step)
                     neo4j_handler.store_procedure_flow(trigger_data['name'], flow_steps)
