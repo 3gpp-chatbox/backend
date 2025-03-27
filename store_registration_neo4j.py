@@ -327,13 +327,13 @@ def create_unique_constraints(session):
             pass  # Ignore if constraint doesn't exist
 
         # Create new constraints
-        constraints = [
-            "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
+    constraints = [
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (n:NetworkElement) REQUIRE n.name IS UNIQUE",
             "CREATE CONSTRAINT IF NOT EXISTS FOR (n:State) REQUIRE n.id IS UNIQUE",
             "CREATE CONSTRAINT IF NOT EXISTS FOR (n:Event) REQUIRE n.id IS UNIQUE"
-        ]
-        
-        for constraint in constraints:
+    ]
+    
+    for constraint in constraints:
             session.run(constraint)
             console.print(f"[green]Created constraint: {constraint}[/green]")
             
@@ -386,7 +386,7 @@ def store_states(session, states: List[Dict], trigger: str):
             console.print(f"[green]✓ Stored state: {state_name} for {state.get('element')}[/green]")
             
         console.print(f"[green]✓ Stored {len(states)} states for trigger: {trigger}[/green]")
-    except Exception as e:
+        except Exception as e:
         console.print(f"[red]Error storing states: {str(e)}[/red]")
         raise
 
@@ -454,7 +454,7 @@ def store_transitions(session, edges: List[Dict], trigger: str):
 def store_network_elements(session, elements: List[Dict]):
     """Store network elements with deduplication."""
     try:
-        for element in elements:
+    for element in elements:
             # Get the name from either 'name' or 'label' field
             element_name = element.get('label', '').split('(')[0].strip()  # Extract name before parentheses
             if not element_name:
@@ -562,8 +562,8 @@ def store_procedure_flow(session, trigger: str, procedure: str, flow_steps: List
         })
         
         console.print(f"[green]✓ Stored procedure flow for {procedure} - {trigger}[/green]")
-        
-    except Exception as e:
+
+        except Exception as e:
         console.print(f"[red]Error storing procedure flow: {str(e)}[/red]")
         raise
 
@@ -628,9 +628,9 @@ def process_registration_data(file_path: str = "processed_data/registration_anal
         # Connect to Neo4j
         if not all([URI, USERNAME, PASSWORD]):
             raise ValueError("Missing Neo4j credentials. Check .env file.")
-            
+
         driver = GraphDatabase.driver(URI, auth=(USERNAME, PASSWORD))
-        
+            
         try:
             with driver.session() as session:
                 # Create constraints
