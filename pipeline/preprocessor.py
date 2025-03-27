@@ -1,8 +1,35 @@
 import os
 import time
+import json
 from docling.document_converter import DocumentConverter
 import re
 from chunker import create_chunks
+
+def save_chunks_to_file(chunks, output_dir, filename):
+    """
+    Save chunks to a JSON file in a readable format
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    output_file = os.path.join(output_dir, f"{filename}_chunks.json")
+    
+    formatted_chunks = []
+    for i, chunk in enumerate(chunks, 1):
+        formatted_chunk = {
+            "chunk_id": i,
+            "title": chunk["title"],
+            "content": chunk["content"] if isinstance(chunk["content"], str) else " ".join(chunk["content"]),
+            "level": chunk["level"]
+        }
+        formatted_chunks.append(formatted_chunk)
+    
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(formatted_chunks, f, indent=2, ensure_ascii=False)
+    
+    print(f"→ Chunks saved to: {output_file}")
+    # Also print first chunk as example
+    if formatted_chunks:
+        print("\nExample of first chunk:")
+        print(json.dumps(formatted_chunks[0], indent=2))
 
 def process_docx(docx_file: str, output_path: str, db_path: str):
     """
@@ -29,6 +56,11 @@ def process_docx(docx_file: str, output_path: str, db_path: str):
         # Create chunks from the filtered markdown
         print("→ Creating chunks...")
         chunks = create_chunks(output_path, db_path)
+        
+        # Save chunks to processed_data directory
+        filename = os.path.splitext(os.path.basename(docx_file))[0]
+        processed_data_dir = os.path.join(os.path.dirname(os.path.dirname(output_path)), "processed_data")
+        save_chunks_to_file(chunks, processed_data_dir, filename)
         
         total_duration = time.time() - total_start_time
         print(f"\n✓ All processing completed in {total_duration:.2f} seconds")

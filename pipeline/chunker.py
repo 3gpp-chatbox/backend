@@ -9,13 +9,14 @@ import spacy
 from spacy.language import Language
 from embedding_handler import DBHandler
 import os
+import json
 
 class DocumentChunker:
     def __init__(self, nlp: Language = None):
         # Load spaCy model for semantic analysis
         self.nlp = nlp or spacy.load("en_core_web_sm")
-        # self.max_chunk_size = 500  # Maximum characters per chunk
-        # self.overlap = 25  # Overlap between chunks
+        self.max_chunk_size = 500  # Maximum characters per chunk
+        self.overlap = 25  # Overlap between chunks
 
     def process_document(self, markdown_text: str) -> List[Dict]:
         """
@@ -103,28 +104,58 @@ class DocumentChunker:
         return semantic_chunks
 
 def create_chunks(markdown_file: str, db_path: str = None) -> List[Dict]:
-    """Main function to create chunks from a markdown file and store them in vector DB."""
+    """Main function to create chunks from a markdown file, store in DB and save to files."""
     try:
         # Initialize DB handler with ChromaDB
         db_handler = DBHandler(persist_directory="DB/chroma_db")
         doc_id = os.path.basename(markdown_file)
         
-        # Check if chunks already exist
+        # Check if chunks already exist in DB
         existing_chunks = db_handler.get_chunks(doc_id)
         if existing_chunks:
-            print(f"Found {len(existing_chunks)} existing chunks")
-            return existing_chunks
+            print(f"Found {len(existing_chunks)} existing chunks in DB")
+            chunks = existing_chunks
+        else:
+            # Create new chunks if none exist
+            print("Creating new chunks...")
+            with open(markdown_file, 'r', encoding='utf-8') as f:
+                markdown_text = f.read()
+            
+            chunker = DocumentChunker()
+            chunks = chunker.process_document(markdown_text)
+            
+            # Store in DB
+            stored_count = db_handler.store_chunks(chunks, doc_id)
+            print(f"Created and stored {stored_count} chunks in DB")
 
-        # Create new chunks if none exist
-        print("Creating new chunks...")
-        with open(markdown_file, 'r', encoding='utf-8') as f:
-            markdown_text = f.read()
+        # Save chunks to files (both JSON and MD)
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "processed_data")
+        os.makedirs(output_dir, exist_ok=True)
+        base_filename = os.path.splitext(os.path.basename(markdown_file))[0]
         
-        chunker = DocumentChunker()
-        chunks = chunker.process_document(markdown_text)
+        # Save as JSON
+        json_file = os.path.join(output_dir, f"{base_filename}_chunks.json")
+        chunks_with_ids = [{"chunk_id": i+1, **chunk} for i, chunk in enumerate(chunks)]
+        with open(json_file, 'w', encoding='utf-8') as f:
+            json.dump(chunks_with_ids, f, indent=2, ensure_ascii=False)
         
-        stored_count = db_handler.store_chunks(chunks, doc_id)
-        print(f"Created and stored {stored_count} new chunks")
+        # Save as Markdown
+        md_file = os.path.join(output_dir, f"{base_filename}_chunks.md")
+        with open(md_file, 'w', encoding='utf-8') as f:
+            for chunk in chunks_with_ids:
+                f.write(f"## Chunk {chunk['chunk_id']}: {chunk['title']}\n\n")
+                f.write(f"Level: {chunk['level']}\n\n")
+                f.write(f"{chunk['content']}\n\n")
+                f.write("---\n\n")
+        
+        print(f"Saved chunks to:")
+        print(f"- JSON: {json_file}")
+        print(f"- Markdown: {md_file}")
+        
+        # Print example chunk
+        if chunks:
+            print("\nExample chunk:")
+            print(json.dumps(chunks_with_ids[0], indent=2))
             
         return chunks
         
