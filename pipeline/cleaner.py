@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 def clean_text(text: str) -> str:
-    """Cleans extracted PDF text by removing headers, footers, images, and page numbers.
+    """Cleans extracted PDF text by removing headers, footers, images, page numbers, and page breaks.
     
     Args:
         text (str): Raw text extracted from PDF
@@ -13,7 +13,6 @@ def clean_text(text: str) -> str:
         str: Cleaned text
     """
    
-    
     # Remove specific headers like document title and version (e.g., "3GPP TS 24.501 version 18.9.0 Release 18")
     header_patterns = [
         r'^\s*3GPP TS 24\.501.*?Release \d+.*$',  # Matches headers like "3GPP TS 24.501 version 18.9.0 Release 18"
@@ -36,6 +35,9 @@ def clean_text(text: str) -> str:
     
     # Remove extra blank lines (headers, footers may leave extra lines)
     text = re.sub(r'\n\s*\n', '\n', text)  # Remove empty or whitespace-only lines
+    
+    # Remove page breaks represented by "---"
+    text = re.sub(r'^\s*-{3,}\s*$', '', text, flags=re.MULTILINE)  # Matches lines with "---"
     
     return text
 

@@ -30,14 +30,17 @@ def chunk_text_by_headings(text: str) -> List[Dict[str, str]]:
             if current_chunk:
                 chunks.append(current_chunk)
             
-            # Extract the heading level and heading text
+            # Extract the heading number (e.g., "5", "5.1", etc.) and the title text
             heading_number = heading_match.group(1).strip()  # e.g., "5", "5.1", etc.
             heading_text = heading_match.group(3).strip()   # The text following the number (e.g., "Overview")
+            
+            # Create the full heading by combining the number and text
+            full_heading = f"{heading_number} {heading_text}"
             
             # Determine the heading level based on the number of periods in the heading number
             heading_level = heading_number.count('.') + 1
             
-            current_chunk = {'heading': heading_text, 'content': [], 'level': heading_level}
+            current_chunk = {'heading': full_heading, 'content': [], 'level': heading_level}
         
         elif current_chunk:
             # Add the line to the current chunk's content
@@ -62,8 +65,8 @@ def save_chunks_to_markdown(chunks: List[Dict[str, str]], output_file: str):
     
     with open(output_file, "w", encoding="utf-8") as file:
         for chunk in chunks:
-            # Write the heading with the corresponding number of '#' symbols
-            file.write(f"{'#' * chunk['level']} {chunk['heading']}\n")
+            # Write the heading without markdown header symbols (plain text)
+            file.write(f"{chunk['heading']}\n")
             
             # Write the content under the heading
             for content_line in chunk['content']:
