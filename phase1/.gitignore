@@ -12,7 +12,7 @@ dist/
 venv/
 env/
 .env
-__pycache__
+
 # IDE specific files
 .idea/
 .vscode/

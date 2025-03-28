@@ -1,0 +1,442 @@
+```json
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "1",
+        "type": "start",
+        "description": "UE in 5GMM-DEREGISTERED state initiates initial registration by sending REGISTRATION REQUEST to AMF. Starts timer T3510. Stops T3502 & T3511 if running.",
+        "entity": "UE",
+        "state": "5GMM-DEREGISTERED"
+      },
+      {
+        "id": "2",
+        "type": "process",
+        "description": "UE handles 5GS mobile identity IE based on conditions (5G-GUTI, SUCI, PEI, etc.).  Starts T3519 if SUCI is included and not already running. Includes UE status IE if dual registration and EMM-REGISTERED.",
+        "entity": "UE"
+      },
+      {
+        "id": "3",
+        "type": "process",
+        "description": "UE includes various IEs (TAI, update type, MICO, NSSAI, capabilities, payload container, etc.) in REGISTRATION REQUEST. Includes NAS message container IE based on security context.",
+        "entity": "UE"
+      },
+      {
+        "id": "4",
+        "type": "process",
+        "description": "AMF may initiate 5GMM common procedures (identification, authentication, security).",
+        "entity": "AMF"
+      },
+      {
+        "id": "5",
+        "type": "decision",
+        "description": "Is initial registration accepted?",
+        "entity": "AMF"
+      },
+      {
+        "id": "6_accept",
+        "type": "process",
+        "description": "AMF sends REGISTRATION ACCEPT to UE. Stores UE capabilities, assigns TAI list (single TAI if non-3GPP access).",
+        "entity": "AMF"
+      },
+      {
+        "id": "7_accept",
+        "type": "process",
+        "description": "AMF may include Service area list IE, list of equivalent PLMNs/SNPNs in REGISTRATION ACCEPT.",
+        "entity": "AMF"
+      },
+      {
+        "id": "8_accept",
+        "type": "process",
+        "description": "AMF determines LADN DNNs and includes LADN information IE in REGISTRATION ACCEPT.",
+        "entity": "AMF"
+      },
+      {
+        "id": "9_accept",
+        "type": "process",
+        "description": "AMF may includes Negotiated WUS assistance information IE in REGISTRATION ACCEPT if supported and accepted.",
+        "entity": "AMF"
+      },
+      {
+        "id": "10_accept",
+        "type": "process",
+        "description": "If 5G-GUTI or SOR transparent container IE is included in REGISTRATION ACCEPT, AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED.",
+        "entity": "AMF",
+        "timer": "T3550",
+        "state": "5GMM-COMMON-PROCEDURE-INITIATED"
+      },
+      {
+        "id": "11_accept",
+        "type": "process",
+        "description": "AMF includes MICO indication IE, T3324, T3512, non-3GPP de-registration timer based on UE request and AMF support.",
+        "entity": "AMF"
+      },
+      {
+        "id": "12_accept",
+        "type": "process",
+        "description": "AMF indicates control plane CIoT 5GS optimization support if accepted.",
+        "entity": "AMF"
+      },
+      {
+        "id": "13_accept",
+        "type": "process",
+        "description": "AMF may includes T3447 IE (service gap time) in REGISTRATION ACCEPT if UE supports service gap control and service gap time is available.",
+        "entity": "AMF"
+      },
+       {
+        "id": "14_accept",
+        "type": "process",
+        "description": "AMF may includes T3448 value IE in the REGISTRATION ACCEPT message, if UE indicated support for control plane CIoT 5GS optimizations and the AMF decides to activate the congestion control for transport of user data via the control plane.",
+        "entity": "AMF"
+      },
+      {
+        "id": "15_accept",
+        "type": "process",
+        "description": "If conditions are met (CAA-level UAV ID), the AMF shall initiate the UUAA-MM procedure with the UAS-NF and shall include a service-level-AA pending indication in the Service-level-AA container IE of the REGISTRATION ACCEPT message and start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED",
+        "entity": "AMF",
+        "timer": "T3550",
+        "state": "5GMM-COMMON-PROCEDURE-INITIATED"
+      },
+      {
+        "id": "16_accept",
+        "type": "process",
+        "description": "AMF includes List of PLMNs to be used in disaster condition IE, Disaster roaming wait range IE and Disaster return wait range IE, based on configuration and MINT support.",
+        "entity": "AMF"
+      },
+      {
+        "id": "17_accept",
+        "type": "process",
+        "description": "AMF includes Feature authorization indication IE in the REGISTRATION ACCEPT message.",
+        "entity": "AMF"
+      },
+      {
+        "id": "18_accept",
+        "type": "process",
+        "description": "AMF set the LCS-UPP bit, the SUPL bit, or both in the 5GS network feature support IE of the REGISTRATION ACCEPT message.",
+        "entity": "AMF"
+      },
+      {
+        "id": "19",
+        "type": "process",
+        "description": "UE resets registration attempt counter, enters 5GMM-REGISTERED state, sets 5GS update status to 5U1 UPDATED.  Stores interworking and network feature support info.",
+        "entity": "UE",
+        "state": "5GMM-REGISTERED"
+      },
+       {
+        "id": "20_accept",
+        "type": "decision",
+        "description": "If Network slicing information changed and UE supports NSAG or PSSI change or there are operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\" IE  the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the message",
+        "entity": "UE"
+      },
+      {
+        "id": "20b_accept",
+        "type": "process",
+        "description": "UE sends REGISTRATION COMPLETE message",
+        "entity": "UE"
+      },
+       {
+        "id": "23_accept",
+        "type": "decision",
+        "description": "AMF determines the PLMN with disaster condition in the UE determined PLMN with disaster condition IE",
+        "entity": "AMF"
+      },
+      {
+        "id": "24_accept",
+        "type": "process",
+        "description": "The AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE if a disaster condition applies to the PLMN with disaster condition and applies RAT utilization control",
+        "entity": "AMF"
+      },
+      {
+        "id": "21_accept",
+        "type": "process",
+        "description": "UE updates CAG information list and operates based on the list and cell type.",
+        "entity": "UE"
+      },
+      {
+        "id": "25",
+        "type": "process",
+        "description": "AMF stops T3550 and enters 5GMM-REGISTERED. Considers 5G-GUTI, PEIPS assistance information, and UE radio capability ID (if sent in REGISTRATION ACCEPT) valid.",
+        "entity": "AMF",
+        "state": "5GMM-REGISTERED",
+        "timer": "T3550"
+      },
+      {
+        "id": "26_accept",
+        "type": "process",
+        "description": "AMF includes 5GS registration result IE in REGISTRATION ACCEPT. Includes allowed NSSAI and mapped S-NSSAI(s).",
+        "entity": "AMF"
+      },
+      {
+        "id": "27_accept",
+        "type": "process",
+        "description": "AMF may include rejected NSSAI/ Partially rejected NSSAI in REGISTRATION ACCEPT.  AMF sets IWK N26 in 5GS network feature support IE.",
+        "entity": "AMF"
+      },
+      {
+        "id": "28_accept",
+        "type": "process",
+        "description": "AMF sets IWK N26 in 5GS network feature support IE to indicate N26 support if UE supports S1 mode. UE operates in single/dual-registration mode based on IWK N26 and UE capability.",
+        "entity": "AMF"
+      },
+      {
+        "id": "29_accept",
+        "type": "process",
+        "description": "AMF includes 5GS network feature support IE with support indicators for IMS voice, Location Services, Emergency services, ATSSS, Emergency services fallback, and non-3GPP access path switching.  AMF sets the EMF bit.",
+        "entity": "AMF"
+      },
+      {
+        "id": "30_accept",
+        "type": "process",
+        "description": "The AMF shall set the EMF bit in the 5GS network feature support IE to Emergency services fallback if the network supports the emergency services fallback procedure",
+        "entity": "AMF"
+      },
+      {
+        "id": "31_accept",
+        "type": "process",
+        "description": "AMF indicates MPS/MCS support in 5GS network feature support IE. UE uses access identity 1 or 2 based on the indication.",
+        "entity": "AMF"
+      },
+      {
+        "id": "32_accept",
+        "type": "process",
+        "description": "AMF set the RestrictEC bit and The AMF shall set the N1 NAS signalling connection release bit to N1 NAS signalling connection release supported in the 5GS network feature support IE of the REGISTRATION ACCEPT message.",
+        "entity": "AMF"
+      },
+      {
+        "id": "33_accept",
+        "type": "process",
+        "description": "AMF includes negotiated DRX parameters (if requested), non-3GPP de-registration timer (if non-3GPP access), truncated 5G-S-TMSI configuration (if configured) and AMF may include RAN timing synchronization IE.",
+        "entity": "AMF"
+      },
+      {
+        "id": "34_accept",
+        "type": "process",
+        "description": "If SOR transparent container IE is included and passes integrity check, UE stores SOR counter and proceeds with 3GPP TS 23.122 annex C behavior",
+        "entity": "UE"
+      },
+       {
+        "id": "35_accept",
+        "type": "process",
+        "description": "UE handles the T3447 value IE and 5GS network feature support IE from the message and the UE receives, the Discontinuous coverage maximum time offset IE in the REGISTRATION ACCEPT message.",
+        "entity": "UE"
+      },
+      {
+        "id": "36_reject",
+        "type": "process",
+        "description": "If initial registration request cannot be accepted, AMF sends REGISTRATION REJECT with appropriate 5GMM cause.  UE sets 5GS update status, TAI list, and 5GMM State for the corresponding cause. Stops timers T3510, T3502 and T3511.",
+        "entity": "AMF",
+        "state": "5GMM-DEREGISTERED",
+        "timer": "T3510, T3502, T3511"
+      },
+      {
+        "id": "37_reject",
+        "type": "timer",
+        "description": "Starts T3346 after REJECT",
+        "entity": "AMF",
+        "timer": "T3346"
+      },
+      {
+        "id": "end_success",
+        "type": "end",
+        "description": "Registration Success."
+      },
+       {
+        "id": "end_failure",
+        "type": "end",
+        "description": "Registration Failed."
+      }
+    ],
+    "edges": [
+      {
+        "from": "1",
+        "to": "2",
+        "type": "sequential"
+      },
+      {
+        "from": "2",
+        "to": "3",
+        "type": "sequential"
+      },
+      {
+        "from": "3",
+        "to": "4",
+        "type": "sequential"
+      },
+      {
+        "from": "4",
+        "to": "5",
+        "type": "sequential"
+      },
+      {
+        "from": "5",
+        "to": "6_accept",
+        "type": "conditional",
+        "condition": "Registration Accepted"
+      },
+      {
+        "from": "5",
+        "to": "36_reject",
+        "type": "conditional",
+        "condition": "Registration Rejected"
+      },
+      {
+        "from": "6_accept",
+        "to": "7_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "7_accept",
+        "to": "8_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "8_accept",
+        "to": "9_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "9_accept",
+        "to": "10_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "10_accept",
+        "to": "11_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "11_accept",
+        "to": "12_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "12_accept",
+        "to": "13_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "13_accept",
+        "to": "14_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "14_accept",
+        "to": "15_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "15_accept",
+        "to": "16_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "16_accept",
+        "to": "17_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "17_accept",
+        "to": "18_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "18_accept",
+        "to": "23_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "23_accept",
+        "to": "24_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "24_accept",
+        "to": "26_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "26_accept",
+        "to": "27_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "27_accept",
+        "to": "28_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "28_accept",
+        "to": "29_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "29_accept",
+        "to": "30_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "30_accept",
+        "to": "31_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "31_accept",
+        "to": "32_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "32_accept",
+        "to": "33_accept",
+        "type": "sequential"
+      },
+      {
+        "from": "33_accept",
+        "to": "19",
+        "type": "sequential"
+      },
+      {
+        "from": "19",
+        "to": "20_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "20_accept",
+        "to": "20b_accept",
+        "type": "conditional",
+        "condition": "Need to send REGISTRATION COMPLETE message"
+      },
+       {
+        "from": "20_accept",
+        "to": "34_accept",
+        "type": "conditional",
+        "condition": "Do not need to send REGISTRATION COMPLETE message"
+      },
+      {
+        "from": "20b_accept",
+        "to": "25",
+        "type": "sequential"
+      },
+      {
+        "from": "34_accept",
+        "to": "35_accept",
+        "type": "sequential"
+      },
+       {
+        "from": "35_accept",
+        "to": "end_success",
+        "type": "sequential"
+      },
+      {
+        "from": "36_reject",
+        "to": "37_reject",
+        "type": "sequential"
+      },
+       {
+        "from": "37_reject",
+        "to": "end_failure",
+        "type": "sequential"
+      }
+    ]
+  }
+}
+```

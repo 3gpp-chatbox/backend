@@ -1,0 +1,24 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {"id": 1, "step": "UE in 5GMM-DEREGISTERED state sends REGISTRATION REQUEST message to AMF to initiate registration for 5GS services.", "state_required": "5GMM-DEREGISTERED", "entity": "UE"},
+    {"id": 2, "step": "AMF may initiate 5GMM common procedures (e.g., identification, authentication, security mode control) based on the REGISTRATION REQUEST message content.", "state_required": "N/A", "entity": "AMF"},
+    {"id": 3, "step": "If the initial registration request is accepted by the network, the AMF sends a REGISTRATION ACCEPT message to the UE, including a TAI list.", "state_required": "N/A", "entity": "AMF"},
+    {"id": 4, "step": "The UE receives the REGISTRATION ACCEPT message, resets the registration attempt counter, enters the state 5GMM-REGISTERED, and sets the 5GS update status to 5U1 UPDATED. If the REGISTRATION ACCEPT message indicates a change of the network slicing information, then the UE shall return a REGISTRATION COMPLETE message.", "state_required": "N/A", "entity": "UE"},
+    {"id": 5, "step": "If the AMF receives the REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and enter state 5GMM-REGISTERED.", "state_required": "N/A", "entity": "AMF"}
+  ],
+  "messages": [
+    {"name": "REGISTRATION REQUEST", "from": "UE", "to": "AMF"},
+    {"name": "REGISTRATION ACCEPT", "from": "AMF", "to": "UE"},
+    {"name": "REGISTRATION COMPLETE", "from": "UE", "to": "AMF"}
+  ],
+  "timers":[
+      {"name":"T3510", "action":"start", "step_id": 1},
+      {"name":"T3510", "action":"stop", "step_id": 4},
+      {"name":"T3550", "action":"start", "step_id": 3},
+      {"name":"T3550", "action":"stop", "step_id": 5},
+      {"name":"T3502", "action":"stop", "step_id": 1},
+      {"name":"T3511", "action":"stop", "step_id": 1}
+  ]
+}

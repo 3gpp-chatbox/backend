@@ -1,0 +1,253 @@
+
+{
+  "decision_points": [
+    {
+      "step": "UE initiates registration (5.5.1.2.2)",
+      "condition": "Based on several conditions (a-g), UE sends REGISTRATION REQUEST. If timer T3502 is running, stop timer T3502. If timer T3511 is running, stop timer T3511.",
+      "timer": "Starts timer T3510"
+    },
+    {
+      "step": "Handling 5GS mobile identity IE (5.5.1.2.2)",
+      "condition": "Multiple conditions (a-g) determine which identity (5G-GUTI, SUCI, PEI) is included in the REGISTRATION REQUEST message.",
+      "dependencies": []
+    },
+    {
+      "step": "SUCI inclusion (5.5.1.2.2)",
+      "condition": "If SUCI is included and T3519 is not running, start T3519 and store SUCI; include stored SUCI while T3519 is running.",
+      "timer": "Starts Timer T3519 if SUCI is included and timer T3519 is not running.",
+      "fallback": "Include stored SUCI in REGISTRATION REQUEST message while timer T3519 is running.",
+      "dependencies": []
+    },
+    {
+      "step": "AMF initiates 5GMM common procedures (5.5.1.2.3)",
+      "condition": "Network may initiate identification, authentication, and security procedures based on the REGISTRATION REQUEST message.",
+      "dependencies": []
+    },
+    {
+      "step": "Emergency Registration (5.5.1.2.3)",
+      "condition": "During emergency registration, the AMF may skip the authentication procedure even if no 5G NAS security context is available if the AMF is configured to support emergency registration for unauthenticated SUCIs.",
+      "dependencies": []
+    },
+    {
+      "step": "Initial registration accepted by the network (5.5.1.2.4)",
+      "condition": "If initial registration request is accepted, AMF sends REGISTRATION ACCEPT message to the UE.",
+      "dependencies": []
+    },
+    {
+      "step": "Equivalent PLMN list handling (5.5.1.2.4)",
+      "condition": "The AMF may include a list of equivalent PLMNs/SNPNs. The UE takes action to store, remove, or delete the list based on the message content and the UE's forbidden PLMN list.",
+      "dependencies": []
+    },
+    {
+      "step": "LADN Information (5.5.1.2.4)",
+      "condition": "Based on the LADN indication IE in the REGISTRATION REQUEST message, UE subscription information, UE location and local configuration about LADN, the AMF determines the LADN DNNs for the UE.",
+      "dependencies": []
+    },
+     {
+      "step": "WUS assistance information (5.5.1.2.4)",
+      "condition": "If the UE supports WUS assistance information and the AMF supports and accepts the use of WUS assistance information for the UE, the AMF shall determine the negotiated UE paging probability information for the UE",
+      "dependencies": []
+    },
+    {
+      "step": "5G-GUTI reallocation (5.5.1.2.4)",
+      "condition": "If AMF has not allocated a new 5G-GUTI by the generic UE configuration update procedure, the AMF shall include in the REGISTRATION ACCEPT message the new assigned 5G-GUTI together with the assigned TAI list.",
+      "dependencies": []
+    },
+    {
+      "step": "Timer Start in AMF (5.5.1.2.4)",
+      "condition": "If a 5G-GUTI or the SOR transparent container IE or Operator-defined access category definitions IE or the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE or the Negotiated PEIPS assistance information IE or UE radio capability ID IE or UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED",
+      "timer": "Starts Timer T3550",
+      "dependencies": []
+    },
+    {
+      "step": "MICO mode handling (5.5.1.2.4)",
+      "condition": "If MICO mode is supported and accepted, AMF may indicate 'all PLMN registration area allocated' and omit the TAI list.",
+      "dependencies": []
+    },
+    {
+      "step": "UE Receives REGISTRATION ACCEPT (5.5.1.2.4)",
+      "condition": "Upon receipt of the REGISTRATION ACCEPT message, the UE reset registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED",
+      "dependencies": []
+    },
+    {
+      "step": "UE Receives REGISTRATION ACCEPT (Network slicing change and need REGISTRATION COMPLETE) (5.5.1.2.4)",
+      "condition": "If the REGISTRATION ACCEPT message contains with the Network slicing indication IE with the Network slicing subscription change, or Configured NSSAI IE with a new configured NSSAI, or CAG IE , the UE needs to return a REGISTRATION COMPLETE message to the AMF.",
+      "dependencies": []
+    },
+    {
+      "step": "SMS over NAS (5.5.1.2.4)",
+      "condition": "If UE requests SMS over NAS and SMSF selection is successful, set SMS allowed bit; otherwise, set SMS allowed bit to 'SMS over NAS not allowed'.",
+      "dependencies": []
+    },
+    {
+      "step": "NSSAA Handling (5.5.1.2.4)",
+      "condition": "Complex conditions determine if NSSAA is required, allowed NSSAI and pending NSSAI are provided, or rejected NSSAI is indicated based on UE support and network slice-specific authentication and authorization requirements.",
+      "dependencies": []
+    },
+    {
+      "step": "Timer Start when Receiving REGISTRATION COMPLETE (5.5.1.2.4)",
+      "condition": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED. The 5G-GUTI, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, the PEIPS assistance information, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, and the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall be considered as valid.",
+      "dependencies": []
+    },
+    {
+      "step": "Feature Support Determination and Handling (5.5.1.2.4)",
+      "condition": "Based on UE and network capabilities, parameters such as IWK N26, IMS voice over PS session indicator, MPS/MCS indicators, and RestrictEC are handled.",
+      "dependencies": []
+    },
+    {
+      "step": "Unsuccessful initial registration request (5.5.1.2.5)",
+      "condition": "If initial registration request can't be accepted, AMF sends a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value. Congestion lead to starting T3346",
+      "dependencies": []
+    },
+      {
+      "step": "Extended rejected NSSAI (5.5.1.2.5)",
+      "condition": "If UE supports extended rejected NSSAI and the AMF determines that maximum number of UEs reached for one or more S-NSSAIs in the requested NSSAI as specified in subclause 4.6.2.5, the AMF shall include the rejected NSSAI containing one or more S-NSSAIs with the rejection cause 'S-NSSAI not available due to maximum number of UEs reached' in the Extended rejected NSSAI IE in the REGISTRATION REJECT message. In addition, the AMF may include a back-off timer value for each S-NSSAI with the rejection cause 'S-NSSAI not available due to maximum number of UEs reached' in the Extended rejected NSSAI IE of the REGISTRATION REJECT message",
+      "dependencies": []
+    },
+       {
+      "step": "CAG Restriction Rejection Handling (5.5.1.2.5)",
+      "condition": "If the registration request is rejected because of CAG restrictions, the AMF includes the 'CAG information list' IE in the REGISTRATION REJECT message.",
+      "dependencies": []
+    },
+    {
+      "step": "UE Takes Action based on REGISTRATION REJECT message cause and condition",
+      "condition": "Based on different 5GMM cause values the UE shall act according to bullet j) of subclause 5.5.1.2.8",
+      "dependencies": []
+    },
+    {
+      "step": "T3526 Timer (5.5.1.2.5)",
+      "condition": "If there is one or more S-NSSAIs in the rejected NSSAI with the rejection cause 'S-NSSAI not available due to maximum number of UEs reached', then for each S-NSSAI, the UE shall stop the timer T3526 associated with the S-NSSAI, if running.The UE start the timer T3526 with the value specified. the UE remove the S-NSSAI from the rejected NSSAI for the maximum number of UEs reached when the timer T3526 associated with the S-NSSAI expires.",
+      "dependencies": []
+    },
+    {
+      "step": "Emergency Services Rejection Handling (5.5.1.2.6)",
+      "condition": "On REGISTRATION REJECT for emergency services, UE performs actions from 5.5.1.2.5 and informs upper layers.",
+      "dependencies": []
+    },
+    {
+      "step": "Abnormal Cases Handling (5.5.1.2.7, UE Side)",
+      "condition": "Multiple abnormal cases (e.g., T3510 timeout, lower layer failure) lead to the UE aborting registration and potentially entering a deregistered state with retries.",
+      "dependencies": []
+    },
+        {
+      "step": "Timer T3346",
+      "condition": "Timer T3346 is running, the UE shall not start the registration procedure for initial registration unless the different condition are met",
+      "dependencies": []
+    },
+     {
+      "step": "The lower layers indicate that the access attempt is barred",
+      "condition": "The UE shall not start the initial registration procedure. The UE stays in the current serving cell and applies the normal cell reselection process",
+      "dependencies": []
+    },
+       {
+      "step": "T3510 Timeout",
+      "condition": "The UE shall abort the registration procedure for initial registration and the NAS signalling connection, if any, shall be released locally if the initial registration request is neither for emergency services nor for initiating a PDU session for emergency services with request type set to 'existing emergency PDU session'.",
+      "dependencies": []
+    },
+    {
+      "step": "Timer T3447",
+      "condition": "Timer T3447 is running, the UE shall not start the registration procedure for initial registration with Follow-on request indicator set to 'Follow-on request pending' unless the different condition are met",
+      "dependencies": []
+    },
+    {
+      "step": "Abnormal Cases Handling (5.5.1.2.8, Network Side)",
+      "condition": "Multiple abnormal cases (e.g., lower layer failure, protocol error, T3550 timeout) lead to the AMF aborting or retrying the procedure.",
+      "dependencies": []
+    },
+        {
+      "step": "Lower layer failure before REGISTRATION COMPLETE",
+      "condition": "AMF locally aborts the procedure and considers both the old and new 5G-GUTI as valid.",
+      "dependencies": []
+    },
+     {
+      "step": "REGISTRATION ACCEPT message (Protocol error) ",
+      "condition": "If the REGISTRATION REQUEST message is received with a protocol error, the AMF shall return a REGISTRATION REJECT message with one of the following 5GMM cause values: #96 invalid mandatory information, #99 information element non-existent or not implemented, #100 conditional IE error or #111 protocol error, unspecified",
+      "dependencies": []
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "5.5.1.2.2 (Initial registration initiation)",
+      "depends_on": "5GMM-DEREGISTERED state",
+      "type": "hard",
+      "condition": "UE must be in 5GMM-DEREGISTERED state to initiate the procedure"
+    },
+    {
+      "step": "5.5.1.2.3 (5GMM common procedure initiation)",
+      "depends_on": "5.5.1.2.2 (Initial registration initiation)",
+      "type": "conditional",
+      "condition": "Depends on the content of the REGISTRATION REQUEST message and network configuration"
+    },
+    {
+      "step": "5.5.1.2.4 (Initial registration accepted by the network)",
+      "depends_on": "5.5.1.2.3 (5GMM common procedure initiation)",
+      "type": "conditional",
+      "condition": "If the network accepts the initial registration request"
+    },
+    {
+      "step": "5.5.1.2.5 (Initial registration not accepted by the network)",
+      "depends_on": "5.5.1.2.3 (5GMM common procedure initiation)",
+      "type": "conditional",
+      "condition": "If the network cannot accept the initial registration request"
+    },
+    {
+      "step": "5.5.1.2.6 (Initial registration for emergency services not accepted by the network)",
+      "depends_on": "5.5.1.2.5 (Initial registration not accepted by the network)",
+      "type": "conditional",
+      "condition": "If initial registration for emergency services is rejected"
+    },
+    {
+      "step": "5.5.1.2.7 (Abnormal cases in the UE)",
+      "depends_on": "5.5.1.2.2 (Initial registration initiation)",
+      "type": "conditional",
+      "condition": "If certain abnormal conditions occur, regardless of acceptance or rejection by the network"
+    },
+    {
+      "step": "5.5.1.2.8 (Abnormal cases on the network side)",
+      "depends_on": "5.5.1.2.2 (Initial registration initiation)",
+      "type": "conditional",
+      "condition": "If certain abnormal conditions occur on the network side"
+    },
+    {
+      "step": "Actions after receiving REGISTRATION ACCEPT",
+      "depends_on": "Successful completion of 5.5.1.2.4",
+      "type": "hard"
+    },
+    {
+      "step": "UE procedure of slice-based N3IWF/TNGF selection (5.5.1.2.5)",
+      "depends_on": "UE supports the slice-based N3IWF/TNGF selection",
+      "type": "conditional",
+      "condition": "If AMF send REGISTRATION REJECT due to slice-based N3IWF/TNGF selection issue"
+    },
+    {
+      "step": "Handle EMM parameters (5.5.1.2.5)",
+      "depends_on": "Receiving Reject messages (5.5.1.2.5)",
+      "type": "conditional",
+      "condition": "If REGISTRATION REJECT message received with certain reason code (single-registration mode)"
+    },
+    {
+      "step": "5.  5.1.2.7(Case c,Timer T3510 timeout)",
+      "depends_on": "5.5.1.2.2 (Initial registration initiation)",
+      "type": "timer",
+      "condition": "Re-initiate if the UE in NB-N1 mode"
+    },
+    {
+      "step": "Start timer T3511 (5.5.1.2.7)",
+      "depends_on": "T3510 timer expire or receiving REJECT (5.5.1.2.7)",
+      "type": "conditional",
+      "condition": "if the registration attempt counter is less than 5, then UE starts Timer T3511"
+    },
+    {
+      "step": "Start timer T3346 (5.5.1.2.7)",
+      "depends_on": "AMF sends REGISTRATION REJECT with cause congestion",
+      "type": "conditional",
+      "condition": "after UE receives REJECT"
+    },
+     {
+      "step": "5.5.1.2.7 (Lower layer failure or release)",
+      "depends_on": "The lower layers failure",
+      "type": "hard",
+      "condition": "This step occurs when there is  lower layers failure or release"
+    }
+  ]
+}

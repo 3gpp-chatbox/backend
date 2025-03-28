@@ -1,0 +1,220 @@
+```json
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "description": "Start of Registration procedure for initial registration",
+        "properties": {}
+      },
+      {
+        "id": "1",
+        "type": "process",
+        "description": "UE in 5GMM-DEREGISTERED state sends REGISTRATION REQUEST message to AMF to initiate registration for 5GS services.",
+        "properties": {
+          "state_required": "5GMM-DEREGISTERED",
+          "entity": "UE",
+          "message_sent": "REGISTRATION REQUEST"
+        }
+      },
+      {
+        "id": "timer_T3510_start",
+        "type": "timer",
+        "description": "T3510",
+        "properties": {
+          "action": "start"
+        }
+      },
+       {
+        "id": "timer_T3502_stop",
+        "type": "timer",
+        "description": "T3502",
+        "properties": {
+          "action": "stop"
+        }
+      },
+       {
+        "id": "timer_T3511_stop",
+        "type": "timer",
+        "description": "T3511",
+        "properties": {
+          "action": "stop"
+        }
+      },
+      {
+        "id": "2",
+        "type": "process",
+        "description": "AMF may initiate 5GMM common procedures (e.g., identification, authentication, security mode control) based on the REGISTRATION REQUEST message content.",
+        "properties": {
+          "state_required": "N/A",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "3",
+        "type": "process",
+        "description": "If the initial registration request is accepted by the network, the AMF sends a REGISTRATION ACCEPT message to the UE, including a TAI list.",
+        "properties": {
+          "state_required": "N/A",
+          "entity": "AMF",
+          "message_sent": "REGISTRATION ACCEPT"
+        }
+      },
+      {
+        "id": "timer_T3550_start",
+        "type": "timer",
+        "description": "T3550",
+        "properties": {
+          "action": "start"
+        }
+      },
+      {
+        "id": "4",
+        "type": "process",
+        "description": "The UE receives the REGISTRATION ACCEPT message, resets the registration attempt counter, enters the state 5GMM-REGISTERED, and sets the 5GS update status to 5U1 UPDATED. If the REGISTRATION ACCEPT message indicates a change of the network slicing information, then the UE shall return a REGISTRATION COMPLETE message.",
+        "properties": {
+          "state_required": "N/A",
+          "entity": "UE",
+          "state_change": "5GMM-REGISTERED",
+          "message_sent": "REGISTRATION COMPLETE (conditional)"
+        }
+      },
+      {
+        "id": "timer_T3510_stop",
+        "type": "timer",
+        "description": "T3510",
+        "properties": {
+          "action": "stop"
+        }
+      },
+      {
+        "id": "decision_need_to_send_registration_complete",
+        "type": "decision",
+        "description": "Check if REGISTRATION COMPLETE message needs to be sent.",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message indicates a change of the network slicing information"
+        }
+      },
+      {
+        "id": "5",
+        "type": "process",
+        "description": "If the AMF receives the REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and enter state 5GMM-REGISTERED.",
+        "properties": {
+          "state_required": "N/A",
+          "entity": "AMF",
+          "state_change": "5GMM-REGISTERED"
+        }
+      },
+      {
+        "id": "timer_T3550_stop",
+        "type": "timer",
+        "description": "T3550",
+        "properties": {
+          "action": "stop"
+        }
+      },
+      {
+        "id": "end",
+        "type": "end",
+        "description": "End of Registration procedure for initial registration",
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "1",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "1",
+        "to": "timer_T3510_start",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "1",
+        "to": "timer_T3502_stop",
+        "type": "conditional",
+        "properties": {
+           "condition": "If timer T3502 is currently running"
+        }
+      },
+      {
+        "from": "1",
+        "to": "timer_T3511_stop",
+        "type": "conditional",
+        "properties": {
+           "condition": "If timer T3511 is currently running"
+        }
+      },
+      {
+        "from": "timer_T3510_start",
+        "to": "2",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "2",
+        "to": "3",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "3",
+        "to": "timer_T3550_start",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "timer_T3550_start",
+        "to": "4",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "4",
+        "to": "timer_T3510_stop",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "timer_T3510_stop",
+        "to": "decision_need_to_send_registration_complete",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "decision_need_to_send_registration_complete",
+        "to": "5",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message indicates a change of the network slicing information"
+        }
+      },
+       {
+        "from": "decision_need_to_send_registration_complete",
+        "to": "end",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message does not indicate a change of the network slicing information"
+        }
+      },
+      {
+        "from": "5",
+        "to": "timer_T3550_stop",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "timer_T3550_stop",
+        "to": "end",
+        "type": "sequential",
+        "properties": {}
+      }
+    ]
+  }
+}
+```

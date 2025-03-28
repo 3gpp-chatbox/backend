@@ -1,0 +1,494 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE in 5GMM-DEREGISTERED state initiates initial registration by sending REGISTRATION REQUEST message to AMF and starts timer T3510. UE stops timer T3502 and T3511 if they are running.",
+      "state_required": "5GMM-DEREGISTERED",
+      "conditional_actions": [
+        "UE stops timer T3502 if it's running.",
+        "UE stops timer T3511 if it's running."
+      ]
+    },
+    {
+      "id": 2,
+      "step": "UE handles 5GS mobile identity IE based on conditions: (a) if previously registered in S1 mode without N26 support and EPS security context exists, create 5G-GUTI mapped from 4G-GUTI and include it in 5GS mobile identity IE and UE status IE and ATTACH REQUEST in EPS NAS message container IE. Additionally include valid 5G-GUTI in Additional GUTI IE if exists. (b) If a valid 5G-GUTI exists, include it in the 5GS mobile identity IE (c) If a SUCI is available include it in the 5GS mobile identity IE and if timer T3519 is not running, start timer T3519 and store the value of the SUCI and include the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running. (d) If the UE is operating in the dual-registration mode and it is in EMM state EMM-REGISTERED, the UE shall include the UE status IE with the EMM registration status set to UE is in EMM-REGISTERED state. (e) If the UE does not hold a valid 5G-GUTI or SUCI other than an onboarding SUCI, and is initiating the initial registration for emergency services, the PEI shall be included in the 5GS mobile identity IE; (f) if the UE is initiating the initial registration for onboarding services in SNPN, an onboarding SUCI shall be included in the 5GS mobile identity IE.",
+      "state_required": "5GMM-DEREGISTERED",
+      "conditional_actions": [
+        "If SUCI is included and T3519 not running, start T3519.",
+        "If dual-registration mode and EMM-REGISTERED, include UE status IE."
+      ]
+    },
+     {
+      "id": 3,
+      "step": "UE includes last visited registered TAI (if available), 5GS update type IE (SMS over NAS indication), MICO indication IE (if MICO supported), active time value in the T3324 IE (if it requests to use an active time value) , Requested T3512 IE (if it includes the T3324 IE), Requested DRX parameters IE (if needs to use the UE specific DRX parameters), Requested NB-N1 mode DRX parameters IE (if needs to use the UE specific DRX parameters for NB-N1 mode), Requested extended DRX parameters IE (if supports eDRX and requests the use of eDRX), LADN indication IE (if needs to request LADN information), Requested NSSAI IE (S-NSSAI(s) to which the UE intends to register), Network slicing indication IE (if default configured NSSAI), 5GMM capability IE , Payload container IE (UE policy container, see annex D), Additional information requested IE(CipherKey bit), Requested WUS assistance information IE (if WUSA bit is set to 'WUS assistance information reception supported'), Requested PEIPS assistance information IE (if NR-PSSI bit is set to 'NR paging subgrouping supported'), Service-level-AA container IE (when the UE supporting UAS services initiates an initial registration for UAS services) in the REGISTRATION REQUEST message based on UE capabilities and requests. The UE shall send the REGISTRATION REQUEST message without including the NAS message container IE if the UE does not have a valid 5G NAS security context, the UE shall include the entire REGISTRATION REQUEST message in the NAS message container IE that is sent as part of the SECURITY MODE COMPLETE message.If the UE has a valid 5G NAS security context and the UE needs to send non-cleartext IEs, the UE shall send a REGISTRATION REQUEST message including the NAS message container IE .",
+      "state_required": "5GMM-DEREGISTERED",
+      "conditional_actions": [
+       "Include NAS message container IE based on security context and non-cleartext IEs requirement.",
+       "Starts UUAA if conditions are met."
+      ]
+    },
+    {
+      "id": 4,
+      "step": "AMF may initiate 5GMM common procedures (e.g., identification, authentication, security procedures) based on information in REGISTRATION REQUEST.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 5,
+      "step": "If initial registration is accepted, AMF sends REGISTRATION ACCEPT message to UE.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 6,
+      "step": "AMF stores UE capabilities and assigns TAI list. If REGISTRATION REQUEST message was received over non-3GPP access, the AMF shall include a single TAI in the TAI list.",
+      "state_required": "Any",
+      "involved_entity": "AMF",
+      "conditional_actions": [
+          "If REGISTRATION REQUEST message was received over non-3GPP access, the AMF shall include a single TAI in the TAI list."
+      ]
+    },
+    {
+      "id": 7,
+      "step": "AMF may include Service area list IE, list of equivalent PLMNs and a list of equivalent SNPNs in REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 8,
+      "step": "AMF determines LADN DNNs and includes LADN information IE in REGISTRATION ACCEPT.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "If the UE supports WUS assistance information and the AMF supports and accepts the use of WUS assistance information for the UE, the AMF shall determine the negotiated UE paging probability information for the UE, store it in the 5GMM context of the UE, and if the UE is not performing the initial registration for emergency services, the AMF shall include it in the Negotiated WUS assistance information IE in the REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 10,
+      "step": "If 5G-GUTI or SOR transparent container IE is included in REGISTRATION ACCEPT, AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "state_required": "Any",
+      "involved_entity": "AMF",
+      "conditional_actions": [
+        "AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED if relevant IEs included."
+      ]
+    },
+    {
+      "id": 11,
+      "step": "If MICO mode is supported and accepted, AMF includes MICO indication IE in REGISTRATION ACCEPT. AMF may indicate \"all PLMN registration area allocated\" in MICO indication IE. AMF shall include T3324 value IE (if requested), T3512 value IE (if 3GPP access). AMF shall include non-3GPP de-registration timer value IE (if non-3GPP access).",
+      "state_required": "Any",
+      "involved_entity": "AMF",
+      "conditional_actions": [
+        "Include MICO indication IE, T3324, T3512, non-3GPP de-registration timer based on UE request and AMF support."
+      ]
+    },
+    {
+      "id": 12,
+      "step": "If control plane CIoT 5GS optimization is accepted, AMF indicates support in REGISTRATION ACCEPT.",
+      "state_required": "Any",
+      "involved_entity": "AMF",
+      "conditional_actions": [
+        "Indicate control plane CIoT 5GS optimization support if accepted."
+      ]
+    },
+    {
+      "id": 13,
+      "step": "AMF may include T3447 IE (service gap time) in REGISTRATION ACCEPT if UE supports service gap control and service gap time is available. If there is a running T3447 timer in the AMF and the Follow-on request indicator is set to Follow-on request pending in the REGISTRATION REQUEST message, the AMF shall ignore the flag and proceed as if the flag was not received except the UE is configured for high priority access in the selected PLMN or the 5GS registration type IE in the REGISTRATION REQUEST message is set to emergency registration.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 14,
+      "step": "AMF may include T3448 value IE in the REGISTRATION ACCEPT message, if UE indicated support for control plane CIoT 5GS optimizations and the AMF decides to activate the congestion control for transport of user data via the control plane. If the AMF received multiple TAIs from the satellite NG-RAN as described in 3GPP TS 23.501 [8], and determines that, by UE subscription and operator's preferences, any but not all TAIs in the received list of TAIs is forbidden for roaming or for regional provision of service, the AMF shall include the TAI(s) in Forbidden TAI(s) for the list of 5GS forbidden tracking areas for roaming IE or the Forbidden TAI(s) for the list of 5GS forbidden tracking areas for regional provision of service IE or both in the REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 15,
+      "step": "If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, the AMF shall initiate the UUAA-MM procedure with the UAS-NF as specified in 3GPP TS 23.256 [6AB] and shall include a service-level-AA pending indication in the Service-level-AA container IE of the REGISTRATION ACCEPT message if conditions are met (valid aerial UE subscription information, UUAA procedure needs to be performed according to operator policy, There is no valid successful UUAA result for the UE in the UE 5GMM context and the REGISTRATION REQUEST message was not received over non-3GPP access). The AMF shall store in the UE 5GMM context that a UUAA procedure is pending. The AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 16,
+      "step": "AMF includes List of PLMNs to be used in disaster condition IE, Disaster roaming wait range IE and Disaster return wait range IE, based on configuration and MINT support.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 17,
+      "step": "AMF includes Feature authorization indication IE in the REGISTRATION ACCEPT message and shall set the MBSRAI field to authorized to operate as MBSR or not authorized to operate as MBSR but allowed to operate as a UE if the initial registration request along with the mobile IAB-indication over N2 reference point from UE and the UE is authorized to operate as an MBSR based on the subscription information and local policy.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+     {
+      "id": 18,
+      "step": "AMF set the LCS-UPP bit, the SUPL bit, or both in the 5GS network feature support IE of the REGISTRATION ACCEPT message if the UE supports user plane positioning using LCS-UPP, SUPL, or both.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 19,
+      "step": "UE resets registration attempt counter, enters 5GMM-REGISTERED state, sets 5GS update status to 5U1 UPDATED. Resets PLMN/SNPN-specific attempt counters. Stores interworking without N26 interface indicator. Stores network feature support information.",
+      "state_required": "Any",
+      "involved_entity": "UE"
+    },
+    {
+      "id": 20,
+      "step": "If REGISTRATION ACCEPT included T3512/T3324 value IE, UE uses the value as periodic registration update timer/active timer. If the UE has set the RCMAN bit to \"Sending of REGISTRATION COMPLETE message for NSAG information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the NSAG information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "UE",
+      "conditional_actions": [
+        "Use T3512/T3324 value if present.",
+         "UE sends REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE if the REGISTRATION ACCEPT message contains the NSAG information IE"
+      ]
+    },
+    {
+      "id": 21,
+      "step": "If Network slicing information changed, UE returns REGISTRATION COMPLETE to acknowledge.",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "UE",
+      "conditional_actions": [
+        "Send REGISTRATION COMPLETE if network slicing information changed."
+      ]
+    },
+    {
+      "id": 22,
+      "step": "If CAG information list IE or Extended CAG information list IE is included in REGISTRATION ACCEPT and the UE had set the CAG bit to \"CAG supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message, UE updates CAG information list and operates based on the list and cell type.",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "UE"
+    },
+    {
+      "id": 23,
+      "step": "If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\" and If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE.",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "UE",
+      "conditional_actions": [
+        "UE updates Operator-defined access category definitions, extended emergency number list and UE radio capability ID based on the list.",
+         "UE send a REGISTRATION COMPLETE message to the AMF to acknowledge reception"
+      ]
+    },
+    {
+      "id": 24,
+      "step": "If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE.",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "UE",
+      "conditional_actions": [
+         "UE send a REGISTRATION COMPLETE message to the AMF to acknowledge reception"
+      ]
+    },
+    {
+      "id": 25,
+      "step": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED. The 5G-GUTI, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, the PEIPS assistance information, if sent in the REGISTRATION ACCEPT message, shall be considered as valid, and the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall be considered as valid.",
+      "state_required": "5GMM-REGISTERED",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 26,
+      "step": "AMF includes 5GS registration result IE in REGISTRATION ACCEPT. The AMF shall include the allowed NSSAI for the current PLMN or SNPN and shall include the mapped S-NSSAI(s) for the allowed NSSAI contained in the requested NSSAI from the UE if available, in the REGISTRATION ACCEPT message if the UE included the requested NSSAI in the REGISTRATION REQUEST message and the AMF allows one or more S-NSSAIs in the requested NSSAI. Additionally, if the AMF allows one or more subscribed S-NSSAIs for the UE, the AMF may include the allowed subscribed S-NSSAI(s) in the allowed NSSAI in the REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 27,
+      "step": "AMF may include rejected NSSAI/ Partially rejected NSSAI in REGISTRATION ACCEPT. AMF sets IWK N26 in 5GS network feature support IE.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 28,
+      "step": "If UE includes S1 mode supported, AMF sets IWK N26 in 5GS network feature support IE to indicate N26 support. UE operates in single-registration or dual-registration mode based on IWK N26 and UE capability.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 29,
+      "step": "AMF includes 5GS network feature support IE with support indicators for IMS voice, Location Services (5G-LCS), Emergency services, ATSSS, Emergency services fallback, and non-3GPP access path switching. AMF sets the EMF bit in the 5GS network feature support IE",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 30,
+      "step": "The AMF shall set the EMF bit in the 5GS network feature support IE to Emergency services fallback if the network supports the emergency services fallback procedure",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 31,
+      "step": "AMF indicates MPS/MCS support in 5GS network feature support IE. UE uses access identity 1 or 2 based on the indication.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 32,
+      "step": "AMF set the RestrictEC bit and The AMF shall set the N1 NAS signalling connection release bit to N1 NAS signalling connection release supported in the 5GS network feature support IE of the REGISTRATION ACCEPT message if the UE indicates support of the N1 NAS signalling connection release in the REGISTRATION REQUEST message",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 33,
+      "step": "AMF includes negotiated DRX parameters (if requested), non-3GPP de-registration timer (if non-3GPP access), truncated 5G-S-TMSI configuration (if configured) and AMF may include RAN timing synchronization IE.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 34,
+      "step": "If SOR transparent container IE is included and passes integrity check, UE stores SOR counter and proceeds with 3GPP TS 23.122 annex C behavior",
+      "state_required": "Any",
+      "involved_entity": "UE"
+    },
+    {
+      "id": 35,
+      "step": "If required by operator policy, AMF includes NSSAI inclusion mode IE. UE operates in indicated mode.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 36,
+      "step": "AMF may include operator-defined access category definitions in REGISTRATION ACCEPT. The UE handles the T3447 value IE and 5GS network feature support IE from the message.AMF determines the PLMN with disaster condition in the UE determined PLMN with disaster condition IE andThe AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE if a disaster condition applies to the PLMN with disaster condition, and the UE is allowed to be registered for disaster roaming services, in the REGISTRATION ACCEPT message. The UE receives, the Discontinuous coverage maximum time offset IE in the REGISTRATION ACCEPT message. The UE shall proceed Unavailability configuration IE, discontinuous coverage if supported",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 37,
+      "step": "The AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE if a disaster condition applies to the PLMN with disaster condition, and the UE is allowed to be registered for disaster roaming services, in the REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 38,
+      "step": "If the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access and the network decides to apply the RAT utilization control, the AMF shall include the RAT utilization control IE in the REGISTRATION ACCEPT message.",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    },
+    {
+      "id": 39,
+      "step": "If initial registration request cannot be accepted, AMF sends REGISTRATION REJECT with appropriate 5GMM cause. The UE shall set the 5GS update status, TAI list and 5GMM State for the corresponding 5GMM cause",
+      "state_required": "Any",
+      "involved_entity": "AMF"
+    }
+  ],
+  "entities": [
+    {
+      "name": "UE",
+      "role": "requester",
+      "involved_steps": [1, 2, 3, 19, 20, 21, 22, 23, 24, 34, 36]
+    },
+    {
+      "name": "AMF",
+      "role": "network",
+      "involved_steps": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36,37,38,39]
+    },
+    {
+      "name": "T3510",
+      "role": "timer",
+      "involved_steps": [1, 39]
+    },
+    {
+      "name": "T3502",
+      "role": "timer",
+      "involved_steps": [1,39]
+    },
+     {
+      "name": "T3511",
+      "role": "timer",
+      "involved_steps": [1,39]
+    },
+    {
+      "name": "T3519",
+      "role": "timer",
+      "involved_steps": [2]
+    },
+      {
+      "name": "T3550",
+      "role": "timer",
+      "involved_steps": [10, 25]
+    },
+       {
+      "name": "T3346",
+      "role": "timer",
+      "involved_steps": [39]
+    },
+    {
+      "name": "UAS-NF",
+      "role": "network_function",
+      "involved_steps": [15]
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF",
+      "parameters": {
+        "mandatory": [],
+        "optional": [
+          "5GS mobile identity IE(5G-GUTI or SUCI or PEI or onboarding SUCI)",
+          "UE status IE",
+          "Last visited registered TAI",
+          "5GS update type IE",
+          "MICO indication IE",
+          "T3324 IE",
+          "Requested T3512 IE",
+          "Requested DRX parameters IE",
+          "Requested NB-N1 mode DRX parameters IE",
+          "Requested extended DRX parameters IE",
+          "LADN indication IE",
+          "Requested NSSAI IE",
+          "Network slicing indication IE",
+          "5GMM capability IE",
+          "Payload container IE",
+          "Additional information requested IE",
+          "Requested WUS assistance information IE",
+          "Requested PEIPS assistance information IE",
+          "Service-level-AA container IE(service-level device ID, service-level-AA server address, service-level-AA payload",
+          "Mobile station classmark 2 IE",
+          "Supported Codecs IE",
+          "UE radio capability ID IE",
+          "UE determined PLMN with disaster condition IE",
+          "S1 UE network capability IE",
+          "EPS NAS message container IE",
+          "Additional GUTI IE",
+          "NID IE",
+          "Service-level-AA container IE(CAA-level UAV ID, USS address,service-level-AA payload"
+
+        ],
+        "conditional": {
+          "UE status IE": "Required if dual registration mode and EMM registered",
+          "Last visited registered TAI": "If available",
+          "MICO indication IE": "If MICO mode is supported",
+          "T3324 IE":"If use active time value",
+          "Requested T3512 IE" : "If include T3324 IE",
+          "Requested DRX parameters IE": "If UE needs to use UE specific DRX parameters",
+          "Requested NB-N1 mode DRX parameters IE": "If UE needs to use UE specific DRX parameters for NB-N1 mode",
+          "Requested extended DRX parameters IE": "If UE supports eDRX and requests its use",
+          "LADN indication IE": "If the UE needs to request LADN information",
+          "Network slicing indication IE": "If the default configured NSSAI",
+          "Additional information requested IE": "If ciphering keys for ciphered broadcast assistance data requested",
+          "Requested WUS assistance information IE": "If WUSA bit is set to 'WUS assistance information reception supported'",
+          "Requested PEIPS assistance information IE" : "if NR-PSSI bit is set to 'NR paging subgrouping supported'",
+          "S1 UE network capability IE":"If the UE supports S1 mode and the UE has not disabled its E-UTRA capability and the 5GS registration type IE in the REGISTRATION REQUEST message is not set to disaster roaming initial registration, the UE shall",
+          "Additional GUTI IE":"If it is not the HPLMN and the UE initiates the registration procedure for disaster roaming services",
+          "Service-level-AA container IE" : "When the UE supporting UAS services initiates an initial registration for UAS services"
+        }
+      }
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE",
+      "parameters": {
+        "mandatory": [],
+        "optional": [
+          "TAI list",
+          "Service area list IE",
+          "List of equivalent PLMNs",
+          "MICO indication IE",
+          "T3324 value IE",
+          "T3512 value IE",
+          "Negotiated DRX parameters IE",
+          "Negotiated extended DRX parameters IE",
+          "Allowed NSSAI",
+          "Rejected NSSAI",
+          "5GS registration result IE",
+          "LADN information IE",
+          "SOR transparent container IE",
+          "Ciphering key data IE",
+          "Operator-defined access category definitions IE",
+          "Extended emergency number list IE",
+          "CAG information list IE",
+          "Extended CAG information list IE",
+          "UE radio capability ID IE",
+          "UE radio capability ID deletion indication IE",
+          "UE radio capability ID IE",
+          "Non-3GPP de-registration timer value IE",
+          "5GS network feature support IE",
+          "List of PLMNs to be used in disaster condition IE",
+          "Disaster roaming wait range IE",
+          "Disaster return wait range IE",
+          "Discontinuous coverage maximum time offset IE",
+          "Unavailability configuration IE",
+          "RAN timing synchronization IE",
+          "Feature authorization indication IE",
+          "Extended rejected NSSAI IE",
+          "Negotiated WUS assistance information IE",
+          "Negotiated PEIPS assistance information IE",
+          "UE radio capability ID IE",
+           "Partially rejected NSSAI IE",
+          "Service-level-AA container IE(service-level-AA pending indication)",
+          "NSSAI inclusion mode IE",
+          "Alternative NSSAI IE",
+          "NSSRG information IE",
+          "S-NSSAI time validity information IE",
+          "Partially allowed NSSAI IE",
+          "On-demand NSSAI IE",
+          "TNAN information IE",
+           "UE radio capability ID deletion indication IE",
+          "Forbidden TAI(s) for the list of 5GS forbidden tracking areas for roaming IE",
+          "Forbidden TAI(s) for the list of 5GS forbidden tracking areas for regional provision of service IE",
+           "RAT utilization control IE",
+           "Truncated 5G-S-TMSI configuration IE",
+            "S-NSSAI location validity information"
+        ],
+        "conditional": {
+          "T3324 value IE": "If UE requested active time and AMF accepts MICO and active time",
+          "T3512 value IE": "If REGISTRATION REQUEST was sent over 3GPP access",
+          "NSSRG information IE":"If configured"
+        }
+      }
+    },
+      {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF",
+      "parameters": {
+        "mandatory": [],
+        "optional": [
+          "SOR transparent container IE",
+            "Payload container IE"
+        ],
+        "conditional": {
+             "SOR transparent container IE":"If it exist",
+              "Payload container IE":"If it exist"
+        }
+      }
+    },
+    {
+      "name": "REGISTRATION REJECT",
+      "from": "AMF",
+      "to": "UE",
+      "parameters": {
+        "mandatory": ["5GMM cause value"],
+        "optional": [
+          "T3346 value IE",
+          "Rejected NSSAI IE",
+          "CAG information list IE",
+          "Extended CAG information list IE",
+          "N3IWF identifier IE",
+          "TNAN information IE",
+          "Forbidden TAI(s) for the list of 5GS forbidden tracking areas for roaming IE",
+          "Forbidden TAI(s) for the list of 5GS forbidden tracking areas for regional provision of service IE",
+          "RAT utilization control IE",
+          "Extended rejected NSSAI IE"
+
+        ]
+      }
+    },
+     {
+      "name": "DEREGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF",
+      "parameters": {
+        "mandatory": [],
+        "optional": [
+         "5GS mobile identity IE"
+        ]
+      }
+    }
+
+  ]
+}
