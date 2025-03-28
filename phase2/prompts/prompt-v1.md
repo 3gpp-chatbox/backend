@@ -1,4 +1,4 @@
-prompts version1
+prompts version1------------3 prompts
 the llm model used "import google.generativeai as genai
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel('gemini-2.0-flash')
@@ -8,6 +8,41 @@ response = model.generate_content(prompt).text.strip()
 used file: 5.5.1.2.txt
 
 final output:step3.json
+
+
+-------------------purpose---------------
+
+
+Each prompt in the chain serves a distinct purpose in extracting and structuring the procedure:
+
+Prompt 1: Extracting Full Procedure Details
+
+Purpose: Captures the full flow of the procedure, identifying main steps, involved entities, messages exchanged, side effects, state dependencies, and policy-based modifications.
+
+Output: A structured JSON format with steps, entities, and message details.
+
+Prompt 2: Analyzing Decision Points & Dependencies
+
+Purpose: Identifies conditional actions, retry mechanisms, timer-driven fallbacks, dependencies between steps, and state-based decision logic.
+
+Output: A structured JSON format specifying decision points, conditions, dependencies, and retry mechanisms.
+
+Prompt 3: Constructing a Flow Graph
+
+Purpose: Converts the extracted steps and decision logic into a structured graph representation, making the procedure visually interpretable.
+
+Output: A graph structure with nodes (steps, decisions) and edges (sequential, conditional, retry paths).
+
+How They Work Together
+Prompt 1 provides the foundational steps of the procedure.
+
+Prompt 2 builds on this by adding decision points, fallbacks, and dependencies.
+
+Prompt 3 combines both to generate a structured flow graph representation of the procedure.
+
+
+
+----------------prompt--------------------
 
 
 prompt1:

@@ -1,4 +1,4 @@
-prompts version2
+prompts version2   -------------3prompts
 the llm model used "import google.generativeai as genai
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel('gemini-2.0-flash')
@@ -7,6 +7,62 @@ response = model.generate_content(prompt).text.strip()
 
 used file: 5.5.1.2.txt
 final output:step3-v2.json
+
+
+
+
+
+
+------------------purpose-------------
+ Each prompt has a distinct purpose in extracting and structuring procedural details from 3GPP specifications:
+
+Extracting the Basic Flow (Prompt 1)
+
+Purpose: Identifies the high-level sequence of steps in the procedure.
+
+Focus:
+
+Key steps performed by UE and AMF.
+
+Messages exchanged.
+
+State transitions of the UE.
+
+Timers involved.
+
+Output: JSON representation of the procedure’s core flow without complex conditions.
+
+Extracting Decision Points and Dependencies (Prompt 2)
+
+Purpose: Captures decision-making logic and dependencies in the procedure.
+
+Focus:
+
+Conditional branches and fallbacks.
+
+Timer-based retries or failures.
+
+Dependencies between steps.
+
+Output: JSON format that maps decision points and inter-step dependencies.
+
+Generating the Flow Graph (Prompt 3)
+
+Purpose: Constructs a graph representation of the procedure.
+
+Focus:
+
+Converts extracted steps and decisions into structured nodes and edges.
+
+Differentiates between sequential, conditional, and retry paths.
+
+Includes properties like state changes and timer actions.
+
+Output: JSON-structured flow graph that visually represents the procedure.
+
+
+
+
 
 ---------------------------------------------------------------------
 
