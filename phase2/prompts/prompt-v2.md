@@ -61,6 +61,12 @@ Includes properties like state changes and timer actions.
 Output: JSON-structured flow graph that visually represents the procedure.
 
 
+Changes and Reasoning
+
+Prompt 1: Still focuses on the main flow, but ensures it includes the entity that is involved in each step.
+Prompt 2: Still focuses on decision points and dependencies, but ensures it includes the step number that each decision point and dependency is related to.
+Prompt 3: This prompt has been updated to generate a flow property graph, and the information from prompt1 and prompt2 is used to add property information to the graph.
+
 
 
 
@@ -200,7 +206,7 @@ Create a graph that is easy to understand, showing the main flow and any alterna
 
 ---------------------------------------------------------------------
 
-gpt evaluation:
+gpt evaluation of final result:
 (prompt:you are 3gpp specification procedure expert, is this procedure flow property graph content correct?)
 response:
 The flow you provided for the 5G registration procedure is detailed and contains most of the correct steps, but there are a few points where you could refine or adjust the content, considering the 3GPP specification, especially with regards to specific state transitions and conditional actions. Below, I'll provide feedback based on the structure of the procedure:
@@ -266,3 +272,7 @@ Conclusion:
 The procedure flow looks mostly correct but needs minor refinements, particularly around the conditions under which certain actions (like sending REGISTRATION COMPLETE or stopping timers) are performed.
 
 You may want to cross-check this flow against the 3GPP TS 23.502 and other relevant 3GPP specifications to ensure all conditions are correctly handled, especially regarding timer behaviors and specific conditions for sending the REGISTRATION COMPLETE message.
+
+
+----------------------
+gpt evaluation of prompts:

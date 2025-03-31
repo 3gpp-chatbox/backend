@@ -1,0 +1,431 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE in state 5GMM-DEREGISTERED sends a REGISTRATION REQUEST message to the AMF for initial registration.",
+      "entity": "UE",
+      "state_change": "5GMM-DEREGISTERED → N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION REQUEST",
+          "to": "AMF",
+          "triggers": ["Timer start T3510", "Timer stop T3502", "Timer stop T3511"]
+        }
+      ],
+      "timers": [
+        {
+          "name": "T3510",
+          "action": "start",
+          "triggers": []
+        },
+        {
+          "name": "T3502",
+          "action": "stop",
+          "triggers": []
+        },
+        {
+          "name": "T3511",
+          "action": "stop",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "step": "If SUCI is included in the REGISTRATION REQUEST message and timer T3519 is not running, the UE starts timer T3519 and stores the value of the SUCI sent in the REGISTRATION REQUEST message.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3519",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "step": "The AMF may initiate 5GMM common procedures (e.g., identification, authentication, security) based on information in the REGISTRATION REQUEST.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 4,
+      "step": "If the initial registration request is accepted, the AMF sends a REGISTRATION ACCEPT message to the UE.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION ACCEPT",
+          "to": "UE",
+          "triggers": ["Timer start T3550", "State change to 5GMM-REGISTERED"]
+        }
+      ],
+      "timers": [],
+      "state_change": "N/A"
+    },
+    {
+      "id": 5,
+      "step": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF",
+      "state_change": "N/A → 5GMM-COMMON-PROCEDURE-INITIATED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "step": "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF",
+      "state_change": "N/A → 5GMM-COMMON-PROCEDURE-INITIATED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "step": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message, the AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF",
+      "state_change": "N/A → 5GMM-COMMON-PROCEDURE-INITIATED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "step": "If the UE is not in NB-N1 mode and the UE has set the RACS bit to \"RACS supported\" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message. If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF",
+      "state_change": "N/A → 5GMM-COMMON-PROCEDURE-INITIATED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "step": "If the AMF determines that the UUAA-MM procedure needs to be performed for a UE, the AMF has not received the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message from the UE and the AMF decides to accept the UE to be registered for other services than UAS services based on the user's subscription data and the operator policy, the AMF shall accept the initial registration request and shall mark in the UE's 5GMM context that the UE is not allowed to request UAS services.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 10,
+      "step": "If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, and if the UUAA procedure is to be performed during the registration procedure according to operator policy, there is no valid successful UUAA result for the UE in the UE 5GMM context, and the REGISTRATION REQUEST message was not received over non-3GPP access, then the AMF shall initiate the UUAA-MM procedure with the UAS-NF and shall include a service-level-AA pending indication in the Service-level-AA container IE of the REGISTRATION ACCEPT message. The AMF shall store in the UE 5GMM context that a UUAA procedure is pending. The AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF",
+      "state_change": "N/A → 5GMM-COMMON-PROCEDURE-INITIATED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "start",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "step": "If the AMF receives the initial registration request along with the mobile IAB-indication over N2 reference point from UE and the UE is authorized to operate as an MBSR based on the subscription information and local policy, the AMF shall include the Feature authorization indication IE in the REGISTRATION ACCEPT message and shall set the MBSRAI field to \"authorized to operate as MBSR\". If the AMF receives the initial registration request along with the mobile IAB-indication over N2 reference point from UE and the UE is not authorized to operate as an MBSR based on the subscription information and local policy but can operate as a UE, the AMF shall include the Feature authorization indication IE in the REGISTRATION ACCEPT message and shall set the MBSRAI field to \"not authorized to operate as MBSR but allowed to operate as a UE\".",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 12,
+      "step": "If the AMF supports user plane positioning using LCS-UPP, SUPL, or both, the AMF shall set the LCS-UPP bit, the SUPL bit, or both in the 5GS network feature support IE of the REGISTRATION ACCEPT message.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 13,
+      "step": "Upon receipt of the REGISTRATION ACCEPT message, the UE resets the registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED.",
+      "entity": "UE",
+      "state_change": "N/A → 5GMM-REGISTERED",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 14,
+      "step": "If the REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\", a Configured NSSAI IE with a new configured NSSAI for the current PLMN or SNPN and optionally the mapped S-NSSAI(s) for the configured NSSAI for the current PLMN or SNPN, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, an S-NSSAI time validity information IE with a new S-NSSAI time validity information; or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value, the UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information. If the UE has set the RCMAN bit to \"Sending of REGISTRATION COMPLETE message for NSAG information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the NSAG information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 15,
+      "step": "If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to \"CAG supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE replaces the \"CAG information list\" stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN, replaces the serving VPLMN's entry of the \"CAG information list\" stored in the UE with the serving VPLMN's entry of the received CAG information list IE or the Extended CAG information list IE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN; or removes the serving VPLMN's entry of the \"CAG information list\" stored in the UE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN and the CAG information list IE or the Extended CAG information list IE does not contain the serving VPLMN's entry.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 16,
+      "step": "If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\".",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 17,
+      "step": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 18,
+      "step": "If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 19,
+      "step": "Upon receiving a REGISTRATION COMPLETE message, the AMF stops timer T3550 and changes to state 5GMM-REGISTERED.",
+      "entity": "AMF",
+      "state_change": "5GMM-COMMON-PROCEDURE-INITIATED → 5GMM-REGISTERED",
+      "messages": [],
+      "timers": [
+        {
+          "name": "T3550",
+          "action": "stop",
+          "triggers": []
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "step": "If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message contains the service-level-AA pending indication in the Service-level-AA container IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the service-level-AA pending indication, and the UE shall not attempt to perform another registration procedure for UAS services until the UUAA-MM procedure is completed, or to establish a PDU session for USS communication or a PDU session for C2 communication until the UUAA-MM procedure is completed successfully.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 21,
+      "step": "If the REGISTRATION ACCEPT message contains the Truncated 5G-S-TMSI configuration IE, then the UE shall store the included truncated 5G-S-TMSI configuration and return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the truncated 5G-S-TMSI configuration.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION COMPLETE",
+          "to": "AMF",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 22,
+      "step": "If the UE is not in NB-N1 mode, the UE has set the RACS bit to \"RACS supported\" in the 5GMM Capability IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message includes a UE radio capability ID deletion indication IE set to \"Network-assigned UE radio capability IDs deletion requested\", the UE shall delete any network-assigned UE radio capability IDs associated with the RPLMN or RSNPN and, if the UE supports access to an SNPN using credentials from a credentials holder, equivalent SNPNs or both, the selected entry of the \"list of subscriber data\" or the selected PLMN subscription stored at the UE, then the UE shall, after the completion of the ongoing registration procedure, initiate a registration procedure for mobility and periodic registration update as specified in subclause 5.5.1.3.2 over the existing N1 NAS signalling connection; or a UE radio capability ID IE, the UE shall store the UE radio capability ID as specified in annex C.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 23,
+      "step": "If the initial registration request cannot be accepted, the AMF sends a REGISTRATION REJECT message to the UE with an appropriate 5GMM cause value.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [
+        {
+          "name": "REGISTRATION REJECT",
+          "to": "UE",
+          "triggers": []
+        }
+      ],
+      "timers": []
+    },
+    {
+      "id": 24,
+      "step": "If the initial registration request is rejected due to general NAS level mobility management congestion control, the network sets the 5GMM cause value to #22 \"congestion\" and assigns a value for back-off timer T3346.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 25,
+      "step": "If the REGISTRATION REJECT message with 5GMM cause #76 or #78 was received without integrity protection, then the UE shall discard the message. If the REGISTRATION REJECT message with 5GMM cause #62 was received without integrity protected, the behaviour of the UE is specified in subclause 5.3.20.2.",
+      "entity": "UE",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 26,
+      "step": "Based on operator policy, if the initial registration request is rejected due to core network redirection for CIoT optimizations, the network sets the 5GMM cause value to #31 \"Redirection to EPC required\".",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 27,
+      "step": "If the initial registration request is rejected because all the S-NSSAI(s) included in the requested NSSAI are rejected and the UE set the NSSAA bit in the 5GMM capability IE to Network slice-specific authentication and authorization supported and all default S-NSSAIs are not allowed or network slice-specific authentication and authorization has failed or been revoked for all default S-NSSAIs and based on network local policy, the network decides not to initiate the network slice-specific re-authentication and re-authorization procedures for any default S-NSSAI requested by the UE; or Network slice-specific authentication and authorization not supported and all default S-NSSAIs are either not allowed or are subject to network slice-specific authentication and authorization, the network sets the 5GMM cause value of the REGISTRATION REJECT message to #62 \"No network slices available\".",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 28,
+      "step": "If the 5GMM cause value is set to #62 \"No network slices available\", the network includes, in the rejected NSSAI of the REGISTRATION REJECT message, all the S-NSSAI(s) which were included in the requested NSSAI.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 29,
+      "step": "If the UE has set the ER-NSSAI bit to \"Extended rejected NSSAI supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message, the rejected S-NSSAI(s) are included in the Extended rejected NSSAI IE of the REGISTRATION REJECT message. Otherwise, the rejected S-NSSAI(s) are included in the Rejected NSSAI IE of the REGISTRATION REJECT message.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 30,
+      "step": "In roaming scenarios, if the Extended rejected NSSAI IE is included in the REGISTRATION REJECT message, the AMF provides mapped S-NSSAI(s) for the rejected NSSAI.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 31,
+      "step": "If the UE supports extended rejected NSSAI and the AMF determines that maximum number of UEs reached for one or more S-NSSAIs in the requested NSSAI as specified in subclause 4.6.2.5, the AMF shall include the rejected NSSAI containing one or more S-NSSAIs with the rejection cause \"S-NSSAI not available due to maximum number of UEs reached\" in the Extended rejected NSSAI IE in the REGISTRATION REJECT message. In addition, the AMF may include a back-off timer value for each S-NSSAI with the rejection cause \"S-NSSAI not available due to maximum number of UEs reached\" in the Extended rejected NSSAI IE of the REGISTRATION REJECT message.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 32,
+      "step": "If the AMF receives the initial registration request along with the authenticated indication over N2 reference point on non-3GPP access and does not receive the indication that authentication by the home network is not required over N12 reference point, or the 5G-RG acting on behalf of an AUN3 device is not allowed to access 5GS as specified in 3GPP TS 23.316 [6D], the network sets the 5GMM cause value to #72 \"Non-3GPP access to 5GCN not allowed\".",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 33,
+      "step": "If the initial registration request from a UE supporting CAG is rejected due to CAG restrictions, the network sets the 5GMM cause value to #76 \"Not authorized for this CAG or authorized for CAG cells only\" and should include the \"CAG information list\" in the CAG information list IE or the Extended CAG information list IE in the REGISTRATION REJECT message.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 34,
+      "step": "If the UE's initial registration request is via a satellite NG-RAN cell and the network using the User Location Information provided by the NG-RAN, see 3GPP TS 38.413 [31], is able to determine that the UE is in a location where the network is not allowed to operate, the network sets the 5GMM cause value in the REGISTRATION REJECT message to #78 \"PLMN not allowed to operate at the present UE location\".",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 35,
+      "step": "If the AMF receives the initial registration request including the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE and the AMF determines that the UE is not allowed to use UAS services via 5GS based on the user's subscription data and the operator policy, the AMF shall return a REGISTRATION REJECT message with 5GMM cause #79 “UAS services not allowed”.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 36,
+      "step": "If the UE initiates the registration procedure for disaster roaming services and the AMF determines that it does not support providing disaster roaming services for the determined PLMN with disaster condition to the UE, then the AMF shall send a REGISTRATION REJECT message with 5GMM cause #80 “Disaster roaming for the determined PLMN with disaster condition not allowed”.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 37,
+      "step": "If the AMF receives the initial registration request over non-3GPP access and detects that the N3IWF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based N3IWF selection in the REGISTRATION REQUEST message, the AMF may send a REGISTRATION REJECT message with 5GMM cause #81 “Selected N3IWF is not compatible with the allowed NSSAI” and may provide information for a suitable N3IWF in the REGISTRATION REJECT message indicating the suitable N3IWF that is compatible with the requested NSSAI.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 38,
+      "step": "If the AMF receives the initial registration request over non-3GPP access and detects that the TNGF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based TNGF selection in the REGISTRATION REQUEST message, the AMF may send a REGISTRATION REJECT message with 5GMM cause #82 “Selected TNGF is not compatible with the allowed NSSAI” and may provide information for a suitable TNAN in the TNAN information IE in the REGISTRATION REJECT message indicating the suitable TNGF that is compatible with the requested NSSAI.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    },
+    {
+      "id": 39,
+      "step": "If the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access, the network decides to apply the RAT utilization control based on the operator policy, and the secure exchange of NAS messages via a NAS signalling connection is established between the UE and the AMF, the AMF shall send the integrity protected REGISTRATION REJECT message with the 5GMM cause value set to #15 \"No suitable cells in tracking area\" and include the RAT utilization control IE. In the RAT utilization control IE, the AMF shall indicate that the access technology of the NG-RAN cell on which the REGISTRATION REQUEST message was received is restricted.",
+      "entity": "AMF",
+      "state_change": "N/A",
+      "messages": [],
+      "timers": []
+    }
+  ]
+}

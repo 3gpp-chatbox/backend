@@ -1,0 +1,206 @@
+
+{
+  "decision_points": [
+    {
+      "step": "UE initiates registration procedure",
+      "condition": "UE in 5GMM-DEREGISTERED state and needs to register for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, performs initial registration for disaster roaming services, or performs initial registration to come out of unavailability period and resume normal services",
+      "outcomes": [
+        {"outcome": "Success - REGISTRATION REQUEST sent, timers started", "next_step": "AMF receives REGISTRATION REQUEST"},
+        {"outcome": "Failure - UE already registered for emergency services over non-current access", "next_step": "UE does not initiate registration (unless handover of emergency PDU session is needed)"},
+        {"outcome": "Failure - UE cannot register for emergency services over 3GPP access", "next_step": "UE attempts registration for emergency services over non-3GPP access"}
+      ]
+    },
+    {
+      "step": "AMF receives REGISTRATION REQUEST",
+      "condition": "Initial registration request is accepted by the network",
+      "outcomes": [
+        {"outcome": "Success - REGISTRATION ACCEPT sent", "next_step": "UE receives REGISTRATION ACCEPT"},
+        {"outcome": "Failure - Initial registration request cannot be accepted by the network", "next_step": "AMF sends REGISTRATION REJECT"}
+      ]
+    },
+    {
+      "step": "AMF determines LADN DNNs",
+      "condition": "REGISTRATION REQUEST message contains the LADN indication IE",
+      "outcomes": [
+        {"outcome": "LADN indication IE includes requested LADN DNNs, UE subscribed DNN list includes the requested LADN DNNs or the wildcard DNN, and the LADN service area of the requested LADN DNN has an intersection with the current registration area", "next_step": "AMF determines the requested LADN DNNs included in the LADN indication IE as LADN DNNs for the UE"},
+        {"outcome": "No requested LADN DNNs included in the LADN indication IE and the wildcard DNN is included in the UE subscribed DNN list", "next_step": "AMF determines the LADN DNN(s) configured in the AMF whose LADN service area has an intersection with the current registration area as LADN DNNs for the UE"},
+        {"outcome": "No requested LADN DNNs included in the LADN indication IE and the wildcard DNN is not included in the UE subscribed DNN list, or if the UE subscribed DNN list does not include any of the DNN's in the LADN indication IE", "next_step": "AMF determines the LADN DNN(s) included in the UE subscribed DNN list whose LADN service area has an intersection with the current registration area as LADN DNNs for the UE"}
+      ]
+    },
+    {
+      "step": "AMF determines LADN DNNs",
+      "condition": "LADN indication IE is not included in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {"outcome": "LADN indication IE is not included in the REGISTRATION REQUEST message", "next_step": "AMF determines the LADN DNN(s) included in the UE subscribed DNN list whose service area has an intersection with the current registration area as LADN DNNs for the UE, except for the wildcard DNN included in the UE subscribed DNN list"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed' or a Configured NSSAI IE with a new configured NSSAI for the current PLMN or SNPN and optionally the mapped S-NSSAI(s) for the configured NSSAI for the current PLMN or SNPN or an NSSRG information IE with a new NSSRG information or an Alternative NSSAI IE with a new alternative NSSAI or an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information or an S-NSSAI time validity information IE with a new S-NSSAI time validity information or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+      "outcomes": [
+        {"outcome": "Success - REGISTRATION COMPLETE message sent", "next_step": "AMF receives REGISTRATION COMPLETE"},
+        {"outcome": "Failure - UE does not send REGISTRATION COMPLETE message", "next_step": "UE does not acknowledge the successful update of the network slicing information"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message",
+      "outcomes": [
+        {"outcome": "Success - UE replaces the 'CAG information list' stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN", "next_step": "UE stores the received CAG information"},
+        {"outcome": "Success - UE replaces the serving VPLMN's entry of the 'CAG information list' stored in the UE with the serving VPLMN's entry of the received CAG information list IE or the Extended CAG information list IE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN", "next_step": "UE stores the received CAG information"},
+        {"outcome": "Success - UE removes the serving VPLMN's entry of the 'CAG information list' stored in the UE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN and the CAG information list IE or the Extended CAG information list IE does not contain the serving VPLMN's entry", "next_step": "UE stores the received CAG information"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "The received 'CAG information list' includes an entry containing the identity of the registered PLMN",
+      "outcomes": [
+        {"outcome": "UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list', and the entry for the registered PLMN in the received 'CAG information list' does not include an 'indication that the UE is only allowed to access 5GS via CAG cells'", "next_step": "UE enters the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated 'CAG information list'"},
+        {"outcome": "UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list', and the entry for the registered PLMN in the received 'CAG information list' includes an 'indication that the UE is only allowed to access 5GS via CAG cells' and one or more CAG-ID(s) are authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list'", "next_step": "UE enters the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] with the updated 'CAG information list'"},
+        {"outcome": "UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list', and the entry for the registered PLMN in the received 'CAG information list' includes an 'indication that the UE is only allowed to access 5GS via CAG cells' and no CAG-ID is authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list', the UE has not set the 5GS registration type IE in the REGISTRATION REQUEST message to 'emergency registration', and the initial registration was not initiated to perform handover of an existing emergency PDU session from the non-current access to the current access", "next_step": "UE enters the state 5GMM-REGISTERED.PLMN-SEARCH and shall apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated 'CAG information list'"},
+        {"outcome": "UE receives the REGISTRATION ACCEPT message via a non-CAG cell and the entry for the registered PLMN in the received 'CAG information list' includes an 'indication that the UE is only allowed to access 5GS via CAG cells' and one or more CAG-ID(s) are authorized based on the 'allowed CAG list' for the registered PLMN in the received 'CAG information list'", "next_step": "UE enters the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] with the updated 'CAG information list'"},
+        {"outcome": "UE receives the REGISTRATION ACCEPT message via a non-CAG cell and the entry for the registered PLMN in the received 'CAG information list' includes an 'indication that the UE is only allowed to access 5GS via CAG cells' and no CAG-ID is authorized based on the 'Allowed CAG list' of the entry for the registered PLMN in the received 'CAG information list', the UE has not set the 5GS registration type IE in the REGISTRATION REQUEST message to 'emergency registration', and the initial registration was not initiated to perform handover of an existing emergency PDU session from the non-current access to the current access", "next_step": "UE enters the state 5GMM-REGISTERED.PLMN-SEARCH and shall apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated 'CAG information list'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "The received 'CAG information list' does not include an entry containing the identity of the registered PLMN and the UE receives the REGISTRATION ACCEPT message via a CAG cell",
+      "outcomes": [
+        {"outcome": "The received 'CAG information list' does not include an entry containing the identity of the registered PLMN and the UE receives the REGISTRATION ACCEPT message via a CAG cell", "next_step": "UE enters the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated 'CAG information list'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "the UE's USIM is configured with indication that the UE is to receive the SOR transparent container IE",
+      "outcomes": [
+        {"outcome": "the SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check", "next_step": "the UE shall locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message"},
+        {"outcome": "the SOR transparent container IE is not included in the REGISTRATION ACCEPT message", "next_step": "the UE shall locally release the established N1 NAS signalling connection"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "the UE operates in SNPN access operation mode and the ME is configured to indicate that the UE shall expect to receive the steering of roaming information during initial registration procedure for the selected entry of the 'list of subscriber data' or the selected PLMN subscription",
+      "outcomes": [
+        {"outcome": "the SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check", "next_step": "the UE shall locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message"},
+        {"outcome": "the SOR transparent container IE is not included in the REGISTRATION ACCEPT message", "next_step": "the UE shall locally release the established N1 NAS signalling connection"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "the REGISTRATION ACCEPT message includes the SOR transparent container IE and the SOR transparent container IE successfully passes the integrity check",
+      "outcomes": [
+        {"outcome": "the registration procedure is performed over 3GPP access and the UE attempts obtaining service on another PLMNs or SNPNs as specified in 3GPP TS 23.122 [5] annex C", "next_step": "the UE may locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message"},
+        {"outcome": "otherwise", "next_step": "the UE shall send a REGISTRATION COMPLETE message and not release the current N1 NAS signalling connection locally"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "the SOR transparent container IE successfully passes the integrity check",
+      "outcomes": [
+        {"outcome": "the list type indicates 'PLMN ID and access technology list', and the SOR transparent container IE indicates a list of preferred PLMN/access technology combinations is provided", "next_step": "the ME shall replace the highest priority entries in the 'Operator Controlled PLMN Selector with Access Technology' list stored in the ME and shall proceed with the behaviour as specified in 3GPP TS 23.122 [5] annex C"},
+        {"outcome": "the list type indicates 'secured packet'", "next_step": "the ME shall behave as if a SMS is received with protocol identifier set to SIM data download, data coding scheme set to class 2 message and SMS payload as secured packet contents of SOR transparent container IE. The SMS payload is forwarded to UICC as specified in 3GPP TS 23.040 [4A] and the ME shall proceed with the behaviour as specified in 3GPP TS 23.122 [5] annex C"},
+        {"outcome": "the list type indicates 'PLMN ID and access technology list' and the SOR transparent container IE indicates 'HPLMN indication that 'no change of the 'Operator Controlled PLMN Selector with Access Technology' list stored in the UE is needed and thus no list of preferred PLMN/access technology combinations is provided'', the UE operates in SNPN access operation mode and the SOR transparent container IE includes SOR-SNPN-SI", "next_step": "the ME shall replace SOR-SNPN-SI of the selected entry of the 'list of subscriber data' or associated with the selected PLMN subscription, as specified in 3GPP TS 23.122 [5] with the received SOR-SNPN-SI. Additionally, if the SOR transparent container IE includes SOR-SNPN-SI-LS, the ME shall replace SOR-SNPN-SI-LS of the selected entry of the 'list of subscriber data' or associated with the selected PLMN subscription, as specified in 3GPP TS 23.122 [5] with the received SOR-SNPN-SI-LS"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "the UE has set the Follow-on request indicator to 'Follow-on request pending' in the REGISTRATION REQUEST message, or the network has downlink signalling pending",
+      "outcomes": [
+        {"outcome": "the UE is configured for high priority access in the selected PLMN", "next_step": "the AMF shall not immediately release the NAS signalling connection after the completion of the registration procedure"},
+        {"outcome": "the 5GS registration type IE in the REGISTRATION REQUEST message is set to 'emergency registration'", "next_step": "the AMF shall not immediately release the NAS signalling connection after the completion of the registration procedure"},
+        {"outcome": "otherwise", "next_step": "the AMF shall not immediately release the NAS signalling connection after the completion of the registration procedure"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the REGISTRATION REJECT message with 5GMM cause #76 or #78 was received without integrity protection",
+      "outcomes": [
+        {"outcome": "the REGISTRATION REJECT message with 5GMM cause #76 or #78 was received without integrity protection", "next_step": "the UE shall discard the message"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the initial registration request is rejected because all the S-NSSAI(s) included in the requested NSSAI are rejected",
+      "outcomes": [
+        {"outcome": "the UE set the NSSAA bit in the 5GMM capability IE to 'Network slice-specific authentication and authorization supported' and all default S-NSSAIs are not allowed", "next_step": "the network shall set the 5GMM cause value of the REGISTRATION REJECT message to #62 'No network slices available'"},
+        {"outcome": "the UE set the NSSAA bit in the 5GMM capability IE to 'Network slice-specific authentication and authorization supported' and network slice-specific authentication and authorization has failed or been revoked for all default S-NSSAIs and based on network local policy, the network decides not to initiate the network slice-specific re-authentication and re-authorization procedures for any default S-NSSAI requested by the UE", "next_step": "the network shall set the 5GMM cause value of the REGISTRATION REJECT message to #62 'No network slices available'"},
+        {"outcome": "the UE set the NSSAA bit in the 5GMM capability IE to 'Network slice-specific authentication and authorization not supported' and all default S-NSSAIs are either not allowed or are subject to network slice-specific authentication and authorization", "next_step": "the network shall set the 5GMM cause value of the REGISTRATION REJECT message to #62 'No network slices available'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the AMF receives the initial registration request along with the authenticated indication over N2 reference point on non-3GPP access and does not receive the indication that authentication by the home network is not required over N12 reference point, or the 5G-RG acting on behalf of an AUN3 device is not allowed to access 5GS as specified in 3GPP TS 23.316 [6D]",
+      "outcomes": [
+        {"outcome": "the AMF receives the initial registration request along with the authenticated indication over N2 reference point on non-3GPP access and does not receive the indication that authentication by the home network is not required over N12 reference point, or the 5G-RG acting on behalf of an AUN3 device is not allowed to access 5GS as specified in 3GPP TS 23.316 [6D]", "next_step": "the network shall set the 5GMM cause value to #72 'Non-3GPP access to 5GCN not allowed'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the initial registration request from a UE supporting CAG is rejected due to CAG restrictions",
+      "outcomes": [
+        {"outcome": "the initial registration request from a UE supporting CAG is rejected due to CAG restrictions", "next_step": "the network shall set the 5GMM cause value to #76 'Not authorized for this CAG or authorized for CAG cells only' and should include the 'CAG information list' in the CAG information list IE or the Extended CAG information list IE in the REGISTRATION REJECT message"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the UE's initial registration request is via a satellite NG-RAN cell and the network using the User Location Information provided by the NG-RAN, see 3GPP TS 38.413 [31], is able to determine that the UE is in a location where the network is not allowed to operate",
+      "outcomes": [
+        {"outcome": "the UE's initial registration request is via a satellite NG-RAN cell and the network using the User Location Information provided by the NG-RAN, see 3GPP TS 38.413 [31], is able to determine that the UE is in a location where the network is not allowed to operate", "next_step": "the network shall set the 5GMM cause value in the REGISTRATION REJECT message to #78 'PLMN not allowed to operate at the present UE location'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the AMF receives the initial registration request including the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE and the AMF determines that the UE is not allowed to use UAS services via 5GS based on the user's subscription data and the operator policy",
+      "outcomes": [
+        {"outcome": "the AMF receives the initial registration request including the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE and the AMF determines that the UE is not allowed to use UAS services via 5GS based on the user's subscription data and the operator policy", "next_step": "the AMF shall return a REGISTRATION REJECT message with 5GMM cause #79 'UAS services not allowed'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the UE initiates the registration procedure for disaster roaming services and the AMF determines that it does not support providing disaster roaming services for the determined PLMN with disaster condition to the UE",
+      "outcomes": [
+        {"outcome": "the UE initiates the registration procedure for disaster roaming services and the AMF determines that it does not support providing disaster roaming services for the determined PLMN with disaster condition to the UE", "next_step": "the AMF shall send a REGISTRATION REJECT message with 5GMM cause #80 'Disaster roaming for the determined PLMN with disaster condition not allowed'"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the AMF receives the initial registration request over non-3GPP access and detects that the N3IWF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based N3IWF selection in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {"outcome": "the AMF receives the initial registration request over non-3GPP access and detects that the N3IWF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based N3IWF selection in the REGISTRATION REQUEST message", "next_step": "the AMF may send a REGISTRATION REJECT message with 5GMM cause #81 'Selected N3IWF is not compatible with the allowed NSSAI' and may provide information for a suitable N3IWF in the REGISTRATION REJECT message indicating the suitable N3IWF that is compatible with the requested NSSAI"}
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "the AMF receives the initial registration request over non-3GPP access and detects that the TNGF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based TNGF selection in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {"outcome": "the AMF receives the initial registration request over non-3GPP access and detects that the TNGF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based TNGF selection in the REGISTRATION REQUEST message", "next_step": "the AMF may send a REGISTRATION REJECT message with 5GMM cause #82 'Selected TNGF is not compatible with the allowed NSSAI' and may provide information for a suitable TNAN in the TNAN information IE in the REGISTRATION REJECT message indicating the suitable TNGF that is compatible with the requested NSSAI"}
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "AMF receives REGISTRATION REQUEST",
+      "depends_on": "UE initiates registration procedure",
+      "type": "hard",
+      "reason": "AMF can only receive the registration request if the UE initiates it."
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "depends_on": "AMF receives REGISTRATION REQUEST",
+      "type": "conditional",
+      "reason": "UE can only receive REGISTRATION ACCEPT if the AMF accepts the registration request."
+    },
+    {
+      "step": "AMF sends REGISTRATION REJECT",
+      "depends_on": "AMF receives REGISTRATION REQUEST",
+      "type": "conditional",
+      "reason": "AMF can only send REGISTRATION REJECT if the AMF rejects the registration request."
+    },
+    {
+      "step": "UE sends REGISTRATION COMPLETE",
+      "depends_on": "UE receives REGISTRATION ACCEPT",
+      "type": "conditional",
+      "reason": "UE sends REGISTRATION COMPLETE only if certain conditions are met after receiving REGISTRATION ACCEPT."
+    }
+  ]
+}

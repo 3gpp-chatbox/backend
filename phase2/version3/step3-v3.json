@@ -1,0 +1,839 @@
+```json
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "description": "UE initiates registration procedure",
+      "properties": {
+        "entity": "UE",
+        "state_change": "5GMM-DEREGISTERED -> N/A",
+        "condition": "UE in 5GMM-DEREGISTERED state and needs to register for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, performs initial registration for disaster roaming services, or performs initial registration to come out of unavailability period and resume normal services"
+      }
+    },
+    {
+      "id": "1",
+      "type": "process",
+      "description": "UE sends REGISTRATION REQUEST message to AMF",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION REQUEST"],
+        "timers": ["T3510 start", "T3502 stop", "T3511 stop"]
+      }
+    },
+    {
+      "id": "2",
+      "type": "process",
+      "description": "If SUCI is included and T3519 is not running, UE starts T3519 and stores SUCI",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "timers": ["T3519 start"]
+      }
+    },
+    {
+      "id": "3",
+      "type": "process",
+      "description": "AMF may initiate 5GMM common procedures",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "4",
+      "type": "decision",
+      "description": "AMF accepts initial registration request?",
+      "properties": {
+        "entity": "AMF",
+        "condition": "Initial registration request is accepted by the network"
+      }
+    },
+    {
+      "id": "5",
+      "type": "process",
+      "description": "AMF sends REGISTRATION ACCEPT message to UE",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION ACCEPT"],
+        "timers": ["T3550 start"],
+        "triggers": ["State change to 5GMM-REGISTERED"]
+      }
+    },
+    {
+      "id": "6",
+      "type": "process",
+      "description": "AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED (5G-GUTI or SOR transparent container IE included)",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A -> 5GMM-COMMON-PROCEDURE-INITIATED",
+        "timers": ["T3550 start"]
+      }
+    },
+    {
+      "id": "7",
+      "type": "process",
+      "description": "AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED (Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included)",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A -> 5GMM-COMMON-PROCEDURE-INITIATED",
+        "timers": ["T3550 start"]
+      }
+    },
+    {
+      "id": "8",
+      "type": "process",
+      "description": "AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED (RCMAP bit set and Negotiated PEIPS assistance information IE included)",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A -> 5GMM-COMMON-PROCEDURE-INITIATED",
+        "timers": ["T3550 start"]
+      }
+    },
+    {
+      "id": "9",
+      "type": "process",
+      "description": "AMF starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED (RACS bit set and UE radio capability ID IE or UE radio capability ID deletion indication IE included)",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A -> 5GMM-COMMON-PROCEDURE-INITIATED",
+        "timers": ["T3550 start"]
+      }
+    },
+    {
+      "id": "10",
+      "type": "process",
+      "description": "AMF marks UE not allowed to request UAS services",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "11",
+      "type": "process",
+      "description": "AMF initiates UUAA-MM procedure, includes service-level-AA pending indication, starts T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A -> 5GMM-COMMON-PROCEDURE-INITIATED",
+        "timers": ["T3550 start"]
+      }
+    },
+    {
+      "id": "12",
+      "type": "process",
+      "description": "AMF includes Feature authorization indication IE in REGISTRATION ACCEPT",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "13",
+      "type": "process",
+      "description": "AMF sets LCS-UPP bit, SUPL bit, or both in 5GS network feature support IE",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "14",
+      "type": "process",
+      "description": "UE resets registration attempt counter, enters 5GMM-REGISTERED and sets 5GS update status to 5U1 UPDATED",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A -> 5GMM-REGISTERED"
+      }
+    },
+    {
+      "id": "15",
+      "type": "decision",
+      "description": "REGISTRATION ACCEPT contains Network slicing indication IE or Configured NSSAI IE or NSSRG information IE or Alternative NSSAI IE or S-NSSAI location validity information or S-NSSAI time validity information or On-demand NSSAI IE?",
+      "properties": {
+        "entity": "UE",
+        "condition": "REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed' or a Configured NSSAI IE with a new configured NSSAI for the current PLMN or SNPN and optionally the mapped S-NSSAI(s) for the configured NSSAI for the current PLMN or SNPN or an NSSRG information IE with a new NSSRG information or an Alternative NSSAI IE with a new alternative NSSAI or an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information or an S-NSSAI time validity information IE with a new S-NSSAI time validity information or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value"
+      }
+    },
+    {
+      "id": "16",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "17",
+      "type": "decision",
+      "description": "REGISTRATION ACCEPT contains CAG information list IE or Extended CAG information list IE and UE had set CAG bit?",
+      "properties": {
+        "entity": "UE",
+        "condition": "REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message"
+      }
+    },
+    {
+      "id": "18",
+      "type": "process",
+      "description": "UE replaces CAG information list",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "19",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF (Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "20",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF (Negotiated PEIPS assistance information IE)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "21",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF (UE radio capability ID IE or UE radio capability ID deletion indication IE)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "22",
+      "type": "process",
+      "description": "AMF stops T3550 and changes to 5GMM-REGISTERED",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "5GMM-COMMON-PROCEDURE-INITIATED -> 5GMM-REGISTERED",
+        "timers": ["T3550 stop"]
+      }
+    },
+    {
+      "id": "23",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF (service-level-AA pending indication)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "24",
+      "type": "process",
+      "description": "UE sends REGISTRATION COMPLETE message to AMF (Truncated 5G-S-TMSI configuration IE)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION COMPLETE"]
+      }
+    },
+    {
+      "id": "25",
+      "type": "process",
+      "description": "UE deletes network-assigned UE radio capability IDs",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "26",
+      "type": "process",
+      "description": "AMF sends REGISTRATION REJECT message to UE",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A",
+        "messages": ["REGISTRATION REJECT"]
+      }
+    },
+    {
+      "id": "27",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #22 \"congestion\" and assigns value for back-off timer T3346",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "28",
+      "type": "process",
+      "description": "UE discards REGISTRATION REJECT message (5GMM cause #76 or #78 received without integrity protection)",
+      "properties": {
+        "entity": "UE",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "29",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #31 \"Redirection to EPC required\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "30",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #62 \"No network slices available\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "31",
+      "type": "process",
+      "description": "AMF includes rejected S-NSSAI(s) in REGISTRATION REJECT message",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "32",
+      "type": "process",
+      "description": "AMF includes mapped S-NSSAI(s) for the rejected NSSAI",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "33",
+      "type": "process",
+      "description": "AMF includes rejected NSSAI with rejection cause \"S-NSSAI not available due to maximum number of UEs reached\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "34",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #72 \"Non-3GPP access to 5GCN not allowed\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "35",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #76 \"Not authorized for this CAG or authorized for CAG cells only\" and includes CAG information list",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "36",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #78 \"PLMN not allowed to operate at the present UE location\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "37",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #79 \"UAS services not allowed\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "38",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #80 \"Disaster roaming for the determined PLMN with disaster condition not allowed\"",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "39",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #81 \"Selected N3IWF is not compatible with the allowed NSSAI\" and provides information for a suitable N3IWF",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "40",
+      "type": "process",
+      "description": "AMF sets 5GMM cause value to #82 \"Selected TNGF is not compatible with the allowed NSSAI\" and provides information for a suitable TNAN",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "41",
+      "type": "process",
+      "description": "AMF sends integrity protected REGISTRATION REJECT message with 5GMM cause value set to #15 \"No suitable cells in tracking area\" and includes the RAT utilization control IE",
+      "properties": {
+        "entity": "AMF",
+        "state_change": "N/A"
+      }
+    },
+    {
+      "id": "end_accept",
+      "type": "end",
+      "description": "Registration procedure completed successfully",
+      "properties": {
+        "entity": "UE/AMF",
+        "state_change": "5GMM-REGISTERED"
+      }
+    },
+    {
+      "id": "end_reject",
+      "type": "end",
+      "description": "Registration procedure rejected",
+      "properties": {
+        "entity": "UE/AMF",
+        "state_change": "N/A"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "1",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION REQUEST"
+      }
+    },
+    {
+      "from": "1",
+      "to": "2",
+      "type": "sequential",
+      "properties": {
+        "description": "If SUCI is included and T3519 is not running"
+      }
+    },
+    {
+      "from": "2",
+      "to": "3",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF may initiate 5GMM common procedures"
+      }
+    },
+    {
+      "from": "3",
+      "to": "4",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF receives REGISTRATION REQUEST"
+      }
+    },
+    {
+      "from": "4",
+      "to": "5",
+      "type": "conditional",
+      "properties": {
+        "condition": "AMF accepts initial registration request",
+        "outcome": "Success - REGISTRATION ACCEPT sent",
+        "next_step": "UE receives REGISTRATION ACCEPT"
+      }
+    },
+    {
+      "from": "4",
+      "to": "26",
+      "type": "conditional",
+      "properties": {
+        "condition": "AMF accepts initial registration request",
+        "outcome": "Failure - Initial registration request cannot be accepted by the network",
+        "next_step": "AMF sends REGISTRATION REJECT"
+      }
+    },
+    {
+      "from": "5",
+      "to": "6",
+      "type": "conditional",
+      "properties": {
+        "condition": "5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message"
+      }
+    },
+    {
+      "from": "6",
+      "to": "7",
+      "type": "conditional",
+      "properties": {
+        "condition": "Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included"
+      }
+    },
+    {
+      "from": "7",
+      "to": "8",
+      "type": "conditional",
+      "properties": {
+        "condition": "UE has set the RCMAP bit and Negotiated PEIPS assistance information IE is included"
+      }
+    },
+    {
+      "from": "8",
+      "to": "9",
+      "type": "conditional",
+      "properties": {
+        "condition": "UE is not in NB-N1 mode, UE has set the RACS bit and UE radio capability ID IE or UE radio capability ID deletion indication IE is included"
+      }
+    },
+    {
+      "from": "9",
+      "to": "10",
+      "type": "conditional",
+      "properties": {
+        "condition": "AMF determines that the UUAA-MM procedure needs to be performed for a UE"
+      }
+    },
+    {
+      "from": "10",
+      "to": "11",
+      "type": "conditional",
+      "properties": {
+        "condition": "UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message"
+      }
+    },
+    {
+      "from": "11",
+      "to": "12",
+      "type": "conditional",
+      "properties": {
+        "condition": "AMF receives the initial registration request along with the mobile IAB-indication over N2 reference point from UE"
+      }
+    },
+    {
+      "from": "12",
+      "to": "13",
+      "type": "conditional",
+      "properties": {
+        "condition": "AMF supports user plane positioning using LCS-UPP, SUPL, or both"
+      }
+    },
+    {
+      "from": "13",
+      "to": "14",
+      "type": "sequential",
+      "properties": {
+        "description": "UE receives REGISTRATION ACCEPT"
+      }
+    },
+    {
+      "from": "14",
+      "to": "15",
+      "type": "conditional",
+      "properties": {
+        "condition": "REGISTRATION ACCEPT contains Network slicing indication IE or Configured NSSAI IE or NSSRG information IE or Alternative NSSAI IE or S-NSSAI location validity information or S-NSSAI time validity information or On-demand NSSAI IE?"
+      }
+    },
+    {
+      "from": "15",
+      "to": "16",
+      "type": "conditional",
+      "properties": {
+        "condition": "REGISTRATION ACCEPT contains Network slicing indication IE or Configured NSSAI IE or NSSRG information IE or Alternative NSSAI IE or S-NSSAI location validity information or S-NSSAI time validity information or On-demand NSSAI IE?",
+        "outcome": "Success - REGISTRATION COMPLETE message sent",
+        "next_step": "AMF receives REGISTRATION COMPLETE"
+      }
+    },
+    {
+      "from": "15",
+      "to": "17",
+      "type": "conditional",
+      "properties": {
+        "condition": "REGISTRATION ACCEPT contains Network slicing indication IE or Configured NSSAI IE or NSSRG information IE or Alternative NSSAI IE or S-NSSAI location validity information or S-NSSAI time validity information or On-demand NSSAI IE?",
+        "outcome": "Failure - UE does not send REGISTRATION COMPLETE message",
+        "next_step": "UE does not acknowledge the successful update of the network slicing information"
+      }
+    },
+    {
+      "from": "16",
+      "to": "17",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF"
+      }
+    },
+    {
+      "from": "17",
+      "to": "18",
+      "type": "conditional",
+      "properties": {
+        "condition": "REGISTRATION ACCEPT contains CAG information list IE or Extended CAG information list IE and UE had set CAG bit?"
+      }
+    },
+    {
+      "from": "18",
+      "to": "19",
+      "type": "sequential",
+      "properties": {
+        "description": "UE replaces CAG information list"
+      }
+    },
+    {
+      "from": "19",
+      "to": "20",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF (Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE)"
+      }
+    },
+    {
+      "from": "20",
+      "to": "21",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF (Negotiated PEIPS assistance information IE)"
+      }
+    },
+    {
+      "from": "21",
+      "to": "22",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF (UE radio capability ID IE or UE radio capability ID deletion indication IE)"
+      }
+    },
+    {
+      "from": "22",
+      "to": "23",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF stops T3550 and changes to 5GMM-REGISTERED"
+      }
+    },
+    {
+      "from": "23",
+      "to": "24",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF (service-level-AA pending indication)"
+      }
+    },
+    {
+      "from": "24",
+      "to": "25",
+      "type": "sequential",
+      "properties": {
+        "description": "UE sends REGISTRATION COMPLETE message to AMF (Truncated 5G-S-TMSI configuration IE)"
+      }
+    },
+    {
+      "from": "25",
+      "to": "end_accept",
+      "type": "sequential",
+      "properties": {
+        "description": "UE deletes network-assigned UE radio capability IDs"
+      }
+    },
+    {
+      "from": "26",
+      "to": "27",
+      "type": "conditional",
+      "properties": {
+        "condition": "the initial registration request is rejected due to general NAS level mobility management congestion control"
+      }
+    },
+    {
+      "from": "26",
+      "to": "28",
+      "type": "conditional",
+      "properties": {
+        "condition": "the REGISTRATION REJECT message with 5GMM cause #76 or #78 was received without integrity protection"
+      }
+    },
+    {
+      "from": "26",
+      "to": "29",
+      "type": "conditional",
+      "properties": {
+        "condition": "Based on operator policy, if the initial registration request is rejected due to core network redirection for CIoT optimizations"
+      }
+    },
+    {
+      "from": "26",
+      "to": "30",
+      "type": "conditional",
+      "properties": {
+        "condition": "the initial registration request is rejected because all the S-NSSAI(s) included in the requested NSSAI are rejected"
+      }
+    },
+    {
+      "from": "26",
+      "to": "34",
+      "type": "conditional",
+      "properties": {
+        "condition": "the AMF receives the initial registration request along with the authenticated indication over N2 reference point on non-3GPP access and does not receive the indication that authentication by the home network is not required over N12 reference point, or the 5G-RG acting on behalf of an AUN3 device is not allowed to access 5GS as specified in 3GPP TS 23.316 [6D]"
+      }
+    },
+    {
+      "from": "26",
+      "to": "35",
+      "type": "conditional",
+      "properties": {
+        "condition": "the initial registration request from a UE supporting CAG is rejected due to CAG restrictions"
+      }
+    },
+    {
+      "from": "26",
+      "to": "36",
+      "type": "conditional",
+      "properties": {
+        "condition": "the UE's initial registration request is via a satellite NG-RAN cell and the network using the User Location Information provided by the NG-RAN, see 3GPP TS 38.413 [31], is able to determine that the UE is in a location where the network is not allowed to operate"
+      }
+    },
+    {
+      "from": "26",
+      "to": "37",
+      "type": "conditional",
+      "properties": {
+        "condition": "the AMF receives the initial registration request including the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE and the AMF determines that the UE is not allowed to use UAS services via 5GS based on the user's subscription data and the operator policy"
+      }
+    },
+    {
+      "from": "26",
+      "to": "38",
+      "type": "conditional",
+      "properties": {
+        "condition": "the UE initiates the registration procedure for disaster roaming services and the AMF determines that it does not support providing disaster roaming services for the determined PLMN with disaster condition to the UE"
+      }
+    },
+    {
+      "from": "26",
+      "to": "39",
+      "type": "conditional",
+      "properties": {
+        "condition": "the AMF receives the initial registration request over non-3GPP access and detects that the N3IWF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based N3IWF selection in the REGISTRATION REQUEST message"
+      }
+    },
+    {
+      "from": "26",
+      "to": "40",
+      "type": "conditional",
+      "properties": {
+        "condition": "the AMF receives the initial registration request over non-3GPP access and detects that the TNGF used by the UE is not compatible with the allowed NSSAI and the UE has indicated its support for slice-based TNGF selection in the REGISTRATION REQUEST message"
+      }
+    },
+    {
+      "from": "26",
+      "to": "41",
+      "type": "conditional",
+      "properties": {
+        "condition": "the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access, the network decides to apply the RAT utilization control based on the operator policy, and the secure exchange of NAS messages via a NAS signalling connection is established between the UE and the AMF"
+      }
+    },
+    {
+      "from": "27",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #22 \"congestion\" and assigns value for back-off timer T3346"
+      }
+    },
+    {
+      "from": "28",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "UE discards REGISTRATION REJECT message (5GMM cause #76 or #78 received without integrity protection)"
+      }
+    },
+    {
+      "from": "29",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #31 \"Redirection to EPC required\""
+      }
+    },
+    {
+      "from": "30",
+      "to": "31",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #62 \"No network slices available\""
+      }
+    },
+    {
+      "from": "31",
+      "to": "32",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF includes rejected S-NSSAI(s) in REGISTRATION REJECT message"
+      }
+    },
+    {
+      "from": "32",
+      "to": "33",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF includes mapped S-NSSAI(s) for the rejected NSSAI"
+      }
+    },
+    {
+      "from": "33",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF includes rejected NSSAI with rejection cause \"S-NSSAI not available due to maximum number of UEs reached\""
+      }
+    },
+    {
+      "from": "34",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #72 \"Non-3GPP access to 5GCN not allowed\""
+      }
+    },
+    {
+      "from": "35",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #76 \"Not authorized for this CAG or authorized for CAG cells only\" and includes CAG information list"
+      }
+    },
+    {
+      "from": "36",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #78 \"PLMN not allowed to operate at the present UE location\""
+      }
+    },
+    {
+      "from": "37",
+      "to": "end_reject",
+      "type": "sequential",
+      "properties": {
+        "description": "AMF sets 5GMM cause value to #79 \"UAS services not allowed\""
+      }
+    },
+    {
+      "from": "38",
