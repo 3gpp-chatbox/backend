@@ -1,0 +1,381 @@
+
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "description": "Procedure starts",
+        "properties": {}
+      },
+      {
+        "id": "1",
+        "type": "process",
+        "description": "UE sends REGISTRATION REQUEST to AMF",
+        "properties": {
+          "state_before": "5GMM-DEREGISTERED",
+          "entity": "UE",
+          "messages": ["REGISTRATION REQUEST"]
+        }
+      },
+      {
+        "id": "2",
+        "type": "process",
+        "description": "UE starts timer T3510, stops timer T3502 (if running), and stops timer T3511 (if running).",
+        "properties": {
+          "state_after": "5GMM-REGISTERED-INITIATED (Implicit)",
+          "entity": "UE",
+          "timers": ["T3510 (start)", "T3502 (stop)", "T3511 (stop)"]
+        }
+      },
+      {
+        "id": "3",
+        "type": "decision",
+        "description": "Network initiates 5GMM common procedures",
+        "properties": {
+          "entity": "AMF",
+          "condition": "Network determines if common procedures are needed based on REGISTRATION REQUEST",
+          "outcomes": [
+            {
+              "outcome": "Initiate Identification, Authentication, and Security procedures",
+              "next_step": "4"
+            },
+            {
+              "outcome": "Skip Authentication and proceed to Security Mode Control (for emergency registration with unauthenticated SUCIs)",
+              "next_step": "4"
+            },
+            {
+              "outcome": "Proceed without initiating common procedures",
+              "next_step": "4"
+            }
+          ]
+        }
+      },
+      {
+        "id": "4",
+        "type": "decision",
+        "description": "Initial registration accepted by the network",
+        "properties": {
+          "entity": "AMF",
+          "condition": "Network accepts the initial registration request",
+          "outcomes": [
+            {
+              "outcome": "Send REGISTRATION ACCEPT message to the UE",
+              "next_step": "5"
+            },
+            {
+              "outcome": "Send REGISTRATION REJECT message to the UE",
+              "next_step": "9"
+            }
+          ]
+        }
+      },
+      {
+        "id": "5",
+        "type": "process",
+        "description": "AMF sends REGISTRATION ACCEPT to UE",
+        "properties": {
+          "entity": "AMF",
+          "messages": ["REGISTRATION ACCEPT"]
+        }
+      },
+      {
+        "id": "6",
+        "type": "process",
+        "description": "UE receives REGISTRATION ACCEPT, resets registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED.",
+        "properties": {
+          "state_after": "5GMM-REGISTERED",
+          "entity": "UE",
+          "update_status": "5U1 UPDATED"
+        }
+      },
+      {
+        "id": "7",
+        "type": "decision",
+        "description": "REGISTRATION COMPLETE (Conditional)",
+        "properties": {
+          "entity": "UE",
+          "condition": "Certain IEs are included in the REGISTRATION ACCEPT message",
+          "outcomes": [
+            {
+              "outcome": "Send REGISTRATION COMPLETE message to the AMF",
+              "next_step": "8"
+            },
+            {
+              "outcome": "Do not send REGISTRATION COMPLETE message",
+              "next_step": "end_success"
+            }
+          ]
+        }
+      },
+      {
+        "id": "8",
+        "type": "process",
+        "description": "UE sends REGISTRATION COMPLETE to AMF",
+        "properties": {
+          "entity": "UE",
+          "messages": ["REGISTRATION COMPLETE"]
+        }
+      },
+      {
+        "id": "9",
+        "type": "process",
+        "description": "AMF sends REGISTRATION REJECT to UE",
+        "properties": {
+          "entity": "AMF",
+          "messages": ["REGISTRATION REJECT"]
+        }
+      },
+      {
+        "id": "10",
+        "type": "process",
+        "description": "AMF stops timer T3550 and changes to state 5GMM-REGISTERED",
+        "properties": {
+          "entity": "AMF",
+          "timers": ["T3550 (stop)"],
+          "state_after": "5GMM-REGISTERED"
+        }
+      },
+      {
+        "id": "11",
+        "type": "process",
+        "description": "UE takes actions based on 5GMM cause value",
+        "properties": {
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "12",
+        "type": "decision",
+        "description": "Abnormal Cases in the UE - T3510 timeout",
+        "properties": {
+          "entity": "UE",
+          "condition": "Timer T3510 expires",
+          "outcomes": [
+            {
+              "outcome": "Abort the registration procedure for initial registration and the NAS signalling connection, if any, shall be released locally",
+              "next_step": "13"
+            }
+          ]
+        }
+      },
+      {
+        "id": "13",
+        "type": "decision",
+        "description": "Retry or PLMN Selection",
+        "properties": {
+          "entity": "UE",
+          "condition": "Registration attempt counter < 5",
+          "outcomes": [
+            {
+              "outcome": "Start T3511 and enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+              "next_step": "end_failure"
+            },
+            {
+              "outcome": "Registration attempt counter = 5",
+              "next_step": "14"
+            }
+          ]
+        }
+      },
+      {
+        "id": "14",
+        "type": "decision",
+        "description": "PLMN Selection",
+        "properties": {
+          "entity": "UE",
+          "condition": "Value of T3502 as indicated by the network is not zero",
+          "outcomes": [
+            {
+              "outcome": "Start timer T3502 and set 5GS update status to 5U2 NOT UPDATED",
+              "next_step": "end_failure"
+            },
+            {
+              "outcome": "Value of T3502 as indicated by the network is zero",
+              "next_step": "end_failure"
+            }
+          ]
+        }
+      },
+      {
+        "id": "5G_GUTI",
+        "type": "process",
+        "description": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+        "properties": {
+          "entity": "AMF",
+          "timers": ["T3550 (start)"]
+        }
+      },
+      {
+        "id": "end_success",
+        "type": "end",
+        "description": "Procedure ends successfully",
+        "properties": {}
+      },
+      {
+        "id": "end_failure",
+        "type": "end",
+        "description": "Procedure ends with failure",
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "1",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE in 5GMM-DEREGISTERED state initiates the registration procedure"
+        }
+      },
+      {
+        "from": "1",
+        "to": "2",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "2",
+        "to": "3",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "3",
+        "to": "4",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "4",
+        "to": "5",
+        "type": "conditional",
+        "properties": {
+          "condition": "Registration accepted",
+          "outcome": "positive"
+        }
+      },
+      {
+        "from": "4",
+        "to": "9",
+        "type": "conditional",
+        "properties": {
+          "condition": "Registration rejected",
+          "outcome": "negative"
+        }
+      },
+      {
+        "from": "5",
+        "to": "6",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "5",
+        "to": "5G_GUTI",
+        "type": "conditional",
+        "properties": {
+          "condition": "5G-GUTI or SOR transparent container IE is included in the REGISTRATION ACCEPT message"
+        }
+      },
+      {
+        "from": "6",
+        "to": "7",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "7",
+        "to": "8",
+        "type": "conditional",
+        "properties": {
+          "condition": "Certain IEs are included in the REGISTRATION ACCEPT message",
+          "outcome": "positive"
+        }
+      },
+      {
+        "from": "7",
+        "to": "end_success",
+        "type": "conditional",
+        "properties": {
+          "condition": "Certain IEs are not included in the REGISTRATION ACCEPT message",
+          "outcome": "negative"
+        }
+      },
+      {
+        "from": "8",
+        "to": "10",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "9",
+        "to": "11",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "10",
+        "to": "end_success",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "11",
+        "to": "end_failure",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "2",
+        "to": "12",
+        "type": "parallel",
+        "properties": {
+          "trigger": "Timer T3510 starts"
+        }
+      },
+      {
+        "from": "12",
+        "to": "13",
+        "type": "conditional",
+        "properties": {
+          "condition": "Timer T3510 expires",
+          "outcome": "retry"
+        }
+      },
+      {
+        "from": "13",
+        "to": "end_failure",
+        "type": "conditional",
+        "properties": {
+          "condition": "Registration attempt counter < 5",
+          "outcome": "retry"
+        }
+      },
+      {
+        "from": "13",
+        "to": "14",
+        "type": "conditional",
+        "properties": {
+          "condition": "Registration attempt counter = 5",
+          "outcome": "negative"
+        }
+      },
+      {
+        "from": "14",
+        "to": "end_failure",
+        "type": "conditional",
+        "properties": {
+          "condition": "Value of T3502 as indicated by the network is not zero",
+          "outcome": "negative"
+        }
+      },
+      {
+        "from": "5G_GUTI",
+        "to": "end_success",
+        "type": "sequential",
+        "properties": {}
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+
+
+
+prompt=f """
+You are a 3GPP procedure extraction tool. Using your knowledge of 3GPP procedures but based on the provided text, 
+Extract the **decision logic, dependencies, and fallback conditions** for the procedure "{section_name}". Do not make assumptions.
+
+### **Extraction Rules:**
+***(If you need the LLM to refine or improve specific parts of the extraction process, you should focus on modifying just the instructions related to that part. The rest of the prompt, especially the output format, remains unchanged.)***
+🔹 **For each decision point:**
+   1️⃣ Identify **the triggering condition** (explicitly stated in the spec).
+   2️⃣ Identify **all possible outcomes** (not just success/failure).
+   3️⃣ Identify **fallbacks caused by previous failures or timeouts**.
+   4️⃣ Identify **hidden dependencies** (e.g., Step 5 only occurs if Step 2 succeeded).
+
+🚀 **Output Format (Structured for Flow Property Graph):**
+{
+  "decision_points": [
+    {
+      "step": Step number,
+      "condition": "Main decision condition",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": X,
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Failure - Retry",
+          "next_step": Y,
+          "reason": "Timer expiry",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Failure - Reject",
+          "next_step": Z,
+          "reason": "Authentication failure",
+          "outcome_type": "negative"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": X,
+      "depends_on": ["Step Y", "Step Z"],
+      "type": "hard",
+      "reason": "Dependency explanation"
+    }
+  ]
+}
+
+Provided Context:
+{text}

@@ -1,0 +1,98 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE in 5GMM-DEREGISTERED state initiates the registration procedure by sending a REGISTRATION REQUEST message to the AMF.",
+      "state_before": "5GMM-DEREGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 2,
+      "step": "UE starts timer T3510, stops timer T3502 (if running), and stops timer T3511 (if running).",
+      "state_after": "5GMM-REGISTERED-INITIATED (Implicit)",
+      "entity": "UE"
+    },
+    {
+      "id": 3,
+      "step": "The network may initiate 5GMM common procedures (e.g., identification, authentication, security mode control) depending on the information received in the REGISTRATION REQUEST message.",
+      "entity": "AMF"
+    },
+    {
+      "id": 4,
+      "step": "If the initial registration request is accepted, the AMF sends a REGISTRATION ACCEPT message to the UE.",
+      "entity": "AMF"
+    },
+    {
+      "id": 5,
+      "step": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 6,
+      "step": "Upon receipt of the REGISTRATION ACCEPT message, the UE resets the registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 7,
+      "step": "If the REGISTRATION ACCEPT message contains specific information elements (e.g., Network slicing indication, CAG information list, Operator-defined access category definitions), the UE returns a REGISTRATION COMPLETE message to the AMF.",
+      "entity": "UE"
+    },
+    {
+      "id": 8,
+      "step": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "If the initial registration request cannot be accepted, the AMF sends a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value.",
+      "entity": "AMF"
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE"
+    },
+    {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION REJECT",
+      "from": "AMF",
+      "to": "UE"
+    }
+  ],
+  "timers": [
+    {
+      "name": "T3510",
+      "action": "start",
+      "step_id": 2
+    },
+    {
+      "name": "T3502",
+      "action": "stop",
+      "step_id": 2
+    },
+    {
+      "name": "T3511",
+      "action": "stop",
+      "step_id": 2
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 5
+    }
+  ]
+}

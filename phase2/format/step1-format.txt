@@ -1,0 +1,61 @@
+keeping the prompt structure consistent across different versions while only modifying the instruction part. This way, you can evaluate and compare the changes in the output that result from slight tweaks in the instructions. The template approach also ensures you can test whether the refined versions still adhere to the same output format and can improve on the specificity of the instructions. 
+
+
+If you need the LLM to refine or improve specific parts of the extraction process, you should focus on modifying just the instructions related to that part. The rest of the prompt, especially the output format, remains unchanged.
+
+
+prompt = f"""
+You are a 3GPP procedure extraction tool. Using your knowledge of 3GPP procedures but based on the provided text ,Extract the high-level flow and key properties of the procedure "{section_name}" from the provided context. Do not make assumptions.
+
+Focus on the essential sequence of actions, including:
+
+
+- Key steps performed by the **UE** and **AMF**.
+- The primary messages exchanged (e.g., **REGISTRATION REQUEST**, **REGISTRATION ACCEPT**).
+- The **main state changes** of the UE (e.g., 5GMM-DEREGISTERED to 5GMM-REGISTERED).
+- **Main timers** that are started and stopped.
+- The involved **entity** in each step (e.g., UE, AMF).
+
+
+
+Output the information in the following JSON format:
+
+
+{{
+  "procedure_name": "{section_name}",
+  "steps": [
+    {{
+      "id": 1,
+      "step": "Description of the first main step",
+      "state_before": "Initial UE state",
+      "entity": "UE or AMF"
+    }},
+    {{
+      "id": 2,
+      "step": "Description of the second main step",
+      "state_after": "State after step 1",
+      "entity": "UE or AMF"
+    }},
+    // ... more steps ...
+  ],
+  "messages": [
+    {{
+      "name": "Message name",
+      "from": "UE or AMF",
+      "to": "UE or AMF"
+    }},
+    // ... more messages ...
+  ],
+  "timers": [
+    {{
+      "name": "Timer name",
+      "action": "start or stop",
+      "step_id": 1
+    }},
+    // ... more timers ...
+  ]
+}}
+
+Provided Context:
+{text}
+"""

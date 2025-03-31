@@ -1,0 +1,231 @@
+
+{
+  "decision_points": [
+    {
+      "step": "Initial Registration Initiation",
+      "condition": "UE in 5GMM-DEREGISTERED state needs to initiate registration",
+      "outcomes": [
+        {
+          "outcome": "Send REGISTRATION REQUEST and start timers",
+          "next_step": "5GMM Common Procedure Initiation",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "5GMM Common Procedure Initiation",
+      "condition": "Network determines if common procedures are needed based on REGISTRATION REQUEST",
+      "outcomes": [
+        {
+          "outcome": "Initiate Identification, Authentication, and Security procedures",
+          "next_step": "Initial registration accepted by the network",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Skip Authentication and proceed to Security Mode Control (for emergency registration with unauthenticated SUCIs)",
+          "next_step": "Initial registration accepted by the network",
+          "outcome_type": "conditional"
+        },
+        {
+          "outcome": "Proceed without initiating common procedures",
+          "next_step": "Initial registration accepted by the network",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "Initial registration accepted by the network",
+      "condition": "Network accepts the initial registration request",
+      "outcomes": [
+        {
+          "outcome": "Send REGISTRATION ACCEPT message to the UE",
+          "next_step": "UE receives REGISTRATION ACCEPT",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "UE receives REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "Enter 5GMM-REGISTERED state and update status",
+          "next_step": "REGISTRATION COMPLETE (Conditional)",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION COMPLETE (Conditional)",
+      "condition": "Certain IEs are included in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "Send REGISTRATION COMPLETE message to the AMF",
+          "next_step": "AMF receives REGISTRATION COMPLETE",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Do not send REGISTRATION COMPLETE message",
+          "next_step": "Procedure End",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "AMF receives REGISTRATION COMPLETE",
+      "condition": "AMF receives REGISTRATION COMPLETE message",
+      "outcomes": [
+        {
+          "outcome": "Stop timer T3550 and change to state 5GMM-REGISTERED",
+          "next_step": "Procedure End",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Initial registration not accepted by the network",
+      "condition": "Network cannot accept the initial registration request",
+      "outcomes": [
+        {
+          "outcome": "Send REGISTRATION REJECT message to the UE",
+          "next_step": "UE receives REGISTRATION REJECT",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "UE receives REGISTRATION REJECT message",
+      "outcomes": [
+        {
+          "outcome": "Take actions based on 5GMM cause value",
+          "next_step": "Procedure End",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal Cases in the UE - T3510 timeout",
+      "condition": "Timer T3510 expires",
+      "outcomes": [
+        {
+          "outcome": "Abort the registration procedure for initial registration and the NAS signalling connection, if any, shall be released locally",
+          "next_step": "Retry or PLMN Selection",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal Cases in the UE - Lower layer failure or release of the NAS signalling connection",
+      "condition": "Lower layer failure or release of the NAS signalling connection received from lower layers before the REGISTRATION ACCEPT or REGISTRATION REJECT message is received",
+      "outcomes": [
+        {
+          "outcome": "Abort the registration procedure for initial registration",
+          "next_step": "Retry or PLMN Selection",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal Cases in the UE - REGISTRATION REJECT message, other 5GMM cause values",
+      "condition": "REGISTRATION REJECT message, other 5GMM cause values than those treated in subclause 5.5.1.2.5, and cases of 5GMM cause values #10, #11, #15, #22, #31, #36, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81 and #82, if considered as abnormal cases according to subclause 5.5.1.2.5",
+      "outcomes": [
+        {
+          "outcome": "Proceed as described below",
+          "next_step": "Retry or PLMN Selection",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "Retry or PLMN Selection",
+      "condition": "Registration attempt counter < 5",
+      "outcomes": [
+        {
+          "outcome": "Start T3511 and enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+          "next_step": "Procedure End",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Registration attempt counter = 5",
+          "next_step": "PLMN Selection",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "PLMN Selection",
+      "condition": "Value of T3502 as indicated by the network is not zero",
+      "outcomes": [
+        {
+          "outcome": "Start timer T3502 and set 5GS update status to 5U2 NOT UPDATED",
+          "next_step": "Procedure End",
+          "outcome_type": "negative"
+        },
+        {
+          "outcome": "Value of T3502 as indicated by the network is zero",
+          "next_step": "Expiry of the timer T3502",
+          "outcome_type": "negative"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "5GMM Common Procedure Initiation",
+      "depends_on": [
+        "Initial Registration Initiation"
+      ],
+      "type": "hard",
+      "reason": "Common procedures are initiated based on the information in the REGISTRATION REQUEST message."
+    },
+    {
+      "step": "Initial registration accepted by the network",
+      "depends_on": [
+        "5GMM Common Procedure Initiation"
+      ],
+      "type": "hard",
+      "reason": "The network decides whether to accept the registration after common procedures."
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "depends_on": [
+        "Initial registration accepted by the network"
+      ],
+      "type": "hard",
+      "reason": "UE can only receive REGISTRATION ACCEPT if the network sends it."
+    },
+    {
+      "step": "REGISTRATION COMPLETE (Conditional)",
+      "depends_on": [
+        "UE receives REGISTRATION ACCEPT"
+      ],
+      "type": "conditional",
+      "reason": "REGISTRATION COMPLETE is sent only if certain IEs are present in REGISTRATION ACCEPT."
+    },
+    {
+      "step": "AMF receives REGISTRATION COMPLETE",
+      "depends_on": [
+        "REGISTRATION COMPLETE (Conditional)"
+      ],
+      "type": "hard",
+      "reason": "AMF can only receive REGISTRATION COMPLETE if the UE sends it."
+    },
+    {
+      "step": "Initial registration not accepted by the network",
+      "depends_on": [
+        "5GMM Common Procedure Initiation"
+      ],
+      "type": "hard",
+      "reason": "The network decides whether to reject the registration after common procedures."
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "depends_on": [
+        "Initial registration not accepted by the network"
+      ],
+      "type": "hard",
+      "reason": "UE can only receive REGISTRATION REJECT if the network sends it."
+    }
+  ]
+}
