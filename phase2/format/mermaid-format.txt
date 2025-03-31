@@ -1,0 +1,40 @@
+graph TD
+    start((Start)) --> 1(UE: Send REGISTRATION REQUEST);
+    
+    %% Timer starts after UE sends request
+    1 --> T3510_Start[UE: Start Timer T3510];
+
+    %% Common procedures decision
+    T3510_Start --> 3{AMF: Perform Common Procedures?};
+    3 -->|Yes| 4{AMF: Registration Accepted?};
+    3 -->|No| 9(AMF: Send REGISTRATION REJECT);
+
+    %% Registration Accepted Path
+    4 -->|Yes| 5(AMF: Send REGISTRATION ACCEPT);
+    4 -->|No| 9;
+
+    5 --> 6(UE: Receive REGISTRATION ACCEPT);
+    5 -->|5G-GUTI or SOR IE included| T3550_Start[AMF: Start Timer T3550];
+
+    6 --> 7{UE: REGISTRATION COMPLETE?};
+    7 -->|Yes| 8(UE: Send REGISTRATION COMPLETE);
+    7 -->|No| end_success((End Success));
+
+    %% Successful Completion Path
+    8 --> 10(AMF: Stop Timer T3550, State: 5GMM-REGISTERED);
+    10 --> end_success;
+
+    %% Registration Reject Path
+    9 --> 11(UE: Handle 5GMM Cause);
+    11 --> end_failure((End Failure));
+
+    %% Timer T3510 Timeout and Retries
+    T3510_Start -->|Timeout| 12{UE: Timer T3510 Expired?};
+    12 -->|Yes| 13{UE: Retry < 5?};
+
+    13 -->|Yes: Retry Registration| 1;
+    13 -->|No: Retry Limit Reached| 14{UE: T3502 != 0?};
+
+    %% Handling T3502
+    14 -->|Yes: Start T3502| end_failure;
+    14 -->|No: T3502 = 0| end_failure;
