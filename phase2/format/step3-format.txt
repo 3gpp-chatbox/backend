@@ -1,19 +1,27 @@
 prompt = f"""
-You are a graph generation tool. Using your knowledge of 3GPP procedures but based on the provided input data, construct a structured **flow property graph** for the procedure "{section_name}".
+You are a **graph generation tool**. Using your knowledge of 3GPP procedures but strictly based on the provided input data, construct a **structured flow property graph** for the procedure **"{section_name}"**.
 
-### Represent:
-- The sequence of steps as nodes, including their descriptions and any relevant properties (e.g., state changes, involved entities, triggers).
-- The flow between steps as edges, including their types (sequential, conditional, retry) and any associated conditions.
-- Decision points and timers as specific node types, with their conditions, properties, and multiple outcomes if applicable.
-- Dependencies, retry conditions, and fallback paths as edge properties.
+---
 
-Ensure the graph:
-- Clearly shows the main flow and alternative paths.
-- Includes detailed properties for each node and edge, such as conditions, outcomes, retries, and reasons for transitions.
-- Captures retry counts, error types, timeouts, and fallback paths where applicable.
+## **🔹 Graph Representation Rules**
+**Nodes** represent:  
+✔ **Procedural Steps** (e.g., UE sends request, AMF processes message).  
+✔ **Decision Points** (e.g., conditions leading to different paths).  
+✔ **Timers** (started/stopped due to events).  
 
-### Example Output Format:
+**Edges** represent:  
+✔ **Flow transitions** (sequential, conditional, retry, fallback).  
+✔ **Decision paths** (if-else branches, error handling, alternative flows).  
+✔ **Dependencies** (where one step is dependent on another).  
 
+🚨 **Strict Rule**: Extract information **only from the provided input data**. Do **not** infer or add missing details.
+
+---
+
+## **🔹 Output Format (Structured JSON)**
+The extracted graph must be in the following format:
+
+```json
 {
   "graph": {
     "nodes": [
@@ -110,6 +118,7 @@ Ensure the graph:
     ]
   }
 }
+
 
 
 ### Input Data:

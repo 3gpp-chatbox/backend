@@ -1,19 +1,32 @@
+prompt = f"""
+You are a **3GPP procedure extraction tool**. Using your knowledge of 3GPP procedures but **strictly based on the provided text**, extract the **decision logic, dependencies, and fallback conditions** for the procedure **"{section_name}"**.
 
+---
 
+## **🔹 What to Extract (Fixed Scope)**
+Extract the following key decision-related elements:  
+- **Decision Points**: Where the procedure takes different paths based on conditions.  
+- **Dependencies**: Steps that are dependent on the success or failure of prior steps.  
+- **Fallback Conditions**: Failure-handling mechanisms (e.g., retries, alternative flows).  
 
-prompt=f """
-You are a 3GPP procedure extraction tool. Using your knowledge of 3GPP procedures but based on the provided text, 
-Extract the **decision logic, dependencies, and fallback conditions** for the procedure "{section_name}". Do not make assumptions.
+🚨 **Strict Rule**: Do **not** make assumptions or infer missing information. Extract only what is explicitly mentioned in the text.  
 
-### **Extraction Rules:**
-***(If you need the LLM to refine or improve specific parts of the extraction process, you should focus on modifying just the instructions related to that part. The rest of the prompt, especially the output format, remains unchanged.)***
-🔹 **For each decision point:**
-   1️⃣ Identify **the triggering condition** (explicitly stated in the spec).
-   2️⃣ Identify **all possible outcomes** (not just success/failure).
-   3️⃣ Identify **fallbacks caused by previous failures or timeouts**.
-   4️⃣ Identify **hidden dependencies** (e.g., Step 5 only occurs if Step 2 succeeded).
+---
 
-🚀 **Output Format (Structured for Flow Property Graph):**
+## **🔹 How to Extract (Refinable Method)**
+(🛠 This section can be refined in future versions)  
+
+When extracting decision logic, follow these principles:  
+- Identify **explicit conditions** that cause a branch in the procedure.  
+- Capture **all possible outcomes**, not just success/failure.  
+- Recognize **timeout or retry mechanisms** that affect procedure flow.  
+- Preserve cause-effect relationships between steps.  
+- (🛠 Additional refinements can be added here.)  
+
+---
+
+## **🔹 Output Format (Consistent JSON)**
+Ensure the extracted data follows this structured format:
 {
   "decision_points": [
     {
