@@ -22,62 +22,8 @@ if not api_key:
 client = genai.Client(api_key=api_key)
 
 def extract_procedural_info_from_text(section_name, text):
-    def convert_json_to_mermaid(section_name, json_data):
-    """
-    Converts structured flow property graph JSON into Mermaid flowchart syntax.
-
-    Parameters:
-    - section_name (str): The name of the 3GPP procedure.
-    - json_data (dict): The structured graph data containing nodes and edges.
-
-    Returns:
-    - Mermaid syntax (str)
-    """
-
     prompt = f"""
-Convert the provided JSON into **Mermaid syntax** for a 3GPP **Flow Property Graph**.
-
----
-
-## **🔹 Flow Property Graph Structure**
-- **Nodes represent execution steps, decisions, timers, and state changes.**
-- **Entities (UE, AMF, etc.) are properties within nodes, NOT separate nodes.**
-- **Edges define execution flow, dependencies, and property modifications.**
-
----
-
-## **🔹 Conversion Rules**
-🔹 **Nodes:**  
-   - **Process Steps** → Rectangular (`[Step Name]`)  
-   - **Decisions** → Diamond (`{{Decision Condition}}`)  
-   - **Timers** → Cylindrical (`([Timer Name])`), with start/stop/reset actions  
-   - **State Changes** → Parallelogram (`[/State Change/]`)  
-   - **Start/End** → Circular (`((Start/End))`)  
-
-🔹 **Edges (Arrows):**  
-   - **Sequential Execution** → `A --> B`  
-   - **Conditional Flow** → `A --|Condition|--> B`  
-   - **Retry on Failure** → `A --|Retry Condition|--> B`  
-   - **Dependency (Step must wait for another)** → `A --|depends on|--> B`  
-   - **Modifying (Message/state change affects another step)** → `A --|modifies|--> B`  
-
-🔹 **Timers:**  
-   - `([T3510])` represents the timer.  
-   - `A -->|Starts Timer| ([T3510])` shows timer activation.  
-   - `([T3510]) --|Expires|--> C` represents expiry leading to an event.  
-
----
-
-## **🔹 Example Mermaid Output**
-```mermaid
-graph TD;
-  A((Start)) -->|UE sends REGISTRATION REQUEST| B[Process: Send Registration Request]
-  B -->|Starts Timer| C([T3510])
-  C --|Expires|--> D{{Retry or Fail?}}
-  D --|Retry|--> B
-  D --|Fail|--> E[Rejection]
-  E -->((End))
-
+convert the provided JSON code to Mermaid syntax for a flow property graph.
 
 
 My provided JSON code:
@@ -127,7 +73,7 @@ def process_text_file(input_file_path, section_name):
     return procedural_info
 
 # Example usage: Processing a text file
-input_file_path = "v01-step3.json"  # Path to your input text file
+input_file_path = "v02-step3.json"  # Path to your input text file
 section_name = "Registration procedure for initial registration"  # Name of the section/procedure
 
 procedural_info = process_text_file(input_file_path, section_name)
