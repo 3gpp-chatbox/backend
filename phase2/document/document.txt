@@ -6,3 +6,85 @@
 
 from version01.  all version extract same element in the same step.
 from version02,all versions use same json putput structure format in the same step (version04 step2  is slightly different )
+
+
+
+difference of prompt
+v02 vs v03
+
+step1: 
+identical in content, with only a minor difference in formatting and spacing. There are no substantial changes in wording, structure, or logic.
+
+step3:the actual instructions and JSON format are identical
+
+step2:
+both use 2.5pro model
+Both versions of the prompt serve the same purpose—extracting decision logic, dependencies, and fallback conditions from a 3GPP procedure text—but Version 03 is a refined and improved version. Here’s why:
+
+Key Differences & Improvements in Version 03
+Better Readability & Clarity
+
+More concise without losing any important details.
+
+More Specific Extraction Guidelines
+
+Adds examples of explicit conditions (e.g., timer expiry, state changes).
+
+Emphasizes capturing all possible outcomes, not just success/failure.
+
+Introduces the concept of retry count and max retry limits, which improves accuracy for procedures involving retries.
+
+No Loss of Information
+
+Retains all the details from Version 02 but presents them in a clearer and more structured manner.
+
+Which One is Better?
+✅ Version 03 is better because it:
+
+Improves readability with structured formatting.
+
+Provides more explicit instructions for extracting details.
+
+Enhances accuracy by emphasizing retries and condition-based flows.
+
+Unless you have a reason to keep Version 02 (e.g., a requirement for a more formal tone), Version 03 is the superior choice!
+
+
+------------------------
+
+difference of prompt
+v04 vs v03
+
+step1: 
+identical in content, with only a minor difference in formatting and spacing. There are no substantial changes in wording, structure, or logic.
+
+step3:the actual instructions and JSON format are identical
+
+
+step2:
+v03 use 2.5pro model,v04 use 2.0flash model
+ Additions in Version 04 (Not in Version 03)
+Conciseness Rule:
+
+✅ V04: "Condense lengthy conditions into high-level summaries that still retain the essence of the decision point. Avoid including long strings or references to external specs."
+
+❌ V03: Does not mention condensing conditions or avoiding external references.
+
+Avoiding Redundant Steps:
+
+✅ V04: "Preserve cause-effect relationships between steps, but do not repeat similar conditions or steps if the outcomes are identical."
+
+❌ V03: Does not mention avoiding redundant steps.
+
+🔹 Additions in Version 03 (Not in Version 04)
+Retry Count & Max Retry Limits:
+
+✅ V03: "For retries, include the retry count and any max retry limits."
+
+❌ V04: Does not explicitly mention tracking retry counts.
+
+More Explicit Examples in "How to Extract":
+
+✅ V03: "Capture all possible outcomes for each decision point, not just success/failure. Examples of outcomes include retry, reject, success with extra steps, etc."
+
+❌ V04: Talks about outcomes but does not explicitly give as many examples.

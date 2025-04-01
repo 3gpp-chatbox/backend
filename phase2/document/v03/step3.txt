@@ -1,0 +1,62 @@
+
+result analysis by chatgpt:
+
+prompt:you are 3gpp NAS specification procedure expert , use knowledge of 3gpp procedure, analyze below extracted flow property graph of procedure " Registration procedure for initial registration" , is the extracted content info is correct , is there any wrong info.  :
+
+
+
+
+
+
+
+response:
+
+
+Your extracted flow property graph of the "Registration procedure for initial registration" aligns closely with 3GPP TS 24.501 specifications. However, I have identified a few potential issues or clarifications:
+
+Observations and Corrections
+State Transition for UE (Node 1)
+
+The UE should enter 5GMM-REGISTERED-INITIATED after sending the REGISTRATION REQUEST (not remain in 5GMM-DEREGISTERED).
+
+The transition to 5GMM-REGISTERED only happens after receiving and processing the REGISTRATION ACCEPT message.
+
+Timer T3519 (Node 5)
+
+The SUCI is included in the 5GS Mobile Identity IE only if the UE is in privacy mode.
+
+T3519 is used for waiting for a response to authentication/security procedures, but it is not always started just because SUCI is included.
+
+The condition "If SUCI is included and T3519 is not running" should be clarified.
+
+AMF Initiating Common Procedures (Node 6)
+
+The network does not always initiate authentication/security procedures—this depends on subscription and network policies.
+
+State Change in Node 10–13 (AMF State Transitions)
+
+5GMM-COMMON-PROCEDURE-INITIATED should only be entered when specific procedures (e.g., authentication, security mode command, identity request) are triggered.
+
+Just receiving 5G-GUTI or SOR does not trigger this state transition.
+
+UE Handling of Registration Accept (Node 14)
+
+The 5GS update status (5U1 UPDATED) is set only if an update is needed.
+
+UE should not reset the registration attempt counter unless the registration was explicitly a retry.
+
+Handling of REGISTRATION COMPLETE Messages (Nodes 15–20)
+
+Not all REGISTRATION ACCEPT conditions require REGISTRATION COMPLETE.
+
+Some conditions (e.g., network slicing update) require it, but others (like just receiving TAI list) do not.
+
+The procedure should clarify under which exact conditions REGISTRATION COMPLETE is sent.
+
+REGISTRATION REJECT Handling (Node 22)
+
+If REGISTRATION REJECT is received, the UE should handle retry logic based on the cause value (e.g., immediate retry, wait for T3512 expiry, or not retry at all).
+
+Final Verdict
+✅ Your flow captures most of the steps correctly and follows 3GPP logic.
+⚠️ However, some details (e.g., state transitions, timers, and REGISTRATION COMPLETE conditions) need refinement.

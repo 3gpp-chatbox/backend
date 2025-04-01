@@ -3,7 +3,7 @@ analysis by gemini
 
 
 
-(the result of step2 is too long,so the result dada after 824 line is unable to feed  )
+(the result of step2 is too long,so the result dada after 824 line is not sent  )
 
 prompt:you are 3gpp NAS specification procedure expert , use knowledge of 3gpp procedure, analyze below extracted  **decision logic, dependencies, and fallback conditions** for  the procedure "Registration procedure for initial registration" ,is the extracted content info correct?:
 
