@@ -1,3 +1,18 @@
+
+
+What to Extract (Fixed Scope)
+extract the **decision logic, dependencies, and fallback conditions** for the procedure **"{section_name}"**.
+**Decision Points**
+**Dependencies**
+**Fallback Conditions**
+
+definition and HOW to extract change in different test version
+
+-----------------------------------------------------------------------------------------------------------
+
+
+
+
 prompt = f"""
 You are a **3GPP procedure extraction tool**. Using your knowledge of 3GPP procedures but **strictly based on the provided text**, extract the **decision logic, dependencies, and fallback conditions** for the procedure **"{section_name}"**.
 

@@ -1,0 +1,345 @@
+```json
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "description": "Procedure starts",
+        "properties": {}
+      },
+      {
+        "id": "1",
+        "type": "process",
+        "description": "UE sends REGISTRATION REQUEST",
+        "properties": {
+          "state_change": "5GMM-DEREGISTERED",
+          "entity": "UE",
+          "messages": ["REGISTRATION REQUEST"]
+        }
+      },
+      {
+        "id": "2",
+        "type": "timer",
+        "description": "UE starts timer T3510",
+        "properties": {
+          "action": "start",
+          "name": "T3510"
+        }
+      },
+      {
+        "id": "3",
+        "type": "decision",
+        "description": "Initial registration request is accepted by the network",
+        "properties": {
+          "condition": "Initial registration request is accepted by the network",
+          "outcomes": [
+            {
+              "outcome": "AMF sends REGISTRATION ACCEPT",
+              "next_step": "4"
+            },
+            {
+              "outcome": "Initial registration request cannot be accepted by the network",
+              "next_step": "13"
+            }
+          ]
+        }
+      },
+      {
+        "id": "4",
+        "type": "process",
+        "description": "AMF sends REGISTRATION ACCEPT",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION ACCEPT"]
+        }
+      },
+      {
+        "id": "5",
+        "type": "decision",
+        "description": "5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message",
+        "properties": {
+          "condition": "5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message",
+          "outcomes": [
+            {
+              "outcome": "AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED",
+              "next_step": "6"
+            },
+            {
+              "outcome": "No 5G-GUTI or the SOR transparent container IE",
+              "next_step": "7"
+            }
+          ]
+        }
+      },
+      {
+        "id": "6",
+        "type": "timer",
+        "description": "AMF starts timer T3550",
+        "properties": {
+          "action": "start",
+          "name": "T3550",
+          "state_change": "5GMM-COMMON-PROCEDURE-INITIATED",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "7",
+        "type": "process",
+        "description": "UE resets the registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED",
+        "properties": {
+          "state_change": "5GMM-REGISTERED",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "8",
+        "type": "decision",
+        "description": "The REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed', a Configured NSSAI IE with a new configured NSSAI, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, an S-NSSAI time validity information IE with a new S-NSSAI time validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed', a Configured NSSAI IE with a new configured NSSAI, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, an S-NSSAI time validity information IE with a new S-NSSAI time validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+          "outcomes": [
+            {
+              "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information",
+              "next_step": "12"
+            },
+            {
+              "outcome": "The REGISTRATION ACCEPT message does not contain the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed', a Configured NSSAI IE with a new configured NSSAI, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, an S-NSSAI time validity information IE with a new S-NSSAI time validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+              "next_step": "9"
+            }
+          ]
+        }
+      },
+      {
+        "id": "9",
+        "type": "decision",
+        "description": "The REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message",
+          "outcomes": [
+            {
+              "outcome": "UE replaces the 'CAG information list' stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN, replaces the serving VPLMN's entry of the 'CAG information list' stored in the UE with the serving VPLMN's entry of the received CAG information list IE or the Extended CAG information list IE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN, or removes the serving VPLMN's entry of the 'CAG information list' stored in the UE when the UE receives the CAG information list IE or the Extended CAG information list IE in a serving PLMN other than the HPLMN or EHPLMN and the CAG information list IE or the Extended CAG information list IE does not contain the serving VPLMN's entry",
+              "next_step": "10"
+            },
+            {
+              "outcome": "The REGISTRATION ACCEPT message does not contain the CAG information list IE or the Extended CAG information list IE and the UE had not set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message",
+              "next_step": "10"
+            }
+          ]
+        }
+      },
+      {
+        "id": "10",
+        "type": "decision",
+        "description": "The REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+          "outcomes": [
+            {
+              "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the 'CAG information list'",
+              "next_step": "12"
+            },
+            {
+              "outcome": "The REGISTRATION ACCEPT message does not contain the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+              "next_step": "11"
+            }
+          ]
+        }
+      },
+      {
+        "id": "11",
+        "type": "decision",
+        "description": "The REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+          "outcomes": [
+            {
+              "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+              "next_step": "12"
+            },
+            {
+              "outcome": "The REGISTRATION ACCEPT message does not contain the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+              "next_step": "end"
+            }
+          ]
+        }
+      },
+      {
+        "id": "12",
+        "type": "process",
+        "description": "Upon receiving a REGISTRATION COMPLETE message, the AMF stops timer T3550 and changes to state 5GMM-REGISTERED",
+        "properties": {
+          "state_change": "5GMM-REGISTERED",
+          "entity": "AMF",
+          "messages": ["REGISTRATION COMPLETE"]
+        }
+      },
+      {
+        "id": "13",
+        "type": "process",
+        "description": "The AMF sends a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION REJECT"]
+        }
+      },
+      {
+        "id": "end",
+        "type": "end",
+        "description": "Procedure ends",
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "1",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE initiates the registration procedure"
+        }
+      },
+      {
+        "from": "1",
+        "to": "2",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE sends REGISTRATION REQUEST"
+        }
+      },
+      {
+        "from": "2",
+        "to": "3",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE starts timer T3510"
+        }
+      },
+      {
+        "from": "3",
+        "to": "4",
+        "type": "conditional",
+        "properties": {
+          "condition": "Initial registration request is accepted by the network",
+          "outcome": "AMF sends REGISTRATION ACCEPT"
+        }
+      },
+      {
+        "from": "3",
+        "to": "13",
+        "type": "conditional",
+        "properties": {
+          "condition": "Initial registration request cannot be accepted by the network",
+          "outcome": "AMF sends REGISTRATION REJECT"
+        }
+      },
+      {
+        "from": "4",
+        "to": "5",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF sends REGISTRATION ACCEPT"
+        }
+      },
+      {
+        "from": "5",
+        "to": "6",
+        "type": "conditional",
+        "properties": {
+          "condition": "5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message",
+          "outcome": "AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED"
+        }
+      },
+      {
+        "from": "5",
+        "to": "7",
+        "type": "conditional",
+        "properties": {
+          "condition": "No 5G-GUTI or the SOR transparent container IE",
+          "outcome": "UE resets the registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED"
+        }
+      },
+      {
+        "from": "6",
+        "to": "12",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF starts timer T3550"
+        }
+      },
+      {
+        "from": "7",
+        "to": "8",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE resets the registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED"
+        }
+      },
+      {
+        "from": "8",
+        "to": "12",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed', a Configured NSSAI IE with a new configured NSSAI, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI location validity information, an S-NSSAI time validity information IE with a new S-NSSAI time validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+          "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information"
+        }
+      },
+      {
+        "from": "8",
+        "to": "9",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message does not contain the Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed', a Configured NSSAI IE with a new configured NSSAI, an NSSRG information IE with a new NSSRG information, an Alternative NSSAI IE with a new alternative NSSAI, an S-NSSAI location validity information in the Registration accept type 6 IE container IE with a new S-NSSAI time validity information, or an On-demand NSSAI IE with a new on-demand NSSAI or an updated slice deregistration inactivity timer value",
+          "outcome": "Continue to next decision"
+        }
+      },
+      {
+        "from": "9",
+        "to": "10",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Continue to next decision"
+        }
+      },
+      {
+        "from": "10",
+        "to": "12",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+          "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the 'CAG information list'"
+        }
+      },
+      {
+        "from": "10",
+        "to": "11",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message does not contain the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE",
+          "outcome": "Continue to next decision"
+        }
+      },
+      {
+        "from": "11",
+        "to": "12",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+          "outcome": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE"
+        }
+      },
+      {
+        "from": "11",
+        "to": "end",
+        "type": "conditional",
+        "properties": {
+          "condition": "The REGISTRATION ACCEPT message does not contain the UE radio capability ID IE or the UE radio capability ID deletion indication IE",
+          "outcome": "Procedure ends"
+        }
+      }
+    ]
+  }
+}
+```

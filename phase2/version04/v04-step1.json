@@ -1,0 +1,186 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF.",
+      "state_before": "5GMM-DEREGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 2,
+      "step": "UE starts timer T3510.",
+      "entity": "UE"
+    },
+    {
+      "id": 3,
+      "step": "UE stops timer T3502, if it is running.",
+      "entity": "UE"
+    },
+    {
+      "id": 4,
+      "step": "UE stops timer T3511, if it is running.",
+      "entity": "UE"
+    },
+    {
+      "id": 5,
+      "step": "If the SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running, the UE shall start timer T3519 and store the value of the SUCI sent in the REGISTRATION REQUEST message.",
+      "entity": "UE"
+    },
+    {
+      "id": 6,
+      "step": "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message.",
+      "entity": "AMF"
+    },
+    {
+      "id": 7,
+      "step": "If the initial registration request is accepted by the network, the AMF shall send a REGISTRATION ACCEPT message to the UE.",
+      "entity": "AMF"
+    },
+    {
+      "id": 8,
+      "step": "The AMF shall assign and include a TAI list as a registration area the UE is registered to in the REGISTRATION ACCEPT message.",
+      "entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI list.",
+      "entity": "UE"
+    },
+    {
+      "id": 10,
+      "step": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 11,
+      "step": "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 12,
+      "step": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 13,
+      "step": "If the UE is not in NB-N1 mode and the UE has set the RACS bit to \"RACS supported\" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message. If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 14,
+      "step": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.",
+      "entity": "UE"
+    },
+    {
+      "id": 15,
+      "step": "If the REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\", the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information.",
+      "entity": "UE"
+    },
+    {
+      "id": 16,
+      "step": "If the UE has set the RCMAN bit to \"Sending of REGISTRATION COMPLETE message for NSAG information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the NSAG information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE.",
+      "entity": "UE"
+    },
+    {
+      "id": 17,
+      "step": "If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to \"CAG supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall replace the \"CAG information list\" stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN.",
+      "entity": "UE"
+    },
+    {
+      "id": 18,
+      "step": "If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\".",
+      "entity": "UE"
+    },
+    {
+      "id": 19,
+      "step": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE.",
+      "entity": "UE"
+    },
+    {
+      "id": 20,
+      "step": "If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE.",
+      "entity": "UE"
+    },
+    {
+      "id": 21,
+      "step": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 22,
+      "step": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value.",
+      "entity": "AMF"
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE"
+    },
+    {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION REJECT",
+      "from": "AMF",
+      "to": "UE"
+    }
+  ],
+  "timers": [
+    {
+      "name": "T3510",
+      "action": "start",
+      "step_id": 2
+    },
+    {
+      "name": "T3502",
+      "action": "stop",
+      "step_id": 3
+    },
+    {
+      "name": "T3511",
+      "action": "stop",
+      "step_id": 4
+    },
+    {
+      "name": "T3519",
+      "action": "start",
+      "step_id": 5
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 10
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 11
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 12
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 13
+    },
+    {
+      "name": "T3550",
+      "action": "stop",
+      "step_id": 21
+    }
+  ]
+}

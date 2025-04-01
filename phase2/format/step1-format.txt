@@ -1,5 +1,20 @@
 
 
+
+What to Extract (Fixed Scope)
+ **extract the high-level flow and key properties** of the procedure **"{section_name}"**.
+**Steps**
+ **Messages**
+ **State Changes**
+ **Timers**
+ **Entities**
+
+definition and HOW to extract changes in different test version
+----------------------------------------------------------------------------------
+
+
+
+
 prompt = f"""
 You are a **3GPP procedure extraction tool**. Using your knowledge of 3GPP procedures, but strictly based on the provided text, **extract the high-level flow and key properties** of the procedure **"{section_name}"**.
 

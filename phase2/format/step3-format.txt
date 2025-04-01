@@ -1,3 +1,14 @@
+
+
+(Fixed Scope)
+example json output format keep same in all test version, rules change in different version.
+
+
+
+
+
+
+
 prompt = f"""
 You are a **graph generation tool**. Using your knowledge of 3GPP procedures but strictly based on the provided input data, construct a **structured flow property graph** for the procedure **"{section_name}"**.
 
