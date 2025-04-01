@@ -145,6 +145,6 @@ section_name = "Registration procedure for initial registration"  # Name of the 
 procedural_info = process_text_file(input_file_path, section_name)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "v02-step1.json")
+    save_procedural_info_to_json(procedural_info, "v03-step1.json")
 else:
     print("Failed to extract procedural information")

@@ -43,7 +43,7 @@ You are a **graph generation tool**. Using your knowledge of 3GPP procedures but
 
 ---
 
-## **🔹 Graph Representation Rules**
+## ** Graph Representation Rules**
 **Nodes** represent:  
 ✔ **Procedural Steps** (e.g., UE sends request, AMF processes message).  
 ✔ **Decision Points** (e.g., conditions leading to different paths).  
@@ -54,11 +54,11 @@ You are a **graph generation tool**. Using your knowledge of 3GPP procedures but
 ✔ **Decision paths** (if-else branches, error handling, alternative flows).  
 ✔ **Dependencies** (where one step is dependent on another).  
 
-🚨 **Strict Rule**: Extract information **only from the provided input data**. Do **not** infer or add missing details.
+ **Strict Rule**: Extract information **only from the provided input data**. Do **not** infer or add missing details.
 
 ---
 
-## **🔹 Output Format (Structured JSON)**
+## ** Output Format (Structured JSON)**
 The extracted graph must be in the following format:
 
 ```json
@@ -194,8 +194,8 @@ def save_to_json(data, file_path):
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    step1_data = read_json_file("v02-step1.json")
-    step2_data = read_json_file("v02-step2.json")
+    step1_data = read_json_file("v03-step1.json")
+    step2_data = read_json_file("v03-step2.json")
 
     if step1_data is None or step2_data is None:
         print("Failed to load step1.json or step2.json")
@@ -210,6 +210,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_json(procedural_info, "v01-step3.json")
+    save_to_json(procedural_info, "v03-step3.json")
 else:
     print("Failed to extract procedural information")
