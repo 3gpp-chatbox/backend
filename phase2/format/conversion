@@ -11,7 +11,14 @@ def convert_json_to_mermaid(section_name, json_data):
     """
 
     prompt = f"""
-Convert the provided JSON into **Mermaid syntax** for a flow property graph.
+Convert the provided JSON into **Mermaid syntax** for a 3GPP **Flow Property Graph**.
+
+---
+
+## **🔹 Flow Property Graph Structure**
+- **Nodes represent execution steps, decisions, timers, and state changes.**
+- **Entities (UE, AMF, etc.) are properties within nodes, NOT separate nodes.**
+- **Edges define execution flow, dependencies, and property modifications.**
 
 ---
 
@@ -19,16 +26,21 @@ Convert the provided JSON into **Mermaid syntax** for a flow property graph.
 🔹 **Nodes:**  
    - **Process Steps** → Rectangular (`[Step Name]`)  
    - **Decisions** → Diamond (`{{Decision Condition}}`)  
-   - **Timers** → Cylindrical (`([Timer])`)  
+   - **Timers** → Cylindrical (`([Timer Name])`), with start/stop/reset actions  
+   - **State Changes** → Parallelogram (`[/State Change/]`)  
    - **Start/End** → Circular (`((Start/End))`)  
 
 🔹 **Edges (Arrows):**  
-   - Sequential (`-->`)  
-   - Conditional (`-->|Condition|-->`)  
-   - Retry (`-->|Retry Condition|-->`)  
+   - **Sequential Execution** → `A --> B`  
+   - **Conditional Flow** → `A --|Condition|--> B`  
+   - **Retry on Failure** → `A --|Retry Condition|--> B`  
+   - **Dependency (Step must wait for another)** → `A --|depends on|--> B`  
+   - **Modifying (Message/state change affects another step)** → `A --|modifies|--> B`  
 
-🔹 **Labels on Edges:**  
-   - Format: `|Trigger / Condition|`  
+🔹 **Timers:**  
+   - `([T3510])` represents the timer.  
+   - `A -->|Starts Timer| ([T3510])` shows timer activation.  
+   - `([T3510]) --|Expires|--> C` represents expiry leading to an event.  
 
 ---
 
@@ -36,7 +48,8 @@ Convert the provided JSON into **Mermaid syntax** for a flow property graph.
 ```mermaid
 graph TD;
   A((Start)) -->|UE sends REGISTRATION REQUEST| B[Process: Send Registration Request]
-  B -->|Triggers Timer T3510| C([Timer T3510 Starts])
-  C -->|Timer Expires / Retry| D{{Retry or Fail?}}
-  D -->|Retry| B
-  D -->|Fail| E[Rejection]
+  B -->|Starts Timer| C([T3510])
+  C --|Expires|--> D{{Retry or Fail?}}
+  D --|Retry|--> B
+  D --|Fail|--> E[Rejection]
+  E -->((End))
