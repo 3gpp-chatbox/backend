@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "S1",
+      "type": "state",
+      "description": "5GMM-DEREGISTERED"
+    },
+    {
+      "id": "E1",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "id": "T1",
+      "type": "event",
+      "description": "Timer T3510 starts"
+    },
+    {
+      "id": "S2",
+      "type": "state",
+      "description": "5GMM-COMMON-PROCEDURE-INITIATED"
+    },
+    {
+      "id": "E2",
+      "type": "event",
+      "description": "AMF sends REGISTRATION ACCEPT"
+    },
+    {
+      "id": "S3",
+      "type": "state",
+      "description": "5GMM-REGISTERED"
+    },
+    {
+      "id": "E3",
+      "type": "event",
+      "description": "UE sends REGISTRATION COMPLETE"
+    },
+    {
+      "id": "E4",
+      "type": "event",
+      "description": "AMF sends REGISTRATION REJECT"
+    }
+  ],
+  "edges": [
+    {
+      "from": "S1",
+      "to": "E1",
+      "type": "trigger",
+      "description": "UE initiates registration procedure"
+    },
+    {
+      "from": "E1",
+      "to": "T1",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "E1",
+      "to": "S2",
+      "type": "trigger",
+      "description": "AMF receives REGISTRATION REQUEST and initiates 5GMM common procedures"
+    },
+    {
+      "from": "S2",
+      "to": "E2",
+      "type": "trigger",
+      "description": "Initial registration request is accepted by the network"
+    },
+    {
+      "from": "E2",
+      "to": "S3",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT and registration is complete"
+    },
+    {
+      "from": "E2",
+      "to": "E3",
+      "type": "condition",
+      "description": "Certain IEs present in REGISTRATION ACCEPT require acknowledgement"
+    },
+    {
+      "from": "E3",
+      "to": "S3",
+      "type": "trigger",
+      "description": "AMF receives REGISTRATION COMPLETE"
+    },
+    {
+      "from": "S2",
+      "to": "E4",
+      "type": "trigger",
+      "description": "Initial registration request cannot be accepted by the network"
+    }
+  ]
+}

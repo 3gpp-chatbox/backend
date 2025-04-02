@@ -5,7 +5,10 @@
 
 
 from version01.  all version extract same element in the same step.
-from version02,all versions use same json putput structure format in the same step (version04 step2  is slightly different )
+from version02,all versions use similar json putput structure format in the same step (not same but similar)
+
+version05 is refined based on version03
+version06 is refined based on version03 and v05
 
 
 

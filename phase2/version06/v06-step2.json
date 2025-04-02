@@ -1,0 +1,448 @@
+{
+  "decision_points": [
+    {
+      "step": "Initial registration initiation",
+      "condition": "UE in state 5GMM-DEREGISTERED initiates registration procedure",
+      "outcomes": [
+        {
+          "outcome": "Success - REGISTRATION REQUEST sent",
+          "next_step": "5GMM common procedure initiation",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "5GMM common procedure initiation",
+      "condition": "Network initiates 5GMM common procedures (e.g., identification, authentication, security)",
+      "outcomes": [
+        {
+          "outcome": "Success - Common procedures completed successfully",
+          "next_step": "Initial registration accepted by the network",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Failure - Common procedures failed",
+          "next_step": "Initial registration not accepted by the network",
+          "reason": "Authentication failure, security mode setup failure, etc.",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Initial registration accepted by the network",
+      "condition": "Initial registration request is accepted by the network",
+      "outcomes": [
+        {
+          "outcome": "Success - REGISTRATION ACCEPT sent",
+          "next_step": "UE receives REGISTRATION ACCEPT",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "condition": "UE receives REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "Success - Registration complete",
+          "next_step": "Enter 5GMM-REGISTERED state",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Conditional - REGISTRATION COMPLETE required",
+          "next_step": "Send REGISTRATION COMPLETE message",
+          "reason": "Certain IEs present in REGISTRATION ACCEPT require acknowledgement",
+          "outcome_type": "conditional"
+        }
+      ]
+    },
+    {
+      "step": "Initial registration not accepted by the network",
+      "condition": "Initial registration request cannot be accepted by the network",
+      "outcomes": [
+        {
+          "outcome": "Failure - REGISTRATION REJECT sent",
+          "next_step": "UE receives REGISTRATION REJECT",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "condition": "UE receives REGISTRATION REJECT message",
+      "outcomes": [
+        {
+          "outcome": "Failure - Registration rejected",
+          "next_step": "Handle 5GMM cause value",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Handle 5GMM cause value",
+      "condition": "Specific 5GMM cause values received in REGISTRATION REJECT",
+      "outcomes": [
+        {
+          "outcome": "Failure - Specific action based on cause value",
+          "next_step": "Enter specific state (e.g., 5GMM-DEREGISTERED.PLMN-SEARCH)",
+          "reason": "Each cause value triggers a different action (e.g., PLMN selection, barring)",
+          "outcome_type": "failure"
+        },
+        {
+          "outcome": "Failure - Retry with backoff",
+          "next_step": "Start T3346",
+          "reason": "Cause value #22 (Congestion) received",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - T3510 timeout",
+      "condition": "Timer T3510 expires",
+      "outcomes": [
+        {
+          "outcome": "Failure - Abort registration",
+          "next_step": "Increment registration attempt counter",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - Lower layer failure",
+      "condition": "Lower layer failure or release of NAS signalling connection",
+      "outcomes": [
+        {
+          "outcome": "Failure - Abort registration",
+          "next_step": "Increment registration attempt counter",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Increment registration attempt counter",
+      "condition": "Registration attempt counter < 5",
+      "outcomes": [
+        {
+          "outcome": "Retry - Start T3511",
+          "next_step": "Start T3511",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Failure - Registration failed",
+          "next_step": "Delete TAI list, start T3502",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - T3550 timeout",
+      "condition": "Timer T3550 expires",
+      "outcomes": [
+        {
+          "outcome": "Retry - Retransmit REGISTRATION ACCEPT",
+          "next_step": "Retransmit REGISTRATION ACCEPT, restart T3550",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Failure - Abort registration",
+          "next_step": "Enter 5GMM-REGISTERED state",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - T3346 is running",
+      "condition": "Timer T3346 is running",
+      "outcomes": [
+        {
+          "outcome": "Failure - Abort registration",
+          "next_step": "Stay in current serving cell",
+          "outcome_type": "failure"
+        },
+        {
+          "outcome": "Success - Registration for emergency services",
+          "next_step": "Start registration procedure for initial registration for emergency services",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Success - Registration for high priority access",
+          "next_step": "Start registration procedure for initial registration for high priority access",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - UE initiated de-registration required",
+      "condition": "UE initiated de-registration required",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Perform UE initiated de-registration procedure",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - De-registration procedure collision",
+      "condition": "UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort de-registration",
+          "next_step": "Progress the initial registration procedure",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - Change in the current TAI",
+      "condition": "The current TAI is changed before the registration procedure for initial registration is completed",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Re-initiate registration procedure immediately",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - Transmission failure of REGISTRATION COMPLETE message indication with change in the current TAI",
+      "condition": "A tracking area border is crossed when the REGISTRATION ACCEPT message has been received but before a REGISTRATION COMPLETE message is sent",
+      "outcomes": [
+        {
+          "outcome": "Success - Resend REGISTRATION COMPLETE message",
+          "next_step": "Resend REGISTRATION COMPLETE message to the network",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Initiate the registration procedure for mobility registration update",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - Transmission failure of REGISTRATION COMPLETE message indication without change in the current TAI from lower layers",
+      "condition": "Transmission failure of REGISTRATION COMPLETE message indication without change in the current TAI from lower layers",
+      "outcomes": [
+        {
+          "outcome": "Success - Re-run the ongoing procedure",
+          "next_step": "Re-run the ongoing procedure",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - Transmission failure of REGISTRATION REQUEST message indication from the lower layers",
+      "condition": "Transmission failure of REGISTRATION REQUEST message indication from the lower layers",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Re-initiate registration procedure immediately",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases in the UE - T3447 is running",
+      "condition": "Timer T3447 is running",
+      "outcomes": [
+        {
+          "outcome": "Failure - Abort registration",
+          "next_step": "Stay in current serving cell",
+          "outcome_type": "failure"
+        },
+        {
+          "outcome": "Success - Registration for emergency services",
+          "next_step": "Start registration procedure for initial registration for emergency services",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Success - Registration for high priority access",
+          "next_step": "Start registration procedure for initial registration for high priority access",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - Lower layer failure",
+      "condition": "A lower layer failure occurs before the REGISTRATION COMPLETE message has been received from the UE and timer T3550 is running",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Enter state 5GMM-REGISTERED",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - Protocol error",
+      "condition": "The REGISTRATION REQUEST message is received with a protocol error",
+      "outcomes": [
+        {
+          "outcome": "Failure - Return a REGISTRATION REJECT message",
+          "next_step": "Return a REGISTRATION REJECT message with one of the following 5GMM cause values: #96, #99, #100, or #111",
+          "outcome_type": "failure"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - REGISTRATION REQUEST message received after the REGISTRATION ACCEPT message has been sent and before the REGISTRATION COMPLETE message is received, if the REGISTRATION COMPLETE message is expected",
+      "condition": "REGISTRATION REQUEST message received after the REGISTRATION ACCEPT message has been sent and before the REGISTRATION COMPLETE message is received, if the REGISTRATION COMPLETE message is expected",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Progress the new registration procedure for initial registration",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Success - Resend REGISTRATION ACCEPT message",
+          "next_step": "Resend the REGISTRATION ACCEPT message and restart the timer T3550",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - More than one REGISTRATION REQUEST message with 5GS registration type IE set to \"initial registration\" received and no REGISTRATION ACCEPT message or REGISTRATION REJECT message has been sent",
+      "condition": "More than one REGISTRATION REQUEST message with 5GS registration type IE set to \"initial registration\" received and no REGISTRATION ACCEPT message or REGISTRATION REJECT message has been sent",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Progress the new registration procedure for initial registration",
+          "outcome_type": "normal"
+        },
+        {
+          "outcome": "Success - Continue with the previous registration procedure",
+          "next_step": "Continue with the previous the registration procedure for initial registration and shall ignore the second REGISTRATION REQUEST message",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - REGISTRATION REQUEST message with 5GS registration type IE set to \"initial registration\" received in state 5GMM-REGISTERED",
+      "condition": "REGISTRATION REQUEST message with 5GS registration type IE set to \"initial registration\" received in state 5GMM-REGISTERED",
+      "outcomes": [
+        {
+          "outcome": "Success - Initiate 5GMM common procedures",
+          "next_step": "Initiate the 5GMM common procedures",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - REGISTRATION REQUEST message with 5GS registration type IE set to \"mobility registration updating\" or \"periodic registration updating\" received before REGISTRATION COMPLETE message, if the REGISTRATION COMPLETE message is expected",
+      "condition": "REGISTRATION REQUEST message with 5GS registration type IE set to \"mobility registration updating\" or \"periodic registration updating\" received before REGISTRATION COMPLETE message, if the REGISTRATION COMPLETE message is expected",
+      "outcomes": [
+        {
+          "outcome": "Success - Stop timer T3550",
+          "next_step": "Progress the registration procedure for mobility and periodic registration update",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - DEREGISTRATION REQUEST message received before REGISTRATION COMPLETE message, if the REGISTRATION COMPLETE message is expected",
+      "condition": "DEREGISTRATION REQUEST message received before REGISTRATION COMPLETE message, if the REGISTRATION COMPLETE message is expected",
+      "outcomes": [
+        {
+          "outcome": "Success - Abort registration",
+          "next_step": "Progress the de-registration procedure",
+          "outcome_type": "normal"
+        }
+      ]
+    },
+    {
+      "step": "Abnormal cases on the network side - UE security capabilities invalid or unacceptable",
+      "condition": "The REGISTRATION REQUEST message is received with invalid or unacceptable UE security capabilities",
+      "outcomes": [
+        {
+          "outcome": "Failure - Return a REGISTRATION REJECT message",
+          "next_step": "Return a REGISTRATION REJECT message",
+          "outcome_type": "failure"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "5GMM common procedure initiation",
+      "depends_on": [
+        "Initial registration initiation"
+      ],
+      "type": "hard",
+      "reason": "5GMM common procedures are initiated after the REGISTRATION REQUEST message is sent."
+    },
+    {
+      "step": "Initial registration accepted by the network",
+      "depends_on": [
+        "5GMM common procedure initiation"
+      ],
+      "type": "hard",
+      "reason": "The network accepts the registration only after successful completion of common procedures."
+    },
+    {
+      "step": "UE receives REGISTRATION ACCEPT",
+      "depends_on": [
+        "Initial registration accepted by the network"
+      ],
+      "type": "hard",
+      "reason": "The UE can only receive the REGISTRATION ACCEPT message if the network has accepted the registration."
+    },
+    {
+      "step": "Initial registration not accepted by the network",
+      "depends_on": [
+        "5GMM common procedure initiation"
+      ],
+      "type": "hard",
+      "reason": "The network rejects the registration if common procedures fail or other conditions are not met."
+    },
+    {
+      "step": "UE receives REGISTRATION REJECT",
+      "depends_on": [
+        "Initial registration not accepted by the network"
+      ],
+      "type": "hard",
+      "reason": "The UE can only receive the REGISTRATION REJECT message if the network has rejected the registration."
+    },
+    {
+      "step": "Handle 5GMM cause value",
+      "depends_on": [
+        "UE receives REGISTRATION REJECT"
+      ],
+      "type": "hard",
+      "reason": "The UE must handle the 5GMM cause value received in the REGISTRATION REJECT message."
+    }
+  ],
+  "timeouts": [
+    {
+      "step": "Initial registration initiation",
+      "timeout_condition": "Timer T3510 expires",
+      "timeout_action": "Abort the registration procedure for initial registration and the NAS signalling connection, if any, shall be released locally if the initial registration request is neither for emergency services nor for initiating a PDU session for emergency services with request type set to \"existing emergency PDU session\".",
+      "retry_count": "N/A",
+      "backoff_strategy": "N/A"
+    },
+    {
+      "step": "Initial registration accepted by the network",
+      "timeout_condition": "Timer T3550 expires",
+      "timeout_action": "Retransmit the REGISTRATION ACCEPT message and shall reset and restart timer T3550. This retransmission is repeated four times, i.e. on the fifth expiry of timer T3550, the registration procedure for initial registration shall be aborted and the AMF enters state 5GMM-REGISTERED.",
+      "retry_count": 4,
+      "backoff_strategy": "fixed"
+    }
+  ],
+  "flagged_missing_info": [
+    {
+      "issue": "Potential missing implicit dependency",
+      "step": "5GMM common procedure initiation",
+      "reason": "The text does not explicitly state the conditions under which the network initiates the identification, authentication, and security procedures. It is likely dependent on the UE's identity, security context, and network policies."
+    },
+    {
+      "issue": "Unclear retry limit for T3511",
+      "step": "Increment registration attempt counter",
+      "reason": "The text mentions incrementing the registration attempt counter but does not specify a maximum number of retries or a backoff strategy after reaching the limit. It only mentions what happens when the counter reaches 5."
+    },
+    {
+      "issue": "Unclear action after T3502 expires",
+      "step": "Increment registration attempt counter",
+      "reason": "The text mentions starting T3502 when the registration attempt counter reaches 5, but the action after T3502 expires is not explicitly stated in this section. It refers to actions defined elsewhere."
+    }
+  ]
+}
