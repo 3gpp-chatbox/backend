@@ -1,0 +1,488 @@
+{
+  "nodes": [
+    {
+      "id": "S0",
+      "type": "state",
+      "description": "UE 5GMM-DEREGISTERED"
+    },
+    {
+      "id": "E1",
+      "type": "event",
+      "description": "UE Initiates Initial Registration"
+    },
+    {
+      "id": "E2",
+      "type": "event",
+      "description": "UE Stops Timers (T3502, T3511 if running)"
+    },
+    {
+      "id": "E3",
+      "type": "event",
+      "description": "UE Sends REGISTRATION REQUEST"
+    },
+    {
+      "id": "E4",
+      "type": "event",
+      "description": "UE Starts T3510"
+    },
+    {
+      "id": "E5",
+      "type": "event",
+      "description": "UE Starts T3519 (Conditional: SUCI included and T3519 not running)"
+    },
+    {
+      "id": "E6",
+      "type": "event",
+      "description": "AMF Receives REGISTRATION REQUEST"
+    },
+    {
+      "id": "S1",
+      "type": "state",
+      "description": "AMF Processing Request (May initiate common procedures)"
+    },
+    {
+      "id": "S2",
+      "type": "state",
+      "description": "AMF Deciding Accept/Reject"
+    },
+    {
+      "id": "E7",
+      "type": "event",
+      "description": "AMF Sends REGISTRATION ACCEPT"
+    },
+    {
+      "id": "E8",
+      "type": "event",
+      "description": "AMF Starts T3550 (Conditional: ACK required)"
+    },
+    {
+      "id": "S3",
+      "type": "state",
+      "description": "AMF Awaiting REG COMPLETE (5GMM-COMMON-PROCEDURE-INITIATED)"
+    },
+    {
+      "id": "E9",
+      "type": "event",
+      "description": "UE Receives REGISTRATION ACCEPT"
+    },
+    {
+      "id": "E10",
+      "type": "event",
+      "description": "UE Stops T3510 (Success)"
+    },
+    {
+      "id": "E11",
+      "type": "event",
+      "description": "UE Resets Attempt Counter"
+    },
+    {
+      "id": "S4",
+      "type": "state",
+      "description": "UE Registered (5GMM-REGISTERED, 5U1 UPDATED)"
+    },
+    {
+      "id": "E12",
+      "type": "event",
+      "description": "UE Applies Timers/Config from ACCEPT"
+    },
+    {
+      "id": "E13",
+      "type": "event",
+      "description": "UE Sends REGISTRATION COMPLETE (Conditional: ACK required)"
+    },
+    {
+      "id": "E14",
+      "type": "event",
+      "description": "AMF Receives REGISTRATION COMPLETE"
+    },
+    {
+      "id": "E15",
+      "type": "event",
+      "description": "AMF Stops T3550"
+    },
+    {
+      "id": "S5",
+      "type": "state",
+      "description": "AMF Registered (5GMM-REGISTERED)"
+    },
+    {
+      "id": "E16",
+      "type": "event",
+      "description": "AMF Sends REGISTRATION REJECT"
+    },
+    {
+      "id": "E17",
+      "type": "event",
+      "description": "UE Receives REGISTRATION REJECT"
+    },
+    {
+      "id": "E18",
+      "type": "event",
+      "description": "UE Stops T3510 (Reject)"
+    },
+    {
+      "id": "S6",
+      "type": "state",
+      "description": "UE Processing Reject"
+    },
+    {
+      "id": "E19",
+      "type": "event",
+      "description": "UE Performs Reject Actions (based on 5GMM cause)"
+    },
+    {
+      "id": "S7",
+      "type": "state",
+      "description": "UE Deregistered (Specific Substate based on cause, e.g., PLMN Search, Limited Service)"
+    },
+    {
+      "id": "E20",
+      "type": "event",
+      "description": "UE T3510 Expires"
+    },
+    {
+      "id": "S8",
+      "type": "state",
+      "description": "UE Aborting Procedure (Failure/Timeout)"
+    },
+    {
+      "id": "E21",
+      "type": "event",
+      "description": "UE Increments Attempt Counter"
+    },
+    {
+      "id": "E22",
+      "type": "event",
+      "description": "UE Starts T3511 (Conditional: Retry < 5)"
+    },
+    {
+      "id": "S9",
+      "type": "state",
+      "description": "UE Attempting Registration (Retry Pending on T3511)"
+    },
+    {
+      "id": "E23",
+      "type": "event",
+      "description": "UE Starts T3502 (Conditional: Retry = 5)"
+    },
+    {
+      "id": "E24",
+      "type": "event",
+      "description": "AMF T3550 Expires"
+    },
+    {
+      "id": "E25",
+      "type": "event",
+      "description": "AMF Retransmits ACCEPT (Conditional: Retry < 5)"
+    },
+    {
+      "id": "S10",
+      "type": "state",
+      "description": "AMF Aborting Procedure (T3550 Timeout)"
+    },
+    {
+      "id": "E26",
+      "type": "event",
+      "description": "Lower Layer Failure / TAI Change (UE)"
+    },
+    {
+      "id": "E27",
+      "type": "event",
+      "description": "Lower Layer Failure (AMF)"
+    },
+    {
+      "id": "S11",
+      "type": "state",
+      "description": "UE Registered Limited Service (Conditional: CAG Issue)"
+    },
+    {
+      "id": "S12",
+      "type": "state",
+      "description": "UE PLMN Search (Conditional: CAG Issue)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "S0",
+      "to": "E1",
+      "type": "trigger",
+      "description": "Need for initial registration"
+    },
+    {
+      "from": "E1",
+      "to": "E2",
+      "type": "trigger",
+      "description": "Proceed with initiation"
+    },
+    {
+      "from": "E2",
+      "to": "E3",
+      "type": "trigger",
+      "description": "Timers stopped, send request"
+    },
+    {
+      "from": "E3",
+      "to": "E4",
+      "type": "trigger",
+      "description": "Request sent, start timer T3510"
+    },
+    {
+      "from": "E3",
+      "to": "E5",
+      "type": "condition",
+      "description": "SUCI included and T3519 not running"
+    },
+    {
+      "from": "E3",
+      "to": "E6",
+      "type": "trigger",
+      "description": "Message transmission to AMF"
+    },
+    {
+      "from": "E6",
+      "to": "S1",
+      "type": "trigger",
+      "description": "Request received by AMF"
+    },
+    {
+      "from": "S1",
+      "to": "S2",
+      "type": "trigger",
+      "description": "Processing complete (incl. optional common procedures)"
+    },
+    {
+      "from": "S2",
+      "to": "E7",
+      "type": "condition",
+      "description": "Network accepts registration"
+    },
+    {
+      "from": "S2",
+      "to": "E16",
+      "type": "condition",
+      "description": "Network rejects registration"
+    },
+    {
+      "from": "E7",
+      "to": "E8",
+      "type": "condition",
+      "description": "REGISTRATION ACCEPT includes IEs requiring acknowledgement"
+    },
+    {
+      "from": "E8",
+      "to": "S3",
+      "type": "trigger",
+      "description": "Timer T3550 started, AMF enters state awaiting COMPLETE"
+    },
+    {
+      "from": "E7",
+      "to": "S5",
+      "type": "condition",
+      "description": "REGISTRATION ACCEPT does not require acknowledgement, AMF considers registration complete"
+    },
+    {
+      "from": "E7",
+      "to": "E9",
+      "type": "trigger",
+      "description": "Message transmission to UE"
+    },
+    {
+      "from": "E9",
+      "to": "E10",
+      "type": "trigger",
+      "description": "REGISTRATION ACCEPT received"
+    },
+    {
+      "from": "E10",
+      "to": "E11",
+      "type": "trigger",
+      "description": "Successful completion step"
+    },
+    {
+      "from": "E11",
+      "to": "S4",
+      "type": "trigger",
+      "description": "State transition to UE Registered"
+    },
+    {
+      "from": "S4",
+      "to": "E12",
+      "type": "trigger",
+      "description": "Processing ACCEPT content (Timers, Config)"
+    },
+    {
+      "from": "S4",
+      "to": "E13",
+      "type": "condition",
+      "description": "REGISTRATION ACCEPT includes IEs requiring acknowledgement"
+    },
+    {
+      "from": "S4",
+      "to": "S11",
+      "type": "condition",
+      "description": "ACCEPT processing results in CAG issue (Limited Service)"
+    },
+    {
+      "from": "S4",
+      "to": "S12",
+      "type": "condition",
+      "description": "ACCEPT processing results in CAG issue (PLMN Search)"
+    },
+    {
+      "from": "E13",
+      "to": "E14",
+      "type": "trigger",
+      "description": "Message transmission to AMF"
+    },
+    {
+      "from": "S3",
+      "to": "E14",
+      "type": "trigger",
+      "description": "REGISTRATION COMPLETE received while AMF waiting"
+    },
+    {
+      "from": "E14",
+      "to": "E15",
+      "type": "trigger",
+      "description": "REGISTRATION COMPLETE received"
+    },
+    {
+      "from": "E15",
+      "to": "S5",
+      "type": "trigger",
+      "description": "Procedure complete at AMF"
+    },
+    {
+      "from": "E16",
+      "to": "E17",
+      "type": "trigger",
+      "description": "Message transmission to UE"
+    },
+    {
+      "from": "E17",
+      "to": "E18",
+      "type": "trigger",
+      "description": "REGISTRATION REJECT received"
+    },
+    {
+      "from": "E18",
+      "to": "S6",
+      "type": "trigger",
+      "description": "Start processing reject"
+    },
+    {
+      "from": "S6",
+      "to": "E19",
+      "type": "trigger",
+      "description": "Processing reject cause"
+    },
+    {
+      "from": "E19",
+      "to": "S7",
+      "type": "trigger",
+      "description": "State transition based on 5GMM cause"
+    },
+    {
+      "from": "E4",
+      "to": "E20",
+      "type": "trigger",
+      "description": "Timer T3510 expires before response"
+    },
+    {
+      "from": "E20",
+      "to": "S8",
+      "type": "trigger",
+      "description": "Timeout event leads to abort"
+    },
+    {
+      "from": "E3",
+      "to": "E26",
+      "type": "trigger",
+      "description": "Lower layer failure or TAI change occurs after sending REQUEST"
+    },
+    {
+      "from": "E26",
+      "to": "S8",
+      "type": "trigger",
+      "description": "Failure/TAI change leads to abort"
+    },
+    {
+      "from": "S8",
+      "to": "E21",
+      "type": "trigger",
+      "description": "Abort action: Increment counter"
+    },
+    {
+      "from": "E21",
+      "to": "E22",
+      "type": "condition",
+      "description": "Registration attempt counter < 5"
+    },
+    {
+      "from": "E22",
+      "to": "S9",
+      "type": "trigger",
+      "description": "Enter state for retry attempt"
+    },
+    {
+      "from": "S9",
+      "to": "E1",
+      "type": "trigger",
+      "description": "Retry procedure after T3511 expiry"
+    },
+    {
+      "from": "E21",
+      "to": "E23",
+      "type": "condition",
+      "description": "Registration attempt counter = 5"
+    },
+    {
+      "from": "E23",
+      "to": "S7",
+      "type": "trigger",
+      "description": "Enter DEREGISTERED substate after max retries (e.g., PLMN Search)"
+    },
+    {
+      "from": "S3",
+      "to": "E24",
+      "type": "trigger",
+      "description": "Timer T3550 expires while waiting for COMPLETE"
+    },
+    {
+      "from": "E24",
+      "to": "E25",
+      "type": "condition",
+      "description": "T3550 expiry retry count < 5"
+    },
+    {
+      "from": "E25",
+      "to": "S3",
+      "type": "trigger",
+      "description": "Retransmit ACCEPT and return to waiting state"
+    },
+    {
+      "from": "E24",
+      "to": "S10",
+      "type": "condition",
+      "description": "T3550 expiry retry count = 5"
+    },
+    {
+      "from": "S10",
+      "to": "S5",
+      "type": "trigger",
+      "description": "Abort action, AMF enters registered state"
+    },
+    {
+      "from": "S3",
+      "to": "E27",
+      "type": "trigger",
+      "description": "Lower layer failure occurs at AMF while waiting for COMPLETE"
+    },
+    {
+      "from": "E27",
+      "to": "S10",
+      "type": "trigger",
+      "description": "Failure leads to abort procedure"
+    }
+  ]
+}

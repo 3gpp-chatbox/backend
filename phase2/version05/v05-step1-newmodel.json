@@ -1,0 +1,124 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "Initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF.",
+      "state_before": "5GMM-DEREGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 2,
+      "step": "Starts timer T3510 upon sending the REGISTRATION REQUEST message.",
+      "entity": "UE"
+    },
+    {
+      "id": 3,
+      "step": "Stops timer T3502, if running, upon sending the REGISTRATION REQUEST message.",
+      "entity": "UE"
+    },
+    {
+      "id": 4,
+      "step": "Stops timer T3511, if running, upon sending the REGISTRATION REQUEST message.",
+      "entity": "UE"
+    },
+    {
+      "id": 5,
+      "step": "Starts timer T3519 if SUCI is included in the REGISTRATION REQUEST message and timer T3519 is not running.",
+      "entity": "UE"
+    },
+    {
+      "id": 6,
+      "step": "Sends a REGISTRATION ACCEPT message to the UE if the initial registration request is accepted.",
+      "entity": "AMF"
+    },
+    {
+      "id": 7,
+      "step": "Starts timer T3550 if the REGISTRATION ACCEPT message includes specific IEs requiring acknowledgement or confirmation (e.g., 5G-GUTI, SOR transparent container, Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list, Negotiated PEIPS assistance information, UE radio capability ID, UE radio capability ID deletion indication, Truncated 5G-S-TMSI configuration, service-level-AA pending indication, Network slicing subscription change indication, Configured NSSAI, NSSRG information, Alternative NSSAI, S-NSSAI location validity information, S-NSSAI time validity information, On-demand NSSAI, NSAG information).",
+      "entity": "AMF"
+    },
+    {
+      "id": 8,
+      "step": "Enters state 5GMM-COMMON-PROCEDURE-INITIATED if timer T3550 is started.",
+      "state_after": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "Upon receipt of the REGISTRATION ACCEPT message, resets the registration attempt counter, enters state 5GMM-REGISTERED, and sets the 5GS update status to 5U1 UPDATED.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 10,
+      "step": "Sends a REGISTRATION COMPLETE message to the AMF if required by conditions specified in the REGISTRATION ACCEPT message (e.g., acknowledging reception of specific IEs like Network slicing subscription change, Configured NSSAI, NSSRG information, Alternative NSSAI, S-NSSAI location validity, S-NSSAI time validity, On-demand NSSAI, NSAG information, CAG information list, Extended CAG information list, Operator-defined access category definitions, Extended emergency number list, Negotiated PEIPS assistance information, UE radio capability ID, UE radio capability ID deletion indication, Truncated 5G-S-TMSI configuration, service-level-AA pending indication, or SOR transparent container acknowledgement).",
+      "entity": "UE"
+    },
+    {
+      "id": 11,
+      "step": "Upon receiving the REGISTRATION COMPLETE message, stops timer T3550.",
+      "entity": "AMF"
+    },
+    {
+      "id": 12,
+      "step": "Enters state 5GMM-REGISTERED upon receiving the REGISTRATION COMPLETE message.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "AMF"
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE"
+    },
+    {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF"
+    }
+  ],
+  "timers": [
+    {
+      "name": "T3510",
+      "action": "start",
+      "step_id": 2,
+      "conditions": "UE sends REGISTRATION REQUEST message."
+    },
+    {
+      "name": "T3502",
+      "action": "stop",
+      "step_id": 3,
+      "conditions": "UE sends REGISTRATION REQUEST message and timer T3502 is currently running."
+    },
+    {
+      "name": "T3511",
+      "action": "stop",
+      "step_id": 4,
+      "conditions": "UE sends REGISTRATION REQUEST message and timer T3511 is currently running."
+    },
+    {
+      "name": "T3519",
+      "action": "start",
+      "step_id": 5,
+      "conditions": "SUCI is included in the 5GS mobile identity IE in the REGISTRATION REQUEST message and timer T3519 is not running."
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 7,
+      "conditions": "AMF sends REGISTRATION ACCEPT message including specific IEs requiring acknowledgement or confirmation (e.g., 5G-GUTI, SOR transparent container, Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list, Negotiated PEIPS assistance information, UE radio capability ID, UE radio capability ID deletion indication, Truncated 5G-S-TMSI configuration, service-level-AA pending indication, Network slicing subscription change indication, Configured NSSAI, NSSRG information, Alternative NSSAI, S-NSSAI location validity information, S-NSSAI time validity information, On-demand NSSAI, NSAG information)."
+    },
+    {
+      "name": "T3550",
+      "action": "stop",
+      "step_id": 11,
+      "conditions": "AMF receives REGISTRATION COMPLETE message."
+    }
+  ]
+}

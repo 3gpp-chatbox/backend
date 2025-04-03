@@ -1,0 +1,257 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE initiates the procedure by sending a REGISTRATION REQUEST message to the AMF, indicating the appropriate 5GS registration type (e.g., \"initial registration\", \"emergency registration\").",
+      "state_before": "5GMM-DEREGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 2,
+      "step": "UE starts timer T3510.",
+      "entity": "UE"
+    },
+    {
+      "id": 3,
+      "step": "If timer T3502 is running, UE stops timer T3502.",
+      "entity": "UE"
+    },
+    {
+      "id": 4,
+      "step": "If timer T3511 is running, UE stops timer T3511.",
+      "entity": "UE"
+    },
+    {
+      "id": 5,
+      "step": "If SUCI is included in the REGISTRATION REQUEST and timer T3519 is not running, UE starts timer T3519.",
+      "entity": "UE"
+    },
+    {
+      "id": 6,
+      "step": "AMF receives the REGISTRATION REQUEST message.",
+      "entity": "AMF"
+    },
+    {
+      "id": 7,
+      "step": "AMF may initiate 5GMM common procedures (e.g., identification, authentication, security).",
+      "entity": "AMF"
+    },
+    {
+      "id": 8,
+      "step": "If the initial registration request is accepted by the network, AMF sends a REGISTRATION ACCEPT message to the UE.",
+      "entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "If specific IEs (e.g., 5G-GUTI, SOR transparent container, Operator-defined access category definitions, Extended emergency number list, CAG information list, Negotiated PEIPS assistance information, UE radio capability ID, Truncated 5G-S-TMSI configuration, Service-level-AA pending, On-demand NSSAI, Configured NSSAI, NSSRG information, S-NSSAI time/location validity, NSAG information, Alternative NSSAI, Network slicing subscription change) are included in REGISTRATION ACCEPT requiring acknowledgment, AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "state_after": "5GMM-COMMON-PROCEDURE-INITIATED (conditional)",
+      "entity": "AMF"
+    },
+    {
+      "id": 10,
+      "step": "UE receives the REGISTRATION ACCEPT message.",
+      "entity": "UE"
+    },
+    {
+      "id": 11,
+      "step": "UE stops timer T3510 (implicitly, upon successful completion).",
+      "entity": "UE"
+    },
+    {
+      "id": 12,
+      "step": "UE resets the registration attempt counter.",
+      "entity": "UE"
+    },
+    {
+      "id": 13,
+      "step": "UE enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 14,
+      "step": "UE uses timer values provided in REGISTRATION ACCEPT (T3512, T3324, non-3GPP de-registration timer). Starts T3448 if T3448 value IE is included and not zero/deactivated. Stores or stops T3447 based on presence of T3447 value IE. Starts T3526 if S-NSSAI rejected due to max UEs with back-off timer.",
+      "entity": "UE"
+    },
+    {
+      "id": 15,
+      "step": "If acknowledgment is required based on IEs received in REGISTRATION ACCEPT, UE sends a REGISTRATION COMPLETE message to the AMF.",
+      "entity": "UE"
+    },
+    {
+      "id": 16,
+      "step": "AMF receives the REGISTRATION COMPLETE message.",
+      "entity": "AMF"
+    },
+    {
+      "id": 17,
+      "step": "AMF stops timer T3550.",
+      "state_before": "5GMM-COMMON-PROCEDURE-INITIATED (conditional)",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "AMF"
+    },
+    {
+      "id": 18,
+      "step": "If the initial registration request cannot be accepted, AMF sends a REGISTRATION REJECT message to the UE including a 5GMM cause value.",
+      "entity": "AMF"
+    },
+    {
+      "id": 19,
+      "step": "UE receives the REGISTRATION REJECT message.",
+      "entity": "UE"
+    },
+    {
+      "id": 20,
+      "step": "UE stops timer T3510 (implicitly, upon receiving reject).",
+      "entity": "UE"
+    },
+    {
+      "id": 21,
+      "step": "UE performs actions based on the 5GMM cause value, which may include changing state (e.g., 5GMM-DEREGISTERED.NO-SUPI, 5GMM-DEREGISTERED.PLMN-SEARCH, 5GMM-DEREGISTERED.LIMITED-SERVICE, 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION), changing update status (e.g., 5U3 ROAMING NOT ALLOWED, 5U2 NOT UPDATED), deleting context, and starting timers (e.g., T3346, T3245, T3526).",
+      "state_after": "Varies based on cause (e.g., 5GMM-DEREGISTERED substate)",
+      "entity": "UE"
+    },
+    {
+      "id": 22,
+      "step": "Abnormal Case (UE): T3510 expires. UE aborts the procedure, stops T3510, increments registration attempt counter. If counter < 5, starts T3511 and enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. If counter = 5, deletes context, starts T3502 (if > 0), enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH.",
+      "state_after": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH",
+      "entity": "UE"
+    },
+    {
+      "id": 23,
+      "step": "Abnormal Case (AMF): T3550 expires (after retransmissions). AMF aborts the procedure, enters 5GMM-REGISTERED, considers old and new 5G-GUTIs temporarily valid.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "AMF"
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE"
+    },
+    {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION REJECT",
+      "from": "AMF",
+      "to": "UE"
+    }
+  ],
+  "timers": [
+    {
+      "name": "T3510",
+      "action": "start",
+      "step_id": 2
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 11
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 20
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 22
+    },
+    {
+      "name": "T3502",
+      "action": "stop",
+      "step_id": 3
+    },
+    {
+      "name": "T3511",
+      "action": "stop",
+      "step_id": 4
+    },
+    {
+      "name": "T3519",
+      "action": "start",
+      "step_id": 5
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 9
+    },
+    {
+      "name": "T3550",
+      "action": "stop",
+      "step_id": 17
+    },
+    {
+      "name": "T3512",
+      "action": "use",
+      "step_id": 14
+    },
+    {
+      "name": "T3324",
+      "action": "use",
+      "step_id": 14
+    },
+    {
+      "name": "non-3GPP de-registration timer",
+      "action": "use",
+      "step_id": 14
+    },
+    {
+      "name": "T3448",
+      "action": "start",
+      "step_id": 14
+    },
+    {
+      "name": "T3447",
+      "action": "use/stop",
+      "step_id": 14
+    },
+    {
+      "name": "T3526",
+      "action": "start/stop",
+      "step_id": 14
+    },
+    {
+      "name": "T3346",
+      "action": "start",
+      "step_id": 21
+    },
+    {
+      "name": "T3245",
+      "action": "start",
+      "step_id": 21
+    },
+    {
+      "name": "T3526",
+      "action": "start",
+      "step_id": 21
+    },
+    {
+      "name": "T3511",
+      "action": "start",
+      "step_id": 22
+    },
+    {
+      "name": "T3502",
+      "action": "start",
+      "step_id": 22
+    },
+    {
+      "name": "T3550",
+      "action": "retransmit/stop",
+      "step_id": 23
+    }
+  ]
+}

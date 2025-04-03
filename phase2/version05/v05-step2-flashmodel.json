@@ -1,0 +1,615 @@
+{
+  "decision_points": [
+    {
+      "step": "Initial registration initiation",
+      "condition": "Timer T3502 is currently running",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "Stop timer T3502"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check if timer T3511 is running"
+        }
+      ]
+    },
+    {
+      "step": "Initial registration initiation",
+      "condition": "Timer T3511 is currently running",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "Stop timer T3511"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Continue with registration request"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.3",
+      "condition": "During a registration procedure with 5GS registration type IE set to \"emergency registration\", if the AMF is configured to support emergency registration for unauthenticated SUCIs, the AMF may choose to skip the authentication procedure even if no 5G NAS security context is available",
+      "outcomes": [
+        {
+          "outcome": "AMF chooses to skip authentication",
+          "next_step": "proceed directly to the execution of the security mode control procedure"
+        },
+        {
+          "outcome": "AMF does not skip authentication",
+          "next_step": "initiate authentication procedure"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE is not in NB-N1 mode and the UE has set the RACS bit to \"RACS supported\" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the AMF determines that the UUAA-MM procedure needs to be performed for a UE, the AMF has not received the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message from the UE and the AMF decides to accept the UE to be registered for other services than UAS services based on the user's subscription data and the operator policy",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall accept the initial registration request and shall mark in the UE's 5GMM context that the UE is not allowed to request UAS services."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE supports network slice replacement and the AMF determines to provide the mapping information between the S-NSSAI to be replaced and the alternative S-NSSAI to the UE",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall include the Alternative NSSAI IE, the Allowed NSSAI IE including the alternative S-NSSAI, if not included in the current allowed NSSAI, and the Configured NSSAI IE including the alternative S-NSSAI, if not included in the current configured NSSAI, in the REGISTRATION ACCEPT message. If the AMF determines that the replaced S-NSSAI is available, then the AMF shall provide the updated alternative NSSAI excluding the replaced S-NSSAI and the corresponding alternative S-NSSAI in the Alternative NSSAI IE in the REGISTRATION ACCEPT message. If the AMF determines that all the replaced S-NSSAI(s) are available, then the AMF shall provide the Alternative NSSAI IE with Length of Alternative NSSAI contents set to 0 in the REGISTRATION ACCEPT message. In addition, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the AMF determines that the replaced S-NSSAI is not supported due to the UE moving outside of NS-AoS of the S-NSSAI while the alternative S-NSSAI is available",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the AMF shall provide the updated allowed NSSAI and partially allowed NSSAI, if available, excluding the replaced S-NSSAI, if included, in the allowed NSSAI or partially allowed NSSAI in the REGISTRATION ACCEPT message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE supports discontinuous coverage and is registered over a satellite NG-RAN access",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF may for discontinuous coverage include the Discontinuous coverage maximum time offset IE in the REGISTRATION ACCEPT message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE receives the Unavailability configuration IE in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall consider that the corresponding unavailability type is \"unavailability due to discontinuous coverage\"."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE receives the Unavailability configuration IE with a value of the unavailability period duration in the REGISTRATION ACCEPT",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE may either: a) delete a UE determined value and start using the received unavailability period duration value; or b) use a UE determined value."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE receives the Unavailability configuration IE with a value of the start of the unavailability period in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE may either: a) delete a UE determined value and start using the received start of the unavailability period value; or b) use a UE determined value."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE is operating as MBSR receives the MBSRAI field of the Feature authorization indication IE in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE NAS layer informs the lower layers of the status of MBSR authorization as specified in subclause 5.35A.4 of 3GPP TS 23.501 [8]."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access and the network decides to apply the RAT utilization control",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall include the RAT utilization control IE in the REGISTRATION ACCEPT message. In the RAT utilization control IE, the AMF shall not indicate that the access technology of the NG-RAN cell on which the REGISTRATION REQUEST message was received is restricted."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the REGISTRATION ACCEPT message received over 3GPP access contains the RAT utilization control IE",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall store the received RAT utilization control information together with the PLMN identity of the current PLMN in the list of \"PLMNs with associated RAT restrictions\" and replace the previously stored one associated with the current PLMN, if any, with the newly received RAT utilization control information."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the REGISTRATION ACCEPT message does not contain the RAT utilization control IE",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall delete the stored RAT utilization control information associated with the current PLMN if any."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE has set the Follow-on request indicator to \"Follow-on request pending\" in the REGISTRATION REQUEST message, or the network has downlink signalling pending",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall not immediately release the NAS signalling connection after the completion of the registration procedure."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE is authorized to use V2X communication over PC5 reference point based on: a) at least one of the following bits in the 5GMM capability IE of the REGISTRATION REQUEST message set by the UE, or already stored in the 5GMM context in the AMF during the previous registration procedure as follows: 1) the V2XCEPC5 bit to \"V2X communication over E-UTRA-PC5 supported\"; or 2) the V2XCNPC5 bit to \"V2X communication over NR-PC5 supported\"; and b) the user's subscription context obtained from the UDM as defined in 3GPP TS 23.287 [6C]",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF should not immediately release the NAS signalling connection after the completion of the registration procedure."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE is authorized to use A2X communication over PC5 reference point based on: a) at least one of the following bits in the 5GMM capability IE of the REGISTRATION REQUEST message set by the UE, or already stored in the 5GMM context in the AMF during the previous registration procedure as follows: 1) the A2XEPC5 bit to \"A2X over E-UTRA-PC5 supported\"; or 2) the A2XNPC5 bit to \"A2X over NR-PC5 supported\"; and b) the user's subscription context obtained from the UDM as defined in 3GPP TS 23.256 [6C]",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF should not immediately release the NAS signalling connection after the completion of the registration procedure."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE is authorized to use 5G ProSe services based on: a) at least one of the following bits in the 5GMM capability IE of the REGISTRATION REQUEST message set by the UE, or already stored in the 5GMM context in the AMF during the previous registration procedure as follows: 1) the 5G ProSe direct discovery bit to \"5G ProSe direct discovery supported\"; or 2) the 5G ProSe direct communication bit to \"5G ProSe direct communication supported\"; and b) the user's subscription context obtained from the UDM as defined in 3GPP TS 23.304 [6E]",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF should not immediately release the NAS signalling connection after the completion of the registration procedure."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the Requested DRX parameters IE was included in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall include the Negotiated DRX parameters IE in the REGISTRATION ACCEPT message and replace any stored Negotiated DRX parameter and use it for the downlink transfer of signalling and user data. The AMF may set the Negotiated DRX parameters IE based on the received Requested DRX parameters IE and operator policy if available."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the Requested NB-N1 mode DRX parameters IE was included in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall include the Negotiated NB-N1 mode DRX parameters IE in the REGISTRATION ACCEPT message and replace any stored Negotiated NB-N1 mode DRX parameters and use it for the downlink transfer of signalling and user data in NB-N1 mode. The AMF may set the Negotiated NB-N1 mode DRX parameters IE based on the received Requested NB-N1 mode DRX parameters IE and operator policy if available."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE's USIM is configured with indication that the UE is to receive the SOR transparent container IE, the SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check (see 3GPP TS 33.501 [24]); and b) if the UE attempts obtaining service on another PLMNs as specified in 3GPP TS 23.122 [5] annex C",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the UE shall locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE's USIM is configured with indication that the UE is to receive the SOR transparent container IE, the SOR transparent container IE is not included in the REGISTRATION ACCEPT message; and b) the UE attempts obtaining service on another PLMNs as specified in 3GPP TS 23.122 [5] annex C",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the UE shall locally release the established N1 NAS signalling connection."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE operates in SNPN access operation mode; b) the ME is configured to indicate that the UE shall expect to receive the steering of roaming information during initial registration procedure for the selected entry of the \"list of subscriber data\" or the selected PLMN subscription; c) the SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check (see 3GPP TS 33.501 [24]); and d) the UE attempts obtaining service on another SNPN as specified in 3GPP TS 23.122 [5] annex C",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the UE shall locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE operates in SNPN access operation mode; b) the ME is configured to indicate that the UE shall expect to receive the steering of roaming information during initial registration procedure for the selected entry of the \"list of subscriber data\" or the selected PLMN subscription; c) the SOR transparent container IE is not included in the REGISTRATION ACCEPT message; and d) the UE attempts obtaining service on another SNPN as specified in 3GPP TS 23.122 [5] annex C",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the UE shall locally release the established N1 NAS signalling connection."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the REGISTRATION ACCEPT message includes the SOR transparent container IE and the SOR transparent container IE successfully passes the integrity check (see 3GPP TS 33.501 [24])",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the ME shall store the received SOR counter as specified in annex C and proceed as follows: a) the UE shall proceed with the behaviour as specified in 3GPP TS 23.122 [5] annex C; and b) if the registration procedure is performed over 3GPP access and the UE attempts obtaining service on another PLMNs or SNPNs as specified in 3GPP TS 23.122 [5] annex C, then the UE may locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message. Otherwise the UE shall send a REGISTRATION COMPLETE message and not release the current N1 NAS signalling connection locally. If an acknowledgement is requested in the SOR transparent container IE of the REGISTRATION ACCEPT message, the UE acknowledgement is included in the SOR transparent container IE of the REGISTRATION COMPLETE message. In the SOR transparent container IE carrying the acknowledgement, the UE shall set the ME support of SOR-CMCI indicator to \"SOR-CMCI supported by the ME\". Additionally, if the UE supports access to an SNPN using credentials from a credentials holder and the UE is not operating in SNPN access operation mode, the UE may set the ME support of SOR-SNPN-SI indicator to \"SOR-SNPN-SI supported by the ME\". Additionally, if the UE supports access to an SNPN providing access for localized services in SNPN, the UE shall set the ME support of SOR-SNPN-SI-LS indicator to \"SOR-SNPN-SI-LS supported by the ME\""
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the SOR transparent container IE does not pass the integrity check successfully",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "then the UE shall discard the content of the SOR transparent container IE."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the REGISTRATION REQUEST message includes the 5GS registration type IE set to \"SNPN onboarding registration\" or the network determines that the UE's subscription only allows for configuration of SNPN subscription parameters in PLMN via the user plane",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF may start an implementation specific timer for onboarding services when the network considers that the UE is in 5GMM-REGISTERED (i.e. the network receives the REGISTRATION COMPLETE message from UE)."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: a) the UE determined PLMN with disaster condition IE is included in the REGISTRATION REQUEST message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition in the UE determined PLMN with disaster condition IE"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: b) the UE determined PLMN with disaster condition IE is not included in the REGISTRATION REQUEST message and the Additional GUTI IE is included in the REGISTRATION REQUEST message and contains 5G-GUTI of a PLMN of the country of the PLMN providing disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition in the PLMN identity of the 5G-GUTI"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: c) the UE determined PLMN with disaster condition IE and the Additional GUTI IE are not included in the REGISTRATION REQUEST message and: 1) the 5GS mobile identity IE contains 5G-GUTI of a PLMN of the country of the PLMN providing disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition in the PLMN identity of the 5G-GUTI"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: c) the UE determined PLMN with disaster condition IE and the Additional GUTI IE are not included in the REGISTRATION REQUEST message and: 2) the 5GS mobile identity IE contains SUCI of a PLMN of the country of the PLMN providing disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition in the PLMN identity of the SUCI"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: d) the UE determined PLMN with disaster condition IE is not included in the REGISTRATION REQUEST message, NG-RAN of the PLMN providing disaster roaming services broadcasts disaster roaming indication and: 1) the Additional GUTI IE is included in the REGISTRATION REQUEST message and contains 5G-GUTI of a PLMN of a country other than the country of the PLMN providing disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition based on the disaster roaming agreement arrangement between mobile network operators."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the 5GS registration type IE in the REGISTRATION REQUEST message is set to \"disaster roaming initial registration\" and: d) the UE determined PLMN with disaster condition IE is not included in the REGISTRATION REQUEST message, NG-RAN of the PLMN providing disaster roaming services broadcasts disaster roaming indication and: 2) the Additional GUTI IE is not included and the 5GS mobile identity IE contains 5G-GUTI or SUCI of a PLMN of a country other than the country of the PLMN providing disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall determine the PLMN with disaster condition based on the disaster roaming agreement arrangement between mobile network operators."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the AMF determines that a disaster condition applies to the PLMN with disaster condition, and the UE is allowed to be registered for disaster roaming services",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE to \"no additional information\" in the REGISTRATION ACCEPT message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the AMF determines that the UE can be registered to the PLMN for normal service",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall set the Disaster roaming registration result value bit in the 5GS registration result IE to \"request for registration for disaster roaming services accepted as registration not for disaster roaming services\" in the REGISTRATION ACCEPT message."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE indicates \"disaster roaming initial registration\" in the 5GS registration type IE in the REGISTRATION REQUEST message and the 5GS registration result IE value in the REGISTRATION ACCEPT message is set to: a) \"request for registration for disaster roaming service accepted as registration not for disaster roaming service\"",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall consider itself registered for normal service. If the PLMN identity of the registered PLMN is a member of the forbidden PLMN list as specified in subclause 5.3.13A, any such PLMN identity shall be deleted from the corresponding list(s). If UE supports S1 mode, the UE shall initiate the registration procedure for mobility and periodic registration update and indicate that S1 mode is supported as described in subclause 5.5.1.3.2"
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE indicates \"disaster roaming initial registration\" in the 5GS registration type IE in the REGISTRATION REQUEST message and the 5GS registration result IE value in the REGISTRATION ACCEPT message is set to: b) \"no additional information\"",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall consider itself registered for disaster roaming services."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE supporting the reconnection to the network due to RAN timing synchronization status change receives the RAN timing synchronization IE with the RecReq bit set to \"Reconnection requested\" in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE shall operate as specified in subclauses 5.3.1.4, 5.5.1.3.2 and 5.6.1.1."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE operating as MBSR receives the MBSRAI field of the Feature authorization indication IE in the REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the UE NAS layer informs the lower layers of the status of MBSR authorization as specified in subclause 5.35A.4 of 3GPP TS 23.501 [8]."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4",
+      "condition": "If the UE indicates support of the RAT utilization control in the REGISTRATION REQUEST message over 3GPP access and the network decides to apply the RAT utilization control",
+      "outcomes": [
+        {
+          "outcome": "True",
+          "next_step": "the AMF shall include the RAT utilization control IE in the REGISTRATION ACCEPT message. In the RAT utilization control IE, the AMF shall not indicate that the access technology of the NG-RAN cell on which the REGISTRATION REQUEST message was received is restricted."
+        },
+        {
+          "outcome": "False",
+          "next_step": "Check next condition

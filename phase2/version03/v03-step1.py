@@ -8,6 +8,7 @@ load_dotenv()
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
+new_model = "gemini-2.5-pro-exp-03-25"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -98,7 +99,7 @@ Provided Context:
 
 
 
-    model_to_use = flash_model  # or pro_model depending on your requirement
+    model_to_use = new_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -128,6 +129,21 @@ def save_procedural_info_to_json(procedural_info, file_path):
     with open(file_path, "w", encoding='utf-8') as file:
         file.write(procedural_info)
     print(f"Procedural info saved to {file_path}")
+def clean_json(file_path):
+    """Remove Markdown-style triple backticks (```json ... ```) from the JSON file."""
+    try:
+        with open(file_path, "r") as f:
+            raw_data = f.read()
+
+        # Remove Markdown code block indicators (```json and ```)
+        cleaned_data = raw_data.strip().replace("```json", "").replace("```", "").strip()
+
+        # Overwrite the file with cleaned JSON
+        with open(file_path, "w") as f:
+            f.write(cleaned_data)
+
+    except Exception as e:
+        print(f"Error cleaning JSON: {e}")
 
 def process_text_file(input_file_path, section_name):
     """Processes content from a text file instead of database."""
@@ -145,6 +161,11 @@ section_name = "Registration procedure for initial registration"  # Name of the 
 procedural_info = process_text_file(input_file_path, section_name)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "v03-step1.json")
+    save_procedural_info_to_json(procedural_info, "v03-step1-newmodel.json")
 else:
     print("Failed to extract procedural information")
+
+if save_procedural_info_to_json:
+   clean_json("v03-step1-newmodel.json")
+else:
+    print("Failed to clean json file")

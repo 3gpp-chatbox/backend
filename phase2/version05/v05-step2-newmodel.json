@@ -1,0 +1,892 @@
+{
+  "decision_points": [
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "condition": "UE has a valid 5G NAS security context.",
+      "outcomes": [
+        {
+          "outcome": "Yes, and non-cleartext IEs need to be sent",
+          "next_step": "Send REGISTRATION REQUEST including NAS message container IE (as per 4.4.6)."
+        },
+        {
+          "outcome": "Yes, and no non-cleartext IEs need to be sent",
+          "next_step": "Send REGISTRATION REQUEST without NAS message container IE."
+        },
+        {
+          "outcome": "No",
+          "next_step": "Send REGISTRATION REQUEST without NAS message container IE. Include entire REGISTRATION REQUEST in NAS message container IE within subsequent SECURITY MODE COMPLETE message (as per 4.4.6, 5.4.2.3)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.3 (AMF)",
+      "condition": "REGISTRATION REQUEST message received.",
+      "outcomes": [
+        {
+          "outcome": "Initiate 5GMM common procedures (e.g., identification, authentication, security)",
+          "next_step": "5GMM common procedures",
+          "reason": "Based on information received in REGISTRATION REQUEST."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.3 (AMF)",
+      "condition": "Registration type is 'emergency registration' AND AMF configured to support emergency registration for unauthenticated SUCIs AND no 5G NAS security context available.",
+      "outcomes": [
+        {
+          "outcome": "AMF chooses to skip authentication",
+          "next_step": "Proceed directly to security mode control procedure."
+        },
+        {
+          "outcome": "AMF chooses not to skip authentication",
+          "next_step": "Initiate authentication procedure."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (AMF)",
+      "condition": "Initial registration request processing.",
+      "outcomes": [
+        {
+          "outcome": "Accepted",
+          "next_step": "Send REGISTRATION ACCEPT message."
+        },
+        {
+          "outcome": "Not Accepted",
+          "next_step": "Send REGISTRATION REJECT message (5.5.1.2.5)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (AMF)",
+      "condition": "REGISTRATION ACCEPT message includes specific IEs requiring acknowledgement (5G-GUTI, SOR transparent container, Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list, Negotiated PEIPS assistance information (if RCMAP supported), UE radio capability ID / deletion indication (if RACS supported), Truncated 5G-S-TMSI configuration, Service-level-AA pending indication, Network slicing subscription change indication, Configured NSSAI, NSSRG information, Alternative NSSAI, S-NSSAI location validity information, S-NSSAI time validity information, On-demand NSSAI, NSAG information (if RCMAN supported)).",
+      "outcomes": [
+        {
+          "outcome": "Yes",
+          "next_step": "Start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED."
+        },
+        {
+          "outcome": "No",
+          "next_step": "Do not start T3550 based on these IEs."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message received.",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": "Stop T3510, reset registration attempt counter, enter 5GMM-REGISTERED, set 5GS update status to 5U1 UPDATED, store context, potentially send REGISTRATION COMPLETE."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message contains IEs requiring acknowledgement (Network slicing subscription change indication, Configured NSSAI, NSSRG information, Alternative NSSAI, S-NSSAI location validity information, S-NSSAI time validity information, On-demand NSSAI, NSAG information (if RCMAN supported), Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list, Negotiated PEIPS assistance information (if RCMAP supported), UE radio capability ID / deletion indication, Truncated 5G-S-TMSI configuration, Service-level-AA pending indication, SOR transparent container (if acknowledgement requested)).",
+      "outcomes": [
+        {
+          "outcome": "Yes",
+          "next_step": "Send REGISTRATION COMPLETE message."
+        },
+        {
+          "outcome": "No",
+          "next_step": "Do not send REGISTRATION COMPLETE based on these IEs."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message contains CAG information list IE or Extended CAG information list IE.",
+      "outcomes": [
+        {
+          "outcome": "Received via CAG cell AND none of the cell's CAG-IDs are authorized AND ('only allowed via CAG cells' indication is NOT present OR ('only allowed via CAG cells' indication IS present AND one or more CAG-IDs are authorized in the list))",
+          "next_step": "Enter 5GMM-REGISTERED.LIMITED-SERVICE, search for suitable cell with updated list."
+        },
+        {
+          "outcome": "Received via CAG cell AND none of the cell's CAG-IDs are authorized AND 'only allowed via CAG cells' indication IS present AND no CAG-ID is authorized in the list AND NOT emergency registration AND NOT handover of emergency PDU session",
+          "next_step": "Enter 5GMM-REGISTERED.PLMN-SEARCH, apply PLMN selection with updated list."
+        },
+        {
+          "outcome": "Received via non-CAG cell AND 'only allowed via CAG cells' indication IS present AND one or more CAG-IDs are authorized in the list",
+          "next_step": "Enter 5GMM-REGISTERED.LIMITED-SERVICE, search for suitable cell with updated list."
+        },
+        {
+          "outcome": "Received via non-CAG cell AND 'only allowed via CAG cells' indication IS present AND no CAG-ID is authorized in the list AND NOT emergency registration AND NOT handover of emergency PDU session",
+          "next_step": "Enter 5GMM-REGISTERED.PLMN-SEARCH, apply PLMN selection with updated list."
+        },
+        {
+          "outcome": "Received via CAG cell AND received list does NOT include an entry for the registered PLMN",
+          "next_step": "Enter 5GMM-REGISTERED.LIMITED-SERVICE, search for suitable cell with updated list."
+        },
+        {
+          "outcome": "Other conditions met",
+          "next_step": "Enter 5GMM-REGISTERED (normal case)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message contains SOR transparent container IE.",
+      "outcomes": [
+        {
+          "outcome": "Integrity check fails AND UE configured for SOR AND UE attempts service on another PLMN/SNPN (as per TS 23.122 Annex C)",
+          "next_step": "Send REGISTRATION COMPLETE (if required), then locally release N1 NAS signalling connection.",
+          "outcome_type": "fallback"
+        },
+        {
+          "outcome": "SOR IE not included AND UE configured for SOR AND UE attempts service on another PLMN/SNPN (as per TS 23.122 Annex C)",
+          "next_step": "Locally release N1 NAS signalling connection.",
+          "outcome_type": "fallback"
+        },
+        {
+          "outcome": "Integrity check succeeds AND UE attempts service on another PLMN/SNPN (as per TS 23.122 Annex C) AND registration over 3GPP access",
+          "next_step": "Send REGISTRATION COMPLETE (if required, may include SOR ACK), then MAY locally release N1 NAS signalling connection.",
+          "outcome_type": "fallback"
+        },
+        {
+          "outcome": "Integrity check succeeds AND UE does NOT attempt service on another PLMN/SNPN",
+          "next_step": "Send REGISTRATION COMPLETE (if required, may include SOR ACK), do NOT locally release connection."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message contains Rejected NSSAI IE or Extended rejected NSSAI IE.",
+      "outcomes": [
+        {
+          "outcome": "Rejection cause 'S-NSSAI not available in the current PLMN or SNPN'",
+          "next_step": "Store S-NSSAI in rejected NSSAI for current PLMN/SNPN. Do not use S-NSSAI in PLMN/SNPN until UE switch off, UICC removal, list update, or S-NSSAI removal."
+        },
+        {
+          "outcome": "Rejection cause 'S-NSSAI not available in the current registration area'",
+          "next_step": "Store S-NSSAI in rejected NSSAI for current registration area. Do not use S-NSSAI in registration area until UE switch off, move out of area, UICC removal, list update, or S-NSSAI removal."
+        },
+        {
+          "outcome": "Rejection cause 'S-NSSAI not available due to the failed or revoked network slice-specific authentication and authorization'",
+          "next_step": "Store S-NSSAI in rejected NSSAI for failed/revoked NSSAA. Do not use S-NSSAI in PLMN/SNPN until UE switch off, UICC removal, list update, or S-NSSAI removal."
+        },
+        {
+          "outcome": "Rejection cause 'S-NSSAI not available due to maximum number of UEs reached'",
+          "next_step": "Store S-NSSAI in rejected NSSAI for max UEs reached. Start timer T3526 with received back-off value (or implementation specific if none/zero/deactivated). Do not use S-NSSAI in PLMN/SNPN until T3526 expiry, UE switch off, UICC removal, list update, or S-NSSAI removal."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message includes 5GS registration result IE with 'NSSAA to be performed' indicator set AND includes pending NSSAI AND does NOT include allowed NSSAI AND does NOT include partially allowed NSSAI.",
+      "outcomes": [
+        {
+          "outcome": "Yes",
+          "next_step": "Delete stored allowed NSSAI. Do not initiate 5GSM procedures (except emergency), Service Request (except specific cases), or NAS transport (except specific types) until allowed/partially allowed NSSAI received."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "condition": "REGISTRATION ACCEPT message includes UE radio capability ID deletion indication IE set to 'Network-assigned UE radio capability IDs deletion requested'.",
+      "outcomes": [
+        {
+          "outcome": "Yes",
+          "next_step": "Delete network-assigned UE radio capability IDs for RPLMN/RSNPN. After completing current registration, initiate mobility/periodic registration update procedure (5.5.1.3.2)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT message received.",
+      "outcomes": [
+        {
+          "outcome": "Process based on 5GMM cause value",
+          "next_step": "Specific actions detailed per cause value (e.g., #3, #6, #7, #11, #12, #13, #15, #22, #27, #31, #36, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #3 (Illegal UE) or #6 (Illegal ME).",
+      "outcomes": [
+        {
+          "outcome": "Integrity check successful",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), consider USIM/SNPN entry invalid (start T3245 if applicable), delete equivalent lists, enter 5GMM-DEREGISTERED.NO-SUPI, set specific counters to max. Handle EMM parameters if single-reg mode. Handle other access if supported. If onboarding SNPN, add SNPN to forbidden list, enter PLMN-SEARCH, set counter to max."
+        },
+        {
+          "outcome": "Integrity check fails",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), consider USIM/SNPN entry invalid (start T3245 if applicable), delete equivalent lists, enter 5GMM-DEREGISTERED.NO-SUPI. Handle EMM parameters if single-reg mode. Handle other access if supported. If onboarding SNPN, add SNPN to forbidden list, enter PLMN-SEARCH."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #7 (5GS services not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Integrity check successful",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), consider USIM/SNPN entry invalid (start T3245 if applicable), enter 5GMM-DEREGISTERED.NO-SUPI, set specific counters to max. Handle EMM parameters if single-reg mode. Handle other access if supported. If onboarding SNPN, add SNPN to forbidden list, enter PLMN-SEARCH, set counter to max."
+        },
+        {
+          "outcome": "Integrity check fails",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), consider USIM/SNPN entry invalid (start T3245 if applicable), enter 5GMM-DEREGISTERED.NO-SUPI. Handle EMM parameters if single-reg mode. Handle other access if supported. If onboarding SNPN, add SNPN to forbidden list, enter PLMN-SEARCH."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #11 (PLMN not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Integrity check successful",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), delete equivalent PLMN list, reset counter, add PLMN to forbidden list (start T3245 if applicable), enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or 5GMM-DEREGISTERED.LIMITED-SERVICE (non-3GPP), perform selection, set PLMN-specific counters to max. Handle EMM parameters if single-reg mode. Handle other access if supported."
+        },
+        {
+          "outcome": "Integrity check fails",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), delete equivalent PLMN list, reset counter, add PLMN to forbidden list (start T3245 if applicable), enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or 5GMM-DEREGISTERED.LIMITED-SERVICE (non-3GPP), perform selection. Handle EMM parameters if single-reg mode. Handle other access if supported."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #12 (Tracking area not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": "Set 5GS update status to 5U3, delete TAI list/last visited TAI (and 5G-GUTI/ngKSI if not registered on other access), reset counter, add TAI to forbidden list ('regional provision'), enter 5GMM-DEREGISTERED.LIMITED-SERVICE. Handle EMM parameters if single-reg mode."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #13 (Roaming not allowed in this tracking area).",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": "Set 5GS update status to 5U3, delete TAI list/last visited TAI (and 5G-GUTI/ngKSI/equivalent lists if not registered on other access), reset counter, add TAI to forbidden list ('roaming'), enter 5GMM-DEREGISTERED.LIMITED-SERVICE or PLMN-SEARCH, perform selection. Handle EMM parameters if single-reg mode."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #15 (No suitable cells in tracking area).",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": "Set 5GS update status to 5U3, delete TAI list/last visited TAI (and 5G-GUTI/ngKSI if not registered on other access), reset counter, add TAI to forbidden list ('roaming'), enter 5GMM-DEREGISTERED.LIMITED-SERVICE, search for suitable cell in another TA. Handle EMM parameters if single-reg mode. Handle Extended 5GMM cause or RAT utilization control IE if present and integrity protected."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #22 (Congestion) AND T3346 value IE present and timer value is not zero or deactivated.",
+      "outcomes": [
+        {
+          "outcome": "Integrity check successful",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, reset counter, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, stop running T3346, start T3346 with received value. Retry when T3346 expires/stops. Handle EMM parameters if single-reg mode. If onboarding SNPN, may enter PLMN-SEARCH."
+        },
+        {
+          "outcome": "Integrity check fails",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, reset counter, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, stop running T3346, start T3346 with random default value. Retry when T3346 expires/stops. Handle EMM parameters if single-reg mode. If onboarding SNPN, may enter PLMN-SEARCH."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #27 (N1 mode not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Integrity check successful",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), reset counter, enter 5GMM-DEREGISTERED.LIMITED-SERVICE, set N1 mode attempt counters to max, disable N1 mode capability for received access AND other access. Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Integrity check fails",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), reset counter, enter 5GMM-DEREGISTERED.LIMITED-SERVICE, disable N1 mode capability for received access. Handle EMM parameters if single-reg mode."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #31 (Redirection to EPC required).",
+      "outcomes": [
+        {
+          "outcome": "Success (UE supports CIoT opt, S1 mode, received via 3GPP, not SNPN)",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), reset counter, enable E-UTRA capability, disable N1 mode capability for 3GPP access, enter 5GMM-DEREGISTERED.NO-CELL-AVAILABLE. Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (conditions not met)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #62 (No network slices available).",
+      "outcomes": [
+        {
+          "outcome": "Success",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, reset counter. Store rejected S-NSSAIs based on cause (start T3526 for 'max UEs reached'). Decide next action based on remaining allowed/configured/default S-NSSAIs and rejection causes (retry registration, search other TA, PLMN/SNPN selection, disable N1 mode)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #72 (Non-3GPP access to 5GCN not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Success (received via non-3GPP)",
+          "next_step": "Set 5GS update status to 5U3, delete TAI list/last visited TAI (and 5G-GUTI/ngKSI if not registered on 3GPP access), reset counter, enter 5GMM-DEREGISTERED, set N1 mode attempt counter for non-3GPP to max (if integrity protected), disable N1 mode capability for non-3GPP access. May enter PLMN-SEARCH."
+        },
+        {
+          "outcome": "Failure (received via 3GPP)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #73 (Serving network not authorized).",
+      "outcomes": [
+        {
+          "outcome": "Success (not SNPN)",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI), delete equivalent PLMN list, reset counter, add PLMN to forbidden list, enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or 5GMM-DEREGISTERED.LIMITED-SERVICE (non-3GPP), perform selection, set PLMN-specific counters to max (if integrity protected). Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (SNPN)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #74 (Temporarily not authorized for this SNPN).",
+      "outcomes": [
+        {
+          "outcome": "Success (SNPN)",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI, equivalent SNPN list), reset counter, add SNPN to temporarily forbidden list for the access type, enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP/onboarding) or 5GMM-DEREGISTERED.LIMITED-SERVICE (non-3GPP), perform selection, set SNPN-specific counters to max (if integrity protected). Handle other access if supported."
+        },
+        {
+          "outcome": "Failure (not SNPN)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #75 (Permanently not authorized for this SNPN).",
+      "outcomes": [
+        {
+          "outcome": "Success (globally-unique SNPN)",
+          "next_step": "Set 5GS update status to 5U3, delete context (5G-GUTI, TAI list, ngKSI, equivalent SNPN list), reset counter, add SNPN to permanently forbidden list for the access type, enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP/onboarding) or 5GMM-DEREGISTERED.LIMITED-SERVICE (non-3GPP), perform selection, set SNPN-specific counters to max (if integrity protected). Handle other access if supported."
+        },
+        {
+          "outcome": "Failure (not SNPN or non-globally-unique SNPN)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #76 (Not authorized for this CAG or authorized for CAG cells only).",
+      "outcomes": [
+        {
+          "outcome": "Success (received via 3GPP, not SNPN)",
+          "next_step": "Set 5GS update status to 5U3, reset counter. Update/store CAG info list if received. Based on cell type (CAG/non-CAG) and updated CAG info list, enter 5GMM-DEREGISTERED.LIMITED-SERVICE (search suitable cell) or 5GMM-DEREGISTERED.PLMN-SEARCH (perform PLMN selection). Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (received via non-3GPP or SNPN)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #78 (PLMN not allowed to operate at the present UE location).",
+      "outcomes": [
+        {
+          "outcome": "Success (received via satellite NG-RAN)",
+          "next_step": "Set 5GS update status to 5U3, delete TAI list/last visited TAI (and 5G-GUTI/ngKSI/equivalent PLMN list if not registered on non-3GPP), reset counter, add PLMN/location to 'PLMNs not allowed...' list (start timer), enter 5GMM-DEREGISTERED.PLMN-SEARCH, perform PLMN selection. Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (received via non-satellite NG-RAN)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #79 (UAS services not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Success (UE included service-level device ID in request)",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, reset counter. If retrying registration, do not include service-level device ID unless enabled via CONFIGURATION UPDATE COMMAND. Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (UE did not include service-level device ID)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #80 (Disaster roaming for the determined PLMN with disaster condition not allowed).",
+      "outcomes": [
+        {
+          "outcome": "Success (UE indicated disaster roaming, not SNPN, not non-3GPP)",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, enter 5GMM-DEREGISTERED.PLMN-SEARCH, delete context (5G-GUTI, TAI list, ngKSI), reset counter. Do not attempt disaster roaming on this PLMN for this determined PLMN for 3-10 minutes. Perform PLMN selection. Set PLMN-specific counter for the determined PLMN to max (if integrity protected). Handle EMM parameters if single-reg mode."
+        },
+        {
+          "outcome": "Failure (conditions not met)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #81 (Selected N3IWF is not compatible with the allowed NSSAI).",
+      "outcomes": [
+        {
+          "outcome": "Success (UE uses N3IWF and indicated support for slice-based N3IWF selection)",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, reset counter. May use provided N3IWF identifier for selection before retry. If new N3IWF selected for retry, delete context (5G-GUTI, TAI list, ngKSI)."
+        },
+        {
+          "outcome": "Failure (conditions not met)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "condition": "REGISTRATION REJECT received with cause #82 (Selected TNGF is not compatible with the allowed NSSAI).",
+      "outcomes": [
+        {
+          "outcome": "Success (UE uses TNGF and indicated support for slice-based TNGF selection)",
+          "next_step": "Abort procedure, set 5GS update status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, reset counter. May use provided TNAN information for selection before retry. If new TNAN selected for retry, delete context (5G-GUTI, TAI list, ngKSI)."
+        },
+        {
+          "outcome": "Failure (conditions not met)",
+          "next_step": "Treat as abnormal case (5.5.1.2.7)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.6 (UE)",
+      "condition": "Initial registration for emergency services rejected.",
+      "outcomes": [
+        {
+          "outcome": "Cause #5 'PEI not accepted'",
+          "next_step": "Enter 5GMM-DEREGISTERED.NO-SUPI. Handle other access if supported and reject received over 3GPP or integrity protected non-3GPP."
+        },
+        {
+          "outcome": "Other cause values",
+          "next_step": "Perform actions as per 5.5.1.2.5 for the specific cause. Inform upper layers of failure."
+        },
+        {
+          "outcome": "Failure due to abnormal case",
+          "next_step": "Perform actions as per 5.5.1.2.7. Inform upper layers of failure."
+        },
+        {
+          "outcome": "Rejection in shared network",
+          "next_step": "Perform actions as per 5.5.1.2.5. Either inform upper layers OR attempt PLMN/SNPN selection and retry emergency registration on selected PLMN/SNPN (if not already attempted, considering handover case)."
+        },
+        {
+          "outcome": "Abnormal case failure in shared network",
+          "next_step": "Perform actions as per 5.5.1.2.7. Either inform upper layers OR attempt PLMN/SNPN selection and retry emergency registration on selected PLMN/SNPN (if not already attempted, considering handover case)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.6A (UE)",
+      "condition": "Initial registration (type 'initial registration') for initiating emergency PDU session (type 'initial emergency request') rejected.",
+      "outcomes": [
+        {
+          "outcome": "Success (rejected)",
+          "next_step": "Perform actions as per 5.5.1.2.5. If still in same PLMN/SNPN: Either inform upper layers OR attempt initial registration for emergency services."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.6A (UE)",
+      "condition": "Initial registration (type 'initial registration') for initiating emergency PDU session (due to handover) rejected.",
+      "outcomes": [
+        {
+          "outcome": "Success (rejected)",
+          "next_step": "Perform actions as per 5.5.1.2.5. If still in same PLMN/ePLMN or SNPN/eSNPN: Attempt initial registration for emergency services."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Timer T3346 is running.",
+      "outcomes": [
+        {
+          "outcome": "Initial registration needed AND (High priority access OR Emergency services OR Re-registration required OR NB-N1 exception data OR Emergency PDU session initiation)",
+          "next_step": "Proceed with initial registration."
+        },
+        {
+          "outcome": "Initial registration needed AND none of the exceptions apply",
+          "next_step": "Do not start initial registration. Stay in current cell, apply cell reselection. Start procedure when T3346 expires/stops.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Lower layers indicate access attempt is barred.",
+      "outcomes": [
+        {
+          "outcome": "Barred",
+          "next_step": "Do not start initial registration. Stay in current cell, apply cell reselection. Start procedure when barring alleviated.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "T3510 timeout.",
+      "outcomes": [
+        {
+          "outcome": "Timeout",
+          "next_step": "Abort procedure, release NAS connection locally (if not emergency/emergency handover). Stop T3510. Increment registration attempt counter (if < 5). If counter < 5: Start T3511, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, retry on T3511 expiry. If counter == 5: Delete context, start T3502, set status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, perform selection. Handle EMM if single-reg mode.",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "REGISTRATION REJECT received with abnormal cause OR Lower layer failure before response.",
+      "outcomes": [
+        {
+          "outcome": "Failure",
+          "next_step": "Abort procedure (if lower layer failure). Stop T3510. Increment registration attempt counter (if < 5 and not emergency/emergency handover). If counter < 5: Start T3511, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION, retry on T3511 expiry. If counter == 5: Delete context, start T3502, set status to 5U2, enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, perform selection. Handle EMM if single-reg mode.",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "UE initiated de-registration required during initial registration.",
+      "outcomes": [
+        {
+          "outcome": "De-registration needed",
+          "next_step": "Abort initial registration. Perform UE-initiated de-registration procedure (using same identity as in aborted request). May perform local de-registration if due to USIM removal and T3519 not running.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "DEREGISTRATION REQUEST received from network during initial registration (in 5GMM-REGISTERED-INITIATED state).",
+      "outcomes": [
+        {
+          "outcome": "Collision",
+          "next_step": "Abort de-registration procedure. Continue with initial registration procedure."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Current TAI changes before initial registration completes.",
+      "outcomes": [
+        {
+          "outcome": "TAI changed",
+          "next_step": "Abort initial registration. Re-initiate initial registration immediately.",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "REGISTRATION COMPLETE needs to be sent, and TAI changes after REGISTRATION ACCEPT received but before REGISTRATION COMPLETE sent.",
+      "outcomes": [
+        {
+          "outcome": "New TAI is in TAI list",
+          "next_step": "Send REGISTRATION COMPLETE."
+        },
+        {
+          "outcome": "New TAI is NOT in TAI list",
+          "next_step": "Abort initial registration. Initiate mobility registration update procedure (using new 5G-GUTI if allocated).",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Transmission failure of REGISTRATION COMPLETE message indication from lower layers.",
+      "outcomes": [
+        {
+          "outcome": "TAI changed and new TAI is NOT in TAI list",
+          "next_step": "Abort initial registration. Initiate mobility registration update procedure.",
+          "outcome_type": "fallback"
+        },
+        {
+          "outcome": "TAI unchanged OR new TAI is in TAI list",
+          "next_step": "Resend REGISTRATION COMPLETE (UE implementation specific re-run).",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Transmission failure of REGISTRATION REQUEST message indication from lower layers.",
+      "outcomes": [
+        {
+          "outcome": "Failure",
+          "next_step": "Abort initial registration. Re-initiate initial registration immediately.",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Timer T3447 is running.",
+      "outcomes": [
+        {
+          "outcome": "Initial registration needed with Follow-on request AND (High priority access OR Emergency services)",
+          "next_step": "Proceed with initial registration."
+        },
+        {
+          "outcome": "Initial registration needed with Follow-on request AND none of the exceptions apply",
+          "next_step": "Do not start initial registration. Stay in current cell, apply cell reselection. Start procedure when T3447 expires/stops.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "REGISTRATION ACCEPT received for one access, 5GS registration result indicates '3GPP access and non-3GPP access', but UE is not registered on the other access.",
+      "outcomes": [
+        {
+          "outcome": "Mismatch",
+          "next_step": "Consider self registered only on the access where ACCEPT was received."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "condition": "Access for localized services in current SNPN is no longer allowed during initial registration (not emergency/emergency handover).",
+      "outcomes": [
+        {
+          "outcome": "Disallowed",
+          "next_step": "Reset counter, stop T3510, abort procedure, locally release NAS connection, enter 5GMM-DEREGISTERED.LIMITED-SERVICE or PLMN-SEARCH, perform SNPN selection.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "Lower layer failure occurs before REGISTRATION COMPLETE received (if expected) and T3550 is running.",
+      "outcomes": [
+        {
+          "outcome": "Failure",
+          "next_step": "Locally abort procedure, enter 5GMM-REGISTERED. Consider both old and new 5G-GUTI valid temporarily."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "REGISTRATION REQUEST received with protocol error.",
+      "outcomes": [
+        {
+          "outcome": "Error",
+          "next_step": "Send REGISTRATION REJECT with cause #96, #99, #100, or #111."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "T3550 expires.",
+      "outcomes": [
+        {
+          "outcome": "1st-4th expiry",
+          "next_step": "Retransmit REGISTRATION ACCEPT, reset and restart T3550.",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "5th expiry",
+          "next_step": "Abort procedure, enter 5GMM-REGISTERED. Consider both old and new 5G-GUTI valid temporarily.",
+          "outcome_type": "fallback"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "New REGISTRATION REQUEST received after ACCEPT sent but before COMPLETE received (if expected).",
+      "outcomes": [
+        {
+          "outcome": "IEs differ from previous request",
+          "next_step": "Abort previous procedure. Progress new registration procedure."
+        },
+        {
+          "outcome": "IEs are the same as previous request",
+          "next_step": "Resend REGISTRATION ACCEPT, restart T3550 (do not increment retransmission counter).",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "More than one REGISTRATION REQUEST received before ACCEPT/REJECT sent.",
+      "outcomes": [
+        {
+          "outcome": "IEs differ from previous request",
+          "next_step": "Abort previous procedure. Execute new registration procedure."
+        },
+        {
+          "outcome": "IEs are the same as previous request",
+          "next_step": "Continue with previous procedure. Ignore second request."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "REGISTRATION REQUEST (type initial) received in state 5GMM-REGISTERED.",
+      "outcomes": [
+        {
+          "outcome": "Network determines UE is genuine (e.g., via authentication)",
+          "next_step": "Delete existing 5GMM context. Progress new REGISTRATION REQUEST."
+        },
+        {
+          "outcome": "Network considers request not from genuine UE",
+          "next_step": "Maintain existing 5GMM context unchanged."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "REGISTRATION REQUEST (type mobility/periodic) received before REGISTRATION COMPLETE (if expected).",
+      "outcomes": [
+        {
+          "outcome": "Collision",
+          "next_step": "Stop T3550. Consider allocated 5G-GUTI valid. Progress mobility/periodic registration update procedure."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "DEREGISTRATION REQUEST received before REGISTRATION COMPLETE (if expected).",
+      "outcomes": [
+        {
+          "outcome": "Collision",
+          "next_step": "Abort initial registration procedure. Progress de-registration procedure."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "REGISTRATION REQUEST received with invalid/unacceptable UE security capabilities.",
+      "outcomes": [
+        {
+          "outcome": "Invalid capabilities",
+          "next_step": "Send REGISTRATION REJECT (cause is implementation specific)."
+        }
+      ]
+    },
+    {
+      "step": "5.5.1.2.8 (AMF)",
+      "condition": "Initial registration request from UE not supporting CAG is rejected due to CAG restrictions (operator policy).",
+      "outcomes": [
+        {
+          "outcome": "Rejected",
+          "next_step": "Send REGISTRATION REJECT with cause other than #76 (e.g., #7, #11, #27, #73)."
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "depends_on": ["UE state 5GMM-DEREGISTERED"],
+      "type": "hard",
+      "reason": "UE must be in 5GMM-DEREGISTERED state to initiate initial registration."
+    },
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "depends_on": ["Availability of SUCI (if T3519 running)"],
+      "type": "hard",
+      "reason": "If T3519 is running, the UE must include the stored SUCI from the previous attempt."
+    },
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "depends_on": ["UE having no valid 5G NAS security context"],
+      "type": "hard",
+      "reason": "If no valid security context, the full REGISTRATION REQUEST must be included in the subsequent SECURITY MODE COMPLETE message."
+    },
+    {
+      "step": "5.5.1.2.3 (AMF)",
+      "depends_on": ["Receipt of REGISTRATION REQUEST"],
+      "type": "hard",
+      "reason": "AMF actions (common procedures, accept/reject) depend on receiving the request."
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "depends_on": ["Receipt of REGISTRATION ACCEPT"],
+      "type": "hard",
+      "reason": "UE actions (state change, context storage, sending COMPLETE) depend on receiving ACCEPT."
+    },
+    {
+      "step": "5.5.1.2.4 (UE)",
+      "depends_on": ["Specific IEs in REGISTRATION ACCEPT"],
+      "type": "hard",
+      "reason": "Sending REGISTRATION COMPLETE is dependent on receiving specific IEs in the ACCEPT message."
+    },
+    {
+      "step": "5.5.1.2.4 (AMF)",
+      "depends_on": ["Receipt of REGISTRATION COMPLETE (if T3550 started)"],
+      "type": "hard",
+      "reason": "AMF stops T3550 and considers certain information valid only after receiving REGISTRATION COMPLETE."
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "depends_on": ["Receipt of REGISTRATION REJECT"],
+      "type": "hard",
+      "reason": "UE actions (state change, context deletion, timer start, retry/fallback) depend on receiving REJECT and its cause code."
+    },
+    {
+      "step": "5.5.1.2.7 (UE Retry)",
+      "depends_on": ["Registration attempt counter < 5"],
+      "type": "hard",
+      "reason": "Retrying after T3510 timeout or abnormal reject requires the counter to be less than 5."
+    },
+    {
+      "step": "5.5.1.2.7 (UE Fallback)",
+      "depends_on": ["Registration attempt counter == 5"],
+      "type": "hard",
+      "reason": "Fallback actions (delete context, start T3502, PLMN search) occur when the counter reaches 5."
+    }
+  ],
+  "timeouts": [
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "timeout_condition": "UE starts timer T3510 after sending REGISTRATION REQUEST.",
+      "timeout_action": "If T3510 expires before receiving REGISTRATION ACCEPT or REJECT, UE aborts procedure, increments counter, starts T3511 (if counter < 5) or deletes context/starts T3502 (if counter == 5). See 5.5.1.2.7 c)."
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "timeout_condition": "UE starts timer T3511 after T3510 expiry or abnormal reject (if attempt counter < 5).",
+      "timeout_action": "When T3511 expires, the registration procedure for initial registration shall be restarted, if still required."
+    },
+    {
+      "step": "5.5.1.2.7 (UE)",
+      "timeout_condition": "UE starts timer T3502 when registration attempt counter reaches 5 (if T3502 value is not zero).",
+      "timeout_action": "When T3502 expires, UE may re-attempt registration or perform PLMN selection based on implementation."
+    },
+    {
+      "step": "5.5.1.2.5 (UE)",
+      "timeout_condition": "UE starts timer T3346 upon receiving REGISTRATION REJECT with cause #22 and a valid T3346 value.",
+      "timeout_action": "When T3346 expires or is stopped, the initial registration procedure is started if still needed."
+    },
+    {
+      "step": "5.5.1.2.4 (AMF)",
+      "timeout_condition": "AMF starts timer T3550 after sending REGISTRATION ACCEPT containing specific IEs requiring acknowledgement.",
+      "timeout_action": "If T3550 expires before REGISTRATION COMPLETE is received: Retransmit REGISTRATION ACCEPT and restart T3550 (up to 4 retransmissions). On 5th expiry, abort procedure, enter 5GMM-REGISTERED, keep old+new GUTI temporarily. See 5.5.1.2.8 c)."
+    },
+    {
+      "step": "5.5.1.2.2 (UE)",
+      "timeout_condition": "UE starts timer T3519 when sending REGISTRATION REQUEST with SUCI (if T3519 not already running).",
+      "timeout_action": "While T3519 is running, UE includes the stored SUCI in subsequent REGISTRATION REQUEST messages."
+    },
+    {
+      "step": "5.5.1.2.4 / 5.5.1.2.5 (UE)",
+      "timeout_condition": "UE starts timer T3526 upon receiving REGISTRATION ACCEPT/REJECT with Rejected NSSAI containing cause 'S-NSSAI not available due to maximum number of UEs reached' and a back-off timer value.",
+      "timeout_action": "When T3526 expires, remove the associated S-NSSAI from the rejected NSSAI list for 'maximum number of UEs reached'."
+    }
+  ]
+}

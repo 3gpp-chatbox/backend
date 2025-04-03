@@ -40,7 +40,7 @@ Only extract **explicit** conditions and steps mentioned in the text. Do **not**
 
 ---
 
-## **🔹 How to Extract (Error-Preventive Method)**  
+## ** How to Extract (Error-Preventive Method)**  
 
 ### 1 **Decision Points & Outcomes**  
 - Ensure that **all decision points** that **affect flow** are captured (e.g., timer expiries, state changes).  
@@ -57,7 +57,7 @@ Only extract **explicit** conditions and steps mentioned in the text. Do **not**
 
 ---
 
-## **🔹 Output Format (Flexible & Detailed for Flow Graph)**  
+## ** Output Format (Flexible & Detailed for Flow Graph)**  
 The extracted information should be structured as follows, ensuring a consistent format for future analysis or Flow Property Graph construction:
 
 {{
@@ -170,11 +170,11 @@ section_name = "Registration procedure for initial registration"  # Name of the 
 procedural_info = process_text_file(input_file_path, section_name)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "v05-step2.json")
+    save_procedural_info_to_json(procedural_info, "v05-step2-flashmodel.json")
 else:
     print("Failed to extract procedural information")
 
 if save_procedural_info_to_json:
-    clean_json("v05-step2.json")
+    clean_json("v05-step2-flashmodel.json")
 else:
     print("Failed to clean json file")

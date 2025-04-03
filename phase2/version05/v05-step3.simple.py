@@ -9,6 +9,7 @@ load_dotenv()
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
+new_model = "gemini-2.5-pro-exp-03-25"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -163,7 +164,7 @@ Example Output Format (Structured JSON)
   """
 
 
-    model_to_use = flash_model  # or pro_model depending on your requirement
+    model_to_use = new_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -204,8 +205,8 @@ def clean_json(file_path):
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    step1_data = read_json_file("v06-step1.json")
-    step2_data = read_json_file("v06-step2.json")
+    step1_data = read_json_file("v05-step1-newmodel.json")
+    step2_data = read_json_file("v05-step2-newmodel.json")
 
     if step1_data is None or step2_data is None:
         print("Failed to load step1.json or step2.json")
@@ -220,10 +221,10 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_json(procedural_info, "v06-step3.simple.json")
+    save_to_json(procedural_info, "v05-step3-simple-newmodel.json")
 else:
     print("Failed to extract procedural information")
 if save_to_json:
-   clean_json("v06-step3.simple.json")
+   clean_json("v05-step3-simple-newmodel.json")
 else:
     print("Failed to clean json file")

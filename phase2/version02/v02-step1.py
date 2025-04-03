@@ -129,6 +129,22 @@ def save_procedural_info_to_json(procedural_info, file_path):
         file.write(procedural_info)
     print(f"Procedural info saved to {file_path}")
 
+def clean_json(file_path):
+    """Remove Markdown-style triple backticks (```json ... ```) from the JSON file."""
+    try:
+        with open(file_path, "r") as f:
+            raw_data = f.read()
+
+        # Remove Markdown code block indicators (```json and ```)
+        cleaned_data = raw_data.strip().replace("```json", "").replace("```", "").strip()
+
+        # Overwrite the file with cleaned JSON
+        with open(file_path, "w") as f:
+            f.write(cleaned_data)
+
+    except Exception as e:
+        print(f"Error cleaning JSON: {e}")
+
 def process_text_file(input_file_path, section_name):
     """Processes content from a text file instead of database."""
     text_content = read_text_file(input_file_path)
@@ -148,3 +164,8 @@ if procedural_info:
     save_procedural_info_to_json(procedural_info, "v02-step1.json")
 else:
     print("Failed to extract procedural information")
+
+if save_procedural_info_to_json:
+   clean_json("v02-step1.json")
+else:
+    print("Failed to clean json file")

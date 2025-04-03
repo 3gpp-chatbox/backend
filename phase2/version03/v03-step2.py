@@ -92,7 +92,7 @@ Provided Context:
 {text}
 """
 
-    model_to_use = new_model  # or pro_model depending on your requirement
+    model_to_use = flash_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -123,6 +123,22 @@ def save_procedural_info_to_json(procedural_info, file_path):
         file.write(procedural_info)
     print(f"Procedural info saved to {file_path}")
 
+def clean_json(file_path):
+    """Remove Markdown-style triple backticks (```json ... ```) from the JSON file."""
+    try:
+        with open(file_path, "r") as f:
+            raw_data = f.read()
+
+        # Remove Markdown code block indicators (```json and ```)
+        cleaned_data = raw_data.strip().replace("```json", "").replace("```", "").strip()
+
+        # Overwrite the file with cleaned JSON
+        with open(file_path, "w") as f:
+            f.write(cleaned_data)
+
+    except Exception as e:
+        print(f"Error cleaning JSON: {e}")
+
 def process_text_file(input_file_path, section_name):
     """Processes content from a text file instead of database."""
     text_content = read_text_file(input_file_path)
@@ -131,7 +147,6 @@ def process_text_file(input_file_path, section_name):
         
     procedural_info = extract_procedural_info_from_text(section_name, text_content)
     return procedural_info
-
 # Example usage: Processing a text file
 input_file_path = "5.5.1.2.txt"  # Path to your input text file
 section_name = "Registration procedure for initial registration"  # Name of the section/procedure
@@ -139,6 +154,11 @@ section_name = "Registration procedure for initial registration"  # Name of the 
 procedural_info = process_text_file(input_file_path, section_name)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "v03-step2.json")
+    save_procedural_info_to_json(procedural_info, "v03-step2-flashmodel.json")
 else:
     print("Failed to extract procedural information")
+
+if save_procedural_info_to_json:
+   clean_json("v03-step2-flashmodel.json")
+else:
+    print("Failed to clean json file")

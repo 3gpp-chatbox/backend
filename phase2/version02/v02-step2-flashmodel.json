@@ -1,0 +1,385 @@
+
+{
+  "decision_points": [
+    {
+      "step": "UE Initialization",
+      "condition": "UE state is 5GMM-DEREGISTERED and one of the conditions in 5.5.1.2.2 is met",
+      "outcomes": [
+        {
+          "outcome": "Registration initiated",
+          "next_step": "REGISTRATION REQUEST message sent to AMF",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "5GS Mobile Identity IE Handling",
+      "condition": "Various conditions based on UE's previous registration status, available identities (5G-GUTI, SUCI), registration type, and PLMN/SNPN",
+      "outcomes": [
+        {
+          "outcome": "5G-GUTI mapped from 4G-GUTI indicated",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Other valid 5G-GUTI or SUCI indicated",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "PEI indicated (for emergency services)",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Onboarding SUCI indicated (for SNPN onboarding)",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Timer T3519",
+      "condition": "SUCI included in 5GS mobile identity IE and timer T3519 not running",
+      "outcomes": [
+        {
+          "outcome": "Timer T3519 started",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "UE Status IE",
+      "condition": "UE operating in dual-registration mode and in EMM-REGISTERED state",
+      "outcomes": [
+        {
+          "outcome": "UE Status IE included",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Last Visited Registered TAI",
+      "condition": "Last visited registered TAI available",
+      "outcomes": [
+        {
+          "outcome": "Last visited registered TAI included",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "SMS over NAS",
+      "condition": "UE requests SMS over NAS",
+      "outcomes": [
+        {
+          "outcome": "5GS update type IE included (SMS requested)",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "5GS update type IE included (SMS not requested)",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "REGISTRATION REQUEST message includes a NAS message container IE",
+      "outcomes": [
+        {
+          "outcome": "REGISTRATION REQUEST message processed from NAS message container IE",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Initial Registration Acceptance",
+      "condition": "Initial registration request accepted by the network",
+      "outcomes": [
+        {
+          "outcome": "REGISTRATION ACCEPT message sent to UE",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Initial registration request not accepted",
+          "next_step": "REGISTRATION REJECT message sent to UE",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "AMF TAI List Assignment",
+      "condition": "REGISTRATION REQUEST message received over non-3GPP access",
+      "outcomes": [
+        {
+          "outcome": "Single TAI included in TAI list",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Timer T3550",
+      "condition": "5G-GUTI or specific IEs included in REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "Timer T3550 started, state changed to 5GMM-COMMON-PROCEDURE-INITIATED",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "MICO Indication IE",
+      "condition": "MICO indication IE included in REGISTRATION REQUEST message and AMF supports MICO mode",
+      "outcomes": [
+        {
+          "outcome": "MICO indication IE included in REGISTRATION ACCEPT message",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "T3447 Timer",
+      "condition": "T3447 timer running in AMF and Follow-on request indicator set to \"Follow-on request pending\"",
+      "outcomes": [
+        {
+          "outcome": "Timer ignored (except for high priority access or emergency registration)",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "UE Registration Complete",
+      "condition": "REGISTRATION ACCEPT message received",
+      "outcomes": [
+        {
+          "outcome": "UE resets registration attempt counter, enters 5GMM-REGISTERED state",
+          "next_step": "Procedure complete",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION COMPLETE Message",
+      "condition": "Various conditions based on IEs included in REGISTRATION ACCEPT message and UE capabilities",
+      "outcomes": [
+        {
+          "outcome": "REGISTRATION COMPLETE message sent to AMF",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "AMF Registration Complete",
+      "condition": "REGISTRATION COMPLETE message received",
+      "outcomes": [
+        {
+          "outcome": "AMF stops timer T3550, enters 5GMM-REGISTERED state",
+          "next_step": "Procedure complete",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "SMSF Selection",
+      "condition": "5GS update type IE included in REGISTRATION REQUEST with SMS requested bit set",
+      "outcomes": [
+        {
+          "outcome": "SMSF selection successful, SMS allowed",
+          "next_step": "REGISTRATION ACCEPT message sent with SMS allowed bit set",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "SMSF selection unsuccessful or SMS not allowed",
+          "next_step": "REGISTRATION ACCEPT message sent with SMS not allowed bit set",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "5GS Registration Result",
+      "condition": "5GS registration result value in REGISTRATION ACCEPT message",
+      "outcomes": [
+        {
+          "outcome": "3GPP access",
+          "next_step": "UE considers itself registered to 3GPP access",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Non-3GPP access",
+          "next_step": "UE considers itself registered to non-3GPP access",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "3GPP access and non-3GPP access",
+          "next_step": "UE considers itself registered to both accesses",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "Network Slice-Specific Authentication and Authorization",
+      "condition": "UE indicates support for NSSAA and Requested NSSAI includes S-NSSAI(s) subject to NSSAA",
+      "outcomes": [
+        {
+          "outcome": "NSSAA successful",
+          "next_step": "Next step in procedure",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "NSSAA to be performed",
+          "next_step": "Next step in procedure",
+          "outcome_type": "pending"
+        },
+        {
+          "outcome": "NSSAA failed or revoked",
+          "next_step": "Next step in procedure",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "UE Abnormal Cases",
+      "condition": "Various timer timeouts, lower layer failures, de-registration collisions, TAI changes, transmission failures",
+      "outcomes": [
+        {
+          "outcome": "Procedure aborted, retry conditions applied",
+          "next_step": "Next step in procedure",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Procedure aborted, fallback to de-registration",
+          "next_step": "UE initiated de-registration procedure",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "Network Abnormal Cases",
+      "condition": "Various lower layer failures, protocol errors, timer timeouts, multiple REGISTRATION REQUEST messages, invalid UE security capabilities",
+      "outcomes": [
+        {
+          "outcome": "REGISTRATION REJECT message sent to UE",
+          "next_step": "Procedure complete",
+          "outcome_type": "negative"
+        },
+        {
+          "outcome": "REGISTRATION ACCEPT message retransmitted",
+          "next_step": "Next step in procedure",
+          "outcome_type": "retry"
+        },
+        {
+          "outcome": "Procedure aborted",
+          "next_step": "AMF enters 5GMM-REGISTERED state",
+          "outcome_type": "negative"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "REGISTRATION ACCEPT message sent to UE",
+      "depends_on": ["REGISTRATION REQUEST message received and processed"],
+      "type": "hard",
+      "reason": "The network must receive and process the REGISTRATION REQUEST before sending the acceptance message."
+    },
+    {
+      "step": "AMF TAI List Assignment",
+      "depends_on": ["REGISTRATION REQUEST message received"],
+      "type": "hard",
+      "reason": "The AMF needs the REGISTRATION REQUEST to determine the TAI list."
+    },
+    {
+      "step": "REGISTRATION COMPLETE message sent to AMF",
+      "depends_on": ["REGISTRATION ACCEPT message received by UE"],
+      "type": "hard",
+      "reason": "The UE must receive the REGISTRATION ACCEPT message before sending the completion message."
+    },
+    {
+      "step": "AMF stops timer T3550",
+      "depends_on": ["REGISTRATION COMPLETE message received by AMF"],
+      "type": "hard",
+      "reason": "The AMF needs the completion message to stop the timer."
+    },
+    {
+      "step": "SMSF confirmation",
+      "depends_on": ["Successful SMSF selection and SMS activation"],
+      "type": "hard",
+      "reason": "The AMF needs SMSF confirmation before sending the REGISTRATION ACCEPT message if SMS over NAS is requested."
+    }
+
+  ],
+  "fallback_conditions": [
+    {
+      "step": "UE Initialization",
+      "condition": "Timer T3346 is running (except for specific conditions)",
+      "fallback": "UE stays in current cell, applies normal cell reselection, and retries registration when conditions are met."
+    },
+    {
+      "step": "UE Initialization",
+      "condition": "Lower layers indicate access attempt is barred",
+      "fallback": "UE stays in current cell, applies normal cell reselection, and retries registration when barring is alleviated."
+    },
+    {
+      "step": "UE Initialization",
+      "condition": "T3510 timeout",
+      "fallback": "UE aborts registration, releases NAS connection (except for emergency services), increments registration attempt counter, and retries with timer T3511 or falls back to 5GMM-DEREGISTERED state."
+    },
+    {
+      "step": "UE Initialization",
+      "condition": "REGISTRATION REJECT message with other 5GMM cause values",
+      "fallback": "UE aborts registration, increments registration attempt counter, and retries with timer T3511 or falls back to 5GMM-DEREGISTERED state."
+    },
+    {
+      "step": "UE Initialization",
+      "condition": "Lower layer failure or release of NAS connection",
+      "fallback": "UE aborts registration and proceeds as described in 5.5.1.2.7."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "T3550 timeout",
+      "fallback": "AMF retransmits REGISTRATION ACCEPT message up to four times, then aborts registration."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "REGISTRATION REQUEST message received after REGISTRATION ACCEPT message",
+      "fallback": "AMF aborts previous registration or resends REGISTRATION ACCEPT message."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "Multiple REGISTRATION REQUEST messages received",
+      "fallback": "AMF aborts previous registration or ignores the second message."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "REGISTRATION REQUEST message received in 5GMM-REGISTERED state",
+      "fallback": "AMF initiates 5GMM common procedures or deletes 5GMM context and progresses new request."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "Lower layer failure before REGISTRATION COMPLETE message",
+      "fallback": "AMF aborts registration, considers old and new 5G-GUTI as valid until old GUTI can be invalidated."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "Protocol error in REGISTRATION REQUEST message",
+      "fallback": "AMF sends REGISTRATION REJECT message with appropriate 5GMM cause value."
+    },
+    {
+      "step": "AMF Processing",
+      "condition": "Invalid or unacceptable UE security capabilities",
+      "fallback": "AMF sends REGISTRATION REJECT message."
+    }
+  ]
+}
