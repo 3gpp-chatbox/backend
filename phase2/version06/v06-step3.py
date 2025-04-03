@@ -39,125 +39,108 @@ def extract_procedural_info(section_name, step1_data, step2_data):
     """Generates a structured **flow property graph** using data from step1.json and step2.json"""
     
     prompt = f"""
-You are a **graph generation tool**. Using your knowledge of 3GPP procedures but strictly based on the provided input data, construct a **structured flow property graph** for the procedure **"{section_name}"**.
+You are a **3GPP Procedure Flow Graph Generator**. Using the extracted structured data from **Step 1 (procedure steps, messages, state transitions, timers)** and **Step 2 (decision logic, dependencies, fallbacks, retries, and timeouts)**, construct a **Flow Property Graph (FPG)** for the procedure **"{section_name}"**.
 
 ---
 
-## ** Graph Representation Rules**
-**Nodes** represent:  
-✔ **Procedural Steps** (e.g., UE sends request, AMF processes message).  
-✔ **Decision Points** (e.g., conditions leading to different paths).  
-✔ **Timers** (started/stopped due to events).  
+## ** What to Construct (Graph-Based Representation)**
 
-**Edges** represent:  
-✔ **Flow transitions** (sequential, conditional, retry, fallback).  
-✔ **Decision paths** (if-else branches, error handling, alternative flows).  
-✔ **Dependencies** (where one step is dependent on another).  
+The Flow Property Graph should capture the **cause-effect relationships** between steps, messages, decisions, and timers, ensuring a structured and analyzable flow. Each node and edge in the graph must adhere to the following definitions:
 
- **Strict Rule**: Extract information **only from the provided input data**. Do **not** infer or add missing details.
+### **1. Nodes (Key Elements in the Procedure Flow)**
+
+- **Step Nodes**: Each procedural step should be a distinct node.
+- **Decision Nodes**: Any decision point (e.g., timer expiry, authentication success/failure) should be a node with multiple outgoing edges for possible outcomes.
+- **Message Nodes**: Key NAS messages exchanged between entities should be represented as nodes.
+- **Timer Nodes**: Important timers (start, expiry) must be explicitly represented.
+
+**Node Field Constraints:**
+
+- **`name`**: This field MUST be a concise, short description of the node's purpose. Prioritize brevity.
+- **`description`**: This field is OPTIONAL. Include it ONLY if the `name` is insufficient to convey the node's meaning, and if adding critical, non-redundant contextual information.
+- **`condition` (for Decision Nodes)**: This field MUST be a short, direct question or statement reflecting the decision being made. Avoid repeating the `name` verbatim.
+
+### **2. Edges (Cause-Effect Links)**
+
+- **Sequential Edges**: If Step A leads directly to Step B, an edge should represent this order.
+- **Decision Edges**: If a decision node has multiple outcomes, edges should point to the next appropriate steps based on those outcomes.
+- **Dependency Edges**: If Step X **must** occur before Step Y (hard dependency), an explicit edge must connect them.
+- **Timeout Edges**: If a timer expires and triggers a fallback/retry, an edge should show this effect.
+
+**Edge Field Constraints:**
+
+- **`description`**: This field is OPTIONAL. Include it ONLY if the `relation` is not self-explanatory or requires additional context. Prioritize brevity.
 
 ---
 
-## ** Output Format (Structured JSON)**
-The extracted graph must be in the following format:
+## **🔹 Output Format (Graph-Based JSON Representation)**
+
+The extracted **Flow Property Graph (FPG)** should be structured as follows:
 
 ```json
 {{
-  "graph": {{
-    "nodes": [
-      {{
-        "id": "start",
-        "type": "start",
-        "description": "Procedure starts",
-        "properties": {{}}
-      }},
-      {{
-        "id": "1",
-        "type": "process",
-        "description": "UE sends REGISTRATION REQUEST",
-        "properties": {{
-          "state_change": "N/A",
-          "entity": "UE",
-          "messages": ["REGISTRATION REQUEST"]
-        }}
-      }},
-      {{
-        "id": "2",
-        "type": "timer",
-        "description": "Timer T3510 starts",
-        "properties": {{
-          "action": "start",
-          "timeout": "5 seconds"
-        }}
-      }},
-      {{
-        "id": "3",
-        "type": "decision",
-        "description": "Decision based on timer expiration",
-        "properties": {{
-          "condition": "Timer T3510 expires",
-          "outcomes": [
-            {{
-              "outcome": "Success",
-              "next_step": 4
-            }},
-            {{
-              "outcome": "Failure - Retry",
-              "next_step": 2,
-              "reason": "Timeout"
-            }}
-          ]
-        }}
-      }},
-      {{
-        "id": "4",
-        "type": "process",
-        "description": "AMF processes REGISTRATION REQUEST",
-        "properties": {{
-          "state_change": "5GMM-DEREGISTERED → 5GMM-REGISTERED",
-          "entity": "AMF",
-          "messages": ["REGISTRATION ACCEPT"]
-        }}
-      }}
-    ],
-    "edges": [
-      {{
-        "from": "start",
-        "to": "1",
-        "type": "sequential",
-        "properties": {{
-          "trigger": "UE sends REGISTRATION REQUEST"
-        }}
-      }},
-      {{
-        "from": "1",
-        "to": "2",
-        "type": "sequential",
-        "properties": {{
-          "trigger": "Timer T3510 starts"
-        }}
-      }},
-      {{
-        "from": "2",
-        "to": "3",
-        "type": "conditional",
-        "properties": {{
-          "condition": "Timer T3510 expires",
-          "error_type": "Timeout",
-          "retry_count": 3
-        }}
-      }},
-      {{
-        "from": "3",
-        "to": "4",
-        "type": "sequential",
-        "properties": {{
-          "trigger": "AMF sends REGISTRATION ACCEPT"
-        }}
-      }}
-    ]
-  }}
+  "procedure_name": "{section_name}",
+  "nodes": [
+    {{
+      "id": 1,
+      "type": "step",
+      "name": "REG_REQ sent",
+      "description": "UE to AMF",
+      "entity": "UE",
+      "action": "send"
+    }},
+    {{
+      "id": 2,
+      "type": "message",
+      "name": "REG_ACC received",
+      "description": "AMF to UE",
+      "from": "AMF",
+      "to": "UE",
+      "action": "send"
+    }},
+    {{
+      "id": 3,
+      "type": "decision",
+      "name": "Auth success?",
+      "condition": "Auth successful?",
+      "outcomes": ["Yes", "No"]
+    }},
+    {{
+      "id": 4,
+      "type": "timer",
+      "name": "T3510 start",
+      "action": "start",
+      "trigger": "REG_REQ sent",
+      "duration": "time_value"
+    }}
+  ],
+  "edges": [
+    {{
+      "from": 1,
+      "to": 2,
+      "relation": "triggers"
+    }},
+    {{
+      "from": 2,
+      "to": 3,
+      "relation": "leads_to"
+    }},
+    {{
+      "from": 3,
+      "to": 4,
+      "condition": "No",
+      "relation": "fallback"
+    }},
+    {{
+      "from": 4,
+      "to": 1,
+      "condition": "Timer expires",
+      "relation": "retry"
+    }}
+  ]
 }}
+
+
 
 ### Input Data:
 #### Extracted Procedure Steps:
@@ -190,12 +173,27 @@ def save_to_json(data, file_path):
     with open(file_path, "w", encoding='utf-8') as file:
         file.write(data)
     print(f"Procedural info saved to {file_path}")
+def clean_json(file_path):
+    """Remove Markdown-style triple backticks (```json ... ```) from the JSON file."""
+    try:
+        with open(file_path, "r") as f:
+            raw_data = f.read()
+
+        # Remove Markdown code block indicators (```json and ```)
+        cleaned_data = raw_data.strip().replace("```json", "").replace("```", "").strip()
+
+        # Overwrite the file with cleaned JSON
+        with open(file_path, "w") as f:
+            f.write(cleaned_data)
+
+    except Exception as e:
+        print(f"Error cleaning JSON: {e}")
 
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    step1_data = read_json_file("v03-step1.json")
-    step2_data = read_json_file("v03-step2.json")
+    step1_data = read_json_file("v06-step1.json")
+    step2_data = read_json_file("v06-step2.json")
 
     if step1_data is None or step2_data is None:
         print("Failed to load step1.json or step2.json")
@@ -210,6 +208,11 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_json(procedural_info, "v03-step3.json")
+    save_to_json(procedural_info, "v06-step3-complex.json")
 else:
     print("Failed to extract procedural information")
+
+if save_to_json:
+   clean_json("v06-step3-complex.json")
+else:
+    print("Failed to clean json file")

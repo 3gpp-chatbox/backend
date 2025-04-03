@@ -70,13 +70,11 @@ graph TD;
   T3550_start_12 -->|AMF starts timer T3550| 5GMM-COMMON-PROCEDURE-INITIATED;
   REGISTRATION_ACCEPT -->|UE receives REGISTRATION ACCEPT| 5GMM-REGISTERED;
   REGISTRATION_ACCEPT -->|Certain IEs present in REGISTRATION ACCEPT require acknowledgement| REGISTRATION_COMPLETE;
-  REGISTRATION_ACCEPT -->|The REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to 'CAG supported' in the 5GMM capability IE of the REGISTRATION REQUEST message| CAG_information_list_replaced;
+  REGISTRATION_ACCEPT -->|The REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message| CAG_information_list_replaced;
   REGISTRATION_ACCEPT -->|The REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE| REGISTRATION_COMPLETE_acknowledged;
-  REGISTRATION_ACCEPT -->|The UE has set the RCMAP bit to 'Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported' in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE| REGISTRATION_COMPLETE_acknowledged_PEIPS;
+  REGISTRATION_ACCEPT -->|The UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE| REGISTRATION_COMPLETE_acknowledged_PEIPS;
   REGISTRATION_ACCEPT -->|The REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE| REGISTRATION_COMPLETE_acknowledged_radio;
   REGISTRATION_COMPLETE -->|UE sends REGISTRATION COMPLETE| T3550_stop;
   T3550_stop -->|AMF stops timer T3550| 5GMM-REGISTERED_AMF;
   REGISTRATION_REQUEST -->|Initial registration request cannot be accepted by the network| REGISTRATION_REJECT;
 ```
-
-***error fixed: Changed double quotes to single quotes in text like 'CAG supported' and 'Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported'***
