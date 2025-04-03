@@ -1,0 +1,312 @@
+{
+  "nodes": [
+    {
+      "id": "state_deregistered",
+      "type": "state",
+      "description": "UE state 5GMM-DEREGISTERED"
+    },
+    {
+      "id": "event_ue_sends_reg_req",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST message, starts T3510"
+    },
+    {
+      "id": "state_ue_waiting_response",
+      "type": "state",
+      "description": "UE waiting for response (T3510 running)"
+    },
+    {
+      "id": "event_amf_receives_reg_req",
+      "type": "event",
+      "description": "AMF receives REGISTRATION REQUEST message"
+    },
+    {
+      "id": "state_amf_processing",
+      "type": "state",
+      "description": "AMF processing request (incl. common procedures)"
+    },
+    {
+      "id": "event_amf_sends_reg_accept",
+      "type": "event",
+      "description": "AMF sends REGISTRATION ACCEPT message"
+    },
+    {
+      "id": "event_amf_sends_reg_reject",
+      "type": "event",
+      "description": "AMF sends REGISTRATION REJECT message"
+    },
+    {
+      "id": "event_ue_receives_reg_accept",
+      "type": "event",
+      "description": "UE receives REGISTRATION ACCEPT, stops T3510"
+    },
+    {
+      "id": "state_ue_registered",
+      "type": "state",
+      "description": "UE enters 5GMM-REGISTERED state"
+    },
+    {
+      "id": "event_ue_sends_reg_complete",
+      "type": "event",
+      "description": "UE sends REGISTRATION COMPLETE message (if ack required)"
+    },
+    {
+      "id": "state_amf_waiting_complete",
+      "type": "state",
+      "description": "AMF sent ACCEPT, waiting for COMPLETE (T3550 running)"
+    },
+    {
+      "id": "event_amf_receives_reg_complete",
+      "type": "event",
+      "description": "AMF receives REGISTRATION COMPLETE, stops T3550"
+    },
+    {
+      "id": "state_amf_registered",
+      "type": "state",
+      "description": "AMF considers UE registered"
+    },
+    {
+      "id": "event_ue_receives_reg_reject",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT, stops T3510"
+    },
+    {
+      "id": "state_ue_rejected",
+      "type": "state",
+      "description": "UE handles REJECT based on cause (enters DEREGISTERED substate)"
+    },
+    {
+      "id": "event_t3510_expires",
+      "type": "event",
+      "description": "Timer T3510 expires at UE"
+    },
+    {
+      "id": "state_ue_retry_wait",
+      "type": "state",
+      "description": "UE waiting for retry timer (T3511 or T3346)"
+    },
+    {
+      "id": "state_ue_max_retries",
+      "type": "state",
+      "description": "UE reached max retries for T3510 timeout"
+    },
+    {
+      "id": "event_t3550_expires",
+      "type": "event",
+      "description": "Timer T3550 expires at AMF"
+    },
+    {
+      "id": "event_amf_resends_reg_accept",
+      "type": "event",
+      "description": "AMF retransmits REGISTRATION ACCEPT, restarts T3550"
+    },
+    {
+      "id": "state_end_success",
+      "type": "state",
+      "description": "Registration Successful"
+    },
+    {
+      "id": "state_end_rejected",
+      "type": "state",
+      "description": "Registration Rejected (final state depends on cause)"
+    },
+    {
+      "id": "state_end_ue_timeout",
+      "type": "state",
+      "description": "Registration Failed (UE T3510 Timeout - Max Retries)"
+    },
+    {
+      "id": "state_end_amf_timeout",
+      "type": "state",
+      "description": "Registration Ended (AMF T3550 Timeout - Max Retries, UE considered registered by AMF)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "state_deregistered",
+      "to": "event_ue_sends_reg_req",
+      "type": "trigger",
+      "description": "UE initiates initial registration procedure"
+    },
+    {
+      "from": "event_ue_sends_reg_req",
+      "to": "state_ue_waiting_response",
+      "type": "trigger",
+      "description": "REGISTRATION REQUEST sent, T3510 started"
+    },
+    {
+      "from": "event_ue_sends_reg_req",
+      "to": "event_amf_receives_reg_req",
+      "type": "trigger",
+      "description": "Message transmission to AMF"
+    },
+    {
+      "from": "event_amf_receives_reg_req",
+      "to": "state_amf_processing",
+      "type": "trigger",
+      "description": "AMF starts processing the request"
+    },
+    {
+      "from": "state_amf_processing",
+      "to": "event_amf_sends_reg_accept",
+      "type": "condition",
+      "description": "Initial registration request is accepted"
+    },
+    {
+      "from": "state_amf_processing",
+      "to": "event_amf_sends_reg_reject",
+      "type": "condition",
+      "description": "Initial registration request cannot be accepted"
+    },
+    {
+      "from": "event_amf_sends_reg_accept",
+      "to": "event_ue_receives_reg_accept",
+      "type": "trigger",
+      "description": "Message transmission to UE"
+    },
+    {
+      "from": "state_ue_waiting_response",
+      "to": "event_ue_receives_reg_accept",
+      "type": "trigger",
+      "description": "REGISTRATION ACCEPT received by UE"
+    },
+    {
+      "from": "event_ue_receives_reg_accept",
+      "to": "state_ue_registered",
+      "type": "trigger",
+      "description": "UE stops T3510, resets counter, enters 5GMM-REGISTERED"
+    },
+    {
+      "from": "state_ue_registered",
+      "to": "event_ue_sends_reg_complete",
+      "type": "condition",
+      "description": "Acknowledgement required by AMF (based on ACCEPT content)"
+    },
+    {
+      "from": "state_ue_registered",
+      "to": "state_end_success",
+      "type": "condition",
+      "description": "Acknowledgement NOT required by AMF"
+    },
+    {
+      "from": "event_ue_sends_reg_complete",
+      "to": "event_amf_receives_reg_complete",
+      "type": "trigger",
+      "description": "Message transmission to AMF"
+    },
+    {
+      "from": "event_amf_sends_reg_accept",
+      "to": "state_amf_waiting_complete",
+      "type": "condition",
+      "description": "Acknowledgement required, AMF starts T3550"
+    },
+    {
+      "from": "event_amf_sends_reg_accept",
+      "to": "state_amf_registered",
+      "type": "condition",
+      "description": "Acknowledgement NOT required"
+    },
+    {
+      "from": "state_amf_waiting_complete",
+      "to": "event_amf_receives_reg_complete",
+      "type": "trigger",
+      "description": "AMF waiting for REGISTRATION COMPLETE"
+    },
+    {
+      "from": "event_amf_receives_reg_complete",
+      "to": "state_amf_registered",
+      "type": "trigger",
+      "description": "AMF stops T3550, enters 5GMM-REGISTERED"
+    },
+    {
+      "from": "state_amf_registered",
+      "to": "state_end_success",
+      "type": "trigger",
+      "description": "Registration procedure successful at AMF"
+    },
+    {
+      "from": "event_amf_sends_reg_reject",
+      "to": "event_ue_receives_reg_reject",
+      "type": "trigger",
+      "description": "Message transmission to UE"
+    },
+    {
+      "from": "state_ue_waiting_response",
+      "to": "event_ue_receives_reg_reject",
+      "type": "trigger",
+      "description": "REGISTRATION REJECT received by UE"
+    },
+    {
+      "from": "event_ue_receives_reg_reject",
+      "to": "state_ue_rejected",
+      "type": "trigger",
+      "description": "UE stops T3510"
+    },
+    {
+      "from": "state_ue_rejected",
+      "to": "state_ue_retry_wait",
+      "type": "condition",
+      "description": "5GMM cause allows retry (e.g., #22 Congestion starts T3346)"
+    },
+    {
+      "from": "state_ue_rejected",
+      "to": "state_end_rejected",
+      "type": "condition",
+      "description": "5GMM cause leads to failure or PLMN search (e.g., #11, #7, #3)"
+    },
+    {
+      "from": "state_ue_retry_wait",
+      "to": "state_deregistered",
+      "type": "trigger",
+      "description": "Retry timer (T3346 or T3511) expires, UE can attempt registration again"
+    },
+    {
+      "from": "state_ue_waiting_response",
+      "to": "event_t3510_expires",
+      "type": "trigger",
+      "description": "Timer T3510 expires before receiving response"
+    },
+    {
+      "from": "event_t3510_expires",
+      "to": "state_ue_retry_wait",
+      "type": "condition",
+      "description": "Registration attempt counter < 5, UE starts T3511"
+    },
+    {
+      "from": "event_t3510_expires",
+      "to": "state_ue_max_retries",
+      "type": "condition",
+      "description": "Registration attempt counter = 5"
+    },
+    {
+      "from": "state_ue_max_retries",
+      "to": "state_end_ue_timeout",
+      "type": "trigger",
+      "description": "Max retries reached, UE deletes context, may start T3502"
+    },
+    {
+      "from": "state_amf_waiting_complete",
+      "to": "event_t3550_expires",
+      "type": "trigger",
+      "description": "Timer T3550 expires before receiving REGISTRATION COMPLETE"
+    },
+    {
+      "from": "event_t3550_expires",
+      "to": "event_amf_resends_reg_accept",
+      "type": "condition",
+      "description": "Retransmission counter < 5"
+    },
+    {
+      "from": "event_amf_resends_reg_accept",
+      "to": "state_amf_waiting_complete",
+      "type": "trigger",
+      "description": "AMF retransmits ACCEPT and restarts T3550"
+    },
+    {
+      "from": "event_t3550_expires",
+      "to": "state_end_amf_timeout",
+      "type": "condition",
+      "description": "Retransmission counter = 5, AMF aborts procedure but considers UE registered"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "steps": [
+    {
+      "id": 1,
+      "step": "UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF.",
+      "state_before": "5GMM-DEREGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 2,
+      "step": "UE starts timer T3510.",
+      "entity": "UE"
+    },
+    {
+      "id": 3,
+      "step": "If timer T3502 is running, UE stops timer T3502.",
+      "entity": "UE"
+    },
+    {
+      "id": 4,
+      "step": "If timer T3511 is running, UE stops timer T3511.",
+      "entity": "UE"
+    },
+    {
+      "id": 5,
+      "step": "If SUCI is included in the REGISTRATION REQUEST and timer T3519 is not running, UE starts timer T3519.",
+      "entity": "UE"
+    },
+    {
+      "id": 6,
+      "step": "AMF may initiate 5GMM common procedures (e.g., authentication, security).",
+      "entity": "AMF"
+    },
+    {
+      "id": 7,
+      "step": "If the initial registration request is accepted, AMF sends a REGISTRATION ACCEPT message to the UE (containing e.g., 5G-GUTI, TAI list, Allowed NSSAI, 5GS network feature support).",
+      "entity": "AMF"
+    },
+    {
+      "id": 8,
+      "step": "If acknowledgement is required (e.g., due to 5G-GUTI, SOR container, Operator-defined access category definitions, CAG information list, Negotiated PEIPS assistance information, UE radio capability ID, Truncated 5G-S-TMSI configuration, service-level-AA pending, NSSAI updates being included in REGISTRATION ACCEPT), AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED.",
+      "entity": "AMF"
+    },
+    {
+      "id": 9,
+      "step": "Upon receipt of REGISTRATION ACCEPT, UE stops timer T3510, resets the registration attempt counter, enters state 5GMM-REGISTERED, and sets the 5GS update status to 5U1 UPDATED.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "UE"
+    },
+    {
+      "id": 10,
+      "step": "If acknowledgement was required by the AMF (based on content in REGISTRATION ACCEPT), UE sends a REGISTRATION COMPLETE message to the AMF.",
+      "entity": "UE"
+    },
+    {
+      "id": 11,
+      "step": "Upon receipt of REGISTRATION COMPLETE, AMF stops timer T3550 and changes to state 5GMM-REGISTERED.",
+      "state_after": "5GMM-REGISTERED",
+      "entity": "AMF"
+    },
+    {
+      "id": 12,
+      "step": "Alternatively, if the initial registration request cannot be accepted, AMF sends a REGISTRATION REJECT message to the UE (including a 5GMM cause).",
+      "entity": "AMF"
+    },
+    {
+      "id": 13,
+      "step": "Upon receipt of REGISTRATION REJECT, UE stops timer T3510 and performs actions based on the 5GMM cause value (e.g., starts T3346 for cause #22, stores forbidden PLMN/TAI, enters appropriate 5GMM-DEREGISTERED substate like ATTEMPTING-REGISTRATION, PLMN-SEARCH, LIMITED-SERVICE, NO-SUPI).",
+      "state_after": "Various 5GMM-DEREGISTERED substates depending on cause",
+      "entity": "UE"
+    },
+    {
+      "id": 14,
+      "step": "If T3510 expires (timeout), UE aborts the procedure, stops T3510, increments the registration attempt counter. If counter < 5, starts T3511 and enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. If counter = 5, deletes context, starts T3502 (if > 0), sets status 5U2 NOT UPDATED, enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH.",
+      "state_after": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH",
+      "entity": "UE"
+    }
+  ],
+  "messages": [
+    {
+      "name": "REGISTRATION REQUEST",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION ACCEPT",
+      "from": "AMF",
+      "to": "UE"
+    },
+    {
+      "name": "REGISTRATION COMPLETE",
+      "from": "UE",
+      "to": "AMF"
+    },
+    {
+      "name": "REGISTRATION REJECT",
+      "from": "AMF",
+      "to": "UE"
+    }
+  ],
+  "timers": [
+    {
+      "name": "T3510",
+      "action": "start",
+      "step_id": 2
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 9
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 13
+    },
+    {
+      "name": "T3510",
+      "action": "stop",
+      "step_id": 14
+    },
+    {
+      "name": "T3502",
+      "action": "stop",
+      "step_id": 3
+    },
+    {
+      "name": "T3502",
+      "action": "start",
+      "step_id": 14
+    },
+    {
+      "name": "T3511",
+      "action": "stop",
+      "step_id": 4
+    },
+    {
+      "name": "T3511",
+      "action": "start",
+      "step_id": 14
+    },
+    {
+      "name": "T3519",
+      "action": "start",
+      "step_id": 5
+    },
+    {
+      "name": "T3550",
+      "action": "start",
+      "step_id": 8
+    },
+    {
+      "name": "T3550",
+      "action": "stop",
+      "step_id": 11
+    },
+    {
+      "name": "T3346",
+      "action": "start",
+      "step_id": 13
+    },
+    {
+      "name": "T3526",
+      "action": "start",
+      "step_id": 13
+    }
+  ]
+}

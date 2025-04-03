@@ -1,7 +1,7 @@
 import json
 
 # Load JSON data from a file
-with open("v02-step3-simple-flashmodel.json", "r", encoding="utf-8") as f:
+with open("v02-step3-simple-newmodel.json", "r", encoding="utf-8") as f:
     graph_data = json.load(f)
 
 # Initialize Mermaid diagram
@@ -26,7 +26,7 @@ for edge in graph_data["edges"]:  # Directly access "edges" from the top level
 mermaid_code += "```\n"
 
 # Save to file
-with open("mermaid-simple.md", "w", encoding="utf-8") as f:
+with open("mermaid-simple-newmodel.md", "w", encoding="utf-8") as f:
     f.write(mermaid_code)
 
 print("Mermaid diagram saved to mermaid-simple.md!")
