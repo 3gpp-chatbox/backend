@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "id": "state1",
+      "type": "state",
+      "description": "5GMM-DEREGISTERED"
+    },
+    {
+      "id": "event1",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST to AMF"
+    },
+    {
+      "id": "state2",
+      "type": "state",
+      "description": "5GMM-REGISTERED-INITIATED"
+    },
+    {
+      "id": "event2",
+      "type": "event",
+      "description": "AMF initiates 5GMM common procedures"
+    },
+    {
+      "id": "event3",
+      "type": "event",
+      "description": "AMF sends REGISTRATION ACCEPT to UE"
+    },
+    {
+      "id": "state3",
+      "type": "state",
+      "description": "5GMM-COMMON-PROCEDURE-INITIATED"
+    },
+    {
+      "id": "state4",
+      "type": "state",
+      "description": "5GMM-REGISTERED"
+    },
+    {
+      "id": "event4",
+      "type": "event",
+      "description": "UE sends REGISTRATION COMPLETE to AMF"
+    },
+    {
+      "id": "event5",
+      "type": "event",
+      "description": "AMF receives REGISTRATION COMPLETE"
+    },
+    {
+      "id": "event6",
+      "type": "event",
+      "description": "AMF sends REGISTRATION REJECT to UE"
+    },
+    {
+      "id": "state5",
+      "type": "state",
+      "description": "UE receives REGISTRATION REJECT"
+    },
+    {
+      "id": "event7",
+      "type": "event",
+      "description": "T3510 expires"
+    },
+    {
+      "id": "state6",
+      "type": "state",
+      "description": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    }
+  ],
+  "edges": [
+    {
+      "from": "state1",
+      "to": "event1",
+      "type": "trigger",
+      "description": "UE initiates registration"
+    },
+    {
+      "from": "event1",
+      "to": "state2",
+      "type": "trigger",
+      "description": "UE starts T3510, stops T3502 and T3511"
+    },
+    {
+      "from": "state2",
+      "to": "event2",
+      "type": "condition",
+      "description": "Network may initiate 5GMM common procedures"
+    },
+    {
+      "from": "event2",
+      "to": "event3",
+      "type": "condition",
+      "description": "Initial registration request is accepted"
+    },
+    {
+      "from": "event3",
+      "to": "state3",
+      "type": "trigger",
+      "description": "AMF starts timer T3550 if 5G-GUTI or SOR transparent container IE is included"
+    },
+    {
+      "from": "event3",
+      "to": "state4",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT and enters 5GMM-REGISTERED"
+    },
+    {
+      "from": "state4",
+      "to": "event4",
+      "type": "condition",
+      "description": "REGISTRATION ACCEPT contains specific IEs"
+    },
+    {
+      "from": "event4",
+      "to": "event5",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION COMPLETE"
+    },
+    {
+      "from": "event5",
+      "to": "state4",
+      "type": "trigger",
+      "description": "AMF stops T3550 and changes to 5GMM-REGISTERED"
+    },
+    {
+      "from": "event2",
+      "to": "event6",
+      "type": "condition",
+      "description": "Initial registration request cannot be accepted"
+    },
+    {
+      "from": "event6",
+      "to": "state5",
+      "type": "trigger",
+      "description": "AMF sends REGISTRATION REJECT"
+    },
+    {
+      "from": "state2",
+      "to": "event7",
+      "type": "condition",
+      "description": "T3510 expires"
+    },
+    {
+      "from": "event7",
+      "to": "state6",
+      "type": "condition",
+      "description": "Registration attempt counter < 5"
+    }
+  ]
+}

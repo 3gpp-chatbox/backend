@@ -1,0 +1,234 @@
+
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "description": "Procedure starts",
+        "properties": {}
+      },
+      {
+        "id": "1",
+        "type": "process",
+        "description": "UE sends REGISTRATION REQUEST",
+        "properties": {
+          "state_change": "5GMM-DEREGISTERED",
+          "entity": "UE",
+          "messages": ["REGISTRATION REQUEST"]
+        }
+      },
+      {
+        "id": "2",
+        "type": "timer",
+        "description": "UE starts timer T3510",
+        "properties": {
+          "action": "start",
+          "name": "T3510"
+        }
+      },
+      {
+        "id": "3",
+        "type": "decision",
+        "description": "Decision based on timer expiration",
+        "properties": {
+          "condition": "Timer T3510 expires",
+          "outcomes": [
+            {
+              "outcome": "Failure - Retry",
+              "next_step": "1",
+              "reason": "T3510 timeout"
+            }
+          ]
+        }
+      },
+      {
+        "id": "6",
+        "type": "process",
+        "description": "AMF processes REGISTRATION REQUEST",
+        "properties": {
+          "entity": "AMF",
+          "messages": []
+        }
+      },
+      {
+        "id": "7",
+        "type": "decision",
+        "description": "Decision based on whether the initial registration request is accepted",
+        "properties": {
+          "condition": "Initial registration request is accepted",
+          "outcomes": [
+            {
+              "outcome": "Success: Send REGISTRATION ACCEPT",
+              "next_step": "8"
+            },
+            {
+              "outcome": "Failure: Send REGISTRATION REJECT",
+              "next_step": "22"
+            }
+          ]
+        }
+      },
+      {
+        "id": "8",
+        "type": "process",
+        "description": "AMF sends a REGISTRATION ACCEPT message to the UE",
+        "properties": {
+          "entity": "AMF",
+          "messages": ["REGISTRATION ACCEPT"]
+        }
+      },
+      {
+        "id": "14",
+        "type": "process",
+        "description": "UE receives REGISTRATION ACCEPT message, resets registration attempt counter, enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED",
+        "properties": {
+          "entity": "UE",
+          "state_change": "5GMM-REGISTERED"
+        }
+      },
+      {
+        "id": "15",
+        "type": "decision",
+        "description": "Decision based on whether the REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\"",
+        "properties": {
+          "condition": "REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\"",
+          "outcomes": [
+            {
+              "outcome": "Success: UE shall return a REGISTRATION COMPLETE message to the AMF",
+              "next_step": "15a"
+            }
+          ]
+        }
+      },
+      {
+        "id": "15a",
+        "type": "process",
+        "description": "UE returns a REGISTRATION COMPLETE message to the AMF",
+        "properties": {
+          "entity": "UE",
+          "messages": ["REGISTRATION COMPLETE"]
+        }
+      },
+      {
+        "id": "21",
+        "type": "process",
+        "description": "AMF receives REGISTRATION COMPLETE message, stops timer T3550 and changes to state 5GMM-REGISTERED",
+        "properties": {
+          "entity": "AMF",
+          "state_change": "5GMM-REGISTERED"
+        }
+      },
+      {
+        "id": "22",
+        "type": "process",
+        "description": "AMF sends a REGISTRATION REJECT message to the UE",
+        "properties": {
+          "entity": "AMF",
+          "messages": ["REGISTRATION REJECT"]
+        }
+      },
+      {
+        "id": "end",
+        "type": "end",
+        "description": "Procedure ends",
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "1",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "1",
+        "to": "2",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "2",
+        "to": "3",
+        "type": "conditional",
+        "properties": {}
+      },
+      {
+        "from": "3",
+        "to": "1",
+        "type": "retry",
+        "properties": {}
+      },
+      {
+        "from": "1",
+        "to": "6",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "6",
+        "to": "7",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "7",
+        "to": "8",
+        "type": "conditional",
+        "properties": {
+          "condition": "Initial registration request is accepted",
+          "outcome": "Success"
+        }
+      },
+      {
+        "from": "7",
+        "to": "22",
+        "type": "conditional",
+        "properties": {
+          "condition": "Initial registration request is accepted",
+          "outcome": "Failure"
+        }
+      },
+      {
+        "from": "8",
+        "to": "14",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "14",
+        "to": "15",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "15",
+        "to": "15a",
+        "type": "conditional",
+        "properties": {
+          "condition": "REGISTRATION ACCEPT message contains the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\"",
+          "outcome": "Success"
+        }
+      },
+      {
+        "from": "15a",
+        "to": "21",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "21",
+        "to": "end",
+        "type": "sequential",
+        "properties": {}
+      },
+      {
+        "from": "22",
+        "to": "end",
+        "type": "sequential",
+        "properties": {}
+      }
+    ]
+  }
+}

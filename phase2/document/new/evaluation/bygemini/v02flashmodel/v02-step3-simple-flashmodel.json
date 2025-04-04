@@ -1,0 +1,165 @@
+{
+  "nodes": [
+    {
+      "id": "state_deregistered",
+      "type": "state",
+      "description": "UE in state 5GMM-DEREGISTERED"
+    },
+    {
+      "id": "event_reg_request",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST message to AMF"
+    },
+    {
+      "id": "timer_start_t3510",
+      "type": "event",
+      "description": "UE starts timer T3510"
+    },
+    {
+      "id": "timer_stop_t3502",
+      "type": "event",
+      "description": "UE stops timer T3502, if it is running"
+    },
+    {
+      "id": "timer_stop_t3511",
+      "type": "event",
+      "description": "UE stops timer T3511, if it is running"
+    },
+    {
+      "id": "decision_initial_reg_accepted",
+      "type": "event",
+      "description": "Initial registration request accepted by the network"
+    },
+    {
+      "id": "event_reg_accept",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION ACCEPT message to the UE"
+    },
+    {
+      "id": "timer_start_t3550",
+      "type": "event",
+      "description": "AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED if 5G-GUTI or SOR transparent container IE is included in REGISTRATION ACCEPT"
+    },
+    {
+      "id": "state_common_procedure_initiated",
+      "type": "state",
+      "description": "AMF enters state 5GMM-COMMON-PROCEDURE-INITIATED"
+    },
+    {
+      "id": "state_registered",
+      "type": "state",
+      "description": "UE enters state 5GMM-REGISTERED and sets the 5GS update status to 5U1 UPDATED upon receipt of REGISTRATION ACCEPT"
+    },
+    {
+      "id": "event_reg_complete",
+      "type": "event",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information or CAG information or Operator-defined access category definitions or UE radio capability ID IE"
+    },
+    {
+      "id": "timer_stop_t3550_amf",
+      "type": "event",
+      "description": "AMF stops timer T3550 upon receiving a REGISTRATION COMPLETE message"
+    },
+    {
+      "id": "state_registered_amf",
+      "type": "state",
+      "description": "AMF changes to state 5GMM-REGISTERED"
+    },
+    {
+      "id": "decision_initial_reg_rejected",
+      "type": "event",
+      "description": "Initial registration request cannot be accepted by the network"
+    },
+    {
+      "id": "event_reg_reject",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value"
+    }
+  ],
+  "edges": [
+    {
+      "from": "state_deregistered",
+      "to": "event_reg_request",
+      "type": "trigger",
+      "description": "UE initiates registration procedure"
+    },
+    {
+      "from": "event_reg_request",
+      "to": "timer_start_t3510",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "event_reg_request",
+      "to": "timer_stop_t3502",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "event_reg_request",
+      "to": "timer_stop_t3511",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "event_reg_request",
+      "to": "decision_initial_reg_accepted",
+      "type": "condition",
+      "description": "AMF processes REGISTRATION REQUEST"
+    },
+    {
+      "from": "decision_initial_reg_accepted",
+      "to": "event_reg_accept",
+      "type": "trigger",
+      "description": "Initial registration request accepted"
+    },
+    {
+      "from": "event_reg_accept",
+      "to": "timer_start_t3550",
+      "type": "trigger",
+      "description": "AMF sends REGISTRATION ACCEPT"
+    },
+    {
+      "from": "timer_start_t3550",
+      "to": "state_common_procedure_initiated",
+      "type": "trigger",
+      "description": "5G-GUTI or SOR transparent container IE is included in REGISTRATION ACCEPT"
+    },
+    {
+      "from": "event_reg_accept",
+      "to": "state_registered",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT"
+    },
+    {
+      "from": "state_registered",
+      "to": "event_reg_complete",
+      "type": "trigger",
+      "description": "UE returns REGISTRATION COMPLETE"
+    },
+    {
+      "from": "event_reg_complete",
+      "to": "timer_stop_t3550_amf",
+      "type": "trigger",
+      "description": "AMF receives REGISTRATION COMPLETE"
+    },
+    {
+      "from": "timer_stop_t3550_amf",
+      "to": "state_registered_amf",
+      "type": "trigger",
+      "description": "AMF stops timer T3550"
+    },
+    {
+      "from": "decision_initial_reg_accepted",
+      "to": "decision_initial_reg_rejected",
+      "type": "condition",
+      "description": "Initial registration request not accepted"
+    },
+    {
+      "from": "decision_initial_reg_rejected",
+      "to": "event_reg_reject",
+      "type": "trigger",
+      "description": "Initial registration request rejected"
+    }
+  ]
+}

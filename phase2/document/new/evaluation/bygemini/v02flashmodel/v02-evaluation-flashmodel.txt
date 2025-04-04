@@ -1,0 +1,41 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text for the "Registration procedure for initial registration" and identify any discrepancies or omissions.
+
+#### Corrections and Omissions:
+
+1.  **Missing Edge:** There's no edge describing what happens after `timer_start_t3510`. The UE starts timer T3510 after sending the REGISTRATION REQUEST. The specification doesn't explicitly state a transition *from* T3510, but it implies the procedure continues while the timer is running, waiting for a response. This is an omission.
+
+    *   **Original Document Reference:** "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510."
+
+2.  **Missing Edge:** There's no edge describing the UE behavior when T3510 expires. The specification doesn't explicitly state the UE behavior when T3510 expires. This is an omission.
+
+3.  **Missing Edge:** There's no edge describing the AMF behavior when the initial registration request is accepted but the AMF does not include a 5G-GUTI or the SOR transparent container IE, the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE, the UE radio capability ID IE or the UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message.
+
+    *   **Original Document Reference:** "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the UE is not in NB-N1 mode and the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message. If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+4.  **Missing State:** There is no state to represent the UE behavior when the initial registration request is rejected. The UE enters a deregistered state, but the specific state depends on the cause value in the REGISTRATION REJECT message.
+
+    *   **Original Document Reference:** Section 5.5.1.2.5 describes the UE behavior based on different 5GMM cause values in the REGISTRATION REJECT message.
+
+5.  **Missing Edge:** There is no edge from `event_reg_reject` to `state_deregistered`. The UE enters a deregistered state after receiving a REGISTRATION REJECT message.
+
+    *   **Original Document Reference:** Section 5.5.1.2.5 describes the UE behavior based on different 5GMM cause values in the REGISTRATION REJECT message, all of which lead to a deregistered state.
+
+6.  **Inaccurate Description:** The description of `timer_start_t3550` is not entirely accurate. The AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED if a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE, the UE radio capability ID IE or the UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message.
+
+    *   **Original Document Reference:** "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS assistance information supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if the Negotiated PEIPS assistance information IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+    *   **Original Document Reference:** "If the UE is not in NB-N1 mode and the UE has set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message, the AMF may include either a UE radio capability ID IE or a UE radio capability ID deletion indication IE in the REGISTRATION ACCEPT message. If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3."
+
+#### Accuracy Score:
+
+Based on the identified omissions and inaccuracies, I would estimate the accuracy of the extracted data to be around **70%**.

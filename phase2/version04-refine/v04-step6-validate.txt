@@ -1,0 +1,39 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text and identify any discrepancies or omissions.
+
+#### Corrections and Omissions:
+
+1.  **Missing Node:** There is no node representing the UE starting timer T3526. The original document mentions this timer in the context of the UE receiving a REGISTRATION REJECT message with the cause "S-NSSAI not available due to maximum number of UEs reached".
+
+    *   **Original Document:** "If there is one or more S-NSSAIs in the rejected NSSAI with the rejection cause "S-NSSAI not available due to maximum number of UEs reached", then for each S-NSSAI, the UE shall behave as follows: ... b) start the timer T3526..." (Section 5.5.1.2.5)
+
+2.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the Network slicing indication IE set to "Network slicing subscription changed" and then sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the REGISTRATION ACCEPT message contains a) the Network slicing indication IE with the Network slicing subscription change indication set to "Network slicing subscription changed"; ... the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information." (Section 5.5.1.2.4)
+
+3.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall: ... the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the "CAG information list"." (Section 5.5.1.2.4)
+
+4.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the Operator-defined access category definitions IE, the Extended emergency number list IE, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the "CAG information list"." (Section 5.5.1.2.4)
+
+5.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the Negotiated PEIPS assistance information IE, and the UE had set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the UE has set the RCMAP bit to "Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE." (Section 5.5.1.2.4)
+
+6.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the UE radio capability ID IE or the UE radio capability ID deletion indication IE, and the UE had set the RACS bit to "RACS supported" in the 5GMM Capability IE of the REGISTRATION REQUEST message, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE." (Section 5.5.1.2.4)
+
+7.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the Truncated 5G-S-TMSI configuration IE, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the REGISTRATION ACCEPT message contains the Truncated 5G-S-TMSI configuration IE, then the UE shall store the included truncated 5G-S-TMSI configuration and return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the truncated 5G-S-TMSI configuration." (Section 5.5.1.2.4)
+
+8.  **Missing Edge:** There is no edge representing the condition where the UE receives the REGISTRATION ACCEPT message with the service-level-AA pending indication in the Service-level-AA container IE, and the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, then the UE sends the REGISTRATION COMPLETE message.
+
+    *   **Original Document:** "If the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message and the REGISTRATION ACCEPT message contains the service-level-AA pending indication in the Service-level-AA container IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the service-level-AA pending indication..." (Section 5.5.1.2.4)
+
+#### Accuracy Score:
+
+Based on the identified omissions, I would estimate the accuracy of the extracted data to be around **75%**.

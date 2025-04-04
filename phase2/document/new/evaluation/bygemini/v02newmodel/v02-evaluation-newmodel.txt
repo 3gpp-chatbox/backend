@@ -1,0 +1,30 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text for the "Registration procedure for initial registration" and identify any discrepancies or omissions.
+
+#### Corrections and Omissions:
+
+Here's a breakdown of the issues I found, along with references to the original document:
+
+*   **Missing Node:** There is no node representing the state `5GMM-COMMON-PROCEDURE-INITIATED` at AMF side. This state is important because the AMF starts timer T3550 and enters this state when certain IEs are included in the REGISTRATION ACCEPT message.
+    *   **Reference:** "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3." (and similar statements for other IEs)
+
+*   **Missing Edge:** There is no edge from `event_amf_sends_reg_accept` to the missing `state_amf_common_procedure_initiated` node. This edge should be a conditional trigger based on the content of the REGISTRATION ACCEPT message.
+    *   **Reference:** "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3." (and similar statements for other IEs)
+
+*   **Incorrect Edge Description:** The edge from `state_ue_registered` to `event_ue_sends_reg_complete` is described as "Acknowledgement required by AMF (based on ACCEPT content)". While generally true, it's more precise to say the AMF *may* require acknowledgement based on specific conditions.
+    *   **Reference:** Multiple instances in section 5.5.1.2.4 describe conditions where the AMF starts T3550, implying acknowledgement is required.
+
+*   **Missing Edge:** There is no edge from `state_amf_common_procedure_initiated` to `state_amf_registered` after `event_amf_receives_reg_complete`.
+    *   **Reference:** "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED."
+
+*   **Missing Edge:** There is no edge from `state_ue_registered` to `state_ue_registered.limited_service` or `state_ue_registered.plmn_search` based on CAG information.
+    *   **Reference:** Several paragraphs in section 5.5.1.2.4 describe the UE's behavior related to CAG information and entering `5GMM-REGISTERED.LIMITED-SERVICE` or `5GMM-REGISTERED.PLMN-SEARCH` states.
+
+*   **Incomplete Edge Description:** The edge from `state_ue_rejected` to `state_end_rejected` is described as "5GMM cause leads to failure or PLMN search (e.g., #11, #7, #3)". This is accurate but could be more specific. The original document details the UE's behavior for *each* 5GMM cause value in the REGISTRATION REJECT message.
+    *   **Reference:** Section 5.5.1.2.5 lists the actions the UE takes for each 5GMM cause value.
+
+*   **Missing Edge:** There is no edge from `state_ue_rejected` to `state_deregistered` after receiving REGISTRATION REJECT message.
+    *   **Reference:** Section 5.5.1.2.5 describes the UE's behavior for each 5GMM cause value.
+
+#### Accuracy Score:
+
+Based on the identified omissions and inaccuracies, I would estimate the accuracy of the extracted data to be around **75%**.

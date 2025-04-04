@@ -1,0 +1,143 @@
+
+{
+  "decision_points": [
+    {
+      "step": "UE Initialization",
+      "condition": "UE state is 5GMM-DEREGISTERED and one of several registration triggers occurs (5GS services, emergency services, SMS over NAS, GERAN/UTRAN to NG-RAN movement, SNPN onboarding, disaster roaming, resuming after unavailability)",
+      "outcomes": [
+        {
+          "outcome": "Success: Send REGISTRATION REQUEST",
+          "next_step": "REGISTRATION REQUEST Sent",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION REQUEST Sent",
+      "condition": "Timer T3510 expires",
+      "outcomes": [
+        {
+          "outcome": "Failure - Retry",
+          "next_step": "UE Initialization",
+          "reason": "T3510 timeout",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION REQUEST Sent",
+      "condition": "UE has valid 5G NAS security context and needs to send non-cleartext IEs",
+      "outcomes": [
+        {
+          "outcome": "Success: Send REGISTRATION REQUEST with NAS message container IE",
+          "next_step": "AMF processes REGISTRATION REQUEST",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Success: Send REGISTRATION REQUEST without NAS message container IE",
+          "next_step": "AMF processes REGISTRATION REQUEST",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "AMF processes REGISTRATION REQUEST",
+      "condition": "Initial registration request is accepted",
+      "outcomes": [
+        {
+          "outcome": "Success: Send REGISTRATION ACCEPT",
+          "next_step": "REGISTRATION ACCEPT Sent",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Failure: Send REGISTRATION REJECT",
+          "next_step": "REGISTRATION REJECT Sent",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION ACCEPT Sent",
+      "condition": "5G-GUTI or specific IEs (Operator-defined access category definitions, Extended emergency number list, CAG information list, Extended CAG information list, Negotiated PEIPS assistance information, UE radio capability ID, UE radio capability ID deletion indication) are included",
+      "outcomes": [
+        {
+          "outcome": "Success: Start timer T3550, enter state 5GMM-COMMON-PROCEDURE-INITIATED",
+          "next_step": "AMF waits for REGISTRATION COMPLETE",
+          "outcome_type": "positive"
+        }
+      ]
+    },
+    {
+      "step": "AMF waits for REGISTRATION COMPLETE",
+      "condition": "REGISTRATION COMPLETE received",
+      "outcomes": [
+        {
+          "outcome": "Success: Stop timer T3550, enter state 5GMM-REGISTERED",
+          "next_step": "Procedure Complete",
+          "outcome_type": "positive"
+        },
+        {
+          "outcome": "Failure - Retry",
+          "next_step": "Resend REGISTRATION ACCEPT",
+          "reason": "T3550 timeout (up to 4 retries)",
+          "outcome_type": "retry"
+        }
+      ]
+    },
+    {
+      "step": "REGISTRATION REJECT Sent",
+      "condition": "5GMM cause value received",
+      "outcomes": [
+        {
+          "outcome": "Various outcomes based on 5GMM cause value (detailed in provided text)",
+          "next_step": "UE handles REGISTRATION REJECT",
+          "outcome_type": "negative"
+        }
+      ]
+    },
+    {
+      "step": "UE handles REGISTRATION REJECT",
+      "condition": "Specific 5GMM cause values (e.g., #3, #6, #7, #10, #11, #12, #13, #15, #22, #27, #31, #36, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82)",
+      "outcomes": [
+        {
+          "outcome": "Various outcomes and fallback actions based on 5GMM cause value (detailed in provided text)",
+          "next_step": "Various next steps based on cause",
+          "outcome_type": "negative"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "step": "AMF processes REGISTRATION REQUEST",
+      "depends_on": ["REGISTRATION REQUEST Sent"],
+      "type": "hard",
+      "reason": "AMF needs the REGISTRATION REQUEST to process"
+    },
+    {
+      "step": "REGISTRATION ACCEPT Sent",
+      "depends_on": ["AMF processes REGISTRATION REQUEST"],
+      "type": "hard",
+      "reason": "AMF sends REGISTRATION ACCEPT only after successful processing"
+    },
+    {
+      "step": "AMF waits for REGISTRATION COMPLETE",
+      "depends_on": ["REGISTRATION ACCEPT Sent"],
+      "type": "hard",
+      "reason": "AMF waits for UE acknowledgement"
+    },
+    {
+      "step": "Procedure Complete",
+      "depends_on": ["AMF waits for REGISTRATION COMPLETE"],
+      "type": "hard",
+      "reason": "Procedure completes only after successful REGISTRATION COMPLETE"
+    },
+    {
+      "step": "UE handles REGISTRATION REJECT",
+      "depends_on": ["REGISTRATION REJECT Sent"],
+      "type": "hard",
+      "reason": "UE needs the REGISTRATION REJECT message to handle the failure"
+    }
+
+  ]
+}

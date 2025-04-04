@@ -1,0 +1,200 @@
+
+{
+  "nodes": [
+    {
+      "id": "UE_DEREGISTERED",
+      "type": "state",
+      "description": "UE in 5GMM-DEREGISTERED state"
+    },
+    {
+      "id": "REGISTRATION_REQUEST_SENT",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST to AMF"
+    },
+    {
+      "id": "T3510_start",
+      "type": "event",
+      "description": "UE starts timer T3510"
+    },
+    {
+      "id": "T3502_stop",
+      "type": "event",
+      "description": "UE stops timer T3502, if running"
+    },
+    {
+      "id": "T3511_stop",
+      "type": "event",
+      "description": "UE stops timer T3511, if running"
+    },
+    {
+      "id": "T3519_start",
+      "type": "event",
+      "description": "UE starts timer T3519 if SUCI is included and T3519 is not running"
+    },
+    {
+      "id": "AMF_processes_REGISTRATION_REQUEST",
+      "type": "event",
+      "description": "AMF processes REGISTRATION REQUEST"
+    },
+    {
+      "id": "REGISTRATION_ACCEPT_SENT",
+      "type": "event",
+      "description": "AMF sends REGISTRATION ACCEPT to UE"
+    },
+    {
+      "id": "UE_stores_TAI",
+      "type": "event",
+      "description": "UE deletes old TAI list and stores the received TAI list"
+    },
+    {
+      "id": "T3550_start",
+      "type": "event",
+      "description": "AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED"
+    },
+    {
+      "id": "UE_REGISTERED",
+      "type": "state",
+      "description": "UE enters state 5GMM-REGISTERED and sets 5GS update status to 5U1 UPDATED"
+    },
+    {
+      "id": "REGISTRATION_COMPLETE_sent",
+      "type": "event",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF"
+    },
+    {
+      "id": "T3550_stop",
+      "type": "event",
+      "description": "AMF stops timer T3550 and changes to state 5GMM-REGISTERED"
+    },
+    {
+      "id": "AMF_REGISTERED",
+      "type": "state",
+      "description": "AMF in 5GMM-REGISTERED state"
+    },
+    {
+      "id": "REGISTRATION_REJECT_SENT",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION REJECT message to the UE"
+    },
+    {
+      "id": "AMF_waits_for_REGISTRATION_COMPLETE",
+      "type": "event",
+      "description": "AMF waits for REGISTRATION COMPLETE"
+    },
+    {
+      "id": "UE_handles_REGISTRATION_REJECT",
+      "type": "event",
+      "description": "UE handles REGISTRATION REJECT"
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_DEREGISTERED",
+      "to": "REGISTRATION_REQUEST_SENT",
+      "type": "trigger",
+      "description": "UE initiates registration procedure"
+    },
+    {
+      "from": "REGISTRATION_REQUEST_SENT",
+      "to": "T3510_start",
+      "type": "trigger",
+      "description": "UE starts timer T3510"
+    },
+    {
+      "from": "REGISTRATION_REQUEST_SENT",
+      "to": "T3502_stop",
+      "type": "trigger",
+      "description": "UE stops timer T3502, if running"
+    },
+    {
+      "from": "REGISTRATION_REQUEST_SENT",
+      "to": "T3511_stop",
+      "type": "trigger",
+      "description": "UE stops timer T3511, if running"
+    },
+    {
+      "from": "REGISTRATION_REQUEST_SENT",
+      "to": "T3519_start",
+      "type": "trigger",
+      "description": "UE starts timer T3519 if SUCI is included and T3519 is not running"
+    },
+    {
+      "from": "REGISTRATION_REQUEST_SENT",
+      "to": "AMF_processes_REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "AMF processes REGISTRATION REQUEST"
+    },
+    {
+      "from": "AMF_processes_REGISTRATION_REQUEST",
+      "to": "REGISTRATION_ACCEPT_SENT",
+      "type": "condition",
+      "description": "Initial registration request is accepted"
+    },
+    {
+      "from": "AMF_processes_REGISTRATION_REQUEST",
+      "to": "REGISTRATION_REJECT_SENT",
+      "type": "condition",
+      "description": "Initial registration request cannot be accepted"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT_SENT",
+      "to": "UE_stores_TAI",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT_SENT",
+      "to": "T3550_start",
+      "type": "condition",
+      "description": "5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT_SENT",
+      "to": "AMF_waits_for_REGISTRATION_COMPLETE",
+      "type": "trigger",
+      "description": "AMF waits for REGISTRATION COMPLETE"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT_SENT",
+      "to": "UE_REGISTERED",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT"
+    },
+    {
+      "from": "UE_REGISTERED",
+      "to": "REGISTRATION_COMPLETE_sent",
+      "type": "condition",
+      "description": "Network slicing indication IE is set to 'Network slicing subscription changed' or other conditions are met"
+    },
+    {
+      "from": "REGISTRATION_COMPLETE_sent",
+      "to": "T3550_stop",
+      "type": "trigger",
+      "description": "AMF receives REGISTRATION COMPLETE"
+    },
+    {
+      "from": "T3550_stop",
+      "to": "AMF_REGISTERED",
+      "type": "trigger",
+      "description": "AMF changes to state 5GMM-REGISTERED"
+    },
+    {
+      "from": "REGISTRATION_REJECT_SENT",
+      "to": "UE_handles_REGISTRATION_REJECT",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION REJECT"
+    },
+    {
+      "from": "UE_DEREGISTERED",
+      "to": "REGISTRATION_REQUEST_SENT",
+      "type": "trigger",
+      "description": "UE state is 5GMM-DEREGISTERED and one of several registration triggers occurs"
+    },
+    {
+      "from": "AMF_waits_for_REGISTRATION_COMPLETE",
+      "to": "T3550_stop",
+      "type": "condition",
+      "description": "REGISTRATION COMPLETE received"
+    }
+  ]
+}
