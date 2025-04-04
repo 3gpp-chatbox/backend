@@ -1,0 +1,36 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text for the "Registration procedure for initial registration" and identify any discrepancies or omissions.
+
+Here's the analysis:
+
+**Corrections and Omissions:**
+
+*   **Node Omissions:**
+    *   The extracted data does not include nodes representing the various 5GMM cause values that can be sent in the REGISTRATION REJECT message. The original document lists several specific causes and their corresponding UE behaviors.
+    *   The extracted data does not include the state "5GMM-REGISTERED.LIMITED-SERVICE" or "5GMM-REGISTERED.PLMN-SEARCH" which are entered by the UE under certain conditions after receiving the REGISTRATION ACCEPT message.
+    *   The extracted data does not include the state "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION" which is entered by the UE under certain conditions after receiving the REGISTRATION REJECT message.
+    *   The extracted data does not include the state "5GMM-DEREGISTERED.NO-SUPI" which is entered by the UE under certain conditions after receiving the REGISTRATION REJECT message.
+    *   The extracted data does not include the state "5GMM-DEREGISTERED.NO-CELL-AVAILABLE" which is entered by the UE under certain conditions after receiving the REGISTRATION REJECT message.
+
+*   **Edge Omissions:**
+    *   There are many missing edges representing the UE's behavior upon receiving a REGISTRATION REJECT message with different 5GMM cause values. The original document details specific actions the UE takes for each cause. For example, upon receiving cause #11, the UE stores the PLMN identity in the forbidden PLMN list.
+    *   Missing edges for the UE's actions when the lower layers indicate an access attempt is barred.
+    *   Missing edges for the UE's actions when T3510 times out.
+    *   Missing edges for the UE's actions when the lower layers indicate a failure or release of the NAS signalling connection.
+    *   Missing edges for the UE's actions when there is a change in the current TAI.
+    *   Missing edges for the UE's actions when the UE is not registered to the access other than the access the REGISTRATION ACCEPT message is received and the 5GS registration result value in the 5GS registration result IE value in the REGISTRATION ACCEPT message is set to "3GPP access and non-3GPP access".
+    *   Missing edges for the UE's actions when access for localized services in current SNPN is no longer allowed.
+
+*   **Node Inaccuracies:**
+    *   The description of the node "UAS\_services\_allowed" is not accurate. The original document states that the AMF marks in the UE's 5GMM context that the UE is *not allowed* to request UAS services. The current description says the opposite. (Section 5.5.1.2.4)
+
+*   **Edge Inaccuracies:**
+    *   The edge from "REGISTRATION\_REQUEST" to "UAS\_services\_allowed" is a *condition*, but the description "AMF determines that the UUAA-MM procedure needs to be performed for a UE" is incorrect. The AMF determines that the UUAA-MM procedure needs to be performed for a UE when the UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message. (Section 5.5.1.2.4)
+
+**Accuracy Score:**
+
+Based on the number of omissions and inaccuracies, I would estimate the accuracy of the extracted data to be around **40%**.
+
+**Important Considerations:**
+
+*   The extracted data focuses primarily on successful registration scenarios and lacks detail on error handling and alternative paths.
+*   The original document contains many conditional statements and specific UE behaviors based on various IEs and network configurations, which are not fully captured in the extracted data.

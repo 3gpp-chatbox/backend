@@ -1,0 +1,434 @@
+{
+  "nodes": [
+    {
+      "id": "5GMM-DEREGISTERED",
+      "type": "state",
+      "description": "UE in state 5GMM-DEREGISTERED"
+    },
+    {
+      "id": "REGISTRATION_REQUEST",
+      "type": "event",
+      "description": "UE sends REGISTRATION REQUEST message to the AMF"
+    },
+    {
+      "id": "T3510_start",
+      "type": "event",
+      "description": "UE starts timer T3510"
+    },
+    {
+      "id": "T3502_stop",
+      "type": "event",
+      "description": "UE stops timer T3502 if running"
+    },
+    {
+      "id": "T3511_stop",
+      "type": "event",
+      "description": "UE stops timer T3511 if running"
+    },
+    {
+      "id": "T3519_start",
+      "type": "event",
+      "description": "UE starts timer T3519 if SUCI included and timer not running"
+    },
+    {
+      "id": "SUCI_included",
+      "type": "state",
+      "description": "UE includes stored SUCI in REGISTRATION REQUEST while T3519 is running"
+    },
+    {
+      "id": "REGISTRATION_ACCEPT",
+      "type": "event",
+      "description": "AMF sends REGISTRATION ACCEPT message to the UE"
+    },
+    {
+      "id": "TAI_list_assigned",
+      "type": "state",
+      "description": "AMF assigns and includes a TAI list in REGISTRATION ACCEPT"
+    },
+    {
+      "id": "TAI_list_stored",
+      "type": "state",
+      "description": "UE deletes old TAI list and stores received TAI list"
+    },
+    {
+      "id": "T3550_start_1",
+      "type": "event",
+      "description": "AMF starts timer T3550 if 5G-GUTI or SOR transparent container IE is included"
+    },
+    {
+      "id": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "state",
+      "description": "AMF enters state 5GMM-COMMON-PROCEDURE-INITIATED"
+    },
+    {
+      "id": "T3550_start_2",
+      "type": "event",
+      "description": "AMF starts timer T3550 if Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included"
+    },
+    {
+      "id": "T3550_start_3",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE has set RCMAP bit and Negotiated PEIPS assistance information IE is included"
+    },
+    {
+      "id": "T3550_start_4",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE is not in NB-N1 mode, has set RACS bit, and UE radio capability ID IE or deletion indication IE is included"
+    },
+    {
+      "id": "UAS_services_allowed",
+      "type": "state",
+      "description": "AMF marks in UE's 5GMM context that the UE is not allowed to request UAS services"
+    },
+    {
+      "id": "T3550_start_5",
+      "type": "event",
+      "description": "AMF starts timer T3550 and initiates UUAA-MM procedure if conditions are met"
+    },
+    {
+      "id": "UUAA_procedure_pending",
+      "type": "state",
+      "description": "AMF stores in the UE 5GMM context that a UUAA procedure is pending"
+    },
+    {
+      "id": "T3550_start_6",
+      "type": "event",
+      "description": "AMF starts timer T3550 if AMF needs to update NSSRG information and UE has set NSSRG bit"
+    },
+    {
+      "id": "T3550_start_7",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE supports S-NSSAI time validity information and AMF needs to update it"
+    },
+    {
+      "id": "T3550_start_8",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE supports S-NSSAI location validity information and AMF needs to update it"
+    },
+    {
+      "id": "T3550_start_9",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE has set NSAG bit and RCMAN bit and NSAG information IE is included"
+    },
+    {
+      "id": "T3550_start_10",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE supports network slice replacement and AMF determines to provide the mapping information"
+    },
+    {
+      "id": "T3550_start_11",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UDM indicates subscription data change for network slicing"
+    },
+    {
+      "id": "T3550_start_12",
+      "type": "event",
+      "description": "AMF starts timer T3550 if UE indicates support for network slice usage control and AMF determines to provide on-demand NSSAI"
+    },
+    {
+      "id": "5GMM-REGISTERED",
+      "type": "state",
+      "description": "UE enters state 5GMM-REGISTERED and sets 5GS update status to 5U1 UPDATED"
+    },
+    {
+      "id": "REGISTRATION_COMPLETE",
+      "type": "event",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF"
+    },
+    {
+      "id": "CAG_information_list_replaced",
+      "type": "state",
+      "description": "UE replaces the CAG information list"
+    },
+    {
+      "id": "REGISTRATION_COMPLETE_acknowledged",
+      "type": "state",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\""
+    },
+    {
+      "id": "REGISTRATION_COMPLETE_acknowledged_PEIPS",
+      "type": "state",
+      "description": "UE returns REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE"
+    },
+    {
+      "id": "REGISTRATION_COMPLETE_acknowledged_radio",
+      "type": "state",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE"
+    },
+    {
+      "id": "T3550_stop",
+      "type": "event",
+      "description": "AMF stops timer T3550"
+    },
+    {
+      "id": "5GMM-REGISTERED_AMF",
+      "type": "state",
+      "description": "AMF changes to state 5GMM-REGISTERED"
+    },
+    {
+      "id": "REGISTRATION_REJECT",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION REJECT message to the UE"
+    }
+  ],
+  "edges": [
+    {
+      "from": "5GMM-DEREGISTERED",
+      "to": "REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "UE initiates registration procedure"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "T3510_start",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "T3502_stop",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "T3511_stop",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "T3519_start",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION REQUEST"
+    },
+    {
+      "from": "T3519_start",
+      "to": "SUCI_included",
+      "type": "condition",
+      "description": "Timer T3519 is running"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "REGISTRATION_ACCEPT",
+      "type": "trigger",
+      "description": "Initial registration request is accepted by the network"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "TAI_list_assigned",
+      "type": "trigger",
+      "description": "AMF sends REGISTRATION ACCEPT"
+    },
+    {
+      "from": "TAI_list_assigned",
+      "to": "TAI_list_stored",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_1",
+      "type": "condition",
+      "description": "5G-GUTI or SOR transparent container IE is included"
+    },
+    {
+      "from": "T3550_start_1",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_2",
+      "type": "condition",
+      "description": "Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included"
+    },
+    {
+      "from": "T3550_start_2",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_3",
+      "type": "condition",
+      "description": "UE has set RCMAP bit and Negotiated PEIPS assistance information IE is included"
+    },
+    {
+      "from": "T3550_start_3",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_4",
+      "type": "condition",
+      "description": "UE is not in NB-N1 mode, has set RACS bit, and UE radio capability ID IE or deletion indication IE is included"
+    },
+    {
+      "from": "T3550_start_4",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "UAS_services_allowed",
+      "type": "condition",
+      "description": "AMF determines that the UUAA-MM procedure needs to be performed for a UE"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_5",
+      "type": "condition",
+      "description": "UE has included the service-level device ID set to the CAA-level UAV ID in the Service-level-AA container IE of the REGISTRATION REQUEST message, and if: - the UE has a valid aerial UE subscription information; - the UUAA procedure is to be performed during the registration procedure according to operator policy; - there is no valid successful UUAA result for the UE in the UE 5GMM context; and - the REGISTRATION REQUEST message was not received over non-3GPP access"
+    },
+    {
+      "from": "T3550_start_5",
+      "to": "UUAA_procedure_pending",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_6",
+      "type": "condition",
+      "description": "AMF needs to update the NSSRG information and UE has set NSSRG bit"
+    },
+    {
+      "from": "T3550_start_6",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_7",
+      "type": "condition",
+      "description": "UE supports S-NSSAI time validity information and AMF needs to update it"
+    },
+    {
+      "from": "T3550_start_7",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_8",
+      "type": "condition",
+      "description": "UE supports S-NSSAI location validity information and AMF needs to update it"
+    },
+    {
+      "from": "T3550_start_8",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_9",
+      "type": "condition",
+      "description": "UE has set NSAG bit and RCMAN bit and NSAG information IE is included"
+    },
+    {
+      "from": "T3550_start_9",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_10",
+      "type": "condition",
+      "description": "UE supports network slice replacement and AMF determines to provide the mapping information"
+    },
+    {
+      "from": "T3550_start_10",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_11",
+      "type": "condition",
+      "description": "UDM indicates subscription data change for network slicing"
+    },
+    {
+      "from": "T3550_start_11",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "T3550_start_12",
+      "type": "condition",
+      "description": "UE indicates support for network slice usage control and AMF determines to provide on-demand NSSAI"
+    },
+    {
+      "from": "T3550_start_12",
+      "to": "5GMM-COMMON-PROCEDURE-INITIATED",
+      "type": "trigger",
+      "description": "AMF starts timer T3550"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "5GMM-REGISTERED",
+      "type": "trigger",
+      "description": "UE receives REGISTRATION ACCEPT"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "REGISTRATION_COMPLETE",
+      "type": "condition",
+      "description": "Certain IEs present in REGISTRATION ACCEPT require acknowledgement"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "CAG_information_list_replaced",
+      "type": "condition",
+      "description": "The REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to \"CAG supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "REGISTRATION_COMPLETE_acknowledged",
+      "type": "condition",
+      "description": "The REGISTRATION ACCEPT message contains the Operator-defined access category definitions IE, the Extended emergency number list IE ,the CAG information list IE or the Extended CAG information list IE"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "REGISTRATION_COMPLETE_acknowledged_PEIPS",
+      "type": "condition",
+      "description": "The UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE"
+    },
+    {
+      "from": "REGISTRATION_ACCEPT",
+      "to": "REGISTRATION_COMPLETE_acknowledged_radio",
+      "type": "condition",
+      "description": "The REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE"
+    },
+    {
+      "from": "REGISTRATION_COMPLETE",
+      "to": "T3550_stop",
+      "type": "trigger",
+      "description": "UE sends REGISTRATION COMPLETE"
+    },
+    {
+      "from": "T3550_stop",
+      "to": "5GMM-REGISTERED_AMF",
+      "type": "trigger",
+      "description": "AMF stops timer T3550"
+    },
+    {
+      "from": "REGISTRATION_REQUEST",
+      "to": "REGISTRATION_REJECT",
+      "type": "trigger",
+      "description": "Initial registration request cannot be accepted by the network"
+    }
+  ]
+}
