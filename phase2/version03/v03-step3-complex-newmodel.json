@@ -1,0 +1,774 @@
+```json
+{
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "description": "Procedure starts",
+        "properties": {}
+      },
+      {
+        "id": "1",
+        "type": "process",
+        "description": "UE initiates the procedure",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "state_before": "5GMM-DEREGISTERED"
+        }
+      },
+      {
+        "id": "d_t3502",
+        "type": "decision",
+        "description": "Check if T3502 is running",
+        "properties": {
+          "condition": "Timer T3502 is running",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "2",
+        "type": "timer",
+        "description": "UE stops timer T3502",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3502",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "d_t3511",
+        "type": "decision",
+        "description": "Check if T3511 is running",
+        "properties": {
+          "condition": "Timer T3511 is running",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "3",
+        "type": "timer",
+        "description": "UE stops timer T3511",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3511",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "d_t3519",
+        "type": "decision",
+        "description": "Check if SUCI included and T3519 not running",
+        "properties": {
+          "condition": "SUCI is included in the REGISTRATION REQUEST and timer T3519 is not running",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "4",
+        "type": "timer",
+        "description": "UE starts timer T3519",
+        "properties": {
+          "action": "start",
+          "timer_name": "T3519",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "5",
+        "type": "process",
+        "description": "UE sends REGISTRATION REQUEST",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "messages": ["REGISTRATION REQUEST"]
+        }
+      },
+      {
+        "id": "6",
+        "type": "timer",
+        "description": "UE starts timer T3510",
+        "properties": {
+          "action": "start",
+          "timer_name": "T3510",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "7",
+        "type": "process",
+        "description": "AMF receives REGISTRATION REQUEST",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION REQUEST"]
+        }
+      },
+      {
+        "id": "8",
+        "type": "process",
+        "description": "AMF may initiate 5GMM common procedures",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "optional": true
+        }
+      },
+      {
+        "id": "d_amf_accept",
+        "type": "decision",
+        "description": "AMF decides whether to accept the registration",
+        "properties": {
+          "condition": "Initial registration request processed by network",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "9",
+        "type": "process",
+        "description": "AMF sends REGISTRATION ACCEPT",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION ACCEPT"]
+        }
+      },
+      {
+        "id": "d_amf_ack_req",
+        "type": "decision",
+        "description": "AMF checks if acknowledgment is required",
+        "properties": {
+          "condition": "Specific IEs included in REGISTRATION ACCEPT require acknowledgment",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "10",
+        "type": "timer",
+        "description": "AMF starts timer T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED",
+        "properties": {
+          "action": "start",
+          "timer_name": "T3550",
+          "entity": "AMF",
+          "state_change": "-> 5GMM-COMMON-PROCEDURE-INITIATED"
+        }
+      },
+      {
+        "id": "11",
+        "type": "process",
+        "description": "UE receives REGISTRATION ACCEPT",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "messages": ["REGISTRATION ACCEPT"]
+        }
+      },
+      {
+        "id": "12",
+        "type": "timer",
+        "description": "UE stops timer T3510",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3510",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "13",
+        "type": "process",
+        "description": "UE resets registration attempt counter",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "14",
+        "type": "process",
+        "description": "UE enters 5GMM-REGISTERED and sets 5GS update status",
+        "properties": {
+          "state_change": "-> 5GMM-REGISTERED",
+          "entity": "UE",
+          "update_status": "5U1 UPDATED"
+        }
+      },
+      {
+        "id": "15",
+        "type": "process",
+        "description": "UE handles timers from REGISTRATION ACCEPT (T3512, T3324, T3448, T3447, T3526)",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "timers_handled": ["T3512", "T3324", "non-3GPP de-registration timer", "T3448", "T3447", "T3526"]
+        }
+      },
+      {
+        "id": "d_ue_ack_req",
+        "type": "decision",
+        "description": "UE checks if acknowledgment is required",
+        "properties": {
+          "condition": "Acknowledgment is required based on IEs received in REGISTRATION ACCEPT",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "16",
+        "type": "process",
+        "description": "UE sends REGISTRATION COMPLETE",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "messages": ["REGISTRATION COMPLETE"]
+        }
+      },
+      {
+        "id": "17",
+        "type": "process",
+        "description": "AMF receives REGISTRATION COMPLETE",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION COMPLETE"]
+        }
+      },
+      {
+        "id": "18",
+        "type": "timer",
+        "description": "AMF stops timer T3550",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3550",
+          "entity": "AMF",
+          "state_change": "5GMM-COMMON-PROCEDURE-INITIATED -> 5GMM-REGISTERED"
+        }
+      },
+      {
+        "id": "end_accept_complete",
+        "type": "end",
+        "description": "Procedure ends successfully (with REGISTRATION COMPLETE)",
+        "properties": {}
+      },
+      {
+        "id": "end_accept_no_complete",
+        "type": "end",
+        "description": "Procedure ends successfully (no REGISTRATION COMPLETE needed)",
+        "properties": {}
+      },
+      {
+        "id": "19",
+        "type": "process",
+        "description": "AMF sends REGISTRATION REJECT",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "AMF",
+          "messages": ["REGISTRATION REJECT"]
+        }
+      },
+      {
+        "id": "20",
+        "type": "process",
+        "description": "UE receives REGISTRATION REJECT",
+        "properties": {
+          "state_change": "N/A",
+          "entity": "UE",
+          "messages": ["REGISTRATION REJECT"]
+        }
+      },
+      {
+        "id": "21",
+        "type": "timer",
+        "description": "UE stops timer T3510",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3510",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "22",
+        "type": "process",
+        "description": "UE performs actions based on 5GMM cause value",
+        "properties": {
+          "state_change": "Varies based on cause",
+          "entity": "UE",
+          "timers_handled": ["T3346", "T3245", "T3526"]
+        }
+      },
+      {
+        "id": "end_reject",
+        "type": "end",
+        "description": "Procedure ends (rejected)",
+        "properties": {}
+      },
+      {
+        "id": "d_t3510_timeout",
+        "type": "decision",
+        "description": "Check if T3510 expired",
+        "properties": {
+          "condition": "Timer T3510 expires",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "23",
+        "type": "process",
+        "description": "UE aborts procedure, stops T3510, increments counter",
+        "properties": {
+          "action": "stop",
+          "timer_name": "T3510",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "d_retry_counter",
+        "type": "decision",
+        "description": "Check registration attempt counter",
+        "properties": {
+          "condition": "Registration attempt counter < 5",
+          "entity": "UE"
+        }
+      },
+      {
+        "id": "24",
+        "type": "timer",
+        "description": "UE starts T3511 and enters ATTEMPTING-REGISTRATION",
+        "properties": {
+          "action": "start",
+          "timer_name": "T3511",
+          "entity": "UE",
+          "state_change": "-> 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+        }
+      },
+      {
+        "id": "end_timeout_retry",
+        "type": "end",
+        "description": "Procedure ends (T3510 timeout, retry scheduled)",
+        "properties": {}
+      },
+      {
+        "id": "25",
+        "type": "process",
+        "description": "UE deletes context, starts T3502 (if > 0), enters ATTEMPTING-REGISTRATION or PLMN-SEARCH",
+        "properties": {
+          "action": "start",
+          "timer_name": "T3502",
+          "entity": "UE",
+          "state_change": "-> 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH"
+        }
+      },
+      {
+        "id": "end_timeout_fail",
+        "type": "end",
+        "description": "Procedure ends (T3510 timeout, max retries)",
+        "properties": {}
+      },
+      {
+        "id": "d_t3550_timeout",
+        "type": "decision",
+        "description": "Check if T3550 expired",
+        "properties": {
+          "condition": "Timer T3550 expires",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "26",
+        "type": "process",
+        "description": "AMF aborts procedure, enters 5GMM-REGISTERED",
+        "properties": {
+          "state_change": "-> 5GMM-REGISTERED",
+          "entity": "AMF"
+        }
+      },
+      {
+        "id": "end_t3550_timeout",
+        "type": "end",
+        "description": "Procedure ends (T3550 timeout at AMF)",
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "1",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE decides to initiate initial registration"
+        }
+      },
+      {
+        "from": "1",
+        "to": "d_t3502",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Check running timers"
+        }
+      },
+      {
+        "from": "d_t3502",
+        "to": "2",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3502 is running",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "2",
+        "to": "d_t3511",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3502 stopped"
+        }
+      },
+      {
+        "from": "d_t3502",
+        "to": "d_t3511",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3502 is not running",
+          "outcome": "No"
+        }
+      },
+      {
+        "from": "d_t3511",
+        "to": "3",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3511 is running",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "3",
+        "to": "d_t3519",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3511 stopped"
+        }
+      },
+      {
+        "from": "d_t3511",
+        "to": "d_t3519",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3511 is not running",
+          "outcome": "No"
+        }
+      },
+      {
+        "from": "d_t3519",
+        "to": "4",
+        "type": "conditional",
+        "properties": {
+          "condition": "SUCI included and T3519 not running",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "4",
+        "to": "5",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3519 started"
+        }
+      },
+      {
+        "from": "d_t3519",
+        "to": "5",
+        "type": "conditional",
+        "properties": {
+          "condition": "SUCI not included or T3519 running",
+          "outcome": "No"
+        }
+      },
+      {
+        "from": "5",
+        "to": "6",
+        "type": "sequential",
+        "properties": {
+          "trigger": "REGISTRATION REQUEST sent"
+        }
+      },
+      {
+        "from": "6",
+        "to": "7",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Message transmission to AMF"
+        }
+      },
+      {
+        "from": "7",
+        "to": "8",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF received request, may start common procedures"
+        }
+      },
+      {
+        "from": "8",
+        "to": "d_amf_accept",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Common procedures (if any) complete, AMF makes decision"
+        }
+      },
+      {
+        "from": "d_amf_accept",
+        "to": "9",
+        "type": "conditional",
+        "properties": {
+          "condition": "Request accepted",
+          "outcome": "Accept"
+        }
+      },
+      {
+        "from": "9",
+        "to": "d_amf_ack_req",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF prepares to send ACCEPT"
+        }
+      },
+      {
+        "from": "d_amf_ack_req",
+        "to": "10",
+        "type": "conditional",
+        "properties": {
+          "condition": "Acknowledgment required",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "10",
+        "to": "11",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF sends ACCEPT (after starting T3550)"
+        }
+      },
+      {
+        "from": "d_amf_ack_req",
+        "to": "11",
+        "type": "conditional",
+        "properties": {
+          "condition": "Acknowledgment not required",
+          "outcome": "No",
+          "trigger": "AMF sends ACCEPT"
+        }
+      },
+      {
+        "from": "11",
+        "to": "12",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE received ACCEPT"
+        }
+      },
+      {
+        "from": "12",
+        "to": "13",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3510 stopped"
+        }
+      },
+      {
+        "from": "13",
+        "to": "14",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Counter reset"
+        }
+      },
+      {
+        "from": "14",
+        "to": "15",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE entered REGISTERED state"
+        }
+      },
+      {
+        "from": "15",
+        "to": "d_ue_ack_req",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE processed timers from ACCEPT"
+        }
+      },
+      {
+        "from": "d_ue_ack_req",
+        "to": "16",
+        "type": "conditional",
+        "properties": {
+          "condition": "Acknowledgment required",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "16",
+        "to": "17",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Message transmission to AMF"
+        }
+      },
+      {
+        "from": "17",
+        "to": "18",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF received COMPLETE"
+        }
+      },
+      {
+        "from": "18",
+        "to": "end_accept_complete",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3550 stopped"
+        }
+      },
+      {
+        "from": "d_ue_ack_req",
+        "to": "end_accept_no_complete",
+        "type": "conditional",
+        "properties": {
+          "condition": "Acknowledgment not required",
+          "outcome": "No"
+        }
+      },
+      {
+        "from": "d_amf_accept",
+        "to": "19",
+        "type": "conditional",
+        "properties": {
+          "condition": "Request rejected",
+          "outcome": "Reject"
+        }
+      },
+      {
+        "from": "19",
+        "to": "20",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Message transmission to UE"
+        }
+      },
+      {
+        "from": "20",
+        "to": "21",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE received REJECT"
+        }
+      },
+      {
+        "from": "21",
+        "to": "22",
+        "type": "sequential",
+        "properties": {
+          "trigger": "T3510 stopped"
+        }
+      },
+      {
+        "from": "22",
+        "to": "end_reject",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE handled reject cause"
+        }
+      },
+      {
+        "from": "6",
+        "to": "d_t3510_timeout",
+        "type": "timer_dependency",
+        "properties": {
+          "trigger": "T3510 starts monitoring",
+          "cancel_trigger_nodes": ["12", "21"]
+        }
+      },
+      {
+        "from": "d_t3510_timeout",
+        "to": "23",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3510 expires",
+          "outcome": "Timeout"
+        }
+      },
+      {
+        "from": "23",
+        "to": "d_retry_counter",
+        "type": "sequential",
+        "properties": {
+          "trigger": "UE handles T3510 expiry"
+        }
+      },
+      {
+        "from": "d_retry_counter",
+        "to": "24",
+        "type": "conditional",
+        "properties": {
+          "condition": "Counter < 5",
+          "outcome": "Yes"
+        }
+      },
+      {
+        "from": "24",
+        "to": "end_timeout_retry",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Retry scheduled via T3511"
+        }
+      },
+      {
+        "from": "d_retry_counter",
+        "to": "25",
+        "type": "conditional",
+        "properties": {
+          "condition": "Counter = 5",
+          "outcome": "No"
+        }
+      },
+      {
+        "from": "25",
+        "to": "end_timeout_fail",
+        "type": "sequential",
+        "properties": {
+          "trigger": "Max retries reached"
+        }
+      },
+      {
+        "from": "10",
+        "to": "d_t3550_timeout",
+        "type": "timer_dependency",
+        "properties": {
+          "trigger": "T3550 starts monitoring",
+          "cancel_trigger_nodes": ["18"]
+        }
+      },
+      {
+        "from": "d_t3550_timeout",
+        "to": "26",
+        "type": "conditional",
+        "properties": {
+          "condition": "T3550 expires (after retransmissions)",
+          "outcome": "Timeout (Max Retries)"
+        }
+      },
+      {
+        "from": "26",
+        "to": "end_t3550_timeout",
+        "type": "sequential",
+        "properties": {
+          "trigger": "AMF aborts procedure due to T3550 timeout"
+        }
+      }
+    ]
+  }
+}
+```

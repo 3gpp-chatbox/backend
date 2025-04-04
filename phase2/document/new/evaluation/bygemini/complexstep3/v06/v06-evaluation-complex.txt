@@ -1,0 +1,45 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text for "Registration procedure for initial registration" and identify any discrepancies or omissions.
+
+#### Corrections and Omissions:
+
+Here's a breakdown of the issues I found, along with references to the original document:
+
+*   **Node 1 (REG_REQ sent):**
+    *   **Missing**: The description should include the UE state. According to the document, the UE should be in the 5GMM-DEREGISTERED state.
+    *   **Original Document**: "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF..."
+
+*   **Node 2 (T3510 start):**
+    *   **Missing**: The trigger description is incomplete. The trigger is sending the REGISTRATION REQUEST message, not just "REG_REQ sent".
+    *   **Original Document**: "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510."
+
+*   **Node 5 (Start T3519):**
+    *   **Inaccurate**: The description is slightly inaccurate. The condition is "If SUCI is included" and "T3519 is not running".
+    *   **Original Document**: "If the SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running, the UE shall start timer T3519..."
+
+*   **Node 6 (Include SUCI in REG_REQ):**
+    *   **Inaccurate**: The description is slightly inaccurate. The condition is "While T3519 is running" and "SUCI is stored".
+    *   **Original Document**: "The UE shall include the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running."
+
+*   **Node 10 (Store TAI list):**
+    *   **Missing**: The UE should also delete its old TAI list.
+    *   **Original Document**: "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI list."
+
+*   **Node 22 (Reset attempt counter):**
+    *   **Missing**: The UE also sets the 5GS update status to 5U1 UPDATED.
+    *   **Original Document**: "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+
+*   **Node 24 (Replace CAG info):**
+    *   **Missing**: This step is conditional on the UE receiving the CAG information list IE or the Extended CAG information list IE in the REGISTRATION ACCEPT message.
+    *   **Original Document**: "If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to "CAG supported" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall: a) replace the "CAG information list" stored in the UE with the received CAG information list IE or the Extended CAG information list IE when received in the HPLMN or EHPLMN;..."
+
+*   **Node 31 (T3346 start):**
+    *   **Missing**: This timer is started when the REGISTRATION REJECT message is received with 5GMM cause #22.
+    *   **Original Document**: "If the initial registration request is rejected due to general NAS level mobility management congestion control, the network shall set the 5GMM cause value to #22 "congestion" and assign a value for back-off timer T3346."
+
+*   **Node 42 (Start T3502):**
+    *   **Missing**: The UE also deletes the TAI list.
+    *   **Original Document**: "the UE shall delete TAI list, start T3502"
+
+#### Accuracy Score:
+
+Based on the identified corrections and omissions, I would estimate the accuracy of the extracted data to be around **75%**.

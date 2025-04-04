@@ -1,0 +1,656 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "nodes": [
+    {
+      "id": 1,
+      "type": "step",
+      "name": "REG_REQ sent",
+      "description": "UE to AMF",
+      "entity": "UE",
+      "action": "send"
+    },
+    {
+      "id": 2,
+      "type": "timer",
+      "name": "T3510 start",
+      "action": "start",
+      "trigger": "REG_REQ sent",
+      "duration": "time_value"
+    },
+    {
+      "id": 3,
+      "type": "step",
+      "name": "Stop T3502",
+      "description": "If running",
+      "entity": "UE",
+      "action": "stop"
+    },
+    {
+      "id": 4,
+      "type": "step",
+      "name": "Stop T3511",
+      "description": "If running",
+      "entity": "UE",
+      "action": "stop"
+    },
+    {
+      "id": 5,
+      "type": "step",
+      "name": "Start T3519",
+      "description": "If SUCI included and T3519 not running",
+      "entity": "UE",
+      "action": "start"
+    },
+    {
+      "id": 6,
+      "type": "step",
+      "name": "Include SUCI in REG_REQ",
+      "description": "While T3519 is running",
+      "entity": "UE",
+      "action": "include"
+    },
+    {
+      "id": 7,
+      "type": "decision",
+      "name": "Registration accepted?",
+      "condition": "Initial registration accepted by network?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 8,
+      "type": "step",
+      "name": "REG_ACC sent",
+      "description": "AMF to UE",
+      "entity": "AMF",
+      "action": "send"
+    },
+    {
+      "id": 9,
+      "type": "step",
+      "name": "Assign TAI list",
+      "description": "AMF assigns TAI list in REG_ACC",
+      "entity": "AMF",
+      "action": "assign"
+    },
+    {
+      "id": 10,
+      "type": "step",
+      "name": "Store TAI list",
+      "description": "UE stores received TAI list",
+      "entity": "UE",
+      "action": "store"
+    },
+    {
+      "id": 11,
+      "type": "decision",
+      "name": "IEs in REG_ACC?",
+      "condition": "Certain IEs included in REG_ACC?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 12,
+      "type": "timer",
+      "name": "T3550 start",
+      "action": "start",
+      "trigger": "Certain IEs in REG_ACC",
+      "duration": "time_value"
+    },
+    {
+      "id": 13,
+      "type": "step",
+      "name": "Mark UE for UAS",
+      "description": "AMF marks UE for UAS if needed",
+      "entity": "AMF",
+      "action": "mark"
+    },
+    {
+      "id": 14,
+      "type": "step",
+      "name": "Initiate UUAA-MM",
+      "description": "AMF initiates UUAA-MM if needed",
+      "entity": "AMF",
+      "action": "initiate"
+    },
+    {
+      "id": 15,
+      "type": "step",
+      "name": "Update NSSRG info",
+      "description": "AMF updates NSSRG info if needed",
+      "entity": "AMF",
+      "action": "update"
+    },
+    {
+      "id": 16,
+      "type": "step",
+      "name": "Update S-NSSAI time validity",
+      "description": "AMF updates S-NSSAI time validity if needed",
+      "entity": "AMF",
+      "action": "update"
+    },
+    {
+      "id": 17,
+      "type": "step",
+      "name": "Update S-NSSAI location validity",
+      "description": "AMF updates S-NSSAI location validity if needed",
+      "entity": "AMF",
+      "action": "update"
+    },
+    {
+      "id": 18,
+      "type": "step",
+      "name": "Include NSAG info",
+      "description": "AMF includes NSAG info if needed",
+      "entity": "AMF",
+      "action": "include"
+    },
+    {
+      "id": 19,
+      "type": "step",
+      "name": "Provide alternative NSSAI",
+      "description": "AMF provides alternative NSSAI if needed",
+      "entity": "AMF",
+      "action": "provide"
+    },
+    {
+      "id": 20,
+      "type": "step",
+      "name": "Include network slicing indication",
+      "description": "AMF includes network slicing indication if needed",
+      "entity": "AMF",
+      "action": "include"
+    },
+    {
+      "id": 21,
+      "type": "step",
+      "name": "Provide on-demand NSSAI",
+      "description": "AMF provides on-demand NSSAI if needed",
+      "entity": "AMF",
+      "action": "provide"
+    },
+    {
+      "id": 22,
+      "type": "step",
+      "name": "Reset attempt counter",
+      "description": "UE resets attempt counter, enters REGISTERED",
+      "entity": "UE",
+      "action": "reset"
+    },
+    {
+      "id": 23,
+      "type": "step",
+      "name": "REG_COMP sent",
+      "description": "UE to AMF",
+      "entity": "UE",
+      "action": "send"
+    },
+    {
+      "id": 24,
+      "type": "step",
+      "name": "Replace CAG info",
+      "description": "UE replaces CAG info if needed",
+      "entity": "UE",
+      "action": "replace"
+    },
+    {
+      "id": 25,
+      "type": "timer",
+      "name": "T3550 stop",
+      "action": "stop",
+      "trigger": "REG_COMP received",
+      "duration": "time_value"
+    },
+    {
+      "id": 26,
+      "type": "step",
+      "name": "REG_REJ sent",
+      "description": "AMF to UE",
+      "entity": "AMF",
+      "action": "send"
+    },
+    {
+      "id": 27,
+      "type": "decision",
+      "name": "T3510 expired?",
+      "condition": "Timer T3510 expired?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 28,
+      "type": "step",
+      "name": "Increment attempt counter",
+      "description": "Increment registration attempt counter",
+      "entity": "UE",
+      "action": "increment"
+    },
+    {
+      "id": 29,
+      "type": "decision",
+      "name": "Attempt counter < 5?",
+      "condition": "Registration attempt counter < 5?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 30,
+      "type": "timer",
+      "name": "T3511 start",
+      "action": "start",
+      "trigger": "Attempt counter < 5",
+      "duration": "time_value"
+    },
+    {
+      "id": 31,
+      "type": "timer",
+      "name": "T3346 start",
+      "action": "start",
+      "trigger": "REG_REJ received",
+      "duration": "time_value"
+    },
+    {
+      "id": 32,
+      "type": "decision",
+      "name": "T3550 expired?",
+      "condition": "Timer T3550 expired?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 33,
+      "type": "step",
+      "name": "Retransmit REG_ACC",
+      "description": "Retransmit REG_ACC, restart T3550",
+      "entity": "AMF",
+      "action": "retransmit"
+    },
+    {
+      "id": 34,
+      "type": "decision",
+      "name": "Lower layer failure?",
+      "condition": "Lower layer failure occurred?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 35,
+      "type": "decision",
+      "name": "Protocol error?",
+      "condition": "REG_REQ received with protocol error?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 36,
+      "type": "decision",
+      "name": "REG_REQ after REG_ACC?",
+      "condition": "REG_REQ received after REG_ACC sent?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 37,
+      "type": "decision",
+      "name": "Multiple REG_REQ?",
+      "condition": "Multiple REG_REQ received?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 38,
+      "type": "decision",
+      "name": "REG_REQ in REGISTERED?",
+      "condition": "REG_REQ received in REGISTERED state?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 39,
+      "type": "decision",
+      "name": "Mobility/Periodic REG_REQ?",
+      "condition": "Mobility/Periodic REG_REQ received before REG_COMP?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 40,
+      "type": "decision",
+      "name": "DEREG_REQ before REG_COMP?",
+      "condition": "DEREG_REQ received before REG_COMP?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 41,
+      "type": "decision",
+      "name": "Security capabilities invalid?",
+      "condition": "UE security capabilities invalid or unacceptable?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 42,
+      "type": "step",
+      "name": "Start T3502",
+      "description": "Delete TAI list, start T3502",
+      "entity": "UE",
+      "action": "start"
+    },
+    {
+      "id": 43,
+      "type": "decision",
+      "name": "REG_COMP required?",
+      "condition": "Certain IEs present in REG_ACC require acknowledgement?",
+      "outcomes": ["Yes", "No"]
+    },
+    {
+      "id": 44,
+      "type": "step",
+      "name": "Initiate 5GMM common procedures",
+      "description": "Initiate the 5GMM common procedures",
+      "entity": "AMF",
+      "action": "initiate"
+    },
+    {
+      "id": 45,
+      "type": "step",
+      "name": "Progress new REG procedure",
+      "description": "Progress the new registration procedure for initial registration",
+      "entity": "AMF",
+      "action": "progress"
+    },
+    {
+      "id": 46,
+      "type": "step",
+      "name": "Continue previous REG procedure",
+      "description": "Continue with the previous the registration procedure for initial registration and shall ignore the second REGISTRATION REQUEST message",
+      "entity": "AMF",
+      "action": "continue"
+    },
+    {
+      "id": 47,
+      "type": "step",
+      "name": "Progress mobility/periodic REG",
+      "description": "Progress the registration procedure for mobility and periodic registration update",
+      "entity": "AMF",
+      "action": "progress"
+    },
+    {
+      "id": 48,
+      "type": "step",
+      "name": "Progress de-registration procedure",
+      "description": "Progress the de-registration procedure",
+      "entity": "AMF",
+      "action": "progress"
+    },
+    {
+      "id": 49,
+      "type": "step",
+      "name": "Handle 5GMM cause value",
+      "description": "Handle 5GMM cause value",
+      "entity": "UE",
+      "action": "handle"
+    }
+  ],
+  "edges": [
+    {
+      "from": 1,
+      "to": 2,
+      "relation": "triggers"
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "relation": "leads_to"
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "relation": "leads_to"
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "relation": "leads_to"
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "relation": "leads_to"
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "relation": "leads_to"
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "relation": "leads_to"
+    },
+    {
+      "from": 9,
+      "to": 10,
+      "relation": "leads_to"
+    },
+    {
+      "from": 10,
+      "to": 11,
+      "relation": "leads_to"
+    },
+    {
+      "from": 11,
+      "to": 12,
+      "condition": "Yes",
+      "relation": "triggers"
+    },
+    {
+      "from": 11,
+      "to": 22,
+      "condition": "No",
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 13,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 14,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 15,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 16,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 17,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 18,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 19,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 20,
+      "relation": "leads_to"
+    },
+    {
+      "from": 12,
+      "to": 21,
+      "relation": "leads_to"
+    },
+    {
+      "from": 22,
+      "to": 43,
+      "relation": "leads_to"
+    },
+    {
+      "from": 43,
+      "to": 23,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 43,
+      "to": 24,
+      "condition": "No",
+      "relation": "leads_to"
+    },
+    {
+      "from": 23,
+      "to": 25,
+      "relation": "triggers"
+    },
+    {
+      "from": 25,
+      "to": 32,
+      "relation": "leads_to"
+    },
+    {
+      "from": 7,
+      "to": 26,
+      "condition": "No",
+      "relation": "leads_to"
+    },
+    {
+      "from": 26,
+      "to": 31,
+      "relation": "triggers"
+    },
+    {
+      "from": 2,
+      "to": 27,
+      "relation": "times_out"
+    },
+    {
+      "from": 27,
+      "to": 28,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 28,
+      "to": 29,
+      "relation": "leads_to"
+    },
+    {
+      "from": 29,
+      "to": 30,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 29,
+      "to": 42,
+      "condition": "No",
+      "relation": "leads_to"
+    },
+    {
+      "from": 30,
+      "to": 1,
+      "relation": "retry"
+    },
+    {
+      "from": 32,
+      "to": 33,
+      "condition": "Yes",
+      "relation": "retry"
+    },
+    {
+      "from": 33,
+      "to": 12,
+      "relation": "leads_to"
+    },
+    {
+      "from": 1,
+      "to": 34,
+      "relation": "leads_to"
+    },
+    {
+      "from": 1,
+      "to": 35,
+      "relation": "leads_to"
+    },
+    {
+      "from": 8,
+      "to": 36,
+      "relation": "leads_to"
+    },
+    {
+      "from": 1,
+      "to": 37,
+      "relation": "leads_to"
+    },
+    {
+      "from": 1,
+      "to": 38,
+      "relation": "leads_to"
+    },
+    {
+      "from": 8,
+      "to": 39,
+      "relation": "leads_to"
+    },
+    {
+      "from": 8,
+      "to": 40,
+      "relation": "leads_to"
+    },
+    {
+      "from": 1,
+      "to": 41,
+      "relation": "leads_to"
+    },
+    {
+      "from": 35,
+      "to": 26,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 38,
+      "to": 44,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 37,
+      "to": 45,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 37,
+      "to": 46,
+      "condition": "No",
+      "relation": "leads_to"
+    },
+    {
+      "from": 39,
+      "to": 47,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 40,
+      "to": 48,
+      "condition": "Yes",
+      "relation": "leads_to"
+    },
+    {
+      "from": 31,
+      "to": 49,
+      "relation": "leads_to"
+    }
+  ]
+}
