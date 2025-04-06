@@ -79,19 +79,75 @@ def extract_procedural_info(section_name, extracted_data, original_content):
     """Generates a structured **flow property graph** using data from step1.json and step2.json"""
     
     prompt = f"""
- I will provide you with two parts:  
 
-1. **First part**: My extracted procedure flow property graph information about the 3GPP procedure "Registration procedure for initial registration."  
-2. **Second part**: The original content of "Registration procedure for initial registration" from the 3GPP NAS specification.  
+ You are given two part. first part is an extracted state machine (in JSON format) for the  procedure "{section_name}", 
+ second part is  original specification document.
+ Compare the extracted info(first part) with the official specification(second part) to identify missing or incorrect elements.
 
-Please use the second part (the original 3GPP document) to correct any errors or missing information in the first part (my extracted data). For any discrepancies or omissions, indicate the corresponding content in the original document so I can verify them myself later.  
+Calculate a coverage score for each category based on the percentage of the expected elements that are present:
+Core Path Accuracy (e.g., states, transitions)
+Timer Accuracy (e.g., timers, values)
+State Transitions and Actions (e.g., correct actions at each state)
+Error Handling and Special Cases (e.g., failures, re-transmissions)
+The coverage score for each category will be calculated as:
 
+Coverage Score=(Number of Correct Elements/Total Number of Expected Elements)×100
+
+Then, compute a weighted final score by assigning weight to each category based on the importance of each procedure component. Here is the structure:
+Core Path Accuracy: [Weight: 30%]
+Timer Accuracy: [Weight: 20%]
+State Transitions and Actions: [Weight: 25%]
+Error Handling and Special Cases: [Weight: 25%]
+Steps:
+Identify the expected elements in each category from the [Specification Name] specification.
+Compare them with the elements in the extracted JSON graph.
+Calculate the percentage of correct elements in each category.
+Compute a final score for each category.
+Compute the total score by applying the weights for each category.
+Report the results with a clear breakdown of coverage percentages and scores for each category.
+If any element is missing or incorrect, deduct from the total score accordingly based on the severity of the missing part.
+Example of Extracted Data (Input JSON):
+{{
+  "CorePath": ["State1 → Transition1", "Transition2", "Transition3", "State2"],
+  "Timers": ["Timer1", "Timer2"],
+  "States": ["State1", "State2"],
+  "Actions": ["Action1", "Action2"]
+}}
+
+Output Format:
+Core Path Accuracy:
+Expected: 10 transitions
+Found: 5 transitions
+Coverage: 50%
+Weighted Score: 50 × 0.30 = 15
+
+Timer Accuracy:
+Expected: 3 timers
+Found: 2 timers
+Coverage: 66.67%
+Weighted Score: 66.67 × 0.20 = 13.33
+
+State Transitions and Actions:
+Expected: 8 transitions/actions
+Found: 4 transitions/actions
+Coverage: 50%
+Weighted Score: 50 × 0.25 = 12.5
+Error Handling and Special Cases:
+Expected: 3 error handling cases
+Found: 1 error handling case
+Coverage: 33.33%
+Weighted Score: 33.33 × 0.25 = 8.33
+Total Score:
+(15 + 13.33 + 12.5 + 8.33) = 49.16 (out of 100)
+
+Key Points:
+Comparing Elements: This is the core of the prompt. You need to define the expected elements for each category (states, transitions, timers, actions, etc.) based on the relevant specification for the procedure you're analyzing. This can be done by referring to documents like the 3GPP TS, RFCs, or other procedure standards.
+Calculating Coverage: For each category, you will calculate how much of the expected elements are present in the extracted data (e.g., compare the transitions or actions in the JSON data with those listed in the specification).
+Scoring Based on Coverage: The percentage of correct elements in each category determines the coverage score. This score is then multiplied by the category's weight to calculate the weighted score.
+Final Total Score: The final score represents the overall accuracy of the extracted procedure against the specification, considering all the categories and their respective weights.
 **Strict Rule**: Use **only** the provided text. Do **not** infer or add missing details.  
 
-Let’s begin.  
-
-#### **Extracted procedure flow property graph info:**  
-
+This is first part.(extracted flow property graph of procedure in json format)
 {json.dumps(extracted_data, indent=2)}
 
 ------------------
@@ -99,15 +155,11 @@ This is second part:
 #### **orginal content from 3gpp specification:**  
 {original_content}
 
-After comparing the two, please:
-Correct any inaccuracies or missing details in the extracted data based on the original specification.
-Provide an accuracy score (1-100%) for the extracted data.
-Reference the exact content in the original document where corrections are needed, so I can cross-check.
-**Strict Rule**: Use **only** the provided text. Do **not** infer or add missing details.  
+
   """
 
 
-    model_to_use = new_model  # or pro_model depending on your requirement
+    model_to_use = flash_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -149,6 +201,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_txt(procedural_info, "v04-evaluation-bynewmodel.txt")
+    save_to_txt(procedural_info, "v04-evaluation-byflashmodel.txt")
 else:
     print("Failed to extract procedural information")

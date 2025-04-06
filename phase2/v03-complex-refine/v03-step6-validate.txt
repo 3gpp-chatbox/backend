@@ -1,0 +1,28 @@
+Okay, I will compare your extracted procedure flow property graph information with the provided 3GPP specification text and identify any discrepancies or omissions.
+
+Here's the analysis:
+
+**Corrections and Omissions:**
+
+*   **Node "1":**
+    *   **Missing Property:** The `properties` dictionary is missing the `registration_type` which can be "initial registration", "emergency registration", "SNPN onboarding registration", or "disaster roaming initial registration".
+    *   **Source:** "When the UE initiates the registration procedure for initial registration, the UE shall indicate "initial registration" in the 5GS registration type IE... When the UE initiates the registration procedure for emergency services, the UE shall indicate "emergency registration" in the 5GS registration type IE... When the UE initiates the initial registration for onboarding services in SNPN, the UE shall indicate "SNPN onboarding registration" in the 5GS registration type IE. When the UE initiates the initial registration procedure for disaster roaming services, the UE shall indicate "disaster roaming initial registration" in the 5GS registration type IE."
+*   **Node "1":**
+    *   **Missing Property:** The `properties` dictionary is missing the `sms_requested` which can be "SMS over NAS supported" or "SMS over NAS not supported".
+    *   **Source:** "If the UE requests the use of SMS over NAS, the UE shall include the 5GS update type IE in the REGISTRATION REQUEST message with the SMS requested bit set to "SMS over NAS supported". When the 5GS update type IE is included in the REGISTRATION REQUEST for reasons other than requesting the use of SMS over NAS, and the UE does not need to register for SMS over NAS, the UE shall set the SMS requested bit of the 5GS update type IE to "SMS over NAS not supported" in the REGISTRATION REQUEST message."
+*   **Node "14":**
+    *   **Inaccurate Property:** The `update_status` property is set to "5U1 UPDATED". The specification states the UE *sets* the 5GS update status to 5U1 UPDATED. This is an action, not a property.
+    *   **Source:** "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+*   **Node "15":**
+    *   **Inaccurate Property:** The `timers_handled` property includes "non-3GPP de-registration timer". The specification states the AMF shall include the non-3GPP de-registration timer value IE in the REGISTRATION ACCEPT message only if the REGISTRATION REQUEST message was sent over the non-3GPP access.
+    *   **Source:** "The AMF shall include the non-3GPP de-registration timer value IE in the REGISTRATION ACCEPT message only if the REGISTRATION REQUEST message was sent over the non-3GPP access."
+*   **Node "22":**
+    *   **Missing Property:** The `timers_handled` property is missing "T3346".
+    *   **Source:** "If the initial registration request is rejected due to general NAS level mobility management congestion control, the network shall set the 5GMM cause value to #22 "congestion" and assign a value for back-off timer T3346."
+*   **Node "25":**
+    *   **Inaccurate Property:** The `action` property is set to "start", and `timer_name` is set to "T3502". The specification states that UE deletes context, starts T3502 (if > 0).
+    *   **Source:** "UE deletes context, starts T3502 (if > 0), enters ATTEMPTING-REGISTRATION or PLMN-SEARCH"
+
+**Accuracy Score:**
+
+Based on the identified corrections and omissions, I would estimate the accuracy of the extracted data to be around **75%**.

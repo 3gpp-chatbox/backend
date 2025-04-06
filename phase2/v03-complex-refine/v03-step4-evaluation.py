@@ -9,7 +9,6 @@ load_dotenv()
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
-new_model = "gemini-2.5-pro-exp-03-25"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -79,14 +78,68 @@ def extract_procedural_info(section_name, extracted_data, original_content):
     """Generates a structured **flow property graph** using data from step1.json and step2.json"""
     
     prompt = f"""
+    you are 3gpp NAS procedure expert, help me with below task ,use knowledge of 3gpp procedure but strictly based on my instruction and provided text.
  I will provide you with two parts:  
 
 1. **First part**: My extracted procedure flow property graph information about the 3GPP procedure "Registration procedure for initial registration."  
 2. **Second part**: The original content of "Registration procedure for initial registration" from the 3GPP NAS specification.  
 
-Please use the second part (the original 3GPP document) to correct any errors or missing information in the first part (my extracted data). For any discrepancies or omissions, indicate the corresponding content in the original document so I can verify them myself later.  
+Please evaluate the accuracy and completeness of the extracted graph.
+
+Your task:
+Compare each node and edge in the JSON against the original document.
+Identify any incorrect, missing, or misleading nodes or edges.
+For each issue, give:
+What’s wrong 
+What it should be 
+Why (with reference to the original sentence or paragraph)
+You can also point out extra or irrelevant entries in the JSON.
 
 **Strict Rule**: Use **only** the provided text. Do **not** infer or add missing details.  
+
+Please return your evaluation as a JSON object.
+For each identified issue, include:
+"type": "node" or "edge"
+"id" (or "from"/"to" for edges)
+"what_is_wrong"
+"suggested_fix"
+"reason"
+"reference_text": the sentence or paragraph from the original document that supports your reasoning
+ "section_of_reference_text":the section where the reference text is located
+Optionally include an "extras_or_irrelevant" section.
+
+example json output format:
+{{
+  "issues": [
+    {{
+      "type": "node",  // or "edge"
+      "id": "3",
+      "what_is_wrong": "The decision node incorrectly links to node 4 on 'Success'.",
+      "suggested_fix": "Should link to node 5 instead.",
+      "reason": "Paragraph 5 states that after success, the process moves to step 5, not 4.",
+      "reference_text": "After a successful registration, the UE initiates session setup..."
+       "section_of_reference_text": "5.5.1.2.5"
+    }},
+    {{
+      "type": "edge",
+      "from": "2",
+      "to": "3",
+      "what_is_wrong": "Missing retry condition in case of timeout.",
+      "suggested_fix": "Add an edge back to node 2 with reason 'Timeout, retry up to 3 times'.",
+      "reason": "Section 2.1.4 mentions that on T3510 expiry, the UE retries registration up to 3 times.",
+      "reference_text": "If the T3510 timer expires, the UE shall retransmit the request up to 3 times."
+       "section_of_reference_text": "5.5.1.2.5"
+    }}
+  ],
+  "extras_or_irrelevant": [
+    {{
+      "id": "6",
+      "type": "node",
+      "reason": "This node is not mentioned in the original document."
+    }}
+  ]
+}}
+
 
 Let’s begin.  
 
@@ -99,15 +152,61 @@ This is second part:
 #### **orginal content from 3gpp specification:**  
 {original_content}
 
-After comparing the two, please:
-Correct any inaccuracies or missing details in the extracted data based on the original specification.
-Provide an accuracy score (1-100%) for the extracted data.
-Reference the exact content in the original document where corrections are needed, so I can cross-check.
+remember Your task:
+Compare each node and edge in the JSON against the original document.
+Identify any incorrect, missing, or misleading nodes or edges.
+For each issue, give:
+What’s wrong
+What it should be
+Why (with reference to the original sentence or paragraph)
+You can also point out extra or irrelevant entries in the JSON.
+
 **Strict Rule**: Use **only** the provided text. Do **not** infer or add missing details.  
+
+Please return your evaluation as a JSON object.
+For each identified issue, include:
+"type": "node" or "edge"
+"id" (or "from"/"to" for edges)
+"what_is_wrong"
+"suggested_fix"
+"reason"
+"reference_text": the sentence or paragraph from the original document that supports your reasoning
+Optionally include an "extras_or_irrelevant" section.
+
+example json output format:
+{{
+  "issues": [
+    {{
+      "type": "node",  // or "edge"
+      "id": "3",
+      "what_is_wrong": "The decision node incorrectly links to node 4 on 'Success'.",
+      "suggested_fix": "Should link to node 5 instead.",
+      "reason": "Paragraph 5 states that after success, the process moves to step 5, not 4.",
+      "reference_text": "After a successful registration, the UE initiates session setup..."
+    }},
+    {{
+      "type": "edge",
+      "from": "2",
+      "to": "3",
+      "what_is_wrong": "Missing retry condition in case of timeout.",
+      "suggested_fix": "Add an edge back to node 2 with reason 'Timeout, retry up to 3 times'.",
+      "reason": "Section 2.1.4 mentions that on T3510 expiry, the UE retries registration up to 3 times.",
+      "reference_text": "If the T3510 timer expires, the UE shall retransmit the request up to 3 times."
+       "section_of_reference_text": "5.5.1.2.5"
+    }}
+  ],
+  "extras_or_irrelevant": [
+    {{
+      "id": "6",
+      "type": "node",
+      "reason": "This node is not mentioned in the original document."
+    }}
+  ]
+}}
   """
 
 
-    model_to_use = new_model  # or pro_model depending on your requirement
+    model_to_use = flash_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -133,7 +232,7 @@ def save_to_txt(data, file_path):
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    extracted_data = read_json_file("v04-step3-simple-flashmodel.json")
+    extracted_data = read_json_file("v03-step3-complex-newmodel.json")
     original_content = read_text_file("5.5.1.2.txt")
 
     if extracted_data is None or original_content is None:
@@ -149,6 +248,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_txt(procedural_info, "v04-evaluation-bynewmodel.txt")
+    save_to_txt(procedural_info, "v03-step4-evaluation.txt")
 else:
     print("Failed to extract procedural information")

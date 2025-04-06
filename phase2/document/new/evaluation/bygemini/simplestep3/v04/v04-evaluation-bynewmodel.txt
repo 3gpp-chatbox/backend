@@ -1,0 +1,120 @@
+Okay, I will compare your extracted property graph information (Part 1) with the original 3GPP specification text (Part 2) for the "Registration procedure for initial registration" and provide corrections based *only* on the provided text.
+
+**Analysis and Corrections:**
+
+Here are the discrepancies and missing information found in your extracted data (Part 1) when compared against the original specification text (Part 2):
+
+**I. Corrections to Existing Nodes/Edges:**
+
+1.  **Node `T3550_start` Description:**
+    *   **Your Data:** "AMF starts timer T3550 and enters state 5GMM-COMMON-PROCEDURE-INITIATED"
+    *   **Correction:** The description is accurate but the *conditions* triggering this are broader than implied by the associated edge. The node description itself is fine based on the text.
+    *   **Reference:** 5.5.1.2.4: "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..." *and* "If the Operator-defined access category definitions IE, the Extended emergency number list IE, the CAG information list IE or the Extended CAG information list IE are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550..." *and* "If the UE has set the RCMAP bit... and if the Negotiated PEIPS assistance information IE is included..., the AMF shall start timer T3550..." *and* "If the UE radio capability ID IE or the UE radio capability ID deletion indication IE is included..., the AMF shall start timer T3550..." *and* "If... the AMF shall include the Truncated 5G-S-TMSI configuration IE... The AMF shall start timer T3550..." *and* "...the AMF shall initiate the UUAA-MM procedure... and shall include a service-level-AA pending indication... The AMF shall start timer T3550..." *and* "...the AMF shall include the NSSRG information... In addition, the AMF shall start timer T3550..." *and* "...the AMF shall include the S-NSSAI time validity information IE... In addition, the AMF shall start timer T3550..." *and* "...the AMF shall include the new S-NSSAI location validity information... In addition, the AMF shall start timer T3550..." *and* "...if the NSAG information IE is included... the AMF shall start timer T3550..." *and* "...the AMF shall include the Alternative NSSAI IE... In addition, the AMF shall start timer T3550..." *and* "...the AMF shall include the On-demand NSSAI IE... In addition, the AMF shall start timer T3550..." *and* "The AMF shall include the Network slicing indication IE with the Network slicing subscription change indication set to "Network slicing subscription changed"... In this case the AMF shall start timer T3550..."
+
+2.  **Node `UE_Initialization` Description:**
+    *   **Your Data:** "UE Initialization"
+    *   **Correction:** This node is too vague. The procedure starts when the UE is in `5GMM-DEREGISTERED` state and specific conditions are met. Replace or clarify this node. The trigger is explicitly stated.
+    *   **Reference:** 5.5.1.2.2: "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, a) when the UE performs initial registration for 5GS services; b) when the UE performs initial registration for emergency services; ..." (lists conditions a through g).
+
+3.  **Edge `REGISTRATION_ACCEPT_SENT` -> `T3550_start` Condition:**
+    *   **Your Data:** "5G-GUTI or specific IEs are included"
+    *   **Correction:** The condition description is incomplete. It should list the specific IEs mentioned in the text that trigger T3550 start when included in REGISTRATION ACCEPT.
+    *   **Reference:** 5.5.1.2.4: Lists multiple IEs triggering T3550: "5G-GUTI", "SOR transparent container IE", "Operator-defined access category definitions IE", "Extended emergency number list IE", "CAG information list IE", "Extended CAG information list IE", "Negotiated PEIPS assistance information IE" (if RCMAP supported), "UE radio capability ID IE", "UE radio capability ID deletion indication IE", "Truncated 5G-S-TMSI configuration IE", "service-level-AA pending indication", "NSSRG information IE", "S-NSSAI time validity information IE", "S-NSSAI location validity information", "NSAG information IE" (if RCMAN supported), "Alternative NSSAI IE", "On-demand NSSAI IE", "Network slicing indication IE with Network slicing subscription change indication".
+
+4.  **Edge `REGISTRATION_ACCEPT_SENT` -> `AMF_waits_for_REGISTRATION_COMPLETE`:**
+    *   **Your Data:** Edge exists with trigger "AMF waits for REGISTRATION COMPLETE".
+    *   **Correction:** This edge is redundant/misleading. The AMF starts T3550 *if* REGISTRATION COMPLETE is expected, and enters the `5GMM-COMMON-PROCEDURE-INITIATED` state (which implies waiting). This edge should likely be removed or reframed. The trigger for waiting is the start of T3550.
+    *   **Reference:** 5.5.1.2.4: "If a 5G-GUTI or the SOR transparent container IE is included... the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..." (This state implies waiting for the COMPLETE message).
+
+5.  **Edge `UE_REGISTERED` -> `REGISTRATION_COMPLETE_sent` Condition:**
+    *   **Your Data:** "Network slicing indication IE is set to 'Network slicing subscription changed' or other conditions are met"
+    *   **Correction:** The condition description is incomplete. It should list the specific IEs/conditions mentioned in the text that require the UE to send REGISTRATION COMPLETE.
+    *   **Reference:** 5.5.1.2.4: Lists multiple conditions: "Network slicing indication IE with the Network slicing subscription change indication set to 'Network slicing subscription changed'", "Configured NSSAI IE", "NSSRG information IE", "Alternative NSSAI IE", "S-NSSAI location validity information", "S-NSSAI time validity information IE", "On-demand NSSAI IE", "NSAG information IE" (if RCMAN supported), "CAG information list IE", "Extended CAG information list IE", "Operator-defined access category definitions IE", "Extended emergency number list IE", "Negotiated PEIPS assistance information IE" (if RCMAP supported), "UE radio capability ID IE", "UE radio capability ID deletion indication IE", "Truncated 5G-S-TMSI configuration IE", "service-level-AA pending indication", "SOR transparent container IE" (if ack requested).
+
+6.  **Edge `UE_DEREGISTERED` -> `REGISTRATION_REQUEST_SENT` (Second Instance):**
+    *   **Your Data:** Duplicate edge with description "UE state is 5GMM-DEREGISTERED and one of several registration triggers occurs".
+    *   **Correction:** This is a duplicate edge. The trigger description is more accurate than the first instance ("UE initiates registration procedure"). Remove one edge and use the more descriptive trigger.
+    *   **Reference:** 5.5.1.2.2: "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration... a) when... b) when... " (lists conditions a through g).
+
+7.  **Edge `AMF_waits_for_REGISTRATION_COMPLETE` -> `T3550_stop`:**
+    *   **Your Data:** Edge exists with condition "REGISTRATION COMPLETE received".
+    *   **Correction:** The source node `AMF_waits_for_REGISTRATION_COMPLETE` is conceptual. The trigger for stopping T3550 is the *receipt* of the REGISTRATION COMPLETE message by the AMF. The edge should originate from `REGISTRATION_COMPLETE_sent` (representing the UE sending and AMF receiving).
+    *   **Reference:** 5.5.1.2.4: "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550..."
+
+**II. Missing Nodes/States/Events:**
+
+1.  **Missing Phase:** `5GMM_Common_Procedure_Initiation`
+    *   **Description:** Represents the phase where the network may initiate procedures like identification, authentication, and security.
+    *   **Reference:** 5.5.1.2.3: "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure..."
+
+2.  **Missing State:** `AMF_State_5GMM_COMMON_PROCEDURE_INITIATED`
+    *   **Description:** State entered by AMF after sending REGISTRATION ACCEPT and starting T3550, while waiting for REGISTRATION COMPLETE.
+    *   **Reference:** 5.5.1.2.4: "...the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..."
+
+3.  **Missing State:** `UE_State_5GMM_REGISTERED_INITIATED`
+    *   **Description:** Implicit state of the UE after sending REGISTRATION REQUEST and before receiving ACCEPT/REJECT. Referenced in abnormal cases.
+    *   **Reference:** 5.5.1.2.7 g): "If the UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED..."
+
+4.  **Missing State:** `UE_State_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION`
+    *   **Description:** State entered by UE after certain registration failures (e.g., Cause #22, #62, T3510 timeout with attempts < 5).
+    *   **Reference:** 5.5.1.2.5 (Cause #22, #62, #79, #81, #82), 5.5.1.2.7 (Cases c, d, e).
+
+5.  **Missing State:** `UE_State_5GMM_DEREGISTERED_LIMITED_SERVICE`
+    *   **Description:** State entered by UE after certain registration rejections (e.g., Cause #12, #13, #15, #27, #72, #73, #74, #76, #77).
+    *   **Reference:** 5.5.1.2.5 (Cause #12, #13, #15, #27, #72, #73, #74, #76, #77), 5.5.1.2.7 (Case n).
+
+6.  **Missing State:** `UE_State_5GMM_DEREGISTERED_PLMN_SEARCH`
+    *   **Description:** State entered by UE after certain registration rejections (e.g., Cause #3, #6, #7, #11, #13, #62, #73, #74, #75, #76, #78, #79, #80, #81, #82) or failures.
+    *   **Reference:** 5.5.1.2.5 (Cause #3, #6, #7, #11, #13, #62, #73, #74, #75, #76, #78, #79, #80, #81, #82), 5.5.1.2.7 (Cases e, n).
+
+7.  **Missing State:** `UE_State_5GMM_DEREGISTERED_NO_SUPI`
+    *   **Description:** State entered by UE after specific registration rejections (e.g., Cause #3, #6, #7, #5 for emergency).
+    *   **Reference:** 5.5.1.2.5 (Cause #3, #6, #7), 5.5.1.2.6 (Cause #5).
+
+8.  **Missing State:** `UE_State_5GMM_DEREGISTERED_NO_CELL_AVAILABLE`
+    *   **Description:** State entered by UE after specific registration rejection (Cause #31).
+    *   **Reference:** 5.5.1.2.5 (Cause #31).
+
+9.  **Missing Event:** `T3511_start`
+    *   **Description:** UE starts timer T3511 after certain registration failures if the attempt counter is less than 5.
+    *   **Reference:** 5.5.1.2.7: "if the registration attempt counter is less than 5: ... timer T3511 is started..."
+
+10. **Missing Event:** `T3502_start`
+    *   **Description:** UE starts timer T3502 after registration failure when the attempt counter reaches 5 (if T3502 value is not zero).
+    *   **Reference:** 5.5.1.2.7: "If the registration attempt counter is equal to 5 ... start timer T3502 if the value of the timer as indicated by the network is not zero..."
+
+11. **Missing Event:** `T3346_start`
+    *   **Description:** UE starts timer T3346 upon receiving REGISTRATION REJECT with cause #22.
+    *   **Reference:** 5.5.1.2.5 (Cause #22): "...the UE shall start timer T3346 with the value provided in the T3346 value IE."
+
+12. **Missing Event:** `T3526_start`
+    *   **Description:** UE starts timer T3526 upon receiving REGISTRATION REJECT with cause #62 and sub-cause "S-NSSAI not available due to maximum number of UEs reached".
+    *   **Reference:** 5.5.1.2.5 (Cause #62): "start the timer T3526 with: 1) the back-off timer value received... or 2) an implementation specific back-off timer value..."
+
+13. **Missing Detail:** `Registration_Attempt_Counter`
+    *   **Description:** A counter maintained by the UE, incremented on failures, affecting behavior when it reaches 5.
+    *   **Reference:** 5.5.1.2.7: "...the registration attempt counter shall be incremented, unless it was already set to 5. If the registration attempt counter is less than 5... If the registration attempt counter is equal to 5..."
+
+14. **Missing Detail:** `Handling_Specific_Reject_Causes`
+    *   **Description:** The graph node `UE_handles_REGISTRATION_REJECT` is too generic. The specification details specific actions (state changes, timer starts, storing forbidden lists, disabling N1 mode, etc.) for numerous 5GMM cause values (#3, #6, #7, #11, #12, #13, #15, #22, #27, #31, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82, etc.).
+    *   **Reference:** 5.5.1.2.5, 5.5.1.2.6.
+
+15. **Missing Detail:** `Abnormal_Cases_Handling`
+    *   **Description:** The graph does not represent the specific behaviors described for abnormal cases like T3510 timeout, lower layer failures, procedure collisions, TAI changes during the procedure, T3346/T3447 running.
+    *   **Reference:** 5.5.1.2.7, 5.5.1.2.8.
+
+16. **Missing Detail:** `Emergency_Registration_Handling`
+    *   **Description:** Specific rules for emergency registration (e.g., skipping authentication, AMF not checking restrictions, specific reject handling) are not differentiated.
+    *   **Reference:** 5.5.1.2.1, 5.5.1.2.2, 5.5.1.2.3, 5.5.1.2.4, 5.5.1.2.6, 5.5.1.2.6A.
+
+17. **Missing Detail:** `Security_Context_Impact_on_Request`
+    *   **Description:** How the REGISTRATION REQUEST is sent (with or without NAS message container IE) depends on the validity of the 5G NAS security context.
+    *   **Reference:** 5.5.1.2.2: "If the UE does not have a valid 5G NAS security context... send the REGISTRATION REQUEST message without including the NAS message container IE... If the UE has a valid 5G NAS security context... send a REGISTRATION REQUEST message including the NAS message container IE..."
+
+**Accuracy Score:**
+
+Based on the comparison, the extracted data captures the most basic success path but misses significant details regarding failure handling, specific conditions, intermediate states, timers related to failures, and abnormal cases explicitly mentioned in the provided text.
+
+**Accuracy Score: 55%**
+
+The extracted graph provides a rudimentary skeleton but lacks the necessary detail and accuracy to fully represent the procedure as described in the specification text, especially concerning state transitions upon failure and conditional triggers.

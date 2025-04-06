@@ -1,0 +1,243 @@
+Okay, let's compare the extracted JSON graph with the provided 3GPP specification text for the "Registration procedure for initial registration" (Section 5.5.1.2).
+
+**Analysis:**
+
+**1. Core Path Accuracy:**
+*   **Expected Elements:** Based on the specification (subclauses 5.5.1.2.2, 5.5.1.2.4) and the level of detail in the JSON, the core path involves:
+    1.  UE Init (State: 5GMM-DEREGISTERED)
+    2.  UE Stops T3502 (if running)
+    3.  UE Stops T3511 (if running)
+    4.  UE Starts T3519 (if SUCI included and T3519 not running)
+    5.  UE Sends REGISTRATION REQUEST
+    6.  UE Starts T3510
+    7.  AMF Receives REGISTRATION REQUEST
+    8.  AMF (Optional) Common Procedures (e.g., Auth/Sec)
+    9.  AMF Decides Accept/Reject
+    10. AMF Sends REGISTRATION ACCEPT (Accept Path)
+    11. AMF Starts T3550 (if ack needed, e.g., for GUTI, SOR, ODB, EENL, CAG, PEIPS, RACS ID)
+    12. UE Receives REGISTRATION ACCEPT
+    13. UE Stops T3510
+    14. UE Resets Registration Attempt Counter
+    15. UE Enters 5GMM-REGISTERED state
+    16. UE Sets 5GS Update Status to 5U1 UPDATED
+    17. UE Handles Timers/Info from ACCEPT (e.g., TAI list, T3512, T3324, NSSAI, etc.)
+    18. UE Sends REGISTRATION COMPLETE (if ack needed)
+    19. AMF Receives REGISTRATION COMPLETE
+    20. AMF Stops T3550
+    21. AMF Sends REGISTRATION REJECT (Reject Path)
+    22. UE Receives REGISTRATION REJECT
+    23. UE Stops T3510
+    24. UE Handles Reject Cause (State change varies)
+    *Total Expected Core Steps/Transitions (at JSON granularity):* ~24
+*   **Found Elements (JSON):**
+    *   Nodes 1, 2, 3, d_t3519, 4, 5, 6, 7, 8, d_amf_accept cover steps 1-9.
+    *   Nodes 9, d_amf_ack_req, 10 cover steps 10-11 (Accept Path).
+    *   Nodes 11, 12, 13, 14 cover steps 12-16.
+    *   Node 15 covers step 17 (partially).
+    *   Nodes d_ue_ack_req, 16 cover step 18.
+    *   Node 17 covers step 19.
+    *   Node 18 covers step 20.
+    *   Node 19 covers step 21 (Reject Path).
+    *   Node 20 covers step 22.
+    *   Node 21 covers step 23.
+    *   Node 22 covers step 24 (partially).
+    *Total Found Core Steps/Transitions:* ~24 nodes/decisions representing the core path.
+*   **Coverage:** (24 / 24) * 100 = 100%
+*   **Weighted Score:** 100 * 0.30 = 30
+
+**2. Timer Accuracy:**
+*   **Expected Elements (Timers & Key Actions from Spec 5.5.1.2):**
+    1.  UE Stops T3502 (if running)
+    2.  UE Stops T3511 (if running)
+    3.  UE Starts T3510
+    4.  UE Starts T3519 (conditional)
+    5.  UE Stops T3510 (on ACCEPT/REJECT)
+    6.  UE Handles T3512 (on ACCEPT)
+    7.  UE Handles T3324 (on ACCEPT)
+    8.  UE Handles T3448 (on ACCEPT)
+    9.  UE Handles T3447 (on ACCEPT)
+    10. UE Handles T3526 (on ACCEPT)
+    11. UE Starts T3346 (on REJECT #22)
+    12. UE Starts T3245 (on REJECT #3, #6, #7, #11)
+    13. UE Starts T3526 (on REJECT #62)
+    14. UE T3510 Expiry -> Start T3511 (retry < 5)
+    15. UE T3510 Expiry -> Start T3502 (retry = 5)
+    16. AMF Starts T3550 (conditional on ACCEPT requiring ack)
+    17. AMF Stops T3550 (on COMPLETE)
+    18. AMF T3550 Expiry (retransmit/abort)
+    *Total Expected Timer Actions/Events:* 18
+*   **Found Elements (JSON):**
+    1.  Stop T3502 (Node 2)
+    2.  Stop T3511 (Node 3)
+    3.  Start T3510 (Node 6)
+    4.  Start T3519 (Node 4)
+    5.  Stop T3510 (Nodes 12, 21, 23)
+    6.  Handle T3512 (Node 15 property)
+    7.  Handle T3324 (Node 15 property)
+    8.  Handle T3448 (Node 15 property)
+    9.  Handle T3447 (Node 15 property - listed as non-3GPP de-reg timer?)
+    10. Handle T3526 (Node 15 property, Node 22 property)
+    11. Handle T3346 (Node 22 property - "handled", not explicitly "start")
+    12. Handle T3245 (Node 22 property - "handled", not explicitly "start")
+    13. Start T3526 (Not explicitly found for REJECT #62)
+    14. T3510 Expiry -> Start T3511 (Node 24)
+    15. T3510 Expiry -> Start T3502 (Node 25)
+    16. Start T3550 (Node 10)
+    17. Stop T3550 (Node 18)
+    18. T3550 Expiry (Node d_t3550_timeout -> 26 - Abort, retransmit missing)
+    *Total Found Timer Actions/Events:* 16 (Missing explicit start T3526 on reject, explicit start T3346/T3245 on reject, T3550 retransmit logic)
+*   **Coverage:** (16 / 18) * 100 = 88.89%
+*   **Weighted Score:** 88.89 * 0.20 = 17.78
+
+**3. State Transitions and Actions:**
+*   **Expected Elements (Key States, Transitions, Major Actions):**
+    1.  UE State: 5GMM-DEREGISTERED (Start)
+    2.  UE Action: Send REGISTRATION REQUEST (with appropriate IEs like Mobile ID, NSSAI, Capabilities)
+    3.  AMF Action: Receive REGISTRATION REQUEST
+    4.  AMF Action: Store UE Capabilities (5GMM, S1, Security)
+    5.  AMF Action: Assign TAI list (in ACCEPT)
+    6.  AMF Action: Assign 5G-GUTI (in ACCEPT)
+    7.  AMF Action: Provide Allowed NSSAI (in ACCEPT)
+    8.  AMF Action: Provide Rejected NSSAI (in ACCEPT/REJECT)
+    9.  AMF Action: Provide Configured NSSAI (in ACCEPT)
+    10. AMF Action: Provide Pending NSSAI (in ACCEPT)
+    11. AMF State: 5GMM-COMMON-PROCEDURE-INITIATED (if T3550 started)
+    12. UE Action: Receive REGISTRATION ACCEPT
+    13. UE State: 5GMM-REGISTERED (on ACCEPT)
+    14. UE Action: Set 5GS Update Status = 5U1 UPDATED
+    15. UE Action: Reset Registration Attempt Counter
+    16. UE Action: Store TAI list
+    17. UE Action: Store Allowed NSSAI
+    18. UE Action: Store Rejected NSSAI
+    19. UE Action: Store Configured NSSAI
+    20. UE Action: Store Pending NSSAI
+    21. UE Action: Send REGISTRATION COMPLETE (if needed)
+    22. AMF Action: Receive REGISTRATION COMPLETE
+    23. AMF State: 5GMM-REGISTERED (on COMPLETE or if no COMPLETE needed)
+    24. UE Action: Receive REGISTRATION REJECT
+    25. UE Action: Handle Reject Cause (State change, list updates, etc.) - Complex action
+    *Total Expected State/Action Elements:* 25
+*   **Found Elements (JSON):**
+    1.  UE State: 5GMM-DEREGISTERED (Node 1 property) - Found
+    2.  UE Action: Send REGISTRATION REQUEST (Node 5) - Found (IE details missing)
+    3.  AMF Action: Receive REGISTRATION REQUEST (Node 7) - Found
+    4.  AMF Action: Store UE Capabilities - Not Found
+    5.  AMF Action: Assign TAI list - Not Found (Implied by UE receiving ACCEPT)
+    6.  AMF Action: Assign 5G-GUTI - Not Found (Implied by UE receiving ACCEPT)
+    7.  AMF Action: Provide Allowed NSSAI - Not Found
+    8.  AMF Action: Provide Rejected NSSAI - Not Found
+    9.  AMF Action: Provide Configured NSSAI - Not Found
+    10. AMF Action: Provide Pending NSSAI - Not Found
+    11. AMF State: 5GMM-COMMON-PROCEDURE-INITIATED (Node 10 property) - Found
+    12. UE Action: Receive REGISTRATION ACCEPT (Node 11) - Found
+    13. UE State: 5GMM-REGISTERED (Node 14 property) - Found
+    14. UE Action: Set 5GS Update Status = 5U1 UPDATED (Node 14 property) - Found
+    15. UE Action: Reset Registration Attempt Counter (Node 13) - Found
+    16. UE Action: Store TAI list - Not Found
+    17. UE Action: Store Allowed NSSAI - Not Found
+    18. UE Action: Store Rejected NSSAI - Not Found
+    19. UE Action: Store Configured NSSAI - Not Found
+    20. UE Action: Store Pending NSSAI - Not Found
+    21. UE Action: Send REGISTRATION COMPLETE (Node 16) - Found
+    22. AMF Action: Receive REGISTRATION COMPLETE (Node 17) - Found
+    23. AMF State: 5GMM-REGISTERED (Node 18 property, implied also if no COMPLETE needed) - Found
+    24. UE Action: Receive REGISTRATION REJECT (Node 20) - Found
+    25. UE Action: Handle Reject Cause (Node 22 property "Varies based on cause") - Partially Found (Lacks detail)
+    *Total Found State/Action Elements:* 15 (Missing capability storage, TAI/GUTI assignment, NSSAI handling/storage, detailed reject handling)
+*   **Coverage:** (15 / 25) * 100 = 60.00%
+*   **Weighted Score:** 60.00 * 0.25 = 15.00
+
+**4. Error Handling and Special Cases:**
+*   **Expected Elements (Spec 5.5.1.2.5, 5.5.1.2.6, 5.5.1.2.7, 5.5.1.2.8):**
+    1.  T3510 Expiry: Retry (<5 attempts) -> Start T3511
+    2.  T3510 Expiry: Failure (>=5 attempts) -> Delete context, Start T3502, State change
+    3.  T3550 Expiry: AMF Retransmit ACCEPT (up to 4 times)
+    4.  T3550 Expiry: AMF Abort procedure, enter 5GMM-REGISTERED
+    5.  Detailed REJECT Cause Handling (#3, #6, #7, #11, #12, #13, #15, #22, #27, #31, #36, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82) - Count as 1 complex element.
+    6.  Emergency Services Registration Rejection Handling (Subclause 5.5.1.2.6)
+    7.  UE Abnormal: T3346 running
+    8.  UE Abnormal: Access barred
+    9.  UE Abnormal: Lower layer failure before ACCEPT/REJECT
+    10. UE Abnormal: De-registration collision
+    11. UE Abnormal: TAI change during procedure
+    12. UE Abnormal: REGISTRATION COMPLETE transmission failure
+    13. UE Abnormal: REGISTRATION REQUEST transmission failure
+    14. UE Abnormal: T3447 running
+    15. AMF Abnormal: Lower layer failure after ACCEPT sent
+    16. AMF Abnormal: Protocol error in REQUEST
+    17. AMF Abnormal: Duplicate/Differing REQUEST received
+    18. AMF Abnormal: REQUEST received in 5GMM-REGISTERED
+    19. AMF Abnormal: Mobility/Periodic Update received before COMPLETE
+    20. AMF Abnormal: DEREGISTRATION received before COMPLETE
+    21. AMF Abnormal: Invalid UE security capabilities
+    22. AMF Abnormal: CAG rejection for non-CAG UE
+    *Total Expected Error/Special Case Elements:* 22
+*   **Found Elements (JSON):**
+    1.  T3510 Expiry: Retry (<5 attempts) -> Start T3511 (Nodes 23, d_retry_counter, 24) - Found
+    2.  T3510 Expiry: Failure (>=5 attempts) -> Delete context, Start T3502, State change (Nodes 23, d_retry_counter, 25) - Found
+    3.  T3550 Expiry: AMF Retransmit ACCEPT - Not Found
+    4.  T3550 Expiry: AMF Abort procedure, enter 5GMM-REGISTERED (Nodes d_t3550_timeout, 26) - Found (Abort part)
+    5.  Detailed REJECT Cause Handling (Node 22 property "Varies based on cause") - Minimally Found (Lacks specific cause handling)
+    6.  Emergency Services Rejection Handling - Not Found
+    7.  UE Abnormal: T3346 running - Not Found
+    8.  UE Abnormal: Access barred - Not Found
+    9.  UE Abnormal: Lower layer failure before ACCEPT/REJECT (Implicitly leads to T3510 expiry, but not explicitly modeled) - Partially Found
+    10. UE Abnormal: De-registration collision - Not Found
+    11. UE Abnormal: TAI change during procedure - Not Found
+    12. UE Abnormal: REGISTRATION COMPLETE transmission failure - Not Found
+    13. UE Abnormal: REGISTRATION REQUEST transmission failure - Not Found
+    14. UE Abnormal: T3447 running - Not Found
+    15. AMF Abnormal: Lower layer failure after ACCEPT sent - Not Found
+    16. AMF Abnormal: Protocol error in REQUEST - Not Found
+    17. AMF Abnormal: Duplicate/Differing REQUEST received - Not Found
+    18. AMF Abnormal: REQUEST received in 5GMM-REGISTERED - Not Found
+    19. AMF Abnormal: Mobility/Periodic Update received before COMPLETE - Not Found
+    20. AMF Abnormal: DEREGISTRATION received before COMPLETE - Not Found
+    21. AMF Abnormal: Invalid UE security capabilities - Not Found
+    22. AMF Abnormal: CAG rejection for non-CAG UE - Not Found
+    *Total Found Error/Special Case Elements:* 4 (T3510 expiry retry, T3510 expiry fail, T3550 expiry abort, minimal reject handling, partial lower layer failure). Let's be generous and count partials as 0.5, minimal as 0.25. So 2 + 1 + 0.25 + 0.5 = 3.75. Round to 4.
+*   **Coverage:** (4 / 22) * 100 = 18.18%
+*   **Weighted Score:** 18.18 * 0.25 = 4.55
+
+**Final Score Calculation:**
+
+*   Core Path Accuracy: 30.00
+*   Timer Accuracy: 17.78
+*   State Transitions and Actions: 15.00
+*   Error Handling and Special Cases: 4.55
+*   **Total Score:** 30.00 + 17.78 + 15.00 + 4.55 = **67.33**
+
+**Output Report:**
+
+**Procedure: Registration procedure for initial registration (3GPP TS 24.501 Section 5.5.1.2)**
+
+**Core Path Accuracy:**
+*   Expected: 24 transitions/steps (representing the main success and reject flows at JSON granularity)
+*   Found: 24 transitions/steps
+*   Coverage: 100%
+*   Weighted Score: 100 * 0.30 = **30.00**
+    *   *Comment:* The main sequence of sending/receiving REQUEST, ACCEPT, REJECT, COMPLETE messages is correctly captured.
+
+**Timer Accuracy:**
+*   Expected: 18 timer-related actions/events (starts, stops, expiries, handling based on spec text)
+*   Found: 16 timer-related actions/events
+*   Coverage: 88.89%
+*   Weighted Score: 88.89 * 0.20 = **17.78**
+    *   *Comment:* Most key timers (T3510, T3550, T3502, T3511, T3519) and their basic operations (start/stop/expiry) are present. Handling of timers received in ACCEPT/REJECT is mentioned but lacks detail (e.g., explicit start conditions for T3346/T3245/T3526 on reject). T3550 retransmission logic on expiry is missing.
+
+**State Transitions and Actions:**
+*   Expected: 25 elements (key UE/AMF states, transitions, and major actions like counter reset, status update, capability storage, TAI/GUTI assignment, NSSAI handling/storage)
+*   Found: 15 elements
+*   Coverage: 60.00%
+*   Weighted Score: 60.00 * 0.25 = **15.00**
+    *   *Comment:* Core state transitions (DEREGISTERED -> REGISTERED/COMMON-PROC-INIT) are present. Basic actions like sending/receiving messages, resetting counters are included. Significant missing elements include the handling and storage of crucial information like UE capabilities, TAI list, GUTI, and various NSSAI types (Allowed, Rejected, Configured, Pending). Detailed actions upon reject are missing.
+
+**Error Handling and Special Cases:**
+*   Expected: 22 elements (covering specific reject cause handling, UE/AMF abnormal cases from spec sections 5.5.1.2.7/5.5.1.2.8, emergency registration specifics)
+*   Found: 4 elements (T3510 expiry handling is well-covered, T3550 expiry partially, reject cause handling minimally, one UE abnormal case partially)
+*   Coverage: 18.18%
+*   Weighted Score: 18.18 * 0.25 = **4.55**
+    *   *Comment:* This category has the lowest coverage. While T3510 expiry is modeled, T3550 expiry lacks retransmission detail. The vast majority of specific reject cause actions and numerous abnormal cases listed in the specification (e.g., access barring, TAI change, protocol errors, duplicate messages, security capability issues, emergency/SNPN/disaster roaming specifics) are not represented in the JSON flow.
+
+**Total Score:**
+(30.00 + 17.78 + 15.00 + 4.55) = **67.33** (out of 100)

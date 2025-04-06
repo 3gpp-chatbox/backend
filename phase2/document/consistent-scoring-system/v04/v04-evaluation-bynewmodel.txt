@@ -1,0 +1,157 @@
+Okay, let's compare the provided JSON state machine for the "Registration procedure for initial registration" against the 3GPP TS 24.501 section 5.5.1.2 specification text.
+
+**Analysis:**
+
+**1. Core Path Accuracy:**
+
+*   **Expected Elements (Based on Specification 5.5.1.2.2, 5.5.1.2.4, 5.5.1.2.5):**
+    *   **States:** UE: 5GMM-DEREGISTERED, 5GMM-REGISTERED-INITIATED (Implicit state when T3510 is running), 5GMM-REGISTERED. AMF: Implicit initial state, 5GMM-COMMON-PROCEDURE-INITIATED (when T3550 starts), 5GMM-REGISTERED. (Approx. 6 key states).
+    *   **Transitions (Main Flow):**
+        1.  UE (Deregistered) -> Send REGISTRATION REQUEST
+        2.  REGISTRATION REQUEST -> AMF Processing
+        3.  AMF Processing -> Send REGISTRATION ACCEPT (Success Case)
+        4.  REGISTRATION ACCEPT -> UE Processing (Enter Registered State)
+        5.  UE (Registered) -> Send REGISTRATION COMPLETE (Conditional)
+        6.  REGISTRATION COMPLETE -> AMF Processing (Stop T3550, Enter Registered State)
+        7.  AMF Processing -> Send REGISTRATION REJECT (Failure Case)
+        8.  REGISTRATION REJECT -> UE Processing (Handle Reject based on cause)
+        (Approx. 8 core transitions in the main success/reject paths).
+*   **Found Elements (Based on JSON):**
+    *   **States:** `UE_DEREGISTERED`, `UE_REGISTERED`, `AMF_REGISTERED`. (3 states explicitly defined). `AMF_waits_for_REGISTRATION_COMPLETE` is an event, not a state. `AMF_processes_REGISTRATION_REQUEST` is an event.
+    *   **Transitions:**
+        1.  `UE_DEREGISTERED` -> `REGISTRATION_REQUEST_SENT` (Covered)
+        2.  `REGISTRATION_REQUEST_SENT` -> `AMF_processes_REGISTRATION_REQUEST` (Covered)
+        3.  `AMF_processes_REGISTRATION_REQUEST` -> `REGISTRATION_ACCEPT_SENT` (Covered)
+        4.  `REGISTRATION_ACCEPT_SENT` -> `UE_REGISTERED` (Covered)
+        5.  `UE_REGISTERED` -> `REGISTRATION_COMPLETE_sent` (Covered, conditional)
+        6.  `REGISTRATION_COMPLETE_sent` -> `T3550_stop` -> `AMF_REGISTERED` (Covered)
+        7.  `AMF_processes_REGISTRATION_REQUEST` -> `REGISTRATION_REJECT_SENT` (Covered)
+        8.  `REGISTRATION_REJECT_SENT` -> `UE_handles_REGISTRATION_REJECT` (Covered)
+        (8 core transitions covered).
+*   **Missing/Incorrect:**
+    *   Implicit states (UE: 5GMM-REGISTERED-INITIATED, AMF: 5GMM-COMMON-PROCEDURE-INITIATED) are not explicitly represented as states.
+    *   The JSON uses events (`AMF_processes_REGISTRATION_REQUEST`, `AMF_waits_for_REGISTRATION_COMPLETE`) where implicit states or actions might be more accurate representations.
+*   **Coverage Calculation:**
+    *   States: 3 found / 6 expected = 50%
+    *   Transitions: 8 found / 8 expected = 100%
+    *   Average Core Path Coverage = (50% + 100%) / 2 = 75%
+
+**2. Timer Accuracy:**
+
+*   **Expected Elements (Based on Specification 5.5.1.2.2, 5.5.1.2.4, 5.5.1.2.5, 5.5.1.2.7, 5.5.1.2.8):**
+    *   **UE:** T3510 (start/stop), T3502 (stop/start), T3511 (stop/start), T3519 (start), T3512 (use received), T3324 (use received), T3447 (use received/stop), T3448 (start/stop), T3526 (start/stop), T3346 (start/stop), T3245 (start). (Approx. 11 timers with associated actions).
+    *   **AMF:** T3550 (start/stop/retransmit/timeout), T3522 (Authentication - common proc), T3513 (Security - common proc), T3560 (Identification - common proc). (Approx. 4 timers with associated actions).
+    *   Total Expected Timers/Actions: ~15
+*   **Found Elements (Based on JSON):**
+    *   **UE:** `T3510_start`, `T3502_stop`, `T3511_stop`, `T3519_start`. (4 timer actions).
+    *   **AMF:** `T3550_start`, `T3550_stop`. (2 timer actions).
+    *   Total Found Timers/Actions: 6
+*   **Missing/Incorrect:**
+    *   Missing UE timers: T3512, T3324, T3447, T3448, T3526, T3346, T3245, T3502 start, T3511 start, T3510 stop.
+    *   Missing AMF timers: T3522, T3513, T3560 (related to common procedures not detailed in JSON).
+    *   Missing T3550 retransmission/timeout logic for AMF.
+*   **Coverage Calculation:** 6 found / 15 expected = 40%
+
+**3. State Transitions and Actions:**
+
+*   **Expected Elements (Based on Specification 5.5.1.2.2, 5.5.1.2.4):**
+    *   **UE sends REQ:** Include specific IEs (registration type, identity, capabilities, NSSAI, LADN indication, MICO, DRX, etc.).
+    *   **AMF receives REQ:** Process IEs, potentially trigger common procedures (Auth, Sec, ID - 5.5.1.2.3).
+    *   **AMF sends ACCEPT:** Include TAI list, 5G-GUTI (optional), Equivalent PLMNs/SNPNs, Service Area List, LADN info, MICO, Timers (T3512, T3324, etc.), Network Features, NSSAI (Allowed, Rejected, Pending, Configured, etc.), CAG info, SOR, RACS, UUAA info, etc. Start T3550 conditionally.
+    *   **UE receives ACCEPT:** Reset attempt counter, enter 5GMM-REGISTERED, set 5GS update status=5U1 UPDATED, store TAI list, GUTI, timers, NSSAI, etc. Send COMPLETE conditionally.
+    *   **UE sends COMPLETE:** Triggered by specific IEs in ACCEPT (NSSAI changes, CAG, OAC, EENL, PEIPS, RACS, Truncated TMSI, UUAA pending, SOR ack, NSAG, AltNSSAI, OnDemandNSSAI, NSSRG, S-NSSAI time/location, NS subscription change).
+    *   **AMF receives COMPLETE:** Stop T3550, enter 5GMM-REGISTERED.
+    *   **AMF sends REJECT:** Include 5GMM cause, potentially T3346, Rejected NSSAI, CAG info, etc.
+    *   **UE receives REJECT:** Actions based on cause (detailed in Error Handling).
+    *   (Many detailed actions, estimate ~30 key actions/conditions for main flow).
+*   **Found Elements (Based on JSON):**
+    *   UE sends REQ (generic trigger).
+    *   AMF processes REQ (generic event).
+    *   AMF sends ACCEPT/REJECT (conditional edges).
+    *   UE receives ACCEPT -> stores TAI, enters UE_REGISTERED state (actions covered).
+    *   UE sends COMPLETE (conditional edge based on generic description).
+    *   AMF receives COMPLETE -> stops T3550, enters AMF_REGISTERED state (actions covered).
+    *   UE receives REJECT -> handles REJECT (generic event).
+    *   Some timer start/stop actions linked to REQ/ACCEPT/COMPLETE.
+    *   (Approx. 12 distinct actions/conditions represented).
+*   **Missing/Incorrect:**
+    *   Lack of detail on specific IEs being sent/received and processed.
+    *   Missing trigger for common procedures (Auth/Sec/ID).
+    *   Missing detailed conditions for sending REGISTRATION COMPLETE.
+    *   Missing actions like resetting attempt counter, setting 5GS update status.
+    *   Missing storage of various parameters (GUTI, Equiv PLMNs, NSSAI types, etc.) upon receiving ACCEPT.
+*   **Coverage Calculation:** 12 found / 30 expected = 40%
+
+**4. Error Handling and Special Cases:**
+
+*   **Expected Elements (Based on Specification 5.5.1.2.5, 5.5.1.2.6, 5.5.1.2.7, 5.5.1.2.8):**
+    *   **Rejection Handling (UE):** Specific actions for causes #3, #6, #7, #10, #11, #12, #13, #15, #22, #27, #31, #36, #62, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82. Includes state changes, timer starts (T3346, T3526, T3245, T3502, T3511), counter resets/increments, storing forbidden info (PLMN, TAI, SNPN, CAG), disabling N1 mode. (Approx. 24 specific cause handlings).
+    *   **Emergency Rejection (UE):** Specific handling for cause #5, informing upper layers. (Approx. 2 cases).
+    *   **Abnormal Cases (UE):** T3346 running, Access barred, T3510 timeout, Other REJECT causes, Lower layer failure, De-reg collision, TAI change, REG COMPLETE failure, REG REQUEST failure, T3447 running, Invalid 5GS reg result, Localized service disallowed. (Approx. 12 cases).
+    *   **Abnormal Cases (AMF):** Lower layer failure, Protocol error, T3550 timeout/retransmission, Message collisions (REQ after ACCEPT, multiple REQs, REQ in REGISTERED, Mobility/Periodic REQ before COMPLETE, DEREG REQ before COMPLETE), Invalid security capabilities, Rejection for non-CAG UE. (Approx. 8 cases).
+    *   Total Expected Error/Abnormal Cases: ~46
+*   **Found Elements (Based on JSON):**
+    *   Generic transition `AMF_processes_REGISTRATION_REQUEST` -> `REGISTRATION_REJECT_SENT`.
+    *   Generic event `UE_handles_REGISTRATION_REJECT`.
+    *   (1 generic reject path represented).
+*   **Missing/Incorrect:**
+    *   Vast majority of specific rejection causes and their handling are missing.
+    *   No specific UE or AMF abnormal cases (timeouts, failures, collisions) are modelled.
+    *   No distinction for emergency registration rejection.
+*   **Coverage Calculation:** 1 found / 46 expected = ~2.17%
+
+**Coverage Scores and Final Score Calculation:**
+
+*   **Core Path Accuracy:**
+    *   Coverage: 75.00%
+    *   Weighted Score: 75.00 * 0.30 = 22.50
+
+*   **Timer Accuracy:**
+    *   Coverage: 40.00%
+    *   Weighted Score: 40.00 * 0.20 = 8.00
+
+*   **State Transitions and Actions:**
+    *   Coverage: 40.00%
+    *   Weighted Score: 40.00 * 0.25 = 10.00
+
+*   **Error Handling and Special Cases:**
+    *   Coverage: 2.17%
+    *   Weighted Score: 2.17 * 0.25 = 0.54
+
+*   **Total Score:**
+    *   (22.50 + 8.00 + 10.00 + 0.54) = **41.04** (out of 100)
+
+**Output Report:**
+
+**Procedure: Registration procedure for initial registration (3GPP TS 24.501 Section 5.5.1.2)**
+
+**Core Path Accuracy:**
+*   Expected: ~6 states, ~8 core transitions
+*   Found: 3 states, 8 transitions
+*   Coverage: **75.00%**
+*   Weighted Score: 75.00 × 0.30 = **22.50**
+*   *Comments: Basic success and reject paths are covered. Missing explicit representation of intermediate states (5GMM-REGISTERED-INITIATED, 5GMM-COMMON-PROCEDURE-INITIATED).*
+
+**Timer Accuracy:**
+*   Expected: ~15 timers/actions (UE: T3510, T3502, T3511, T3519, T3512, T3324, T3447, T3448, T3526, T3346, T3245; AMF: T3550, T3522, T3513, T3560)
+*   Found: 6 timer actions (UE: T3510 start, T3502 stop, T3511 stop, T3519 start; AMF: T3550 start, T3550 stop)
+*   Coverage: **40.00%**
+*   Weighted Score: 40.00 × 0.20 = **8.00**
+*   *Comments: Only initial timer actions are captured. Missing timers related to received parameters, error handling (T3346, T3526, T3245), retry logic (T3511, T3502), and AMF common procedures/retransmissions.*
+
+**State Transitions and Actions:**
+*   Expected: ~30 key actions/conditions (IE handling, common procedures trigger, storing context, conditional COMPLETE message, setting update status, etc.)
+*   Found: ~12 actions/conditions (generic triggers, state changes, basic conditional COMPLETE)
+*   Coverage: **40.00%**
+*   Weighted Score: 40.00 × 0.25 = **10.00**
+*   *Comments: Lacks detail on Information Element processing, specific conditions for REGISTRATION COMPLETE, context storage actions (GUTI, NSSAI, etc.), and triggering of common procedures.*
+
+**Error Handling and Special Cases:**
+*   Expected: ~46 specific cases (Rejection cause handling for ~24 causes, ~2 emergency rejection cases, ~12 UE abnormal cases, ~8 AMF abnormal cases)
+*   Found: 1 generic reject path
+*   Coverage: **2.17%**
+*   Weighted Score: 2.17 × 0.25 = **0.54**
+*   *Comments: Extremely low coverage. Specific rejection cause handling, UE/AMF abnormal case procedures (timeouts, failures, collisions), and emergency-specific handling are almost entirely missing.*
+
+**Total Score:**
+*   (22.50 + 8.00 + 10.00 + 0.54) = **41.04** (out of 100)

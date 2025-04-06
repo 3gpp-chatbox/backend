@@ -9,7 +9,6 @@ load_dotenv()
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
-new_model = "gemini-2.5-pro-exp-03-25"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -107,7 +106,7 @@ Reference the exact content in the original document where corrections are neede
   """
 
 
-    model_to_use = new_model  # or pro_model depending on your requirement
+    model_to_use = flash_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -133,7 +132,7 @@ def save_to_txt(data, file_path):
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    extracted_data = read_json_file("v04-step3-simple-flashmodel.json")
+    extracted_data = read_json_file("v03-step5-correct-usestep4e-improvedprompt.json")
     original_content = read_text_file("5.5.1.2.txt")
 
     if extracted_data is None or original_content is None:
@@ -149,6 +148,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_txt(procedural_info, "v04-evaluation-bynewmodel.txt")
+    save_to_txt(procedural_info, "v03-step6-usestep4e-improvedprompt.txt")
 else:
     print("Failed to extract procedural information")

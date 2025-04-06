@@ -1,0 +1,56 @@
+```json
+{
+  "issues": [
+    {
+      "type": "edge",
+      "from": "24",
+      "to": "end_timeout_retry",
+      "id": "24",
+      "what_is_wrong": "The edge from node 24 to end_timeout_retry is not accurate. It should loop back to the beginning of the procedure.",
+      "suggested_fix": "Change the 'to' value to '1'.",
+      "reason": "After T3511 expires, the UE re-initiates the registration procedure, which starts at node 1.",
+      "reference_text": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510.",
+      "section_of_reference_text": "5.5.1.2.2"
+    },
+    {
+      "type": "edge",
+      "from": "d_t3510_timeout",
+      "to": "23",
+      "id": "d_t3510_timeout",
+      "what_is_wrong": "The 'condition' property of the edge is too generic.",
+      "suggested_fix": "Change the 'condition' property to 'T3510 expires'.",
+      "reason": "The decision to go to node 23 is based specifically on the expiry of timer T3510.",
+      "reference_text": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510.",
+      "section_of_reference_text": "5.5.1.2.2"
+    },
+    {
+      "type": "node",
+      "id": "23",
+      "what_is_wrong": "The description of node 23 is incomplete. It does not mention incrementing the registration attempt counter.",
+      "suggested_fix": "Change the description to 'UE aborts procedure, stops T3510, increments counter'.",
+      "reason": "The UE increments the registration attempt counter after T3510 expiry.",
+      "reference_text": "The UE shall abort the registration procedure for initial registration and the NAS signalling connection, if any, shall be released locally if the initial registration request is neither for emergency services nor for initiating a PDU session for emergency services with request type set to \"existing emergency PDU session\". The UE shall proceed as described below.",
+      "section_of_reference_text": "5.5.1.2.7"
+    },
+    {
+      "type": "node",
+      "id": "24",
+      "what_is_wrong": "The description of node 24 is incomplete. It does not mention the UE state change.",
+      "suggested_fix": "Change the description to 'UE starts T3511 and enters ATTEMPTING-REGISTRATION'.",
+      "reason": "The UE enters the ATTEMPTING-REGISTRATION state when starting T3511.",
+      "reference_text": "If the registration attempt counter is less than 5: - if the initial registration request is not for emergency services, timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION.",
+      "section_of_reference_text": "5.5.1.2.7"
+    },
+    {
+      "type": "node",
+      "id": "25",
+      "what_is_wrong": "The description of node 25 is incomplete. It does not mention the UE state change.",
+      "suggested_fix": "Change the description to 'UE deletes context, starts T3502 (if > 0), enters ATTEMPTING-REGISTRATION or PLMN-SEARCH'.",
+      "reason": "The UE enters the ATTEMPTING-REGISTRATION or PLMN-SEARCH state after reaching max retries.",
+      "reference_text": "the UE shall delete TAI list and last visited registered TAI, start timer T3502 if the value of the timer as indicated by the network is not zero and shall set the 5GS update status to 5U2 NOT UPDATED. If the UE is not registering or has not registered to the same PLMN over both 3GPP access and non-3GPP access, the UE shall additionally delete 5G-GUTI, ngKSI and list of equivalent PLMNs (if any) or list of equivalent SNPNs (if any). The state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform a PLMN selection, SNPN selection or SNPN selection for onboarding services according to 3GPP TS 23.122 [5].",
+      "section_of_reference_text": "5.5.1.2.7"
+    }
+  ],
+  "extras_or_irrelevant": []
+}
+```

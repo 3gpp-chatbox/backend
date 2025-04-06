@@ -9,6 +9,7 @@ load_dotenv()
 
 flash_model = "gemini-2.0-flash"
 pro_model = "gemini-2.0-pro-exp-02-05"
+new_model = "gemini-2.5-pro-exp-03-25"
 
 # Load the Google API Key from the .env file
 load_dotenv(override=True)
@@ -106,7 +107,7 @@ Reference the exact content in the original document where corrections are neede
   """
 
 
-    model_to_use = flash_model  # or pro_model depending on your requirement
+    model_to_use = new_model  # or pro_model depending on your requirement
     response = client.models.generate_content(
         model=model_to_use,
         contents=prompt,
@@ -148,6 +149,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_txt(procedural_info, "v03-evaluation-complex.txt")
+    save_to_txt(procedural_info, "v03-evaluation-bynewmodel-complex.txt")
 else:
     print("Failed to extract procedural information")
