@@ -1,0 +1,137 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      {"id": "UE_5GMM_DEREGISTERED", "type": "state"},
+      {"id": "Send_REGISTRATION_REQUEST", "type": "event"},
+      {"id": "UE_Awaiting_AMF_Response", "type": "state"},
+      {"id": "Receive_REGISTRATION_REQUEST", "type": "event"},
+      {"id": "AMF_Processing_Registration", "type": "state"},
+      {"id": "Send_REGISTRATION_ACCEPT", "type": "event"},
+      {"id": "AMF_Awaiting_REG_COMPLETE", "type": "state"},
+      {"id": "Receive_REGISTRATION_ACCEPT", "type": "event"},
+      {"id": "UE_5GMM_REGISTERED", "type": "state"},
+      {"id": "Send_REGISTRATION_COMPLETE", "type": "event"},
+      {"id": "Receive_REGISTRATION_COMPLETE", "type": "event"},
+      {"id": "AMF_5GMM_REGISTERED", "type": "state"},
+      {"id": "Send_REGISTRATION_REJECT", "type": "event"},
+      {"id": "Receive_REGISTRATION_REJECT", "type": "event"},
+      {"id": "UE_Processing_Rejection", "type": "state"},
+      {"id": "T3510_Timeout", "type": "event"},
+      {"id": "T3550_Timeout", "type": "event"},
+      {"id": "Lower_Layer_Failure", "type": "event"}
+    ],
+    "edges": [
+      {
+        "from": "UE_5GMM_DEREGISTERED",
+        "to": "Send_REGISTRATION_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "Send_REGISTRATION_REQUEST",
+        "to": "UE_Awaiting_AMF_Response",
+        "type": "condition"
+      },
+      {
+        "from": "Receive_REGISTRATION_REQUEST",
+        "to": "AMF_Processing_Registration",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Processing_Registration",
+        "to": "Send_REGISTRATION_ACCEPT",
+        "type": "trigger"
+      },
+      {
+        "from": "Send_REGISTRATION_ACCEPT",
+        "to": "AMF_Awaiting_REG_COMPLETE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Awaiting_AMF_Response",
+        "to": "Receive_REGISTRATION_ACCEPT",
+        "type": "trigger"
+      },
+      {
+        "from": "Receive_REGISTRATION_ACCEPT",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Send_REGISTRATION_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Awaiting_REG_COMPLETE",
+        "to": "Receive_REGISTRATION_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "Receive_REGISTRATION_COMPLETE",
+        "to": "AMF_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Processing_Registration",
+        "to": "Send_REGISTRATION_REJECT",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Awaiting_AMF_Response",
+        "to": "Receive_REGISTRATION_REJECT",
+        "type": "trigger"
+      },
+      {
+        "from": "Receive_REGISTRATION_REJECT",
+        "to": "UE_Processing_Rejection",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Processing_Rejection",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Awaiting_AMF_Response",
+        "to": "T3510_Timeout",
+        "type": "trigger"
+      },
+      {
+        "from": "T3510_Timeout",
+        "to": "UE_Processing_Rejection",
+        "type": "condition"
+      },
+       {
+        "from": "AMF_Awaiting_REG_COMPLETE",
+        "to": "T3550_Timeout",
+        "type": "trigger"
+      },
+      {
+        "from": "T3550_Timeout",
+        "to": "AMF_Processing_Registration",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Awaiting_AMF_Response",
+        "to": "Lower_Layer_Failure",
+        "type": "trigger"
+      },
+       {
+        "from": "Lower_Layer_Failure",
+        "to": "UE_Processing_Rejection",
+        "type": "condition"
+      },
+       {
+        "from": "AMF_Awaiting_REG_COMPLETE",
+        "to": "Lower_Layer_Failure",
+        "type": "trigger"
+      },
+       {
+        "from": "Lower_Layer_Failure",
+        "to": "AMF_5GMM_REGISTERED",
+        "type": "condition"
+      }
+    ]
+  }
+}

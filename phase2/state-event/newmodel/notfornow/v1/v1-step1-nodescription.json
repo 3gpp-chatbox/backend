@@ -1,0 +1,706 @@
+{
+  "states": [
+    {
+      "state_name": "UE_5GMM_DEREGISTERED"
+    },
+    {
+      "state_name": "UE_5GMM_REGISTERED_INITIATED"
+    },
+    {
+      "state_name": "AMF_5GMM_COMMON_PROCEDURE_INITIATED"
+    },
+    {
+      "state_name": "UE_5GMM_REGISTERED"
+    },
+    {
+      "state_name": "AMF_5GMM_REGISTERED"
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U1_UPDATED"
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U2_NOT_UPDATED"
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U3_ROAMING_NOT_ALLOWED"
+    },
+    {
+      "state_name": "UE_Timer_T3502_Running"
+    },
+    {
+      "state_name": "UE_Timer_T3511_Running"
+    },
+    {
+      "state_name": "UE_Timer_T3519_Running"
+    },
+    {
+      "state_name": "UE_Timer_T3346_Running"
+    },
+    {
+      "state_name": "UE_Timer_T3447_Running"
+    },
+    {
+      "state_name": "UE_Timer_T3511_Running_After_Failure"
+    },
+    {
+      "state_name": "UE_Timer_T3502_Running_After_Failure"
+    },
+    {
+      "state_name": "AMF_Timer_T3550_Running"
+    },
+    {
+      "state_name": "UE_EMM_REGISTERED"
+    },
+    {
+      "state_name": "UE_Valid_5G_NAS_Security_Context_Available"
+    },
+    {
+      "state_name": "UE_No_Valid_5G_NAS_Security_Context"
+    },
+    {
+      "state_name": "UE_Last_Visited_Registered_TAI_Available"
+    },
+    {
+      "state_name": "UE_Allowed_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Configured_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Default_Configured_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Pending_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Rejected_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Partially_Rejected_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Partially_Allowed_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_Alternative_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_NSSRG_Information_Available"
+    },
+    {
+      "state_name": "UE_S-NSSAI_Time_Validity_Info_Available"
+    },
+    {
+      "state_name": "UE_S-NSSAI_Location_Validity_Info_Available"
+    },
+    {
+      "state_name": "UE_On-demand_NSSAI_Available"
+    },
+    {
+      "state_name": "UE_NSAG_Information_Available"
+    },
+    {
+      "state_name": "UE_Stored_UE_Policy_Sections_Available"
+    },
+    {
+      "state_name": "UE_LADN_Information_Stored"
+    },
+    {
+      "state_name": "UE_Extended_LADN_Information_Stored"
+    },
+    {
+      "state_name": "UE_CAG_Information_List_Stored"
+    },
+    {
+      "state_name": "UE_Equivalent_PLMN_List_Stored"
+    },
+    {
+      "state_name": "UE_Equivalent_SNPN_List_Stored"
+    },
+    {
+      "state_name": "UE_Operator_Defined_Access_Category_Definitions_Stored"
+    },
+    {
+      "state_name": "UE_SOR_Counter_Stored"
+    },
+    {
+      "state_name": "UE_SOR_CMCI_Stored"
+    },
+    {
+      "state_name": "UE_Truncated_5G-S-TMSI_Configuration_Stored"
+    },
+    {
+      "state_name": "UE_Radio_Capability_ID_Stored"
+    },
+    {
+      "state_name": "UE_List_of_PLMNs_for_Disaster_Stored"
+    },
+    {
+      "state_name": "UE_Disaster_Roaming_Wait_Range_Stored"
+    },
+    {
+      "state_name": "UE_Disaster_Return_Wait_Range_Stored"
+    },
+    {
+      "state_name": "UE_Forbidden_TAIs_for_Roaming_Stored"
+    },
+    {
+      "state_name": "UE_Forbidden_TAIs_for_Regional_Provision_Stored"
+    },
+    {
+      "state_name": "UE_PLMNs_Not_Allowed_At_Location_Stored"
+    },
+    {
+      "state_name": "UE_RAT_Utilization_Control_Info_Stored"
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION"
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_PLMN_SEARCH"
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE"
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_NO_SUPI"
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE"
+    },
+    {
+      "state_name": "UE_N1_Mode_Capability_Disabled"
+    },
+    {
+      "state_name": "UE_E-UTRA_Capability_Enabled"
+    },
+    {
+      "state_name": "UE_Satellite_NG-RAN_Capability_Disabled"
+    },
+    {
+      "state_name": "AMF_UUAA_Procedure_Pending"
+    },
+    {
+      "state_name": "UE_Not_Allowed_UAS_Services"
+    },
+    {
+      "state_name": "AMF_Old_And_New_5G-GUTI_Valid"
+    }
+  ],
+  "events": [
+    {
+      "event_name": "Initial_Registration_Initiation_Trigger",
+      "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to come out of unavailability period."
+    },
+    {
+      "event_name": "REGISTRATION_REQUEST_Received",
+      "trigger": "AMF receives REGISTRATION REQUEST message from UE."
+    },
+    {
+      "event_name": "REGISTRATION_ACCEPT_Received",
+      "trigger": "UE receives REGISTRATION ACCEPT message from AMF."
+    },
+    {
+      "event_name": "REGISTRATION_REJECT_Received",
+      "trigger": "UE receives REGISTRATION REJECT message from AMF."
+    },
+    {
+      "event_name": "REGISTRATION_COMPLETE_Received",
+      "trigger": "AMF receives REGISTRATION COMPLETE message from UE (when expected)."
+    },
+    {
+      "event_name": "T3510_Timeout",
+      "trigger": "Timer T3510 expires in the UE."
+    },
+    {
+      "event_name": "T3550_Timeout",
+      "trigger": "Timer T3550 expires in the AMF."
+    },
+    {
+      "event_name": "T3511_Expiry",
+      "trigger": "Timer T3511 expires in the UE after a registration failure."
+    },
+    {
+      "event_name": "T3502_Expiry",
+      "trigger": "Timer T3502 expires in the UE after registration attempt counter reaches 5."
+    },
+    {
+      "event_name": "T3346_Expiry",
+      "trigger": "Timer T3346 expires in the UE."
+    },
+    {
+      "event_name": "T3447_Expiry",
+      "trigger": "Timer T3447 expires in the UE."
+    },
+    {
+      "event_name": "T3526_Expiry",
+      "trigger": "Timer T3526 associated with an S-NSSAI expires in the UE."
+    },
+    {
+      "event_name": "Lower_Layer_Failure_UE",
+      "trigger": "Lower layer failure occurs in the UE before REGISTRATION ACCEPT or REGISTRATION REJECT is received."
+    },
+    {
+      "event_name": "Lower_Layer_Failure_AMF",
+      "trigger": "Lower layer failure occurs at the network side before REGISTRATION COMPLETE message has been received from the UE and timer T3550 is running."
+    },
+    {
+      "event_name": "NAS_Signalling_Connection_Release_UE",
+      "trigger": "Release of the NAS signalling connection received from lower layers before REGISTRATION ACCEPT or REGISTRATION REJECT message is received."
+    },
+    {
+      "event_name": "Access_Attempt_Barred",
+      "trigger": "Lower layers indicate that the access attempt is barred."
+    },
+    {
+      "event_name": "Access_Barring_Alleviated",
+      "trigger": "Lower layers indicate that access barring is alleviated for the relevant access category."
+    },
+    {
+      "event_name": "UE_Initiated_De-registration_Required",
+      "trigger": "UE needs to perform de-registration (e.g., due to USIM removal)."
+    },
+    {
+      "event_name": "De-registration_Procedure_Collision",
+      "trigger": "UE receives a DEREGISTRATION REQUEST message from the network while in state 5GMM-REGISTERED-INITIATED."
+    },
+    {
+      "event_name": "Current_TAI_Change",
+      "trigger": "The current TAI changes before the registration procedure for initial registration is completed."
+    },
+    {
+      "event_name": "Tracking_Area_Border_Crossed_After_Accept",
+      "trigger": "A tracking area border is crossed when the REGISTRATION ACCEPT message has been received but before a REGISTRATION COMPLETE message is sent."
+    },
+    {
+      "event_name": "Transmission_Failure_REGISTRATION_COMPLETE",
+      "trigger": "Transmission failure indication for REGISTRATION COMPLETE message received from lower layers."
+    },
+    {
+      "event_name": "Transmission_Failure_REGISTRATION_REQUEST",
+      "trigger": "Transmission failure indication for REGISTRATION REQUEST message received from lower layers."
+    },
+    {
+      "event_name": "Protocol_Error_In_REGISTRATION_REQUEST",
+      "trigger": "AMF receives REGISTRATION REQUEST message with a protocol error."
+    },
+    {
+      "event_name": "Duplicate_REGISTRATION_REQUEST_Received_After_Accept",
+      "trigger": "AMF receives another REGISTRATION REQUEST message after REGISTRATION ACCEPT has been sent and before REGISTRATION COMPLETE is received (if expected)."
+    },
+    {
+      "event_name": "Duplicate_REGISTRATION_REQUEST_Received_Before_Accept",
+      "trigger": "AMF receives more than one REGISTRATION REQUEST message before sending REGISTRATION ACCEPT or REGISTRATION REJECT."
+    },
+    {
+      "event_name": "REGISTRATION_REQUEST_Received_In_Registered_State",
+      "trigger": "AMF receives a REGISTRATION REQUEST message with 5GS registration type IE set to 'initial registration' while in state 5GMM-REGISTERED."
+    },
+    {
+      "event_name": "Mobility_Periodic_REGISTRATION_REQUEST_Received_Before_Complete",
+      "trigger": "AMF receives a REGISTRATION REQUEST message with 5GS registration type IE set to 'mobility registration updating' or 'periodic registration updating' before REGISTRATION COMPLETE message is received (if expected)."
+    },
+    {
+      "event_name": "DEREGISTRATION_REQUEST_Received_Before_Complete",
+      "trigger": "AMF receives a DEREGISTRATION REQUEST message before REGISTRATION COMPLETE message is received (if expected)."
+    },
+    {
+      "event_name": "Invalid_UE_Security_Capabilities_Received",
+      "trigger": "AMF receives REGISTRATION REQUEST message with invalid or unacceptable UE security capabilities."
+    },
+    {
+      "event_name": "Access_For_Localized_Services_No_Longer_Allowed",
+      "trigger": "Access for localized services in the current SNPN is disabled or validity information is no longer met while initial registration is ongoing."
+    },
+    {
+      "event_name": "Network_Slicing_Subscription_Change_Indicated",
+      "trigger": "UDM indicates to AMF that the subscription data for network slicing has changed."
+    },
+    {
+      "event_name": "SOR_Container_Integrity_Check_Failure",
+      "trigger": "The SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check."
+    },
+    {
+      "event_name": "SOR_Container_Integrity_Check_Success",
+      "trigger": "The SOR transparent container IE included in the REGISTRATION ACCEPT message successfully passes the integrity check."
+    }
+  ],
+  "actions": [
+    {
+      "action_name": "UE_Indicate_Registration_Type",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Initiate_Initial_Registration",
+      "state_change": "5GMM-DEREGISTERED -> 5GMM-REGISTERED-INITIATED"
+    },
+    {
+      "action_name": "UE_Send_REGISTRATION_REQUEST",
+      "state_change": "N/A (Part of UE_Initiate_Initial_Registration)"
+    },
+    {
+      "action_name": "UE_Start_T3510",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Stop_T3502",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Stop_T3511",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Start_T3519",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_Stored_SUCI",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_REGISTRATION_REQUEST_In_SECURITY_MODE_COMPLETE",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_NAS_Message_Container",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Process_REGISTRATION_REQUEST",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Initiate_Common_Procedures",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Skip_Authentication",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Accept_Registration",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Send_REGISTRATION_ACCEPT",
+      "state_change": "N/A (Leads to AMF_5GMM_COMMON_PROCEDURE_INITIATED if REG_COMPLETE expected)"
+    },
+    {
+      "action_name": "AMF_Store_UE_Capabilities",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Assign_TAI_List",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Equivalent_PLMN_SNPN_List",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_LADN_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_LADN_Information",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Store_Include_WUS_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Store_Include_PEIPS_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Handle_Unavailability_Period",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Allocate_5G_GUTI",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_CAG_Information",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Start_T3550",
+      "state_change": "-> AMF_5GMM_COMMON_PROCEDURE_INITIATED"
+    },
+    {
+      "action_name": "AMF_Include_MICO_Indication",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Timers",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Network_Feature_Support",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_DRX_Parameters",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Truncated_5G-S-TMSI_Config",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Initiate_UUAA-MM",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Service_Level_AA_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Disaster_Roaming_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Forbidden_TAIs",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_RAN_Timing_Sync",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_MBSR_Authorization",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_NSSAI_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_SOR_Container",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_NSSAI_Inclusion_Mode",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Operator_Defined_Access_Category_Definitions",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_UE_Radio_Capability_ID",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Ciphering_Key_Data",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Discontinuous_Coverage_Offset",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_RAT_Utilization_Control",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Disaster_Roaming_PLMN",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Set_Disaster_Roaming_Result",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Not_Release_NAS_Connection",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Receive_Accept_Actions",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-REGISTERED"
+    },
+    {
+      "action_name": "UE_Send_REGISTRATION_COMPLETE",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Rejected_NSSAI",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Start_T3526",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Remove_Rejected_NSSAI_Max_UEs",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Delete_Network_Slicing_Info",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Delete_Stored_Info_On_Accept",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_CAG_Update_On_Accept",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_CAG_Restriction_On_Accept",
+      "state_change": "5GMM-REGISTERED -> 5GMM-REGISTERED.LIMITED-SERVICE / 5GMM-REGISTERED.PLMN-SEARCH"
+    },
+    {
+      "action_name": "UE_Handle_SOR_Container",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Discard_SOR_Container",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Locally_Release_NAS_Connection",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Operate_In_NSSAI_Inclusion_Mode",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Operator_Defined_AC_Definitions",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_T3447_Update",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_T3448_Update",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Truncated_TMSI_Config",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Radio_Capability_ID_Update",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Service_Level_AA_Pending",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Disaster_Roaming_Config",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Disaster_Roaming_Result",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Forbidden_TAIs",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_RAN_Timing_Sync_Indication",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Discontinuous_Coverage_Offset",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Unavailability_Config",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Inform_Lower_Layers_MBSR_Status",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_RAT_Utilization_Control",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Reject_Registration",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Send_REGISTRATION_REJECT",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Receive_Reject_Actions",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Discard_REGISTRATION_REJECT",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Emergency_Registration_Reject",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-DEREGISTERED.NO-SUPI / Other DEREGISTERED states"
+    },
+    {
+      "action_name": "UE_Handle_Emergency_PDU_Initiation_Reject",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Abort_Initial_Registration",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Handle_Abnormal_Cases_c_d_e",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION / 5GMM-DEREGISTERED.PLMN-SEARCH"
+    },
+    {
+      "action_name": "UE_ReInitiate_Initial_Registration",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Initiate_Mobility_Registration_Update",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Resend_REGISTRATION_COMPLETE",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Abort_Initial_Registration",
+      "state_change": "AMF_5GMM_COMMON_PROCEDURE_INITIATED -> AMF_5GMM_REGISTERED (potentially)"
+    },
+    {
+      "action_name": "AMF_Retransmit_REGISTRATION_ACCEPT",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Ignore_Duplicate_REGISTRATION_REQUEST",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Progress_New_Registration",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Handle_Request_In_Registered_State",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Stop_T3550",
+      "state_change": "AMF_5GMM_COMMON_PROCEDURE_INITIATED -> AMF_5GMM_REGISTERED (if REG_COMPLETE)"
+    },
+    {
+      "action_name": "AMF_Progress_Mobility_Periodic_Registration",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Progress_De_Registration",
+      "state_change": "N/A"
+    }
+  ]
+}

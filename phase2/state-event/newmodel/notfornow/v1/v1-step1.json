@@ -1,0 +1,862 @@
+{
+  "states": [
+    {
+      "state_name": "UE_5GMM_DEREGISTERED",
+      "description": "The UE is in state 5GMM-DEREGISTERED before initiating the registration procedure for initial registration."
+    },
+    {
+      "state_name": "UE_5GMM_REGISTERED_INITIATED",
+      "description": "The UE enters this state after sending the REGISTRATION REQUEST message. The network (AMF) might be in 5GMM-COMMON-PROCEDURE-INITIATED or waiting for REGISTRATION COMPLETE."
+    },
+    {
+      "state_name": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "description": "The AMF enters this state after sending a REGISTRATION ACCEPT message that requires a REGISTRATION COMPLETE message from the UE (e.g., containing 5G-GUTI, SOR, Operator-defined access category definitions, CAG info, PEIPS info, UE radio capability ID, Truncated 5G-S-TMSI config, service-level-AA pending, NSSRG info, S-NSSAI time/location validity, On-demand NSSAI, Alternative NSSAI, NSAG info, Network slicing subscription change indication) and starts timer T3550."
+    },
+    {
+      "state_name": "UE_5GMM_REGISTERED",
+      "description": "The UE enters this state upon receipt of the REGISTRATION ACCEPT message."
+    },
+    {
+      "state_name": "AMF_5GMM_REGISTERED",
+      "description": "The AMF enters this state upon receiving the REGISTRATION COMPLETE message (if expected) or after T3550 expiry/lower layer failure if REGISTRATION COMPLETE was expected but not received."
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U1_UPDATED",
+      "description": "The UE sets the 5GS update status to 5U1 UPDATED upon receipt of the REGISTRATION ACCEPT message."
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U2_NOT_UPDATED",
+      "description": "The UE sets the 5GS update status to 5U2 NOT UPDATED upon receiving specific REGISTRATION REJECT causes (#22, #62, #79, #80, #81, #82) or after the registration attempt counter reaches 5 in abnormal cases c, d, e."
+    },
+    {
+      "state_name": "UE_5GS_Update_Status_5U3_ROAMING_NOT_ALLOWED",
+      "description": "The UE sets the 5GS update status to 5U3 ROAMING NOT ALLOWED upon receiving specific REGISTRATION REJECT causes (#3, #6, #7, #11, #12, #13, #15, #27, #31, #36, #72, #73, #74, #75, #76, #77, #78)."
+    },
+    {
+      "state_name": "UE_Timer_T3502_Running",
+      "description": "Timer T3502 is running in the UE, potentially before initiating registration."
+    },
+    {
+      "state_name": "UE_Timer_T3511_Running",
+      "description": "Timer T3511 is running in the UE, potentially before initiating registration."
+    },
+    {
+      "state_name": "UE_Timer_T3519_Running",
+      "description": "Timer T3519 is running in the UE after sending a REGISTRATION REQUEST with SUCI."
+    },
+    {
+      "state_name": "UE_Timer_T3346_Running",
+      "description": "Timer T3346 is running in the UE, started after receiving REGISTRATION REJECT with cause #22."
+    },
+    {
+      "state_name": "UE_Timer_T3447_Running",
+      "description": "Timer T3447 is running in the UE, related to service gap control."
+    },
+    {
+      "state_name": "UE_Timer_T3511_Running_After_Failure",
+      "description": "Timer T3511 is started in the UE after abnormal cases c, d, e if the registration attempt counter is less than 5."
+    },
+    {
+      "state_name": "UE_Timer_T3502_Running_After_Failure",
+      "description": "Timer T3502 is started in the UE after abnormal cases c, d, e if the registration attempt counter is equal to 5 and the timer value is not zero."
+    },
+    {
+      "state_name": "AMF_Timer_T3550_Running",
+      "description": "Timer T3550 is running in the AMF, waiting for the REGISTRATION COMPLETE message."
+    },
+    {
+      "state_name": "UE_EMM_REGISTERED",
+      "description": "UE is in EMM state EMM-REGISTERED when operating in dual-registration mode."
+    },
+    {
+      "state_name": "UE_Valid_5G_NAS_Security_Context_Available",
+      "description": "UE has a valid 5G NAS security context."
+    },
+    {
+      "state_name": "UE_No_Valid_5G_NAS_Security_Context",
+      "description": "UE does not have a valid 5G NAS security context."
+    },
+    {
+      "state_name": "UE_Last_Visited_Registered_TAI_Available",
+      "description": "The last visited registered TAI is available in the UE."
+    },
+    {
+      "state_name": "UE_Allowed_NSSAI_Available",
+      "description": "UE has an allowed NSSAI for the current PLMN or SNPN."
+    },
+    {
+      "state_name": "UE_Configured_NSSAI_Available",
+      "description": "UE has a configured NSSAI for the current PLMN or SNPN."
+    },
+    {
+      "state_name": "UE_Default_Configured_NSSAI_Available",
+      "description": "UE has a default configured NSSAI."
+    },
+    {
+      "state_name": "UE_Pending_NSSAI_Available",
+      "description": "UE has a pending NSSAI."
+    },
+    {
+      "state_name": "UE_Rejected_NSSAI_Available",
+      "description": "UE has stored rejected NSSAI information."
+    },
+    {
+      "state_name": "UE_Partially_Rejected_NSSAI_Available",
+      "description": "UE has stored partially rejected NSSAI information."
+    },
+    {
+      "state_name": "UE_Partially_Allowed_NSSAI_Available",
+      "description": "UE has stored partially allowed NSSAI information."
+    },
+    {
+      "state_name": "UE_Alternative_NSSAI_Available",
+      "description": "UE has stored alternative NSSAI information."
+    },
+    {
+      "state_name": "UE_NSSRG_Information_Available",
+      "description": "UE has stored NSSRG information."
+    },
+    {
+      "state_name": "UE_S-NSSAI_Time_Validity_Info_Available",
+      "description": "UE has S-NSSAI time validity information."
+    },
+    {
+      "state_name": "UE_S-NSSAI_Location_Validity_Info_Available",
+      "description": "UE has S-NSSAI location validity information."
+    },
+    {
+      "state_name": "UE_On-demand_NSSAI_Available",
+      "description": "UE has stored on-demand NSSAI information."
+    },
+    {
+      "state_name": "UE_NSAG_Information_Available",
+      "description": "UE has stored NSAG information."
+    },
+    {
+      "state_name": "UE_Stored_UE_Policy_Sections_Available",
+      "description": "UE has one or more stored UE policy sections identified by a UPSI for the HPLMN/selected PLMN/SNPN."
+    },
+    {
+      "state_name": "UE_LADN_Information_Stored",
+      "description": "UE has stored LADN information received from the network."
+    },
+    {
+      "state_name": "UE_Extended_LADN_Information_Stored",
+      "description": "UE has stored extended LADN information received from the network."
+    },
+    {
+      "state_name": "UE_CAG_Information_List_Stored",
+      "description": "UE has stored a 'CAG information list'."
+    },
+    {
+      "state_name": "UE_Equivalent_PLMN_List_Stored",
+      "description": "UE has stored a list of equivalent PLMNs."
+    },
+    {
+      "state_name": "UE_Equivalent_SNPN_List_Stored",
+      "description": "UE has stored a list of equivalent SNPNs."
+    },
+    {
+      "state_name": "UE_Operator_Defined_Access_Category_Definitions_Stored",
+      "description": "UE has stored operator-defined access category definitions for the RPLMN."
+    },
+    {
+      "state_name": "UE_SOR_Counter_Stored",
+      "description": "ME has stored the SOR counter received from the network."
+    },
+    {
+      "state_name": "UE_SOR_CMCI_Stored",
+      "description": "UE has stored SOR-CMCI in the non-volatile memory of the ME."
+    },
+    {
+      "state_name": "UE_Truncated_5G-S-TMSI_Configuration_Stored",
+      "description": "UE has stored the truncated 5G-S-TMSI configuration."
+    },
+    {
+      "state_name": "UE_Radio_Capability_ID_Stored",
+      "description": "UE has stored a UE radio capability ID (network-assigned or manufacturer-assigned)."
+    },
+    {
+      "state_name": "UE_List_of_PLMNs_for_Disaster_Stored",
+      "description": "UE has stored the 'list of PLMN(s) to be used in disaster condition'."
+    },
+    {
+      "state_name": "UE_Disaster_Roaming_Wait_Range_Stored",
+      "description": "UE has stored the disaster roaming wait range."
+    },
+    {
+      "state_name": "UE_Disaster_Return_Wait_Range_Stored",
+      "description": "UE has stored the disaster return wait range."
+    },
+    {
+      "state_name": "UE_Forbidden_TAIs_for_Roaming_Stored",
+      "description": "UE has stored TAIs in the list of '5GS forbidden tracking areas for roaming'."
+    },
+    {
+      "state_name": "UE_Forbidden_TAIs_for_Regional_Provision_Stored",
+      "description": "UE has stored TAIs in the list of '5GS forbidden tracking areas for regional provision of service'."
+    },
+    {
+      "state_name": "UE_PLMNs_Not_Allowed_At_Location_Stored",
+      "description": "UE has stored PLMN identity in the list of 'PLMNs not allowed to operate at the present UE location'."
+    },
+    {
+      "state_name": "UE_RAT_Utilization_Control_Info_Stored",
+      "description": "UE has stored RAT utilization control information for the current PLMN."
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "description": "UE enters this state after certain registration failures (e.g., cause #22, #62, #79, #80, #81, #82) or after abnormal cases c, d, e when the attempt counter is less than 5 or equal to 5."
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "UE enters this state after certain registration failures (e.g., cause #11, #13, #36, #62, #73, #74, #75, #76, #78, #80, #81, #82) or optionally after abnormal cases c, d, e when the attempt counter is equal to 5, or after cause #76 under specific CAG conditions."
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "description": "UE enters this state after certain registration failures (e.g., cause #12, #13, #15, #27) or after cause #76 under specific CAG conditions."
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "description": "UE enters this state after receiving REGISTRATION REJECT with cause #3, #6, #7 or #5 (emergency)."
+    },
+    {
+      "state_name": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+      "description": "UE enters this state after receiving REGISTRATION REJECT with cause #31."
+    },
+    {
+      "state_name": "UE_N1_Mode_Capability_Disabled",
+      "description": "UE disables N1 mode capability for an access type or PLMN/SNPN after specific reject causes (#27, #31, #62, #72)."
+    },
+    {
+      "state_name": "UE_E-UTRA_Capability_Enabled",
+      "description": "UE enables E-UTRA capability if it was disabled after receiving REGISTRATION REJECT with cause #31."
+    },
+    {
+      "state_name": "UE_Satellite_NG-RAN_Capability_Disabled",
+      "description": "UE disables satellite NG-RAN capability after receiving REGISTRATION REJECT cause #15 with Extended 5GMM cause 'Satellite NG-RAN not allowed in PLMN' under specific conditions."
+    },
+    {
+      "state_name": "AMF_UUAA_Procedure_Pending",
+      "description": "AMF stores in the UE 5GMM context that a UUAA procedure is pending."
+    },
+    {
+      "state_name": "UE_Not_Allowed_UAS_Services",
+      "description": "AMF marks in the UE's 5GMM context that the UE is not allowed to request UAS services."
+    },
+    {
+      "state_name": "AMF_Old_And_New_5G-GUTI_Valid",
+      "description": "AMF considers both old and new 5G-GUTI as valid temporarily after lower layer failure or T3550 expiry when REGISTRATION COMPLETE was expected."
+    }
+  ],
+  "events": [
+    {
+      "event_name": "Initial_Registration_Initiation_Trigger",
+      "trigger": "UE performs initial registration for 5GS services, emergency services, SMS over NAS, moves from GERAN/UTRAN to NG-RAN, performs initial registration for onboarding services in SNPN, disaster roaming services, or to come out of unavailability period."
+    },
+    {
+      "event_name": "REGISTRATION_REQUEST_Received",
+      "trigger": "AMF receives REGISTRATION REQUEST message from UE."
+    },
+    {
+      "event_name": "REGISTRATION_ACCEPT_Received",
+      "trigger": "UE receives REGISTRATION ACCEPT message from AMF."
+    },
+    {
+      "event_name": "REGISTRATION_REJECT_Received",
+      "trigger": "UE receives REGISTRATION REJECT message from AMF."
+    },
+    {
+      "event_name": "REGISTRATION_COMPLETE_Received",
+      "trigger": "AMF receives REGISTRATION COMPLETE message from UE (when expected)."
+    },
+    {
+      "event_name": "T3510_Timeout",
+      "trigger": "Timer T3510 expires in the UE."
+    },
+    {
+      "event_name": "T3550_Timeout",
+      "trigger": "Timer T3550 expires in the AMF."
+    },
+    {
+      "event_name": "T3511_Expiry",
+      "trigger": "Timer T3511 expires in the UE after a registration failure."
+    },
+    {
+      "event_name": "T3502_Expiry",
+      "trigger": "Timer T3502 expires in the UE after registration attempt counter reaches 5."
+    },
+    {
+      "event_name": "T3346_Expiry",
+      "trigger": "Timer T3346 expires in the UE."
+    },
+    {
+      "event_name": "T3447_Expiry",
+      "trigger": "Timer T3447 expires in the UE."
+    },
+    {
+      "event_name": "T3526_Expiry",
+      "trigger": "Timer T3526 associated with an S-NSSAI expires in the UE."
+    },
+    {
+      "event_name": "Lower_Layer_Failure_UE",
+      "trigger": "Lower layer failure occurs in the UE before REGISTRATION ACCEPT or REGISTRATION REJECT is received."
+    },
+    {
+      "event_name": "Lower_Layer_Failure_AMF",
+      "trigger": "Lower layer failure occurs at the network side before REGISTRATION COMPLETE message has been received from the UE and timer T3550 is running."
+    },
+    {
+      "event_name": "NAS_Signalling_Connection_Release_UE",
+      "trigger": "Release of the NAS signalling connection received from lower layers before REGISTRATION ACCEPT or REGISTRATION REJECT message is received."
+    },
+    {
+      "event_name": "Access_Attempt_Barred",
+      "trigger": "Lower layers indicate that the access attempt is barred."
+    },
+    {
+      "event_name": "Access_Barring_Alleviated",
+      "trigger": "Lower layers indicate that access barring is alleviated for the relevant access category."
+    },
+    {
+      "event_name": "UE_Initiated_De-registration_Required",
+      "trigger": "UE needs to perform de-registration (e.g., due to USIM removal)."
+    },
+    {
+      "event_name": "De-registration_Procedure_Collision",
+      "trigger": "UE receives a DEREGISTRATION REQUEST message from the network while in state 5GMM-REGISTERED-INITIATED."
+    },
+    {
+      "event_name": "Current_TAI_Change",
+      "trigger": "The current TAI changes before the registration procedure for initial registration is completed."
+    },
+    {
+      "event_name": "Tracking_Area_Border_Crossed_After_Accept",
+      "trigger": "A tracking area border is crossed when the REGISTRATION ACCEPT message has been received but before a REGISTRATION COMPLETE message is sent."
+    },
+    {
+      "event_name": "Transmission_Failure_REGISTRATION_COMPLETE",
+      "trigger": "Transmission failure indication for REGISTRATION COMPLETE message received from lower layers."
+    },
+    {
+      "event_name": "Transmission_Failure_REGISTRATION_REQUEST",
+      "trigger": "Transmission failure indication for REGISTRATION REQUEST message received from lower layers."
+    },
+    {
+      "event_name": "Protocol_Error_In_REGISTRATION_REQUEST",
+      "trigger": "AMF receives REGISTRATION REQUEST message with a protocol error."
+    },
+    {
+      "event_name": "Duplicate_REGISTRATION_REQUEST_Received_After_Accept",
+      "trigger": "AMF receives another REGISTRATION REQUEST message after REGISTRATION ACCEPT has been sent and before REGISTRATION COMPLETE is received (if expected)."
+    },
+    {
+      "event_name": "Duplicate_REGISTRATION_REQUEST_Received_Before_Accept",
+      "trigger": "AMF receives more than one REGISTRATION REQUEST message before sending REGISTRATION ACCEPT or REGISTRATION REJECT."
+    },
+    {
+      "event_name": "REGISTRATION_REQUEST_Received_In_Registered_State",
+      "trigger": "AMF receives a REGISTRATION REQUEST message with 5GS registration type IE set to 'initial registration' while in state 5GMM-REGISTERED."
+    },
+    {
+      "event_name": "Mobility_Periodic_REGISTRATION_REQUEST_Received_Before_Complete",
+      "trigger": "AMF receives a REGISTRATION REQUEST message with 5GS registration type IE set to 'mobility registration updating' or 'periodic registration updating' before REGISTRATION COMPLETE message is received (if expected)."
+    },
+    {
+      "event_name": "DEREGISTRATION_REQUEST_Received_Before_Complete",
+      "trigger": "AMF receives a DEREGISTRATION REQUEST message before REGISTRATION COMPLETE message is received (if expected)."
+    },
+    {
+      "event_name": "Invalid_UE_Security_Capabilities_Received",
+      "trigger": "AMF receives REGISTRATION REQUEST message with invalid or unacceptable UE security capabilities."
+    },
+    {
+      "event_name": "Access_For_Localized_Services_No_Longer_Allowed",
+      "trigger": "Access for localized services in the current SNPN is disabled or validity information is no longer met while initial registration is ongoing."
+    },
+    {
+      "event_name": "Network_Slicing_Subscription_Change_Indicated",
+      "trigger": "UDM indicates to AMF that the subscription data for network slicing has changed."
+    },
+    {
+      "event_name": "SOR_Container_Integrity_Check_Failure",
+      "trigger": "The SOR transparent container IE included in the REGISTRATION ACCEPT message does not successfully pass the integrity check."
+    },
+    {
+      "event_name": "SOR_Container_Integrity_Check_Success",
+      "trigger": "The SOR transparent container IE included in the REGISTRATION ACCEPT message successfully passes the integrity check."
+    }
+  ],
+  "actions": [
+    {
+      "action_name": "UE_Indicate_Registration_Type",
+      "description": "UE indicates 'initial registration', 'emergency registration', 'SNPN onboarding registration', or 'disaster roaming initial registration' in the 5GS registration type IE of the REGISTRATION REQUEST message.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Initiate_Initial_Registration",
+      "description": "UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration under specific conditions.",
+      "state_change": "5GMM-DEREGISTERED -> 5GMM-REGISTERED-INITIATED"
+    },
+    {
+      "action_name": "UE_Send_REGISTRATION_REQUEST",
+      "description": "UE sends a REGISTRATION REQUEST message to the AMF, including various IEs based on UE capabilities, requested services, available identities (5G-GUTI, SUCI, PEI), NSSAI, LADN indication, MICO indication, DRX parameters, UE status, security context, etc.",
+      "state_change": "N/A (Part of UE_Initiate_Initial_Registration)"
+    },
+    {
+      "action_name": "UE_Start_T3510",
+      "description": "UE starts timer T3510 after sending the REGISTRATION REQUEST message.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Stop_T3502",
+      "description": "UE stops timer T3502 if it is currently running when initiating initial registration.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Stop_T3511",
+      "description": "UE stops timer T3511 if it is currently running when initiating initial registration.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Start_T3519",
+      "description": "UE starts timer T3519 and stores the SUCI value if SUCI is included in the REGISTRATION REQUEST and T3519 is not running.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_Stored_SUCI",
+      "description": "UE includes the stored SUCI in the REGISTRATION REQUEST message while timer T3519 is running.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_REGISTRATION_REQUEST_In_SECURITY_MODE_COMPLETE",
+      "description": "If UE has no valid 5G NAS security context, UE includes the entire REGISTRATION REQUEST message in the NAS message container IE of the SECURITY MODE COMPLETE message.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Include_NAS_Message_Container",
+      "description": "If UE has a valid 5G NAS security context and needs to send non-cleartext IEs, UE includes the NAS message container IE in the REGISTRATION REQUEST.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Process_REGISTRATION_REQUEST",
+      "description": "AMF processes the received REGISTRATION REQUEST message. If it includes a NAS message container IE, AMF processes the request from the container.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Initiate_Common_Procedures",
+      "description": "AMF may initiate 5GMM common procedures (identification, authentication, security) based on the REGISTRATION REQUEST.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Skip_Authentication",
+      "description": "During emergency registration for unauthenticated SUCIs, AMF may skip authentication and proceed to security mode control.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Accept_Registration",
+      "description": "AMF accepts the initial registration request.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Send_REGISTRATION_ACCEPT",
+      "description": "AMF sends a REGISTRATION ACCEPT message to the UE, including assigned 5G-GUTI, TAI list, allowed NSSAI, network feature support, LADN information, MICO indication, timers (T3324, T3512, non-3GPP de-reg), etc., based on the request and network policy/capabilities.",
+      "state_change": "N/A (Leads to AMF_5GMM_COMMON_PROCEDURE_INITIATED if REG_COMPLETE expected)"
+    },
+    {
+      "action_name": "AMF_Store_UE_Capabilities",
+      "description": "AMF stores received 5GMM capability, S1 UE network capability, and UE security capability from the REGISTRATION REQUEST.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Assign_TAI_List",
+      "description": "AMF assigns and includes a TAI list in the REGISTRATION ACCEPT message. Includes a single TAI if request over non-3GPP.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Equivalent_PLMN_SNPN_List",
+      "description": "AMF may include a list of equivalent PLMNs or SNPNs (if UE supports ESI) in the REGISTRATION ACCEPT message.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_LADN_Info",
+      "description": "AMF determines LADN DNNs and service areas based on LADN indication IE, subscription, location, and configuration.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_LADN_Information",
+      "description": "AMF includes determined LADN information (or extended LADN information) in the REGISTRATION ACCEPT message.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Store_Include_WUS_Info",
+      "description": "If WUS is supported and accepted, AMF determines, stores, and includes Negotiated WUS assistance information IE in REGISTRATION ACCEPT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Store_Include_PEIPS_Info",
+      "description": "If PEIPS is supported and accepted, AMF determines, stores, and includes Negotiated PEIPS assistance information IE (or Updated PEIPS IE) in REGISTRATION ACCEPT/CONFIGURATION UPDATE COMMAND.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Handle_Unavailability_Period",
+      "description": "If UE supports UN-PER and AMF accepts, AMF sets UN-PER bit and may provide Unavailability configuration IE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Allocate_5G_GUTI",
+      "description": "AMF performs 5G-GUTI reallocation and includes the new 5G-GUTI in REGISTRATION ACCEPT if not done via generic UE configuration update.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_CAG_Information",
+      "description": "If UE supports CAG and AMF needs to update the list, AMF includes CAG information list IE or Extended CAG information list IE in REGISTRATION ACCEPT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Start_T3550",
+      "description": "AMF starts timer T3550 if REGISTRATION ACCEPT contains elements requiring REGISTRATION COMPLETE.",
+      "state_change": "-> AMF_5GMM_COMMON_PROCEDURE_INITIATED"
+    },
+    {
+      "action_name": "AMF_Include_MICO_Indication",
+      "description": "AMF includes MICO indication IE if requested and accepted, potentially indicating 'all PLMN registration area allocated'.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Timers",
+      "description": "AMF includes T3324, T3512, non-3GPP de-registration timer values in REGISTRATION ACCEPT based on request and acceptance.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Network_Feature_Support",
+      "description": "AMF includes 5GS network feature support IE indicating support for CIoT optimization, IMS voice, LCS, emergency, ATSSS, NAPS, interworking (IWK N26), MPS/MCS, enhanced coverage restriction, MUSIM features (N1 release, paging indication, reject paging, paging restriction), RSLP, UN-PER.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_DRX_Parameters",
+      "description": "AMF includes Negotiated DRX parameters, Negotiated NB-N1 mode DRX parameters, or Negotiated extended DRX parameters IE if requested and accepted.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Truncated_5G-S-TMSI_Config",
+      "description": "AMF includes Truncated 5G-S-TMSI configuration IE under specific NB-N1 mode conditions.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Initiate_UUAA-MM",
+      "description": "AMF initiates UUAA-MM procedure under specific conditions related to UAS services.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Service_Level_AA_Info",
+      "description": "AMF includes service-level-AA pending indication or response in REGISTRATION ACCEPT based on UUAA status.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Disaster_Roaming_Info",
+      "description": "If UE supports MINT, AMF may include List of PLMNs to be used in disaster condition, Disaster roaming wait range, Disaster return wait range IEs.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Forbidden_TAIs",
+      "description": "AMF includes Forbidden TAI(s) IE(s) if received TAI list from satellite NG-RAN contains forbidden TAIs.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_RAN_Timing_Sync",
+      "description": "If UE supports RANtiming, AMF may include RAN timing synchronization IE with RecReq bit set.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_MBSR_Authorization",
+      "description": "AMF includes Feature authorization indication IE indicating MBSR authorization status.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_NSSAI_Info",
+      "description": "AMF includes allowed NSSAI, rejected NSSAI, partially allowed/rejected NSSAI, pending NSSAI, configured NSSAI, NSSRG info, S-NSSAI time/location validity, On-demand NSSAI, Alternative NSSAI, NSAG info based on request, subscription, UE capabilities, and network status.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_SOR_Container",
+      "description": "AMF includes SOR transparent container IE based on subscription/policy.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_NSSAI_Inclusion_Mode",
+      "description": "AMF includes NSSAI inclusion mode IE based on operator policy.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Operator_Defined_Access_Category_Definitions",
+      "description": "AMF may include Operator-defined access category definitions IE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_UE_Radio_Capability_ID",
+      "description": "AMF may include UE radio capability ID IE or deletion indication IE if UE supports RACS.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Ciphering_Key_Data",
+      "description": "AMF includes Ciphering key data IE if requested and available.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_Discontinuous_Coverage_Offset",
+      "description": "AMF may include Discontinuous coverage maximum time offset IE for satellite access.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Include_RAT_Utilization_Control",
+      "description": "AMF includes RAT utilization control IE if UE supports it, request over 3GPP, and network applies it.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Determine_Disaster_Roaming_PLMN",
+      "description": "AMF determines the PLMN with disaster condition based on information in REGISTRATION REQUEST or agreements.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Set_Disaster_Roaming_Result",
+      "description": "AMF sets the Disaster roaming registration result value bit in the 5GS registration result IE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Not_Release_NAS_Connection",
+      "description": "AMF shall not immediately release the NAS signalling connection if Follow-on request indicator is set or downlink signalling is pending, or UE is authorized for V2X/A2X/ProSe.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Receive_Accept_Actions",
+      "description": "Upon receiving REGISTRATION ACCEPT, UE resets attempt counter, enters 5GMM-REGISTERED, sets update status to 5U1 UPDATED, resets PLMN/SNPN specific counters, stores TAI list, equivalent PLMN/SNPN list, LADN info, NSSAI info (allowed, configured, pending, rejected, partially allowed/rejected, alternative, NSSRG, time/location validity, on-demand, NSAG), timers (T3512, T3324, non-3GPP de-reg), network features, DRX parameters, SOR info, NSSAI inclusion mode, operator-defined AC definitions, truncated 5G-S-TMSI config, UE radio capability ID, disaster roaming info, forbidden TAIs, unavailability config, discontinuous coverage offset, RAT utilization control info, considers registration result (3GPP/Non-3GPP/Both), handles CAG info, provides info to upper layers, operates in specified interworking mode.",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-REGISTERED"
+    },
+    {
+      "action_name": "UE_Send_REGISTRATION_COMPLETE",
+      "description": "UE returns a REGISTRATION COMPLETE message to the AMF to acknowledge reception of specific IEs (e.g., Network slicing info updates, NSAG info, CAG info, Operator-defined AC defs, PEIPS info, UE radio capability ID, Truncated 5G-S-TMSI config, service-level-AA pending, SOR ack).",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Rejected_NSSAI",
+      "description": "UE stores rejected S-NSSAI(s) in the appropriate rejected NSSAI list based on the rejection cause received in REGISTRATION ACCEPT or REGISTRATION REJECT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Start_T3526",
+      "description": "UE starts timer T3526 for S-NSSAIs rejected due to 'maximum number of UEs reached' with the received back-off timer value or an implementation specific value.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Remove_Rejected_NSSAI_Max_UEs",
+      "description": "UE removes the S-NSSAI from the rejected NSSAI for the maximum number of UEs reached when the associated timer T3526 expires.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Delete_Network_Slicing_Info",
+      "description": "UE deletes network slicing information and NSSAI inclusion mode for other PLMNs/SNPNs upon receiving Network slicing subscription change indication.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Delete_Stored_Info_On_Accept",
+      "description": "UE deletes old TAI list, stored equivalent PLMN/SNPN list (if new one not received), pending NSSAI (if not received and NSSAA not indicated), stored T3447 value (if new one not received), stored RAT utilization control info (if new one not received).",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_CAG_Update_On_Accept",
+      "description": "UE replaces or updates the stored 'CAG information list' based on the received CAG information list IE / Extended CAG information list IE in REGISTRATION ACCEPT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_CAG_Restriction_On_Accept",
+      "description": "If received CAG info indicates restriction (e.g., cell not authorized, UE only allowed CAG access), UE enters 5GMM-REGISTERED.LIMITED-SERVICE or 5GMM-REGISTERED.PLMN-SEARCH and searches for a suitable cell or performs PLMN selection.",
+      "state_change": "5GMM-REGISTERED -> 5GMM-REGISTERED.LIMITED-SERVICE / 5GMM-REGISTERED.PLMN-SEARCH"
+    },
+    {
+      "action_name": "UE_Handle_SOR_Container",
+      "description": "UE performs integrity check on SOR container, stores SOR counter, proceeds per TS 23.122 Annex C, potentially releases connection, sends acknowledgement, updates stored lists/forwards payload to UICC, stores/deletes SOR-CMCI.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Discard_SOR_Container",
+      "description": "UE discards the content of the SOR transparent container IE if the integrity check fails.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Locally_Release_NAS_Connection",
+      "description": "UE locally releases the established N1 NAS signalling connection under specific SOR-related conditions or after aborting registration due to localized service access no longer allowed.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Operate_In_NSSAI_Inclusion_Mode",
+      "description": "UE operates in the NSSAI inclusion mode indicated by the network, stored by the UE, or the default mode.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Operator_Defined_AC_Definitions",
+      "description": "UE stores or deletes operator-defined access category definitions based on the received Operator-defined access category definitions IE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_T3447_Update",
+      "description": "UE stores the received T3447 value or erases the stored value if not received.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_T3448_Update",
+      "description": "UE starts timer T3448 with the received value or ignores it under specific conditions.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Truncated_TMSI_Config",
+      "description": "UE stores the received Truncated 5G-S-TMSI configuration.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Radio_Capability_ID_Update",
+      "description": "UE deletes network-assigned IDs or stores the received UE radio capability ID.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Service_Level_AA_Pending",
+      "description": "UE acknowledges reception of service-level-AA pending indication and refrains from UAS registration/PDU session establishment until UUAA-MM completion.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Disaster_Roaming_Config",
+      "description": "UE stores received 'list of PLMN(s) to be used in disaster condition', disaster roaming wait range, and disaster return wait range.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Disaster_Roaming_Result",
+      "description": "UE considers itself registered for normal service or disaster roaming services based on the 5GS registration result value.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Forbidden_TAIs",
+      "description": "UE stores received TAIs into the list of '5GS forbidden tracking areas for roaming' or '5GS forbidden tracking areas for regional provision of service'.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_RAN_Timing_Sync_Indication",
+      "description": "UE operates as specified in other subclauses upon receiving RAN timing synchronization IE with RecReq bit set.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_Discontinuous_Coverage_Offset",
+      "description": "UE stores the received Discontinuous coverage maximum time offset value.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Unavailability_Config",
+      "description": "UE considers unavailability type, notes EUPR bit, and may use received duration/start values.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Inform_Lower_Layers_MBSR_Status",
+      "description": "UE NAS layer informs lower layers of the MBSR authorization status.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Store_RAT_Utilization_Control",
+      "description": "UE stores or deletes RAT utilization control information based on presence in REGISTRATION ACCEPT/REJECT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Reject_Registration",
+      "description": "AMF cannot accept the initial registration request.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Send_REGISTRATION_REJECT",
+      "description": "AMF sends a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value and potentially T3346 timer, rejected NSSAI, CAG information list, N3IWF/TNAN info, Forbidden TAIs, RAT utilization control IE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Receive_Reject_Actions",
+      "description": "Upon receiving REGISTRATION REJECT, UE performs actions based on the 5GMM cause value, potentially setting update status, deleting context, entering new state, resetting/incrementing counters, storing PLMN/SNPN/TAI in forbidden lists, starting timers (T3346, T3245, T3526), performing PLMN/SNPN selection, disabling N1 mode, handling EMM parameters, storing rejected NSSAI, updating CAG info, storing RAT utilization control info, informing upper layers (emergency).",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Discard_REGISTRATION_REJECT",
+      "description": "UE discards REGISTRATION REJECT message if received without integrity protection for specific causes (#62, #76, #78).",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Handle_Emergency_Registration_Reject",
+      "description": "UE enters 5GMM-DEREGISTERED.NO-SUPI for cause #5, or performs standard reject actions and informs upper layers for other causes. In shared networks, may attempt PLMN/SNPN selection and re-registration.",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-DEREGISTERED.NO-SUPI / Other DEREGISTERED states"
+    },
+    {
+      "action_name": "UE_Handle_Emergency_PDU_Initiation_Reject",
+      "description": "UE performs standard reject actions, then informs upper layers or attempts emergency registration based on conditions.",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Abort_Initial_Registration",
+      "description": "UE aborts the initial registration procedure due to T3510 timeout, specific reject causes, lower layer failure, de-registration requirement, TAI change, transmission failure, or localized service access becoming disallowed.",
+      "state_change": "5GMM-REGISTERED-INITIATED -> Various 5GMM-DEREGISTERED sub-states"
+    },
+    {
+      "action_name": "UE_Handle_Abnormal_Cases_c_d_e",
+      "description": "UE stops T3510, increments attempt counter (if applicable), starts T3511 or deletes context/starts T3502 based on counter value, changes state, potentially performs PLMN/SNPN selection, handles EMM parameters.",
+      "state_change": "5GMM-REGISTERED-INITIATED -> 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION / 5GMM-DEREGISTERED.PLMN-SEARCH"
+    },
+    {
+      "action_name": "UE_ReInitiate_Initial_Registration",
+      "description": "UE re-initiates the initial registration procedure immediately after TAI change or REGISTRATION REQUEST transmission failure.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Initiate_Mobility_Registration_Update",
+      "description": "UE initiates the registration procedure for mobility registration update after TAI change post-REG ACCEPT / pre-REG COMPLETE, or after REG COMPLETE transmission failure with TAI change, or after receiving REG ACCEPT with UE radio capability ID deletion indication.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "UE_Resend_REGISTRATION_COMPLETE",
+      "description": "UE resends the REGISTRATION COMPLETE message after transmission failure if the current TAI is still in the TAI list.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Abort_Initial_Registration",
+      "description": "AMF locally aborts the initial registration procedure due to lower layer failure, T3550 fifth expiry, differing subsequent REGISTRATION REQUEST, or receiving DEREGISTRATION REQUEST before REGISTRATION COMPLETE.",
+      "state_change": "AMF_5GMM_COMMON_PROCEDURE_INITIATED -> AMF_5GMM_REGISTERED (potentially)"
+    },
+    {
+      "action_name": "AMF_Retransmit_REGISTRATION_ACCEPT",
+      "description": "AMF retransmits the REGISTRATION ACCEPT message on T3550 expiry (first four times) or if an identical REGISTRATION REQUEST is received after sending REG ACCEPT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Ignore_Duplicate_REGISTRATION_REQUEST",
+      "description": "AMF ignores a second identical REGISTRATION REQUEST message received before sending REG ACCEPT/REJECT.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Progress_New_Registration",
+      "description": "AMF aborts the previous procedure and progresses the new registration procedure if a differing REGISTRATION REQUEST is received.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Handle_Request_In_Registered_State",
+      "description": "AMF may initiate common procedures, delete context and progress request if UE genuine, or maintain context if not genuine.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Stop_T3550",
+      "description": "AMF stops timer T3550 upon receiving REGISTRATION COMPLETE or a subsequent Mobility/Periodic REGISTRATION REQUEST.",
+      "state_change": "AMF_5GMM_COMMON_PROCEDURE_INITIATED -> AMF_5GMM_REGISTERED (if REG_COMPLETE)"
+    },
+    {
+      "action_name": "AMF_Progress_Mobility_Periodic_Registration",
+      "description": "AMF progresses the registration procedure for mobility and periodic registration update if the corresponding request is received before REGISTRATION COMPLETE.",
+      "state_change": "N/A"
+    },
+    {
+      "action_name": "AMF_Progress_De_Registration",
+      "description": "AMF progresses the de-registration procedure if a DEREGISTRATION REQUEST is received before REGISTRATION COMPLETE.",
+      "state_change": "N/A"
+    }
+  ]
+}
