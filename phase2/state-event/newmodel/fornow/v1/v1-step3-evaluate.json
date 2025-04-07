@@ -1,0 +1,56 @@
+
+{
+  "corrections": [
+    {
+      "type": "incorrect_edge_type",
+      "edge": "Receive_REGISTRATION_ACCEPT → UE_5GMM_REGISTERED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Receiving the REGISTRATION ACCEPT message triggers the UE to enter the 5GMM-REGISTERED state. The edge type should be 'trigger'. Similar corrections apply to other edges where an event (message reception, timer expiry) causes a state transition (e.g., Send_REGISTRATION_REQUEST → UE_Awaiting_AMF_Response, Receive_REGISTRATION_REQUEST → AMF_Processing_Registration, Receive_REGISTRATION_COMPLETE → AMF_5GMM_REGISTERED, Receive_REGISTRATION_REJECT → UE_Processing_Rejection, T3510_Timeout → UE_Processing_Rejection, Lower_Layer_Failure → UE_Processing_Rejection, Lower_Layer_Failure → AMF_5GMM_REGISTERED)."
+    },
+    {
+      "type": "incorrect_state_modeling",
+      "state": "AMF_Awaiting_REG_COMPLETE",
+      "description": "The state entered by the AMF after sending REGISTRATION ACCEPT and starting timer T3550 is explicitly named '5GMM-COMMON-PROCEDURE-INITIATED' in TS 24.501 subclause 5.5.1.2.4. The graph uses 'AMF_Awaiting_REG_COMPLETE'. Suggest renaming the state node ID and description for accuracy.",
+      "suggested_correction": "Rename state node 'AMF_Awaiting_REG_COMPLETE' to 'AMF_5GMM_COMMON_PROCEDURE_INITIATED' and update its description accordingly."
+    },
+    {
+      "type": "missing_transition",
+      "from_node": "Send_REGISTRATION_ACCEPT",
+      "to_node": "AMF_5GMM_REGISTERED",
+      "description": "The AMF only starts T3550 and awaits REGISTRATION COMPLETE if specific IEs requiring acknowledgement are present in REGISTRATION ACCEPT (TS 24.501, 5.5.1.2.4). If no acknowledgement is required, the AMF should transition directly to a registered state after sending REGISTRATION ACCEPT. This path is missing.",
+      "suggested_location": "Add a 'trigger' edge from 'Send_REGISTRATION_ACCEPT' to 'AMF_5GMM_REGISTERED' representing the case where T3550 is not started."
+    },
+    {
+      "type": "incorrect_transition",
+      "edge": "T3550_Timeout → AMF_Processing_Registration",
+      "description": "On the first four expiries of T3550, the AMF retransmits REGISTRATION ACCEPT and restarts T3550 (TS 24.501, 5.5.1.2.8 case c). The AMF should remain in the state awaiting REGISTRATION COMPLETE (renamed 'AMF_5GMM_COMMON_PROCEDURE_INITIATED'). The current transition to 'AMF_Processing_Registration' is incorrect. It should be a loop back to 'AMF_5GMM_COMMON_PROCEDURE_INITIATED'.",
+      "suggested_correction": "Change the target of the edge from 'T3550_Timeout' to 'AMF_5GMM_COMMON_PROCEDURE_INITIATED' (or 'AMF_Awaiting_REG_COMPLETE' if not renamed) for retries 1-4. Ensure edge type is 'trigger'."
+    },
+    {
+      "type": "missing_transition",
+      "from_node": "T3550_Timeout",
+      "to_node": "AMF_5GMM_REGISTERED",
+      "description": "On the fifth expiry of timer T3550, the AMF aborts the procedure and enters state 5GMM-REGISTERED (TS 24.501, 5.5.1.2.8 case c). This transition is missing.",
+      "suggested_location": "Add a 'trigger' edge from 'T3550_Timeout' to 'AMF_5GMM_REGISTERED' representing the 5th expiry condition."
+    },
+    {
+      "type": "insufficient_detail",
+      "state": "UE_Processing_Rejection",
+      "description": "The state 'UE_Processing_Rejection' and its subsequent transition to 'UE_5GMM_DEREGISTERED' oversimplify the UE behavior. Depending on the trigger (REGISTRATION REJECT cause, T3510 timeout, Lower Layer Failure) and conditions (attempt counter), the UE enters specific 5GMM-DEREGISTERED sub-states (e.g., NO-SUPI, PLMN-SEARCH, LIMITED-SERVICE, ATTEMPTING-REGISTRATION, NO-CELL-AVAILABLE) and performs different actions (e.g., starting T3511, T3502, T3346, updating forbidden lists) as detailed in TS 24.501 subclauses 5.5.1.2.5 and 5.5.1.2.7.",
+      "suggested_correction": "Enhance the description of the transition edge(s) originating from 'UE_Processing_Rejection' to detail the different outcomes based on the specific trigger (REJECT cause code, T3510 expiry, Lower Layer Failure) and conditions (e.g., attempt counter value), referencing the specific sub-states and actions from the specification. Alternatively, model the distinct outcome states explicitly."
+    },
+    {
+        "type": "missing_event",
+        "event": "T3346_Handling",
+        "description": "When receiving REGISTRATION REJECT with cause #22 (Congestion), the UE starts timer T3346 and enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION (TS 24.501, 5.5.1.2.5). The timer T3346 and its associated behavior (blocking subsequent registrations until expiry) are not modeled.",
+        "suggested_location": "Add a T3346 timer event triggered by 'Receive_REGISTRATION_REJECT' (cause #22), influencing the transition from 'UE_Processing_Rejection'."
+      },
+      {
+        "type": "missing_event",
+        "event": "T3511_Handling",
+        "description": "After T3510 expiry or lower layer failure (cases c, e in 5.5.1.2.7), if the registration attempt counter is less than 5, the UE starts timer T3511 and enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. The procedure is restarted upon T3511 expiry. This timer is not modeled.",
+        "suggested_location": "Add a T3511 timer event triggered from 'UE_Processing_Rejection' under the specified conditions (T3510 expiry/LLF, counter < 5)."
+      }
+  ]
+}

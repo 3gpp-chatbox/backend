@@ -1,0 +1,23 @@
+
+{
+  "corrections": [
+    {
+      "type": "missing_state",
+      "state": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "description": "The specific substate '5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION' described in TS 24.501 5.5.1.2.5 (for cause #22) and 5.5.1.2.7 (for T3510 timeout/lower layer failure if counter < 5) is not explicitly modeled. This state is entered when timer T3346 or T3511 is started. The current graph transitions from 'UE_Processing_Rejection' directly to the generic 'UE_5GMM_DEREGISTERED' state, obscuring this specific outcome.",
+      "suggested_location": "As a distinct target state for transitions originating from 'UE_Processing_Rejection' when triggered by receiving REGISTRATION REJECT cause #22, or upon T3510 timeout / Lower Layer Failure if the registration attempt counter is less than 5. This state could be considered a substate of 'UE_5GMM_DEREGISTERED'."
+    },
+    {
+      "type": "missing_transition",
+      "description": "Explicit transitions representing the start of timers T3346 (upon REJECT cause #22) and T3511 (upon T3510 timeout or Lower Layer Failure if counter < 5) leading to the 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION' state are missing. The current transition 'UE_Processing_Rejection' -> 'UE_5GMM_DEREGISTERED' aggregates these specific cases.",
+      "suggested_location": "Modify the outcomes from 'UE_Processing_Rejection'. Add specific transitions: 1) 'UE_Processing_Rejection' -> 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION' (triggered by starting T3346 for cause #22). 2) 'UE_Processing_Rejection' -> 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION' (triggered by starting T3511 for T3510 timeout/LLF if counter < 5). The existing transition to 'UE_5GMM_DEREGISTERED' should cover the remaining rejection causes and counter=5 cases."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "Send_REGISTRATION_ACCEPT -> AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The edge from 'Send_REGISTRATION_ACCEPT' to 'AMF_5GMM_COMMON_PROCEDURE_INITIATED' should be a 'trigger'. As per TS 24.501 5.5.1.2.4, the inclusion of specific IEs (like 5G-GUTI, SOR container, etc.) in the REGISTRATION ACCEPT message actively triggers the AMF to start timer T3550 and enter the 5GMM-COMMON-PROCEDURE-INITIATED state. This is an action initiated by the event's content, not just a passive condition."
+    }
+  ]
+}

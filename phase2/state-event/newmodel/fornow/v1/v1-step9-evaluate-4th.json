@@ -1,0 +1,71 @@
+
+{
+  "corrections": [
+    {
+      "type": "missing_state",
+      "state": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "description": "State 'UE_5GMM_DEREGISTERED.NO-SUPI' is missing. This state is entered upon receiving REGISTRATION REJECT with cause #3 (Illegal UE), #6 (Illegal ME), or #7 (5GS services not allowed) according to TS 24.501, 5.5.1.2.5.",
+      "suggested_location": "As a target state from 'UE_Processing_Rejection' for specific rejection causes."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "State 'UE_5GMM_DEREGISTERED.PLMN-SEARCH' is missing. This state is entered upon receiving REGISTRATION REJECT with causes like #11 (PLMN not allowed), #13 (Roaming not allowed in this TA), #73 (Serving network not authorized), #74 (Temp not auth SNPN), #75 (Perm not auth SNPN), #76 (CAG - specific conditions), #78 (PLMN not allowed location), #80 (Disaster roaming not allowed), or when registration attempt counter reaches 5 (optional). See TS 24.501, 5.5.1.2.5 & 5.5.1.2.7.",
+      "suggested_location": "As a target state from 'UE_Processing_Rejection' for specific rejection causes or conditions."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "description": "State 'UE_5GMM_DEREGISTERED.LIMITED-SERVICE' is missing. This state is entered upon receiving REGISTRATION REJECT with causes like #12 (TA not allowed), #13 (Roaming not allowed in this TA), #15 (No suitable cells in TA), #27 (N1 mode not allowed), #76 (CAG - specific conditions). See TS 24.501, 5.5.1.2.5.",
+      "suggested_location": "As a target state from 'UE_Processing_Rejection' for specific rejection causes."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_5GMM_DEREGISTERED_T3502_RUNNING",
+      "description": "A state representing UE being in 5GMM-DEREGISTERED substate ATTEMPTING-REGISTRATION or PLMN-SEARCH with timer T3502 running is missing. This occurs when the registration attempt counter reaches 5 after T3510 expiry or lower layer failure (TS 24.501, 5.5.1.2.7 cases c,d,e).",
+      "suggested_location": "As a target state from 'UE_Processing_Rejection' when registration attempt counter reaches 5."
+    },
+     {
+      "type": "missing_event",
+      "event": "T3502_Expiry",
+      "description": "The expiry of timer T3502 is not modeled as an event. T3502 is started when the registration attempt counter reaches 5 (TS 24.501, 5.5.1.2.7 cases c,d,e). Its expiry triggers specific actions (e.g., PLMN search).",
+      "suggested_location": "As an event triggering a transition from a state where T3502 is running (e.g., 'UE_5GMM_DEREGISTERED_T3502_RUNNING')."
+    },
+    {
+      "type": "incorrect_edge",
+      "edge": "UE_Processing_Rejection → UE_5GMM_DEREGISTERED",
+      "description": "This edge is too generic. It bundles outcomes for multiple rejection causes (#3, #6, #7, #11, #12, #13, #15, #27, #31, #72, #73, #74, #75, #76, #77, #78, #80) and the condition where the registration attempt counter reaches 5. These conditions should lead to more specific DEREGISTERED substates (NO-SUPI, PLMN-SEARCH, LIMITED-SERVICE, T3502_RUNNING) or ATTEMPTING-REGISTRATION (e.g., for cause #62, #79, #81, #82). This edge should be replaced by multiple edges leading to the correct specific states based on the cause/condition.",
+      "suggested_correction": "Replace this edge with multiple edges: 'UE_Processing_Rejection → UE_5GMM_DEREGISTERED_NO_SUPI' (for causes #3, #6, #7), 'UE_Processing_Rejection → UE_5GMM_DEREGISTERED_PLMN_SEARCH' (for causes #11, #13, #73, #74, #75, #76(cond.), #78, #80), 'UE_Processing_Rejection → UE_5GMM_DEREGISTERED_LIMITED_SERVICE' (for causes #12, #13, #15, #27, #76(cond.)), 'UE_Processing_Rejection → UE_5GMM_DEREGISTERED_T3502_RUNNING' (for counter=5), 'UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION' (for causes #62, #79, #81, #82)."
+    },
+    {
+      "type": "missing_edge",
+      "edge": "UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION (Cause #62)",
+      "description": "Transition for REGISTRATION REJECT cause #62 (No network slices available) is missing. According to 5.5.1.2.5, this cause leads to DEREGISTERED.ATTEMPTING-REGISTRATION or DEREGISTERED.PLMN-SEARCH or DEREGISTERED.LIMITED-SERVICE depending on conditions. A transition to ATTEMPTING-REGISTRATION should be added for the case where the UE can retry with a different NSSAI.",
+      "suggested_location": "From 'UE_Processing_Rejection' to 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION'."
+    },
+     {
+      "type": "missing_edge",
+      "edge": "UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION (Cause #79)",
+      "description": "Transition for REGISTRATION REJECT cause #79 (UAS services not allowed) is missing. According to 5.5.1.2.5, this cause leads to DEREGISTERED.ATTEMPTING-REGISTRATION or DEREGISTERED.PLMN-SEARCH.",
+      "suggested_location": "From 'UE_Processing_Rejection' to 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION'."
+    },
+    {
+      "type": "missing_edge",
+      "edge": "UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION (Cause #81)",
+      "description": "Transition for REGISTRATION REJECT cause #81 (Selected N3IWF is not compatible with the allowed NSSAI) is missing. According to 5.5.1.2.5, this cause leads to DEREGISTERED.ATTEMPTING-REGISTRATION or DEREGISTERED.PLMN-SEARCH.",
+      "suggested_location": "From 'UE_Processing_Rejection' to 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION'."
+    },
+    {
+      "type": "missing_edge",
+      "edge": "UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION (Cause #82)",
+      "description": "Transition for REGISTRATION REJECT cause #82 (Selected TNGF is not compatible with the allowed NSSAI) is missing. According to 5.5.1.2.5, this cause leads to DEREGISTERED.ATTEMPTING-REGISTRATION or DEREGISTERED.PLMN-SEARCH.",
+      "suggested_location": "From 'UE_Processing_Rejection' to 'UE_DEREGISTERED_ATTEMPTING_REGISTRATION'."
+    },
+    {
+      "type": "refine_edge_description",
+      "edge": "UE_Processing_Rejection → UE_DEREGISTERED_ATTEMPTING_REGISTRATION (T3510/LLF < 5)",
+      "description": "The description should clarify that this transition applies not only to T3510 timeout and Lower Layer Failure (when counter < 5) but also to receiving certain REGISTRATION REJECT causes where the counter is incremented but remains less than 5 (implicitly covered by case 'd' in 5.5.1.2.7).",
+      "suggested_correction": "Update description to: Triggered after processing T3510 timeout, Lower Layer Failure, or certain REGISTRATION REJECT causes if registration attempt counter < 5; UE starts timer T3511 and enters DEREGISTERED.ATTEMPTING-REGISTRATION substate."
+    }
+  ]
+}

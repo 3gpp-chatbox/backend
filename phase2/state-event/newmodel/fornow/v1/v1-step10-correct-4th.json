@@ -1,0 +1,340 @@
+{
+  "nodes": [
+    {
+      "id": "UE_5GMM_DEREGISTERED",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED state, not registered for 5GS services."
+    },
+    {
+      "id": "Send_REGISTRATION_REQUEST",
+      "type": "event",
+      "description": "UE sends a REGISTRATION REQUEST message to the AMF."
+    },
+    {
+      "id": "UE_Awaiting_AMF_Response",
+      "type": "state",
+      "description": "UE has sent REGISTRATION REQUEST, started timer T3510, and is waiting for REGISTRATION ACCEPT or REGISTRATION REJECT from the AMF."
+    },
+    {
+      "id": "Receive_REGISTRATION_REQUEST",
+      "type": "event",
+      "description": "AMF receives the REGISTRATION REQUEST message from the UE."
+    },
+    {
+      "id": "AMF_Processing_Registration",
+      "type": "state",
+      "description": "AMF is processing the received REGISTRATION REQUEST message, potentially initiating common procedures like identification, authentication, and security."
+    },
+    {
+      "id": "Send_REGISTRATION_ACCEPT",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION ACCEPT message to the UE."
+    },
+    {
+      "id": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "state",
+      "description": "AMF has sent REGISTRATION ACCEPT, requires acknowledgement, started timer T3550 awaiting REGISTRATION COMPLETE, and entered state 5GMM-COMMON-PROCEDURE-INITIATED."
+    },
+    {
+      "id": "Receive_REGISTRATION_ACCEPT",
+      "type": "event",
+      "description": "UE receives the REGISTRATION ACCEPT message from the AMF."
+    },
+    {
+      "id": "UE_5GMM_REGISTERED",
+      "type": "state",
+      "description": "UE has successfully registered, entered state 5GMM-REGISTERED, and set 5GS update status to 5U1 UPDATED."
+    },
+    {
+      "id": "Send_REGISTRATION_COMPLETE",
+      "type": "event",
+      "description": "UE sends a REGISTRATION COMPLETE message to the AMF, typically to acknowledge receipt of specific information in REGISTRATION ACCEPT."
+    },
+    {
+      "id": "Receive_REGISTRATION_COMPLETE",
+      "type": "event",
+      "description": "AMF receives the REGISTRATION COMPLETE message from the UE."
+    },
+    {
+      "id": "AMF_5GMM_REGISTERED",
+      "type": "state",
+      "description": "AMF considers the UE successfully registered, having received REGISTRATION COMPLETE (if required) or completed processing REGISTRATION ACCEPT."
+    },
+    {
+      "id": "Send_REGISTRATION_REJECT",
+      "type": "event",
+      "description": "AMF sends a REGISTRATION REJECT message to the UE."
+    },
+    {
+      "id": "Receive_REGISTRATION_REJECT",
+      "type": "event",
+      "description": "UE receives the REGISTRATION REJECT message from the AMF."
+    },
+    {
+      "id": "UE_Processing_Rejection",
+      "type": "state",
+      "description": "UE is processing a received REGISTRATION REJECT message or handling a T3510 timeout or lower layer failure."
+    },
+    {
+      "id": "T3510_Timeout",
+      "type": "event",
+      "description": "Timer T3510 expires at the UE while waiting for a response to REGISTRATION REQUEST."
+    },
+    {
+      "id": "T3550_Timeout",
+      "type": "event",
+      "description": "Timer T3550 expires at the AMF while waiting for REGISTRATION COMPLETE."
+    },
+    {
+      "id": "Lower_Layer_Failure",
+      "type": "event",
+      "description": "A failure is indicated by lower layers at either the UE or AMF during the registration procedure."
+    },
+    {
+      "id": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED substate ATTEMPTING-REGISTRATION, typically with timer T3346 or T3511 running, following a registration rejection or failure."
+    },
+    {
+      "id": "T3511_Expiry",
+      "type": "event",
+      "description": "Timer T3511 expires at the UE."
+    },
+    {
+      "id": "T3346_Expiry",
+      "type": "event",
+      "description": "Timer T3346 expires at the UE."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED substate NO-SUPI, entered upon receiving REGISTRATION REJECT with cause #3, #6, or #7."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED substate PLMN-SEARCH, entered upon receiving REGISTRATION REJECT with causes like #11, #13, #73, #74, #75, #76(cond.), #78, #80, or after T3502 expiry."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED substate LIMITED-SERVICE, entered upon receiving REGISTRATION REJECT with causes like #12, #13, #15, #27, #76(cond.)."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_T3502_RUNNING",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED substate ATTEMPTING-REGISTRATION or PLMN-SEARCH with timer T3502 running, typically after registration attempt counter reaches 5."
+    },
+    {
+      "id": "T3502_Expiry",
+      "type": "event",
+      "description": "Timer T3502 expires at the UE."
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_5GMM_DEREGISTERED",
+      "to": "Send_REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "Triggered when the UE in state 5GMM-DEREGISTERED initiates the registration procedure for initial registration (e.g., for 5GS services, emergency, SMS over NAS, mobility from GERAN/UTRAN, SNPN onboarding, disaster roaming, resuming normal services)."
+    },
+    {
+      "from": "Send_REGISTRATION_REQUEST",
+      "to": "UE_Awaiting_AMF_Response",
+      "type": "trigger",
+      "description": "Triggered after UE sends REGISTRATION REQUEST and starts timer T3510."
+    },
+    {
+      "from": "Receive_REGISTRATION_REQUEST",
+      "to": "AMF_Processing_Registration",
+      "type": "trigger",
+      "description": "Triggered when AMF receives REGISTRATION REQUEST and begins processing, potentially initiating common procedures."
+    },
+    {
+      "from": "AMF_Processing_Registration",
+      "to": "Send_REGISTRATION_ACCEPT",
+      "type": "trigger",
+      "description": "Triggered when the AMF determines the initial registration request can be accepted."
+    },
+    {
+      "from": "Send_REGISTRATION_ACCEPT",
+      "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "trigger",
+      "description": "Triggered if the sent REGISTRATION ACCEPT requires a REGISTRATION COMPLETE acknowledgement (e.g., contains 5G-GUTI, SOR, Operator-defined access category definitions, etc.); AMF starts timer T3550 and enters 5GMM-COMMON-PROCEDURE-INITIATED state."
+    },
+    {
+      "from": "UE_Awaiting_AMF_Response",
+      "to": "Receive_REGISTRATION_ACCEPT",
+      "type": "trigger",
+      "description": "Triggered when the UE receives a REGISTRATION ACCEPT message from the AMF."
+    },
+    {
+      "from": "Receive_REGISTRATION_ACCEPT",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "trigger",
+      "description": "Triggered upon receiving REGISTRATION ACCEPT; UE resets registration attempt counter, enters 5GMM-REGISTERED state, and sets 5GS update status to 5U1 UPDATED."
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Send_REGISTRATION_COMPLETE",
+      "type": "trigger",
+      "description": "Triggered if the received REGISTRATION ACCEPT message contains specific IEs requiring acknowledgement (e.g., Network slicing subscription change, Configured NSSAI, NSSRG information, Alternative NSSAI, CAG information list, Operator-defined access category definitions, Negotiated PEIPS assistance information, UE radio capability ID, Truncated 5G-S-TMSI configuration, service-level-AA pending indication, SOR transparent container, On-demand NSSAI, S-NSSAI time/location validity info, NSAG info)."
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Receive_REGISTRATION_COMPLETE",
+      "type": "trigger",
+      "description": "Triggered when the AMF receives the REGISTRATION COMPLETE message from the UE."
+    },
+    {
+      "from": "Receive_REGISTRATION_COMPLETE",
+      "to": "AMF_5GMM_REGISTERED",
+      "type": "trigger",
+      "description": "Triggered upon receiving REGISTRATION COMPLETE; AMF stops timer T3550 and transitions to 5GMM-REGISTERED state. Allocated 5G-GUTI, PEIPS info, UE radio capability ID, etc., are considered valid."
+    },
+    {
+      "from": "AMF_Processing_Registration",
+      "to": "Send_REGISTRATION_REJECT",
+      "type": "trigger",
+      "description": "Triggered when the AMF determines the initial registration request cannot be accepted."
+    },
+    {
+      "from": "UE_Awaiting_AMF_Response",
+      "to": "Receive_REGISTRATION_REJECT",
+      "type": "trigger",
+      "description": "Triggered when the UE receives a REGISTRATION REJECT message from the AMF."
+    },
+    {
+      "from": "Receive_REGISTRATION_REJECT",
+      "to": "UE_Processing_Rejection",
+      "type": "trigger",
+      "description": "Triggered upon receiving REGISTRATION REJECT; UE proceeds to handle the rejection based on the included 5GMM cause value."
+    },
+    {
+      "from": "UE_Awaiting_AMF_Response",
+      "to": "T3510_Timeout",
+      "type": "trigger",
+      "description": "Triggered when timer T3510 expires at the UE before receiving REGISTRATION ACCEPT or REGISTRATION REJECT."
+    },
+    {
+      "from": "T3510_Timeout",
+      "to": "UE_Processing_Rejection",
+      "type": "trigger",
+      "description": "Triggered upon T3510 expiry; UE aborts the procedure, increments the registration attempt counter (if < 5), and potentially starts T3511 or enters a DEREGISTERED substate if counter reaches 5."
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "T3550_Timeout",
+      "type": "trigger",
+      "description": "Triggered when timer T3550 expires at the AMF before receiving REGISTRATION COMPLETE (if expected)."
+    },
+    {
+      "from": "T3550_Timeout",
+      "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "trigger",
+      "description": "Triggered on the first four expiries of T3550; AMF retransmits REGISTRATION ACCEPT, restarts T3550, and remains in 5GMM-COMMON-PROCEDURE-INITIATED state."
+    },
+    {
+      "from": "UE_Awaiting_AMF_Response",
+      "to": "Lower_Layer_Failure",
+      "type": "trigger",
+      "description": "Triggered when lower layers indicate a failure or release the NAS signalling connection at the UE before REGISTRATION ACCEPT/REJECT is received."
+    },
+    {
+      "from": "Lower_Layer_Failure",
+      "to": "UE_Processing_Rejection",
+      "type": "trigger",
+      "description": "Triggered upon lower layer failure at UE before response; UE aborts the procedure, increments the registration attempt counter (if < 5), and potentially starts T3511 or enters a DEREGISTERED substate if counter reaches 5."
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Lower_Layer_Failure",
+      "type": "trigger",
+      "description": "Triggered when a lower layer failure occurs at the AMF before REGISTRATION COMPLETE is received (if expected) and T3550 is running."
+    },
+    {
+      "from": "Lower_Layer_Failure",
+      "to": "AMF_5GMM_REGISTERED",
+      "type": "trigger",
+      "description": "Triggered upon lower layer failure at AMF while awaiting REGISTRATION COMPLETE; AMF locally aborts the procedure and enters state 5GMM-REGISTERED."
+    },
+    {
+      "from": "Send_REGISTRATION_ACCEPT",
+      "to": "AMF_5GMM_REGISTERED",
+      "type": "trigger",
+      "description": "Triggered if REGISTRATION ACCEPT does not require acknowledgement (T3550 not started); AMF enters registered state."
+    },
+    {
+      "from": "T3550_Timeout",
+      "to": "AMF_5GMM_REGISTERED",
+      "type": "trigger",
+      "description": "Triggered on the 5th expiry of T3550; AMF aborts the procedure and enters 5GMM-REGISTERED state."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "trigger",
+      "description": "Triggered after processing REGISTRATION REJECT with cause #22; UE starts timer T3346 and enters DEREGISTERED.ATTEMPTING-REGISTRATION substate."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "trigger",
+      "description": "Triggered after processing T3510 timeout, Lower Layer Failure, or certain REGISTRATION REJECT causes if registration attempt counter < 5; UE starts timer T3511 and enters DEREGISTERED.ATTEMPTING-REGISTRATION substate."
+    },
+    {
+      "from": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "to": "Send_REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "Triggered when timer T3511 expires; UE restarts the registration procedure if still required."
+    },
+    {
+      "from": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "to": "Send_REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "Triggered when timer T3346 expires or is stopped; UE restarts the registration procedure if still required."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "trigger",
+      "description": "Triggered after processing REGISTRATION REJECT with cause #3 (Illegal UE), #6 (Illegal ME), or #7 (5GS services not allowed)."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "type": "trigger",
+      "description": "Triggered after processing REGISTRATION REJECT with cause #11 (PLMN not allowed), #13 (Roaming not allowed in this TA), #73 (Serving network not authorized), #74 (Temp not auth SNPN), #75 (Perm not auth SNPN), #76 (CAG - specific conditions), #78 (PLMN not allowed location), #80 (Disaster roaming not allowed)."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "type": "trigger",
+      "description": "Triggered after processing REGISTRATION REJECT with cause #12 (TA not allowed), #13 (Roaming not allowed in this TA), #15 (No suitable cells in TA), #27 (N1 mode not allowed), #76 (CAG - specific conditions)."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_5GMM_DEREGISTERED_T3502_RUNNING",
+      "type": "trigger",
+      "description": "Triggered after processing T3510 timeout or Lower Layer Failure when registration attempt counter reaches 5; UE starts timer T3502 and enters 5GMM-DEREGISTERED substate ATTEMPTING-REGISTRATION or PLMN-SEARCH."
+    },
+    {
+      "from": "UE_Processing_Rejection",
+      "to": "UE_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "trigger",
+      "description": "Triggered after processing REGISTRATION REJECT with cause #62 (No network slices available), #79 (UAS services not allowed), #81 (Selected N3IWF not compatible), #82 (Selected TNGF not compatible). UE enters DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    {
+      "from": "UE_5GMM_DEREGISTERED_T3502_RUNNING",
+      "to": "T3502_Expiry",
+      "type": "trigger",
+      "description": "Triggered when timer T3502 expires."
+    },
+    {
+      "from": "T3502_Expiry",
+      "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "type": "trigger",
+      "description": "Triggered upon T3502 expiry; UE performs actions like selecting a new PLMN."
+    }
+  ]
+}
