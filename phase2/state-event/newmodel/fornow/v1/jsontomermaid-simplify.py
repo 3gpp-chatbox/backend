@@ -13,7 +13,7 @@ for node in graph_data["nodes"]:  # Directly access "nodes" from the top level
     node_id = node["id"]
     description = node["description"]
     node_map[node_id] = description
-    mermaid_code += f'  {node_id}["{node_id}: {description}"];\n'
+    mermaid_code += f'  {node_id};\n'
 
 # Add edges
 for edge in graph_data["edges"]:  # Directly access "edges" from the top level
