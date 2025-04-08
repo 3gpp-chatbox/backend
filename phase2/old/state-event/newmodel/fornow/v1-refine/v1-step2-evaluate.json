@@ -1,0 +1,46 @@
+
+{
+  "corrections": [
+    {
+      "type": "missing_transition",
+      "from": "E_T3510_Timeout_Retry",
+      "event": null,
+      "to": "UE_Attempting_Initial_Registration",
+      "description": "The graph incorrectly transitions from E_T3510_Timeout_Retry directly to UE_Registration_Rejected. According to the spec (5.5.1.2.7 case c), if the registration attempt counter is less than 5 after a T3510 timeout, the UE should start T3511 and re-attempt the registration procedure upon T3511 expiry. A transition back towards an attempt state is missing.",
+      "supporting_text_snippet": "For the cases c [T3510 timeout]... If the registration attempt counter is less than 5: - if the initial registration request is not for emergency services, timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. When timer T3511 expires the registration procedure for initial registration shall be restarted, if still required."
+    },
+    {
+      "type": "incorrect_transition",
+      "edge": {
+        "from": "E_T3510_Timeout_Retry",
+        "to": "UE_Registration_Rejected"
+      },
+      "description": "The transition from E_T3510_Timeout_Retry to UE_Registration_Rejected is only valid if the maximum number of retries (5) has been reached. The graph should model the retry loop first.",
+      "suggested_correction": "The transition from E_T3510_Timeout_Retry should lead back to a state representing the UE re-attempting registration (e.g., via T3511 timer expiry), not directly to UE_Registration_Rejected unless the retry limit is hit.",
+      "supporting_text_snippet": "For the cases c [T3510 timeout]... If the registration attempt counter is less than 5: - ...timer T3511 is started... When timer T3511 expires the registration procedure for initial registration shall be restarted... If the registration attempt counter is equal to 5 - ...the UE shall delete TAI list... start timer T3502... The state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "incorrect_transition",
+      "edge": {
+        "from": "E_Failure_UE",
+        "to": "UE_Registration_Rejected"
+      },
+      "description": "The transition from E_Failure_UE (originating from UE_Sending_RegComplete) to UE_Registration_Rejected is incorrect. Spec 5.5.1.2.7 case j states that upon transmission failure of REGISTRATION COMPLETE without TAI change, it's up to UE implementation how to re-run the procedure. It does not mandate entering a rejected state.",
+      "suggested_correction": "The transition from E_Failure_UE (when triggered from UE_Sending_RegComplete) should potentially loop back to UE_Sending_RegComplete for a retry attempt, or reflect UE implementation variability, rather than going to UE_Registration_Rejected.",
+      "supporting_text_snippet": "j) Transmission failure of REGISTRATION COMPLETE message indication without change in the current TAI from lower layers. It is up to the UE implementation how to re-run the ongoing procedure."
+    },
+    {
+      "type": "missing_detail",
+      "component_type": "state/procedure",
+      "description": "The graph abstracts the 5GMM common procedures (Authentication, Security Mode Control, Identification) mentioned in section 5.5.1.2.3, which can occur during the AMF_Processing_Initial_Registration and UE_Attempting_Initial_Registration states. While abstraction is normal, this is a significant part of the procedure.",
+      "supporting_text_snippet": "5.5.1.2.3 5GMM common procedure initiation\nThe network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_detail",
+      "component_type": "state",
+      "state": "UE_Registration_Rejected",
+      "description": "The state 'UE_Registration_Rejected' is an abstraction of multiple possible UE outcomes and states following a REGISTRATION REJECT message or procedure failure (e.g., T3510 max retries). The actual UE state depends on the 5GMM cause value or failure type (e.g., 5GMM-DEREGISTERED.PLMN-SEARCH, 5GMM-DEREGISTERED.LIMITED-SERVICE, 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION with T3346 running).",
+      "supporting_text_snippet": "Sections 5.5.1.2.5 and 5.5.1.2.7 detail various actions and state changes based on specific 5GMM cause values or failure conditions (e.g., #11 PLMN not allowed -> PLMN-SEARCH, #12 TA not allowed -> LIMITED-SERVICE, #22 Congestion -> T3346 running)."
+    }
+  ]
+}
