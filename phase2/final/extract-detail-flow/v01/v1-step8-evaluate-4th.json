@@ -1,0 +1,145 @@
+
+{
+  "corrections": [
+    {
+      "type": "incorrect_state",
+      "state": "UE_5GMM_REGISTERED_NSSAA_Pending",
+      "description": "The UE state upon receiving REGISTRATION ACCEPT with pending NSSAI is 5GMM-REGISTERED, not a distinct NSSAA_Pending state. The pending status is stored context, not a primary state.",
+      "suggested_location": "Remove this state. The pending NSSAI is context within the UE_5GMM_REGISTERED state.",
+      "supporting_text_snippet": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall ... enter state 5GMM-REGISTERED... The UE that has indicated the support for network slice-specific authentication and authorization receiving the pending NSSAI in the REGISTRATION ACCEPT message shall store the S-NSSAI(s) in the pending NSSAI as specified in subclause 4.6.2.2."
+    },
+    {
+      "type": "incorrect_state",
+      "state": "AMF_Processes_MobilityOrPeriodicUpdate",
+      "description": "This state belongs to the Mobility Registration Update or Periodic Registration Update procedures, not the Initial Registration procedure.",
+      "suggested_location": "Remove this state and related incoming/outgoing edges from this graph.",
+      "supporting_text_snippet": "5.5.1.2.8 g) REGISTRATION REQUEST message with 5GS registration type IE set to \"mobility registration updating\" or \"periodic registration updating\" received before REGISTRATION COMPLETE message... the registration procedure for mobility and periodic registration update shall be progressed as described in subclause 5.5.1.3."
+    },
+    {
+      "type": "missing_event",
+      "event": "Timer_T3502_Expired",
+      "description": "The expiry of timer T3502, which may be started when the registration attempt counter reaches 5, is a trigger for subsequent actions but is missing as an event.",
+      "suggested_location": "After UE state where T3502 is running (implicitly after UE_Starts_T3502_Action).",
+      "supporting_text_snippet": "If the registration attempt counter is equal to 5 ... start timer T3502 if the value of the timer as indicated by the network is not zero ... if the value of T3502 as indicated by the network is zero, the UE shall perform the actions defined for the expiry of the timer T3502."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #11)",
+      "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "Specific transition for handling 5GMM Cause #11 (PLMN not allowed) leading to PLMN search is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #11 (PLMN not allowed). ... For 3GPP access the UE shall enter state 5GMM-DEREGISTERED.PLMN-SEARCH and perform a PLMN selection..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #12)",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "description": "Specific transition for handling 5GMM Cause #12 (Tracking area not allowed) leading to limited service is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #12 (Tracking area not allowed). ... the UE shall store the current TAI in the list of \"5GS forbidden tracking areas for regional provision of service\" and enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #13)",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE or UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "Specific transition for handling 5GMM Cause #13 (Roaming not allowed in this tracking area) leading to limited service or PLMN search is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #13 (Roaming not allowed in this tracking area). ... the UE shall store the current TAI in the list of \"5GS forbidden tracking areas for roaming\" and enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE or optionally 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #15)",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "description": "Specific transition for handling 5GMM Cause #15 (No suitable cells in tracking area) leading to limited service is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #15 (No suitable cells in tracking area). ... the UE shall store the current TAI in the list of \"5GS forbidden tracking areas for roaming\" and enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #27)",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "description": "Specific transition for handling 5GMM Cause #27 (N1 mode not allowed) leading to limited service and disabling N1 mode is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #27 (N1 mode not allowed). ... Additionally, the UE shall reset the registration attempt counter and shall enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE. ... The UE shall disable the N1 mode capability..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #62)",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION or UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "Specific transition for handling 5GMM Cause #62 (No network slices available) leading to attempting registration or PLMN search is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #62 (No network slices available). The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "event": "REGISTRATION_REJECT_Received (Cause #76)",
+      "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE or UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "Specific transition for handling 5GMM Cause #76 (Not authorized for this CAG or authorized for CAG cells only) leading to limited service or PLMN search based on updated CAG info is missing.",
+      "supporting_text_snippet": "5.5.1.2.5: #76 (Not authorized for this CAG or authorized for CAG cells only). ... then the UE shall enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE ... then the UE shall enter the state 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Receives_DEREGISTRATION_REQUEST",
+      "description": "The event where the UE receives a DEREGISTRATION REQUEST message during the initial registration procedure (collision case) is missing.",
+      "suggested_location": "As a trigger from state UE_5GMM_REGISTERED_INITIATED.",
+      "supporting_text_snippet": "5.5.1.2.7 g) De-registration procedure collision. If the UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED the de-registration procedure shall be aborted and the initial registration procedure shall be progressed."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "event": "UE_Receives_DEREGISTRATION_REQUEST",
+      "to": "UE_5GMM_REGISTERED_INITIATED",
+      "description": "Transition missing for collision case where UE receives DEREGISTRATION REQUEST while initial registration is ongoing; the de-registration is aborted and initial registration continues.",
+      "supporting_text_snippet": "5.5.1.2.7 g) De-registration procedure collision. If the UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED the de-registration procedure shall be aborted and the initial registration procedure shall be progressed."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Initiates_DeRegistration → UE_Performs_Local_DeRegistration",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The edge represents an action triggered by UE_Initiates_DeRegistration under certain conditions (USIM removal, T3519 not running). The edge type should be 'trigger', and the condition should be a label or property of the edge.",
+      "supporting_text_snippet": "5.5.1.2.7 f) UE initiated de-registration required. ... If the de-registration is due to USIM removal and T3519 is not running, the UE may perform a local de-registration."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_Aborts_Registration_Procedure",
+      "event": "Abort due to new REGISTRATION REQUEST",
+      "to": "AMF_ProcessingRegistrationRequest",
+      "description": "When AMF aborts the current procedure due to receiving a new REGISTRATION REQUEST with different IEs, it should transition to process the new request.",
+      "supporting_text_snippet": "5.5.1.2.8 d) 1) If one or more of the information elements in the REGISTRATION REQUEST message differ ... the previously initiated the registration procedure ... shall be aborted ... and the new registration procedure ... shall be progressed."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "event": "AMF_Receives_New_REGISTRATION_REQUEST (Same IEs)",
+      "to": "AMF_Retransmits_REGISTRATION_ACCEPT",
+      "description": "If AMF receives a duplicate REGISTRATION REQUEST after sending ACCEPT but before COMPLETE, it should resend ACCEPT.",
+      "supporting_text_snippet": "5.5.1.2.8 d) 2) if the information elements do not differ, then the REGISTRATION ACCEPT message shall be resent and the timer T3550 shall be restarted."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_Increments_RegistrationAttemptCounter",
+      "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "label": "Counter == 5",
+      "description": "When the registration attempt counter reaches 5 after a failure (T3510 expiry, reject, lower layer failure), the UE enters 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally 5GMM-DEREGISTERED.PLMN-SEARCH. The graph forces PLMN_SEARCH.",
+      "suggested_change": "The transition should primarily go to UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION, with PLMN_SEARCH as an optional alternative path.",
+      "supporting_text_snippet": "5.5.1.2.7 c) If the registration attempt counter is equal to 5 ... The state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "TAI_Change_Detected",
+      "to": "UE_Initiates_InitialRegistration",
+      "description": "If TAI changes while in UE_5GMM_REGISTERED_INITIATED state, the spec says the procedure shall be aborted and re-initiated immediately. The graph shows TAI_Change_Detected triggering UE_Initiates_InitialRegistration, which implies re-initiation but misses the explicit abort action.",
+      "suggested_change": "Add an intermediate 'UE_Aborts_Registration' event triggered by TAI change, which then triggers re-initiation.",
+      "supporting_text_snippet": "5.5.1.2.7 h) Change in the current TAI. If the current TAI is changed before the registration procedure for initial registration is completed, the registration procedure for initial registration shall be aborted and re-initiated immediately."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_Handling_DeRegistration",
+      "description": "An intermediate state could clarify the handling between initiating de-registration and performing local de-registration based on conditions.",
+      "suggested_location": "Between 'UE_Initiates_DeRegistration' and 'UE_Performs_Local_DeRegistration'/'UE_Sends_DEREGISTRATION_REQUEST'.",
+      "supporting_text_snippet": "5.5.1.2.7 f) UE initiated de-registration required. The registration procedure ... shall be aborted, and the UE initiated de-registration procedure shall be performed. ... If the de-registration is due to USIM removal and T3519 is not running, the UE may perform a local de-registration."
+    }
+  ]
+}

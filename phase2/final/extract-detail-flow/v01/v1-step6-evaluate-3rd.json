@@ -1,0 +1,71 @@
+
+{
+  "corrections": [
+    {
+      "type": "incorrect_transition",
+      "from": "AMF_Sends_REGISTRATION_ACCEPT",
+      "to": "AMF_5GMM_REGISTERED",
+      "description": "The AMF only enters the 5GMM-REGISTERED state after sending REGISTRATION ACCEPT if timer T3550 is NOT started (i.e., REGISTRATION COMPLETE is not expected). If T3550 is started, the AMF should transition to AMF_5GMM_COMMON_PROCEDURE_INITIATED.",
+      "suggestion": "Remove the direct transition from 'AMF_Sends_REGISTRATION_ACCEPT' to 'AMF_5GMM_REGISTERED'. Add a condition check after 'AMF_Sends_REGISTRATION_ACCEPT': if T3550 is not started, transition to 'AMF_5GMM_REGISTERED'; if T3550 is started, transition to 'AMF_Starts_T3550'.",
+      "supporting_text_snippet": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED. ... If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..."
+    },
+    {
+      "type": "incorrect_component",
+      "component_id": "UE_WaitingForRegistrationResponse",
+      "component_type": "state",
+      "description": "The state 'UE_WaitingForRegistrationResponse' represents the UE state after sending REGISTRATION REQUEST and waiting for a response. While functionally correct, the 3GPP specification refers to this condition as the UE being in substate 5GMM-REGISTERED-INITIATED within the 5GMM-DEREGISTERED state (see 5.1.3.2.3.2). The graph uses a custom name.",
+      "suggested_label": "UE_5GMM_REGISTERED_INITIATED (or keep current with note)",
+      "supporting_text_snippet": "5.1.3.2.3.2 State 5GMM-REGISTERED-INITIATED: A registration procedure is ongoing for 5GS services..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_Sends_REGISTRATION_ACCEPT",
+      "event": "Condition_REG_COMPLETE_Not_Needed",
+      "to": "AMF_5GMM_REGISTERED",
+      "description": "The graph does not explicitly show the path where the AMF sends REGISTRATION ACCEPT, determines REGISTRATION COMPLETE is not needed (T3550 is not started), and transitions directly to AMF_5GMM_REGISTERED.",
+      "supporting_text_snippet": "If a 5G-GUTI or the SOR transparent container IE ... are included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED... (Implicitly, if these are not included and COMPLETE is not needed, T3550 is not started and AMF can transition to REGISTERED)."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Performs_Local_DeRegistration",
+      "description": "The specification mentions that the UE may perform a local de-registration (without sending a DEREGISTRATION REQUEST) if the de-registration is due to USIM removal and T3519 is not running (Abnormal case f in 5.5.1.2.7). This local action is missing.",
+      "suggested_location": "As an alternative outcome triggered by 'UE initiated de-registration required' under specific conditions.",
+      "supporting_text_snippet": "f) UE initiated de-registration required. ... If the de-registration is due to USIM removal and T3519 is not running, the UE may perform a local de-registration."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_WaitingForRegistrationResponse",
+      "event": "Transmission_Failure_REG_COMPLETE_and_TAI_Change_NotInList",
+      "to": "UE_Initiates_MobilityRegistrationUpdate",
+      "description": "Abnormal case i) in 5.5.1.2.7 specifies that if transmission of REGISTRATION COMPLETE fails and the current TAI is no longer in the TAI list, the initial registration is aborted and a mobility registration update is initiated. This specific trigger is missing.",
+      "supporting_text_snippet": "i) Transmission failure of REGISTRATION COMPLETE message indication with change in the current TAI. ... 2) otherwise, the registration procedure for initial registration shall be aborted and the registration procedure for mobility registration update shall be initiated."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_WaitingForRegistrationResponse",
+      "event": "Transmission_Failure_REG_REQUEST",
+      "to": "UE_Initiates_InitialRegistration",
+      "description": "Abnormal case k) in 5.5.1.2.7 states that a transmission failure of the REGISTRATION REQUEST message causes the procedure to be aborted and re-initiated immediately. The graph currently models lower layer failures leading to counter increments and potential re-initiation via T3511, but not an immediate re-initiation for this specific failure.",
+      "supporting_text_snippet": "k) Transmission failure of REGISTRATION REQUEST message indication from the lower layers. The registration procedure for initial registration shall be aborted and re-initiated immediately."
+    },
+    {
+      "type": "missing_logic",
+      "description": "The graph does not model the collision handling specified in 5.5.1.2.8 d), where receiving a new REGISTRATION REQUEST (different from the first) after sending ACCEPT but before receiving COMPLETE causes the AMF to abort the first procedure and process the new one.",
+      "suggested_location": "Add logic branching from AMF_5GMM_COMMON_PROCEDURE_INITIATED state upon receiving a new REGISTRATION REQUEST.",
+      "supporting_text_snippet": "d) REGISTRATION REQUEST message received after the REGISTRATION ACCEPT message has been sent and before the REGISTRATION COMPLETE message is received... 1) If one or more of the information elements ... differ ... the previously initiated the registration procedure ... shall be aborted ... and the new registration procedure ... shall be progressed"
+    },
+    {
+      "type": "missing_logic",
+      "description": "The graph does not model the collision handling specified in 5.5.1.2.8 g), where receiving a Mobility/Periodic Update REQUEST after sending ACCEPT but before receiving COMPLETE causes the AMF to stop T3550, consider the allocated 5G-GUTI valid, and progress the mobility/periodic update procedure.",
+      "suggested_location": "Add logic branching from AMF_5GMM_COMMON_PROCEDURE_INITIATED state upon receiving a Mobility/Periodic Update REQUEST.",
+      "supporting_text_snippet": "g) REGISTRATION REQUEST message with 5GS registration type IE set to \"mobility registration updating\" or \"periodic registration updating\" received before REGISTRATION COMPLETE message... Timer T3550 shall be stopped. The allocated 5G-GUTI ... shall be considered as valid and the registration procedure for mobility and periodic registration update shall be progressed..."
+    },
+    {
+      "type": "missing_state_transition",
+      "from": "UE_Handles_Rejection_Cause",
+      "to": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+      "description": "The graph is missing the transition from handling a rejection cause to the state UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE, which occurs specifically for 5GMM cause #31 (Redirection to EPC required).",
+      "supporting_text_snippet": "5.5.1.2.5: #31 (Redirection to EPC required). ... The UE shall ... enter the 5GMM-DEREGISTERED.NO-CELL-AVAILABLE."
+    }
+  ]
+}

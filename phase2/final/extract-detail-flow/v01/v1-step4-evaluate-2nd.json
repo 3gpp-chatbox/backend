@@ -1,0 +1,75 @@
+
+{
+  "corrections": [
+    {
+      "type": "missing_event",
+      "event": "UE_Stops_T3502",
+      "description": "The specification states that upon initiating initial registration, the UE shall stop timer T3502 if it is running. This action is missing.",
+      "suggested_location": "Triggered by 'UE_Initiates_InitialRegistration'.",
+      "supporting_text_snippet": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510. If timer T3502 is currently running, the UE shall stop timer T3502."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Stops_T3511",
+      "description": "The specification states that upon initiating initial registration, the UE shall stop timer T3511 if it is running. This action is missing.",
+      "suggested_location": "Triggered by 'UE_Initiates_InitialRegistration'.",
+      "supporting_text_snippet": "If timer T3511 is currently running, the UE shall stop timer T3511."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Starts_T3519",
+      "description": "The specification describes starting timer T3519 if a SUCI is included in the REGISTRATION REQUEST and T3519 is not running. This timer and its handling are missing.",
+      "suggested_location": "Conditionally triggered by 'UE_Initiates_InitialRegistration' based on SUCI inclusion.",
+      "supporting_text_snippet": "If the SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running, the UE shall start timer T3519..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Resets_RegistrationAttemptCounter_On_Accept",
+      "description": "The specification states that upon receipt of REGISTRATION ACCEPT, the UE shall reset the registration attempt counter. This action is missing.",
+      "suggested_location": "Triggered by 'UE_Receives_REGISTRATION_ACCEPT'.",
+      "supporting_text_snippet": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Resets_PLMN_Counters_On_Accept",
+      "description": "The specification states that upon receipt of REGISTRATION ACCEPT, the UE shall reset various PLMN-specific and USIM validity counters. These actions are missing.",
+      "suggested_location": "Triggered by 'UE_Receives_REGISTRATION_ACCEPT'.",
+      "supporting_text_snippet": "If the UE receives the REGISTRATION ACCEPT message from a PLMN, then the UE shall reset the PLMN-specific attempt counter... The UE shall also reset the PLMN-specific N1 mode attempt counter... If the message was received via 3GPP access, the UE shall reset the counter for \"SIM/USIM considered invalid for GPRS services\" events and the counter for \"SIM/USIM considered invalid for non-GPRS services\" events..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_LocallyReleases_NASConnection",
+      "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "description": "The specification states that under certain SOR failure conditions, the UE shall locally release the NAS connection. While this might lead to PLMN search based on 23.122, the immediate outcome is local release, potentially leading to a general DEREGISTERED state, not necessarily PLMN_SEARCH state directly from this event.",
+      "suggested_to": "UE_5GMM_DEREGISTERED",
+      "supporting_text_snippet": "...then the UE shall locally release the established N1 NAS signalling connection."
+    },
+    {
+      "type": "incorrect_sequence",
+      "description": "For 5GMM Cause #22 (Congestion), the graph shows 'UE_Handles_Rejection_Cause' triggering both 'UE_Starts_T3346' and 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION' in parallel. The spec implies starting T3346 leads to or occurs within the ATTEMPTING_REGISTRATION state.",
+      "suggestion": "The edge from 'UE_Handles_Rejection_Cause' should go to 'UE_Starts_T3346'. A new edge should go from 'UE_Starts_T3346' to 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION'.",
+      "supporting_text_snippet": "The UE shall abort the initial registration procedure... reset the registration attempt counter and enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION... the UE shall start timer T3346..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Starts_T3502",
+      "description": "In abnormal case c) (T3510 timeout) when the registration attempt counter reaches 5, the UE should start timer T3502 if its value is not zero. This action is missing.",
+      "suggested_location": "Conditionally triggered after 'UE_Increments_RegistrationAttemptCounter' when counter equals 5.",
+      "supporting_text_snippet": "If the registration attempt counter is equal to 5... start timer T3502 if the value of the timer as indicated by the network is not zero..."
+    },
+    {
+      "type": "incorrect_sequence",
+      "description": "For abnormal case e) (Lower layer failure), the graph shows 'LowerLayer_Failure_UE' triggering 'UE_Increments_RegistrationAttemptCounter', 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION', and 'UE_5GMM_DEREGISTERED_PLMN_SEARCH' in parallel. The spec implies the failure leads to incrementing the counter, and the counter value then determines the subsequent state (ATTEMPTING_REGISTRATION or PLMN_SEARCH) and T3511 start.",
+      "suggestion": "Edges from 'LowerLayer_Failure_UE' to 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION' and 'UE_5GMM_DEREGISTERED_PLMN_SEARCH' should be removed. The existing edge 'LowerLayer_Failure_UE' -> 'UE_Increments_RegistrationAttemptCounter' correctly reflects the first step.",
+      "supporting_text_snippet": "For the cases c, d and e... the registration attempt counter shall be incremented... If the registration attempt counter is less than 5... timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION... If the registration attempt counter is equal to 5... The state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Receives_REGISTRATION_ACCEPT",
+      "event": "TAI_Change_Detected_Before_REG_COMPLETE (New TAI in list)",
+      "to": "UE_Sends_REGISTRATION_COMPLETE",
+      "description": "Abnormal case h) describes that if TAI changes after ACCEPT but before COMPLETE, and the new TAI is in the TAI list, the UE should send REGISTRATION COMPLETE. The graph only models the case where the TAI change leads to a mobility registration update (implying new TAI not in list).",
+      "supporting_text_snippet": "If the REGISTRATION COMPLETE message needs to be sent and a tracking area border is crossed... before a REGISTRATION COMPLETE message is sent and: 1) if the current TAI is in the TAI list, the UE sends the REGISTRATION COMPLETE message to the network..."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+```json
+{
+  "corrections": [
+    {
+      "type": "missing_state",
+      "state": "AMF_Authenticating_Securing",
+      "description": "The graph is missing states representing the mandatory 5GMM common procedures (Authentication, Security Mode Control) initiated by the AMF after receiving REGISTRATION REQUEST.",
+      "suggested_location": "Between 'AMF_Processing_Initial_Registration' and the sending of 'REGISTRATION ACCEPT' or 'REGISTRATION REJECT'.",
+      "supporting_text_snippet": "5.5.1.2.3 5GMM common procedure initiation\nThe network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_Authenticating_Securing",
+      "description": "The graph is missing states representing the UE's involvement in the 5GMM common procedures (Authentication, Security Mode Control) initiated by the AMF.",
+      "suggested_location": "Within the 'UE_Attempting_Initial_Registration' phase, triggered by network commands (e.g., AUTHENTICATION REQUEST, SECURITY MODE COMMAND).",
+      "supporting_text_snippet": "5.5.1.2.3 5GMM common procedure initiation\nThe network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure..."
+    },
+    {
+      "type": "missing_event",
+      "event": "E_AUTHENTICATION_REQUEST",
+      "description": "The event representing the AMF sending an AUTHENTICATION REQUEST message to the UE during common procedures is missing.",
+      "suggested_location": "Triggered from 'AMF_Authenticating_Securing' state.",
+      "supporting_text_snippet": "5.5.1.2.3 5GMM common procedure initiation\nThe network may initiate 5GMM common procedures, e.g. the ... authentication ... procedures..."
+    },
+    {
+      "type": "missing_event",
+      "event": "E_SECURITY_MODE_COMMAND",
+      "description": "The event representing the AMF sending a SECURITY MODE COMMAND message to the UE during common procedures is missing.",
+      "suggested_location": "Triggered from 'AMF_Authenticating_Securing' state, typically after successful authentication.",
+      "supporting_text_snippet": "5.5.1.2.3 5GMM common procedure initiation\nThe network may initiate 5GMM common procedures, e.g. the ... security procedures..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Registration_Rejected",
+      "event": "Specific_Reject_Cause_Handling",
+      "to": "Various_States",
+      "description": "The graph incorrectly maps all REGISTRATION REJECT events to a single 'UE_Registration_Rejected' state. The spec defines different UE behaviors (e.g., retry with T3346 for cause #22, add to forbidden list and PLMN search for cause #11, disable N1 mode for cause #27) based on the 5GMM cause value.",
+      "supporting_text_snippet": "5.5.1.2.5 Initial registration not accepted by the network\nFurthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message. \n#11 (PLMN not allowed). ... store the PLMN identity in the forbidden PLMN list ... enter state 5GMM-DEREGISTERED.PLMN-SEARCH...\n#22 (Congestion). ... start timer T3346 ... The initial registration procedure is started if still needed when timer T3346 expires...\n#27 (N1 mode not allowed). ... The UE shall disable the N1 mode capability..."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_Retry_After_Rejection",
+      "description": "States representing UE retry mechanisms after specific rejection causes (e.g., #22 Congestion with T3346) are missing. All rejections currently lead to a terminal 'UE_Registration_Rejected' state.",
+      "suggested_location": "Following 'E_REGISTRATION_REJECT' under specific cause conditions.",
+      "supporting_text_snippet": "5.5.1.2.5 Initial registration not accepted by the network\n#22 (Congestion). ... The UE shall start timer T3346 ... The initial registration procedure is started if still needed when timer T3346 expires or is stopped."
+    },
+    {
+      "type": "missing_state",
+      "state": "UE_Deregistered_PLMN_Search",
+      "description": "The state '5GMM-DEREGISTERED.PLMN-SEARCH', which the UE enters after certain rejection causes (e.g., #11, #76), is missing. It's currently abstracted into 'UE_Registration_Rejected'.",
+      "suggested_location": "As a possible outcome state after 'E_REGISTRATION_REJECT' depending on the cause code.",
+      "supporting_text_snippet": "5.5.1.2.5 Initial registration not accepted by the network\n#11 (PLMN not allowed). ... enter state 5GMM-DEREGISTERED.PLMN-SEARCH and perform a PLMN selection..."
+    },
+    {
+      "type": "incorrect_transition",
+      "edge": "E_T3510_Timeout_Retry -> UE_Registration_Rejected",
+      "description": "The transition from 'E_T3510_Timeout_Retry' should not lead directly to 'UE_Registration_Rejected'. According to spec abnormal case c), T3510 timeout (if attempt counter < 5) should lead to starting T3511 and re-attempting registration upon T3511 expiry.",
+      "suggested_transition": "E_T3510_Timeout_Retry should lead back to a state indicating waiting for T3511 expiry before re-attempting registration (e.g., back to UE_Attempting_Initial_Registration after T3511 logic).",
+      "supporting_text_snippet": "5.5.1.2.7 Abnormal cases in the UE\nc) T3510 timeout. ... If the registration attempt counter is less than 5: - ... timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. When timer T3511 expires the registration procedure for initial registration shall be restarted, if still required."
+    },
+    {
+      "type": "missing_event",
+      "event": "E_T3511_Timeout",
+      "description": "The timer T3511, started after T3510 expiry when retries are allowed, and its expiry event are missing from the graph.",
+      "suggested_location": "Triggered after T3510 expiry (when counter < 5), leading back to registration attempt.",
+      "supporting_text_snippet": "5.5.1.2.7 Abnormal cases in the UE\nc) T3510 timeout. ... timer T3511 is started ... When timer T3511 expires the registration procedure for initial registration shall be restarted..."
+    },
+    {
+      "type": "incorrect_transition",
+      "edge": "E_Failure_UE -> UE_Registration_Rejected (from UE_Sending_RegComplete)",
+      "description": "A UE failure during the 'UE_Sending_RegComplete' state (i.e., transmission failure of REGISTRATION COMPLETE) should not necessarily lead to 'UE_Registration_Rejected'. Spec case 5.5.1.2.7 j) indicates UE implementation handles re-running (e.g., retransmission), and case i) handles TAI change leading to mobility update.",
+      "suggested_transition": "E_Failure_UE from UE_Sending_RegComplete should potentially loop back to UE_Sending_RegComplete (for retransmission) or trigger a different procedure (like mobility update if TAI changed).",
+      "supporting_text_snippet": "5.5.1.2.7 Abnormal cases in the UE\nj) Transmission failure of REGISTRATION COMPLETE message indication without change in the current TAI from lower layers. It is up to the UE implementation how to re-run the ongoing procedure.\ni) Transmission failure of REGISTRATION COMPLETE message indication with change in the current TAI. ... 2) otherwise, the registration procedure for initial registration shall be aborted and the registration procedure for mobility registration update shall be initiated."
+    },
+    {
+      "type": "missing_event",
+      "event": "E_T3502_Timeout",
+      "description": "The timer T3502, started after the registration attempt counter reaches 5, and its expiry event are missing from the graph.",
+      "suggested_location": "Triggered after max registration attempts (counter = 5).",
+      "supporting_text_snippet": "5.5.1.2.7 Abnormal cases in the UE\nIf the registration attempt counter is equal to 5 ... start timer T3502 if the value of the timer as indicated by the network is not zero ... if the value of T3502 as indicated by the network is zero, the UE shall perform the actions defined for the expiry of the timer T3502."
+    }
+  ]
+}
+```

@@ -1,0 +1,104 @@
+
+{
+  "corrections": [
+    {
+      "type": "incorrect_edge_reference",
+      "edge": "UE_5GMM_REGISTERED_INITIATED -> UE_Receives_REGISTRATION_ACCEPT",
+      "description": "The UE receiving REGISTRATION ACCEPT is triggered by the AMF sending it, not by the UE being in the REGISTERED_INITIATED state. The edge should originate from 'AMF_Sends_REGISTRATION_ACCEPT'.",
+      "suggested_change": {
+        "remove_edge": {
+          "from": "UE_5GMM_REGISTERED_INITIATED",
+          "to": "UE_Receives_REGISTRATION_ACCEPT",
+          "type": "trigger"
+        },
+        "add_edge": {
+          "from": "AMF_Sends_REGISTRATION_ACCEPT",
+          "to": "UE_Receives_REGISTRATION_ACCEPT",
+          "type": "trigger"
+        }
+      },
+      "supporting_text_snippet": "If the initial registration request is accepted by the network, the AMF shall send a REGISTRATION ACCEPT message to the UE. ... Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED..."
+    },
+    {
+      "type": "incorrect_edge_reference",
+      "edge": "UE_5GMM_REGISTERED_INITIATED -> UE_Receives_REGISTRATION_REJECT",
+      "description": "The UE receiving REGISTRATION REJECT is triggered by the AMF sending it, not by the UE being in the REGISTERED_INITIATED state. The edge should originate from 'AMF_Sends_REGISTRATION_REJECT'.",
+      "suggested_change": {
+        "remove_edge": {
+          "from": "UE_5GMM_REGISTERED_INITIATED",
+          "to": "UE_Receives_REGISTRATION_REJECT",
+          "type": "trigger"
+        },
+        "add_edge": {
+          "from": "AMF_Sends_REGISTRATION_REJECT",
+          "to": "UE_Receives_REGISTRATION_REJECT",
+          "type": "trigger"
+        }
+      },
+      "supporting_text_snippet": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value. ... Furthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_Receives_REGISTRATION_ACCEPT",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE_CAG",
+      "description": "According to section 5.5.1.2.4, upon receiving REGISTRATION ACCEPT with specific CAG conditions, the UE first enters 5GMM-REGISTERED and then transitions to 5GMM-REGISTERED.LIMITED-SERVICE. The graph incorrectly shows a direct transition from receiving ACCEPT to the CAG-specific limited service state.",
+      "suggested_change": {
+         "remove_edge": {
+          "from": "UE_Receives_REGISTRATION_ACCEPT",
+          "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE_CAG",
+          "type": "trigger"
+        },
+        "add_edge": {
+          "from": "UE_5GMM_REGISTERED",
+          "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE_CAG",
+          "type": "trigger",
+          "label": "CAG check fails (specific conditions)"
+        }
+      },
+      "supporting_text_snippet": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN... a) if the UE receives the REGISTRATION ACCEPT message via a CAG cell... then the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_Receives_REGISTRATION_ACCEPT",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH_CAG",
+      "description": "According to section 5.5.1.2.4, upon receiving REGISTRATION ACCEPT with specific CAG conditions, the UE first enters 5GMM-REGISTERED and then transitions to 5GMM-REGISTERED.PLMN-SEARCH. The graph incorrectly shows a direct transition from receiving ACCEPT to the CAG-specific PLMN search state.",
+      "suggested_change": {
+         "remove_edge": {
+          "from": "UE_Receives_REGISTRATION_ACCEPT",
+          "to": "UE_5GMM_REGISTERED_PLMN_SEARCH_CAG",
+          "type": "trigger"
+        },
+        "add_edge": {
+          "from": "UE_5GMM_REGISTERED",
+          "to": "UE_5GMM_REGISTERED_PLMN_SEARCH_CAG",
+          "type": "trigger",
+          "label": "CAG check fails (specific conditions)"
+        }
+      },
+      "supporting_text_snippet": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN... a) if the UE receives the REGISTRATION ACCEPT message via a CAG cell... ii) if no CAG-ID is authorized... then the UE shall enter the state 5GMM-REGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "event": "Transmission_Failure_REG_COMPLETE_and_TAI_Change_InList",
+      "to": "UE_Sends_REGISTRATION_COMPLETE",
+      "description": "Abnormal case 5.5.1.2.7 i) specifies that if REGISTRATION COMPLETE transmission fails after TAI change, but the new TAI is *in* the TAI list, the UE resends REGISTRATION COMPLETE. The graph only models the case where the new TAI is *not* in the list.",
+      "suggested_location": "Parallel path to 'Transmission_Failure_REG_COMPLETE_and_TAI_Change_NotInList'",
+      "supporting_text_snippet": "i) Transmission failure of REGISTRATION COMPLETE message indication with change in the current TAI. 1) If the current TAI is still part of the TAI list, the UE resends the REGISTRATION COMPLETE message to the network;"
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "AMF_Aborts_Registration_Procedure",
+      "description": "In abnormal cases 5.5.1.2.8 a) (Lower layer failure before COMPLETE) and c) (T3550 final expiry), the spec states the AMF aborts the procedure and enters state 5GMM-REGISTERED. The graph node 'AMF_Aborts_Registration_Procedure' does not transition to 'AMF_5GMM_REGISTERED'.",
+      "suggested_change": {
+        "add_edge": {
+          "from": "AMF_Aborts_Registration_Procedure",
+          "to": "AMF_5GMM_REGISTERED",
+          "type": "trigger",
+          "label": "Condition: Lower layer failure before COMPLETE or T3550 final expiry"
+        }
+      },
+      "supporting_text_snippet": "5.5.1.2.8 a) Lower layer failure ... the AMF shall locally abort the registration procedure for initial registration, enter state 5GMM-REGISTERED... \n 5.5.1.2.8 c) T3550 time-out ... on the fifth expiry of timer T3550, the registration procedure for initial registration shall be aborted and the AMF enters state 5GMM-REGISTERED."
+    }
+  ]
+}

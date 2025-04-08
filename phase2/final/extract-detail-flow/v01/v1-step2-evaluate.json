@@ -1,0 +1,229 @@
+
+{
+  "corrections": [
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Initiates_InitialRegistration -> UE_WaitingForRegistrationResponse",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The event 'UE_Initiates_InitialRegistration' (sending REGISTRATION REQUEST) triggers the UE to enter the 'UE_WaitingForRegistrationResponse' state.",
+      "supporting_text_snippet": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Receives_REGISTRATION_REQUEST -> AMF_ProcessingRegistrationRequest",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The event 'AMF_Receives_REGISTRATION_REQUEST' triggers the AMF to enter the 'AMF_ProcessingRegistrationRequest' state.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures... depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Initiates_CommonProcedures -> AMF_PerformingCommonProcedures",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The event 'AMF_Initiates_CommonProcedures' triggers the AMF to enter the 'AMF_PerformingCommonProcedures' state.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_CommonProcedures_Complete -> AMF_ReadyToSendRegistrationAcceptOrReject",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The event 'AMF_CommonProcedures_Complete' triggers the AMF to enter the 'AMF_ReadyToSendRegistrationAcceptOrReject' state.",
+      "supporting_text_snippet": "If the initial registration request is accepted by the network, the AMF shall send a REGISTRATION ACCEPT message..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_ProcessingRegistrationRequest",
+      "event": "No_Common_Procedures_Needed",
+      "to": "AMF_ReadyToSendRegistrationAcceptOrReject",
+      "description": "Missing path for when AMF finishes processing the request and no common procedures (like authentication/security) are required, directly leading to the decision state.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures... depending on the information received..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "AMF_ProcessingRegistrationRequest",
+      "to": "AMF_CommonProcedures_Complete",
+      "description": "The edge from 'AMF_ProcessingRegistrationRequest' should trigger 'AMF_Initiates_CommonProcedures' if needed, not directly jump to 'AMF_CommonProcedures_Complete'. If no common procedures are needed, it should transition to 'AMF_ReadyToSendRegistrationAcceptOrReject'.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures... during the registration procedure..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Sends_REGISTRATION_ACCEPT -> AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Sending REGISTRATION ACCEPT (with content requiring REGISTRATION COMPLETE) triggers the AMF state 'AMF_5GMM_COMMON_PROCEDURE_INITIATED' where timer T3550 runs.",
+      "supporting_text_snippet": "If a 5G-GUTI or the SOR transparent container IE is included... the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Sends_REGISTRATION_ACCEPT -> AMF_5GMM_REGISTERED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Sending REGISTRATION ACCEPT (without content requiring REGISTRATION COMPLETE) should trigger the AMF state 'AMF_5GMM_REGISTERED'. (Note: Spec implies T3550 always runs if ACCEPT is sent, making this path potentially invalid based on strict reading, but it might represent the case where COMPLETE is not needed).",
+      "supporting_text_snippet": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Receives_REGISTRATION_ACCEPT -> UE_5GMM_REGISTERED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Receiving REGISTRATION ACCEPT triggers the UE to enter the 'UE_5GMM_REGISTERED' state.",
+      "supporting_text_snippet": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_5GMM_REGISTERED",
+      "event": "UE_Sends_REGISTRATION_COMPLETE",
+      "to": "UE_5GMM_REGISTERED",
+      "description": "The trigger for sending REGISTRATION COMPLETE is receiving a REGISTRATION ACCEPT message containing specific IEs, not being in the REGISTERED state. The transition should originate from 'UE_Receives_REGISTRATION_ACCEPT' (conditioned on ACCEPT content) to 'UE_Sends_REGISTRATION_COMPLETE'. The edge from 'UE_Sends_REGISTRATION_COMPLETE' back to 'UE_5GMM_REGISTERED' is incorrect; the UE remains registered.",
+      "supporting_text_snippet": "If the REGISTRATION ACCEPT message contains... the UE shall return a REGISTRATION COMPLETE message to the AMF..."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Receives_REGISTRATION_ACCEPT",
+      "event": "Condition_For_REG_COMPLETE_Met",
+      "to": "UE_Sends_REGISTRATION_COMPLETE",
+      "description": "Missing transition: Receiving REGISTRATION ACCEPT with specific IEs (e.g., GUTI, SOR, CAG, NSSAI updates) should trigger the UE to send REGISTRATION COMPLETE.",
+      "supporting_text_snippet": "If the REGISTRATION ACCEPT message contains... the UE shall return a REGISTRATION COMPLETE message to the AMF..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Receives_REGISTRATION_COMPLETE -> AMF_5GMM_REGISTERED",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Receiving REGISTRATION COMPLETE triggers the AMF to stop T3550 and enter the final 'AMF_5GMM_REGISTERED' state.",
+      "supporting_text_snippet": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "AMF_Sends_REGISTRATION_REJECT -> AMF_Idle",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Sending REGISTRATION REJECT triggers the AMF to return to an idle state for this UE context.",
+      "supporting_text_snippet": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Receives_REGISTRATION_REJECT -> UE_Handles_Rejection_Cause",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "Receiving REGISTRATION REJECT triggers the UE to perform the 'UE_Handles_Rejection_Cause' action/event.",
+      "supporting_text_snippet": "Furthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Handles_Rejection_Cause -> UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The outcome of handling specific rejection causes (e.g., #22, #62, #79, #81, #82) triggers the UE state 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION'.",
+      "supporting_text_snippet": "#22 (Congestion)... The UE shall abort the initial registration procedure... and enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Handles_Rejection_Cause -> UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The outcome of handling specific rejection causes (e.g., #12, #13, #15, #27, #76) triggers the UE state 'UE_5GMM_DEREGISTERED_LIMITED_SERVICE'.",
+      "supporting_text_snippet": "#12 (Tracking area not allowed)... the UE shall store the current TAI... and enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Handles_Rejection_Cause -> UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The outcome of handling specific rejection causes (e.g., #11, #13(optional), #36, #62, #73, #74, #75, #76, #78, #79, #80, #81, #82) triggers the UE state 'UE_5GMM_DEREGISTERED_PLMN_SEARCH'.",
+      "supporting_text_snippet": "#11 (PLMN not allowed)... For 3GPP access the UE shall enter state 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Handles_Rejection_Cause -> UE_5GMM_DEREGISTERED_NO_SUPI",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The outcome of handling specific rejection causes (e.g., #3, #6, #7) triggers the UE state 'UE_5GMM_DEREGISTERED_NO_SUPI'.",
+      "supporting_text_snippet": "#3 (Illegal UE)... the UE shall enter the state 5GMM-DEREGISTERED.NO-SUPI."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "UE_Handles_Rejection_Cause -> UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The outcome of handling rejection cause #31 triggers the UE state 'UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE'.",
+      "supporting_text_snippet": "#31 (Redirection to EPC required)... and enter the 5GMM-DEREGISTERED.NO-CELL-AVAILABLE."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "Timer_T3510_Expired -> UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The expiry of timer T3510 triggers the UE state 'UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION' (if counter < 5 or counter = 5).",
+      "supporting_text_snippet": "For the cases c... If the registration attempt counter is less than 5... timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    {
+      "type": "incorrect_edge_type",
+      "edge": "Timer_T3510_Expired -> UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+      "current_type": "condition",
+      "suggested_type": "trigger",
+      "description": "The expiry of timer T3510 can optionally trigger the UE state 'UE_5GMM_DEREGISTERED_PLMN_SEARCH' (if counter = 5).",
+      "supporting_text_snippet": "If the registration attempt counter is equal to 5... The state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Starts_T3510",
+      "description": "The action of starting timer T3510 when the UE sends REGISTRATION REQUEST is missing.",
+      "suggested_location": "After 'UE_Initiates_InitialRegistration'.",
+      "supporting_text_snippet": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Increments_RegistrationAttemptCounter",
+      "description": "The action of incrementing the registration attempt counter upon T3510 expiry, certain rejects, or lower layer failure (when counter < 5) is missing.",
+      "suggested_location": "Before transitioning to ATTEMPTING_REGISTRATION or PLMN_SEARCH after failure.",
+      "supporting_text_snippet": "For the cases c, d and e... the registration attempt counter shall be incremented, unless it was already set to 5."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Starts_T3511",
+      "description": "The action of starting timer T3511 upon T3510 expiry, certain rejects, or lower layer failure (when counter < 5) is missing.",
+      "suggested_location": "After incrementing counter and entering ATTEMPTING_REGISTRATION state.",
+      "supporting_text_snippet": "If the registration attempt counter is less than 5... timer T3511 is started and the state is changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    {
+      "type": "missing_event",
+      "event": "AMF_Starts_T3550",
+      "description": "The action of the AMF starting timer T3550 when sending REGISTRATION ACCEPT requiring a REGISTRATION COMPLETE is missing.",
+      "suggested_location": "Concurrent with or immediately after 'AMF_Sends_REGISTRATION_ACCEPT' under specific conditions.",
+      "supporting_text_snippet": "If a 5G-GUTI or the SOR transparent container IE is included... the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED..."
+    },
+    {
+      "type": "missing_event",
+      "event": "AMF_Stops_T3550",
+      "description": "The action of the AMF stopping timer T3550 upon receiving REGISTRATION COMPLETE is missing.",
+      "suggested_location": "Concurrent with or immediately after 'AMF_Receives_REGISTRATION_COMPLETE'.",
+      "supporting_text_snippet": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550..."
+    },
+    {
+      "type": "missing_event",
+      "event": "UE_Starts_T3346",
+      "description": "The action of the UE starting timer T3346 upon receiving REGISTRATION REJECT with cause #22 is missing.",
+      "suggested_location": "After 'UE_Handles_Rejection_Cause' for cause #22.",
+      "supporting_text_snippet": "#22 (Congestion)... If the REGISTRATION REJECT message is integrity protected, the UE shall start timer T3346 with the value provided..."
+    },
+    {
+      "type": "incorrect_transition",
+      "from": "UE_LocallyReleases_NASConnection",
+      "to": "UE_5GMM_REGISTERED",
+      "description": "Locally releasing the NAS connection (e.g., due to SOR indicating PLMN change) should lead to a DEREGISTERED state (e.g., PLMN-SEARCH), not back to REGISTERED.",
+      "supporting_text_snippet": "...if the registration procedure is performed over 3GPP access and the UE attempts obtaining service on another PLMNs or SNPNs as specified in 3GPP TS 23.122 [5] annex C, then the UE may locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Receives_REGISTRATION_ACCEPT",
+      "event": "TAI_Change_Detected_Before_REG_COMPLETE",
+      "to": "UE_Initiates_MobilityRegistrationUpdate",
+      "description": "Missing handling for TAI change after receiving ACCEPT but before sending required COMPLETE, where the new TAI is outside the received TAI list, triggering Mobility Registration Update.",
+      "supporting_text_snippet": "If the REGISTRATION COMPLETE message needs to be sent and a tracking area border is crossed... before a REGISTRATION COMPLETE message is sent and... if the current TAI is [not] in the TAI list... the registration procedure for initial registration shall be aborted and the registration procedure for mobility registration update shall be initiated."
+    }
+  ]
+}

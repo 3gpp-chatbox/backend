@@ -1,0 +1,814 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      {
+        "id": "UE_5GMM_DEREGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "UE_Initiates_InitialRegistration",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "AMF_Idle",
+        "type": "state"
+      },
+      {
+        "id": "AMF_Receives_REGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_ProcessingRegistrationRequest",
+        "type": "state"
+      },
+      {
+        "id": "AMF_Initiates_CommonProcedures",
+        "type": "event"
+      },
+      {
+        "id": "AMF_PerformingCommonProcedures",
+        "type": "state"
+      },
+      {
+        "id": "AMF_CommonProcedures_Complete",
+        "type": "event"
+      },
+      {
+        "id": "AMF_ReadyToSendRegistrationAcceptOrReject",
+        "type": "state"
+      },
+      {
+        "id": "AMF_Sends_REGISTRATION_ACCEPT",
+        "type": "event"
+      },
+      {
+        "id": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "AMF_5GMM_REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "UE_Receives_REGISTRATION_ACCEPT",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "UE_Sends_REGISTRATION_COMPLETE",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Receives_REGISTRATION_COMPLETE",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Sends_REGISTRATION_REJECT",
+        "type": "event"
+      },
+      {
+        "id": "UE_Receives_REGISTRATION_REJECT",
+        "type": "event"
+      },
+      {
+        "id": "UE_Handles_Rejection_Cause",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "state"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "state"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "state"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_NO_SUPI",
+        "type": "state"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+        "type": "state"
+      },
+      {
+        "id": "Timer_T3510_Expired",
+        "type": "event"
+      },
+      {
+        "id": "Timer_T3511_Expired",
+        "type": "event"
+      },
+      {
+        "id": "Timer_T3346_Expired",
+        "type": "event"
+      },
+      {
+        "id": "Timer_T3550_Expired",
+        "type": "event"
+      },
+      {
+        "id": "LowerLayer_Failure_UE",
+        "type": "event"
+      },
+      {
+        "id": "LowerLayer_Failure_AMF",
+        "type": "event"
+      },
+      {
+        "id": "TAI_Change_Detected",
+        "type": "event"
+      },
+      {
+        "id": "UE_Initiates_MobilityRegistrationUpdate",
+        "type": "event"
+      },
+      {
+        "id": "UE_Initiates_DeRegistration",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Receives_DEREGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Retransmits_REGISTRATION_ACCEPT",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Aborts_Registration_Procedure",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_LIMITED_SERVICE_CAG",
+        "type": "state"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_PLMN_SEARCH_CAG",
+        "type": "state"
+      },
+      {
+        "id": "UE_LocallyReleases_NASConnection",
+        "type": "event"
+      },
+      {
+        "id": "No_Common_Procedures_Needed",
+        "type": "event"
+      },
+      {
+        "id": "Condition_For_REG_COMPLETE_Met",
+        "type": "event"
+      },
+      {
+        "id": "UE_Starts_T3510",
+        "type": "event"
+      },
+      {
+        "id": "UE_Increments_RegistrationAttemptCounter",
+        "type": "event"
+      },
+      {
+        "id": "UE_Starts_T3511",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Starts_T3550",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Stops_T3550",
+        "type": "event"
+      },
+      {
+        "id": "UE_Starts_T3346",
+        "type": "event"
+      },
+      {
+        "id": "TAI_Change_Detected_Before_REG_COMPLETE",
+        "type": "event"
+      },
+      {
+        "id": "UE_Stops_T3502",
+        "type": "event"
+      },
+      {
+        "id": "UE_Stops_T3511",
+        "type": "event"
+      },
+      {
+        "id": "UE_Starts_T3519",
+        "type": "event"
+      },
+      {
+        "id": "UE_Resets_RegistrationAttemptCounter_On_Accept",
+        "type": "event"
+      },
+      {
+        "id": "UE_Resets_PLMN_Counters_On_Accept",
+        "type": "event"
+      },
+      {
+        "id": "UE_Starts_T3502_Action",
+        "type": "event"
+      },
+      {
+        "id": "Condition_REG_COMPLETE_Not_Needed",
+        "type": "event"
+      },
+      {
+        "id": "UE_Performs_Local_DeRegistration",
+        "type": "event"
+      },
+      {
+        "id": "Transmission_Failure_REG_COMPLETE_and_TAI_Change_NotInList",
+        "type": "event"
+      },
+      {
+        "id": "Transmission_Failure_REG_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Receives_New_REGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Receives_MobilityOrPeriodicUpdateRequest",
+        "type": "event"
+      },
+      {
+        "id": "Timer_T3502_Expired",
+        "type": "event"
+      },
+      {
+        "id": "UE_Receives_DEREGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_Receives_New_REGISTRATION_REQUEST_Same_IEs",
+        "type": "event"
+      },
+      {
+        "id": "UE_Aborts_And_Reinitiates_Registration_Due_To_TAI_Change",
+        "type": "event"
+      },
+      {
+        "id": "UE_Handling_DeRegistration",
+        "type": "state"
+      },
+      {
+        "id": "UE_Sends_DEREGISTRATION_REQUEST",
+        "type": "event"
+      }
+    ],
+    "edges": [
+      {
+        "from": "UE_5GMM_DEREGISTERED",
+        "to": "UE_Initiates_InitialRegistration",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Initiates_InitialRegistration",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "AMF_Receives_REGISTRATION_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Receives_REGISTRATION_REQUEST",
+        "to": "AMF_ProcessingRegistrationRequest",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_ProcessingRegistrationRequest",
+        "to": "AMF_Initiates_CommonProcedures",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Initiates_CommonProcedures",
+        "to": "AMF_PerformingCommonProcedures",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_PerformingCommonProcedures",
+        "to": "AMF_CommonProcedures_Complete",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_CommonProcedures_Complete",
+        "to": "AMF_ReadyToSendRegistrationAcceptOrReject",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_ReadyToSendRegistrationAcceptOrReject",
+        "to": "AMF_Sends_REGISTRATION_ACCEPT",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "UE_Receives_REGISTRATION_ACCEPT",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE_CAG",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_5GMM_REGISTERED_PLMN_SEARCH_CAG",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "AMF_Receives_REGISTRATION_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_ReadyToSendRegistrationAcceptOrReject",
+        "to": "AMF_Sends_REGISTRATION_REJECT",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Sends_REGISTRATION_REJECT",
+        "to": "AMF_Idle",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "UE_Receives_REGISTRATION_REJECT",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_REJECT",
+        "to": "UE_Handles_Rejection_Cause",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Timer_T3510_Expired",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "to": "Timer_T3511_Expired",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3511_Expired",
+        "to": "UE_Initiates_InitialRegistration",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "to": "Timer_T3346_Expired",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3346_Expired",
+        "to": "UE_Initiates_InitialRegistration",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Timer_T3550_Expired",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3550_Expired",
+        "to": "AMF_Retransmits_REGISTRATION_ACCEPT",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Retransmits_REGISTRATION_ACCEPT",
+        "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3550_Expired",
+        "to": "AMF_Aborts_Registration_Procedure",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "LowerLayer_Failure_UE",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "LowerLayer_Failure_AMF",
+        "type": "trigger"
+      },
+      {
+        "from": "LowerLayer_Failure_AMF",
+        "to": "AMF_Aborts_Registration_Procedure",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "TAI_Change_Detected",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "TAI_Change_Detected",
+        "type": "trigger"
+      },
+      {
+        "from": "TAI_Change_Detected",
+        "to": "UE_Initiates_MobilityRegistrationUpdate",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "UE_Initiates_DeRegistration",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "AMF_Receives_DEREGISTRATION_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Receives_DEREGISTRATION_REQUEST",
+        "to": "AMF_Idle",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_LocallyReleases_NASConnection",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_ProcessingRegistrationRequest",
+        "to": "No_Common_Procedures_Needed",
+        "type": "trigger"
+      },
+      {
+        "from": "No_Common_Procedures_Needed",
+        "to": "AMF_ReadyToSendRegistrationAcceptOrReject",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "Condition_For_REG_COMPLETE_Met",
+        "type": "trigger"
+      },
+      {
+        "from": "Condition_For_REG_COMPLETE_Met",
+        "to": "UE_Sends_REGISTRATION_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Initiates_InitialRegistration",
+        "to": "UE_Starts_T3510",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3510_Expired",
+        "to": "UE_Increments_RegistrationAttemptCounter",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_Increments_RegistrationAttemptCounter",
+        "type": "trigger"
+      },
+      {
+        "from": "LowerLayer_Failure_UE",
+        "to": "UE_Increments_RegistrationAttemptCounter",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Increments_RegistrationAttemptCounter",
+        "to": "UE_Starts_T3511",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Starts_T3511",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Increments_RegistrationAttemptCounter",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Counter == 5 (Optional)"
+      },
+      {
+        "from": "AMF_Sends_REGISTRATION_ACCEPT",
+        "to": "AMF_Starts_T3550",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Starts_T3550",
+        "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Receives_REGISTRATION_COMPLETE",
+        "to": "AMF_Stops_T3550",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Stops_T3550",
+        "to": "AMF_5GMM_REGISTERED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_Starts_T3346",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "TAI_Change_Detected_Before_REG_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "TAI_Change_Detected_Before_REG_COMPLETE",
+        "to": "UE_Initiates_MobilityRegistrationUpdate",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Initiates_InitialRegistration",
+        "to": "UE_Stops_T3502",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Initiates_InitialRegistration",
+        "to": "UE_Stops_T3511",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Initiates_InitialRegistration",
+        "to": "UE_Starts_T3519",
+        "type": "trigger",
+        "label": "SUCI included and T3519 not running"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_Resets_RegistrationAttemptCounter_On_Accept",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_REGISTRATION_ACCEPT",
+        "to": "UE_Resets_PLMN_Counters_On_Accept",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_LocallyReleases_NASConnection",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Starts_T3346",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Increments_RegistrationAttemptCounter",
+        "to": "UE_Starts_T3502_Action",
+        "type": "trigger",
+        "label": "Counter == 5 and T3502 value > 0"
+      },
+      {
+        "from": "TAI_Change_Detected_Before_REG_COMPLETE",
+        "to": "UE_Sends_REGISTRATION_COMPLETE",
+        "type": "trigger",
+        "label": "New TAI in TAI list"
+      },
+      {
+        "from": "AMF_Sends_REGISTRATION_ACCEPT",
+        "to": "AMF_5GMM_REGISTERED",
+        "type": "trigger",
+        "label": "REGISTRATION COMPLETE not expected"
+      },
+      {
+        "from": "UE_Performs_Local_DeRegistration",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Transmission_Failure_REG_COMPLETE_and_TAI_Change_NotInList",
+        "type": "trigger"
+      },
+      {
+        "from": "Transmission_Failure_REG_COMPLETE_and_TAI_Change_NotInList",
+        "to": "UE_Initiates_MobilityRegistrationUpdate",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Transmission_Failure_REG_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "Transmission_Failure_REG_REQUEST",
+        "to": "UE_Initiates_InitialRegistration",
+        "type": "trigger",
+        "label": "Immediate re-initiation"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "AMF_Receives_New_REGISTRATION_REQUEST",
+        "type": "trigger",
+        "label": "Different from initial request"
+      },
+      {
+        "from": "AMF_Receives_New_REGISTRATION_REQUEST",
+        "to": "AMF_Aborts_Registration_Procedure",
+        "type": "trigger",
+        "label": "Abort previous procedure"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "AMF_Receives_MobilityOrPeriodicUpdateRequest",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Receives_MobilityOrPeriodicUpdateRequest",
+        "to": "AMF_Stops_T3550",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+        "type": "trigger",
+        "label": "Cause #31 (Redirection to EPC)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Cause #11 (PLMN not allowed)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger",
+        "label": "Cause #12 (Tracking area not allowed)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger",
+        "label": "Cause #13 (Roaming not allowed in this TA)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Cause #13 (Roaming not allowed in this TA, optional)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger",
+        "label": "Cause #15 (No suitable cells in TA)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger",
+        "label": "Cause #27 (N1 mode not allowed)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "trigger",
+        "label": "Cause #62 (No network slices available)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Cause #62 (No network slices available, optional)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "trigger",
+        "label": "Cause #76 (Not authorized for CAG)"
+      },
+      {
+        "from": "UE_Handles_Rejection_Cause",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Cause #76 (Not authorized for CAG, optional)"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "UE_Receives_DEREGISTRATION_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Receives_DEREGISTRATION_REQUEST",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "trigger",
+        "label": "Abort De-registration, Continue Initial Registration"
+      },
+      {
+        "from": "AMF_Aborts_Registration_Procedure",
+        "to": "AMF_ProcessingRegistrationRequest",
+        "type": "trigger",
+        "label": "Process new REGISTRATION REQUEST"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "AMF_Receives_New_REGISTRATION_REQUEST_Same_IEs",
+        "type": "trigger"
+      },
+      {
+        "from": "AMF_Receives_New_REGISTRATION_REQUEST_Same_IEs",
+        "to": "AMF_Retransmits_REGISTRATION_ACCEPT",
+        "type": "trigger",
+        "label": "Resend REG ACCEPT, Restart T3550"
+      },
+      {
+        "from": "TAI_Change_Detected",
+        "to": "UE_Aborts_And_Reinitiates_Registration_Due_To_TAI_Change",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Aborts_And_Reinitiates_Registration_Due_To_TAI_Change",
+        "to": "UE_Initiates_InitialRegistration",
+        "type": "trigger",
+        "label": "Re-initiate Immediately"
+      },
+      {
+        "from": "UE_Initiates_DeRegistration",
+        "to": "UE_Handling_DeRegistration",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Handling_DeRegistration",
+        "to": "UE_Performs_Local_DeRegistration",
+        "type": "trigger",
+        "label": "USIM removal and T3519 not running"
+      },
+      {
+        "from": "UE_Handling_DeRegistration",
+        "to": "UE_Sends_DEREGISTRATION_REQUEST",
+        "type": "trigger",
+        "label": "Normal De-registration"
+      },
+      {
+        "from": "UE_Sends_DEREGISTRATION_REQUEST",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "trigger"
+      },
+      {
+        "from": "UE_Starts_T3502_Action",
+        "to": "Timer_T3502_Expired",
+        "type": "trigger"
+      },
+      {
+        "from": "Timer_T3502_Expired",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "trigger",
+        "label": "Perform PLMN Selection"
+      }
+    ]
+  }
+}
