@@ -1,0 +1,115 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      { "id": "UE_Deregistered", "type": "state" },
+      { "id": "UE_Registration_Initiated", "type": "state" },
+      { "id": "UE_Registered", "type": "state" },
+      { "id": "AMF_Idle", "type": "state" },
+      { "id": "AMF_Processing_Registration", "type": "state" },
+      { "id": "AMF_Waiting_For_Completion", "type": "state" },
+      { "id": "AMF_Registered", "type": "state" },
+      { "id": "REG_REQUEST_Sent", "type": "event" },
+      { "id": "REG_REQUEST_Received", "type": "event" },
+      { "id": "REG_ACCEPT_Sent", "type": "event" },
+      { "id": "REG_ACCEPT_Received", "type": "event" },
+      { "id": "REG_COMPLETE_Received", "type": "event" },
+      { "id": "Completion_Timeout_Or_Not_Required", "type": "event" },
+      { "id": "REG_REJECT_Sent", "type": "event" },
+      { "id": "REG_REJECT_Received", "type": "event" },
+      { "id": "Registration_Timeout_Or_Failure", "type": "event" }
+    ],
+    "edges": [
+      {
+        "from": "UE_Deregistered",
+        "to": "REG_REQUEST_Sent",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_REQUEST_Sent",
+        "to": "UE_Registration_Initiated",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Idle",
+        "to": "REG_REQUEST_Received",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_REQUEST_Received",
+        "to": "AMF_Processing_Registration",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Processing_Registration",
+        "to": "REG_ACCEPT_Sent",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_ACCEPT_Sent",
+        "to": "AMF_Waiting_For_Completion",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Registration_Initiated",
+        "to": "REG_ACCEPT_Received",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_ACCEPT_Received",
+        "to": "UE_Registered",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Waiting_For_Completion",
+        "to": "REG_COMPLETE_Received",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_COMPLETE_Received",
+        "to": "AMF_Registered",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Waiting_For_Completion",
+        "to": "Completion_Timeout_Or_Not_Required",
+        "type": "trigger"
+      },
+      {
+        "from": "Completion_Timeout_Or_Not_Required",
+        "to": "AMF_Registered",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_Processing_Registration",
+        "to": "REG_REJECT_Sent",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_REJECT_Sent",
+        "to": "AMF_Idle",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Registration_Initiated",
+        "to": "REG_REJECT_Received",
+        "type": "trigger"
+      },
+      {
+        "from": "REG_REJECT_Received",
+        "to": "UE_Deregistered",
+        "type": "condition"
+      },
+      {
+        "from": "UE_Registration_Initiated",
+        "to": "Registration_Timeout_Or_Failure",
+        "type": "trigger"
+      },
+      {
+        "from": "Registration_Timeout_Or_Failure",
+        "to": "UE_Deregistered",
+        "type": "condition"
+      }
+    ]
+  }
+}

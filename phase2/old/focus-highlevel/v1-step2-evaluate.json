@@ -1,0 +1,52 @@
+```json
+{
+  "corrections": [
+    {
+      "type": "missing_state",
+      "state": "UE_Authenticating",
+      "description": "State 'UE_Authenticating' is missing to represent the UE undergoing authentication.",
+      "suggested_location": "After 'UE_Registration_Initiated' and before 'REG_ACCEPT_Received' or 'REG_REJECT_Received'.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_state",
+      "state": "AMF_Authenticating",
+      "description": "State 'AMF_Authenticating' is missing to represent the AMF performing authentication.",
+      "suggested_location": "After 'AMF_Processing_Registration' and before 'REG_ACCEPT_Sent' or 'REG_REJECT_Sent'.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_Processing_Registration",
+      "event": "Authentication_Required",
+      "to": "AMF_Authenticating",
+      "description": "Transition missing: AMF may require authentication after processing the registration request.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Registration_Initiated",
+      "event": "Authentication_Required",
+      "to": "UE_Authenticating",
+      "description": "Transition missing: UE may need to authenticate after initiating registration.",
+      "supporting_text_snippet": "The network may initiate 5GMM common procedures, e.g. the identification, authentication and security procedures during the registration procedure, depending on the information received in the REGISTRATION REQUEST message."
+    },
+    {
+      "type": "missing_transition",
+      "from": "AMF_Authenticating",
+      "event": "Authentication_Successful",
+      "to": "AMF_Processing_Registration",
+      "description": "Transition missing: AMF returns to processing registration after successful authentication.",
+      "supporting_text_snippet": "If the initial registration request is accepted by the network, the AMF shall send a REGISTRATION ACCEPT message to the UE."
+    },
+    {
+      "type": "missing_transition",
+      "from": "UE_Authenticating",
+      "event": "Authentication_Successful",
+      "to": "UE_Registration_Initiated",
+      "description": "Transition missing: UE returns to registration initiated after successful authentication.",
+      "supporting_text_snippet": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+    }
+  ]
+}
+```

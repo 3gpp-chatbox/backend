@@ -18,8 +18,8 @@ for node in graph_data["graph"]["nodes"]:  # Directly access "nodes" from the to
 for edge in graph_data["graph"]["edges"]:  # Directly access "edges" from the top level
     from_node = edge["from"]  # Use "from" from JSON (not "from_node")
     to_node = edge["to"]
-   
-    mermaid_code += f'  {from_node} -->{to_node};\n'
+
+    mermaid_code += f'  {from_node} --> {to_node};\n'
 
 # Close the Mermaid code block
 mermaid_code += "```\n"
