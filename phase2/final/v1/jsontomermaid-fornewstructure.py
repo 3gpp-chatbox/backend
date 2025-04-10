@@ -1,7 +1,7 @@
 import json
 
 # Load restructured JSON
-with open("restructured_graph.json", "r", encoding="utf-8") as f:
+with open("restructured-refine.json", "r", encoding="utf-8") as f:
     graph_data = json.load(f)
 
 # Initialize Mermaid diagram
@@ -23,7 +23,7 @@ for edge in graph_data["edges"]:
 mermaid_code += "```\n"
 
 # Save to file
-with open("mermaid-newstructure.md", "w", encoding="utf-8") as f:
+with open("mermaid-newstructure-refine.md", "w", encoding="utf-8") as f:
     f.write(mermaid_code)
 
 print("Mermaid diagram saved to mermaid-newstructure.md!")
