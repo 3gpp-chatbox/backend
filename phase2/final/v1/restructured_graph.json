@@ -1,0 +1,141 @@
+{
+  "nodes": [
+    {
+      "id": "UE_Deregistered",
+      "type": "state",
+      "description": "UE is in 5GMM-DEREGISTERED state."
+    },
+    {
+      "id": "UE_Attempting_Initial_Registration",
+      "type": "state",
+      "description": "UE has sent REGISTRATION REQUEST and is waiting for a response (Timer T3510 running)."
+    },
+    {
+      "id": "UE_Sending_RegComplete",
+      "type": "state",
+      "description": "UE has received REGISTRATION ACCEPT requiring acknowledgement and is preparing/sending REGISTRATION COMPLETE."
+    },
+    {
+      "id": "UE_Registered",
+      "type": "state",
+      "description": "UE is successfully registered with the network (5GMM-REGISTERED state)."
+    },
+    {
+      "id": "UE_Registration_Rejected",
+      "type": "state",
+      "description": "UE registration attempt was rejected by the network or failed due to maximum retries or other failures."
+    },
+    {
+      "id": "AMF_Idle",
+      "type": "state",
+      "description": "AMF is idle with respect to this UE's registration procedure."
+    },
+    {
+      "id": "AMF_Processing_Initial_Registration",
+      "type": "state",
+      "description": "AMF has received REGISTRATION REQUEST and is processing it (e.g., performing authentication, security)."
+    },
+    {
+      "id": "AMF_Waiting_Registration_Complete",
+      "type": "state",
+      "description": "AMF has sent REGISTRATION ACCEPT requiring acknowledgement and is waiting for REGISTRATION COMPLETE (Timer T3550 running)."
+    },
+    {
+      "id": "AMF_Registered",
+      "type": "state",
+      "description": "AMF considers the UE successfully registered (5GMM-REGISTERED state)."
+    }
+  ],
+  "edges": [
+    {
+      "from": "AMF_Idle",
+      "to": "UE_Attempting_Initial_Registration",
+      "label": "E_REGISTRATION_REQUEST",
+      "description": "REGISTRATION REQUEST message is sent by UE / received by AMF."
+    },
+    {
+      "from": "AMF_Idle",
+      "to": "AMF_Processing_Initial_Registration",
+      "label": "E_REGISTRATION_REQUEST",
+      "description": "REGISTRATION REQUEST message is sent by UE / received by AMF."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "AMF_Waiting_Registration_Complete",
+      "label": "E_REGISTRATION_ACCEPT_ReqComplete",
+      "description": "REGISTRATION ACCEPT message requiring REGISTRATION COMPLETE is sent by AMF / received by UE."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "AMF_Registered",
+      "label": "E_REGISTRATION_ACCEPT_NoComplete",
+      "description": "REGISTRATION ACCEPT message not requiring REGISTRATION COMPLETE is sent by AMF / received by UE."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "AMF_Idle",
+      "label": "E_REGISTRATION_REJECT",
+      "description": "REGISTRATION REJECT message is sent by AMF / received by UE."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "UE_Sending_RegComplete",
+      "label": "E_REGISTRATION_ACCEPT_ReqComplete",
+      "description": "REGISTRATION ACCEPT message requiring REGISTRATION COMPLETE is sent by AMF / received by UE."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "UE_Registered",
+      "label": "E_REGISTRATION_ACCEPT_NoComplete",
+      "description": "REGISTRATION ACCEPT message not requiring REGISTRATION COMPLETE is sent by AMF / received by UE."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "UE_Registration_Rejected",
+      "label": "E_REGISTRATION_REJECT",
+      "description": "REGISTRATION REJECT message is sent by AMF / received by UE."
+    },
+    {
+      "from": "AMF_Waiting_Registration_Complete",
+      "to": "UE_Registered",
+      "label": "E_REGISTRATION_COMPLETE",
+      "description": "REGISTRATION COMPLETE message is sent by UE / received by AMF."
+    },
+    {
+      "from": "AMF_Waiting_Registration_Complete",
+      "to": "AMF_Registered",
+      "label": "E_REGISTRATION_COMPLETE",
+      "description": "REGISTRATION COMPLETE message is sent by UE / received by AMF."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "UE_Attempting_Initial_Registration",
+      "label": "E_T3510_Timeout_Retry",
+      "description": "UE's T3510 timer expires before receiving a response, and retry counter is less than 5."
+    },
+    {
+      "from": "UE_Attempting_Initial_Registration",
+      "to": "UE_Registration_Rejected",
+      "label": "E_T3510_Timeout_Max",
+      "description": "UE's T3510 timer expires, and retry counter reaches 5."
+    },
+    {
+      "from": "AMF_Waiting_Registration_Complete",
+      "to": "AMF_Waiting_Registration_Complete",
+      "label": "E_T3550_Timeout_Retry",
+      "description": "AMF's T3550 timer expires (1st to 4th time) while waiting for REGISTRATION COMPLETE."
+    },
+    {
+      "from": "AMF_Waiting_Registration_Complete",
+      "to": "AMF_Registered",
+      "label": "E_T3550_Timeout_Max",
+      "description": "AMF's T3550 timer expires for the 5th time while waiting for REGISTRATION COMPLETE."
+    },
+    {
+      "from": "AMF_Waiting_Registration_Complete",
+      "to": "AMF_Registered",
+      "label": "E_Failure_AMF",
+      "description": "Abnormal case occurs at the AMF side (e.g., lower layer failure)."
+    }
+  ]
+}
