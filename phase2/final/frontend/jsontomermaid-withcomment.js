@@ -16,11 +16,16 @@ function convertJsonToMermaid(inputFile, outputFile) {
 
   let mermaidCode = "```mermaid\ngraph TD;\n";
 
+  // Add procedure name as a comment
+  if (graphData.procedure_name) {
+    mermaidCode += `  %% Procedure: ${graphData.procedure_name}\n`;
+  }
+
   // Add nodes with comments for extra metadata
   graphData.graph.nodes.forEach(node => {
     const nodeId = node.id;
     const description = escapeNodeText(node.description);
-    mermaidCode += `  ${nodeId}["${description}"];\n`;
+    mermaidCode += `  ${nodeId};\n`;
     // Add comments for 'type' and 'description'
     mermaidCode += `  %% Type: ${node.type}\n`;
     mermaidCode += `  %% Description: ${node.description}\n`;
@@ -31,7 +36,7 @@ function convertJsonToMermaid(inputFile, outputFile) {
     const fromNode = edge.from;
     const toNode = edge.to;
     const edgeLabel = escapeEdgeText(edge.description);
-    mermaidCode += `  ${fromNode} -->|${edgeLabel}| ${toNode};\n`;
+    mermaidCode += `  ${fromNode} -->${toNode};\n`;
     // Add comments for edge type and description
     mermaidCode += `  %% Type: ${edge.type}\n`;
     mermaidCode += `  %% Description: ${edge.description}\n`;
