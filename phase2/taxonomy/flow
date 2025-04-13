@@ -1,0 +1,9 @@
+Step 1: Extract States
+Step 2: Extract Triggers 
+(step2.5 : For each, identify sub-conditions (AND/OR logic) and spec references.")
+(or combine step2 and 2.5?)
+
+step3: Extract Actions with Embedded Error Handling
+
+step4: Identify message types, constraints, and related procedures in §[CLAUSE]."
+

@@ -1,0 +1,99 @@
+{
+  "procedure": {
+    "name": "Registration procedure for initial registration",
+    "section_reference": "5.5.1.2",
+    "triggers": [
+      {
+        "id": 1,
+        "type": "Service Request",
+        "description": "UE performs initial registration for 5GS services",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 a)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration for 5GS services;"
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "type": "Service Request",
+        "description": "UE performs initial registration for emergency services",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 b)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration for emergency services;"
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "type": "Service Request",
+        "description": "UE performs initial registration for SMS over NAS",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 c)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration for SMS over NAS;"
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "type": "Mobility",
+        "description": "UE moves from GERAN/UTRAN to NG-RAN coverage after GPRS attach/RAU or 5G-SRVCC",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 d)"
+          ],
+          "excerpts": [
+            "when the UE moves from GERAN to NG-RAN coverage or the UE moves from a UTRAN to NG-RAN coverage and the following applies:\n\n1)\tthe UE initiated a GPRS attach or routing area updating procedure while in A/Gb mode or Iu mode; or\n\n2)\tthe UE has performed 5G-SRVCC from NG-RAN to UTRAN as specified in 3GPP TS 23.216 [6A],\n\n\tand since then the UE did not perform a successful EPS attach or tracking area updating procedure in S1 mode or registration procedure in N1 mode;"
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "type": "Service Request",
+        "description": "UE performs initial registration for onboarding services in SNPN",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 e)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration for onboarding services in SNPN;"
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "type": "Service Request",
+        "description": "UE performs initial registration for disaster roaming services",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 f)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration for disaster roaming services; and"
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "type": "Service Request",
+        "description": "UE performs initial registration to come out of unavailability period and resume normal services",
+        "metadata": {
+          "section_reference": [
+            "5.5.1.2.2 g)"
+          ],
+          "excerpts": [
+            "when the UE performs initial registration to come out of unavailability period and resume normal services;"
+          ]
+        }
+      }
+    ]
+  }
+}

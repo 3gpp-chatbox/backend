@@ -1,0 +1,14 @@
+{
+  "trigger_id": 1,
+  "conditions": [
+    {
+      "operator": "AND",
+      "rules": [
+        { "description": "UE in state 5GMM-DEREGISTERED", 
+        "spec_clause": "5.5.1.2.2" },
+        { "description": "UE performs initial registration for 5GS services", 
+        "spec_clause": "5.5.1.2.2 a)" }
+      ]
+    }
+  ]
+}
