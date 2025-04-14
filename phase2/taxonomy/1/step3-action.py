@@ -39,7 +39,6 @@ Requirements:
    - `id`: Sequential numeric ID starting at 1
    - `action_type`: Technical category from:
      [registration_request, authentication, timer_management, security_activation, state_transition]
-   - `description`: Concise 5GMM/NAS technical summary
    - `error_handling`: {{
        "type": [timer_expiry|retry_limit|security_failure],
        "response": Specific recovery action,
@@ -65,7 +64,6 @@ JSON Output Template:
       {{
         "id": 1,
         "action_type": "registration_request",
-        "description": "UE transmits REGISTRATION REQUEST message",
         "error_handling": {{
           "type": "timer_expiry",
           "response": "Retry procedure after T3510 timeout",

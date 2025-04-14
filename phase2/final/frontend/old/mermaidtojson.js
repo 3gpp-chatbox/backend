@@ -106,5 +106,5 @@ function convertMermaidToJson(inputFile, outputFile) {
 
 // Example usage
 const inputFile = "test_converteroutput_with_comments.md";
-const outputFile = "converted_back.json";
+const outputFile = "converted_back1.json";
 convertMermaidToJson(inputFile, outputFile);

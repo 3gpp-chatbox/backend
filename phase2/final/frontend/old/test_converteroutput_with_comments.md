@@ -1,7 +1,7 @@
 ```mermaid
 graph TD;
   %% Procedure: Registration procedure for initial registration
-  UE_Deregistered;
+  A(UE_Deregistered);
   %% Type: state
   %% Description: UE is in 5GMM-DEREGISTERED state.
   UE_Attempting_Initial_Registration;
