@@ -41,6 +41,8 @@ function convertJsonToMermaid(inputFile, outputFile) {
     nodeIdMap[node.id] = label;
     const labelText = escapeNodeText(node.id);
     mermaidCode += `  ${label}(${labelText});\n`;
+    mermaidCode += `  %% Type: ${node.type}\n`;
+    mermaidCode += `  %% Description: ${node.description}\n`;
   });
 
   // Add edges using mapped labels
@@ -48,6 +50,8 @@ function convertJsonToMermaid(inputFile, outputFile) {
     const from = nodeIdMap[edge.from] || edge.from;
     const to = nodeIdMap[edge.to] || edge.to;
     mermaidCode += `  ${from} --> ${to};\n`;
+    mermaidCode += `  %% Type: ${edge.type}\n`;
+    mermaidCode += `  %% Description: ${edge.description}\n`;
   });
 
   mermaidCode += "```";
