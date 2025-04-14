@@ -1,0 +1,428 @@
+{
+  "procedure": "Registration Procedure for Initial Registration",
+  "conditions": [
+    {
+      "id": "a",
+      "condition": "UE in 5GMM-DEREGISTERED initiates Initial Registration (Reasons: 5GS services, emergency, SMS over NAS, GERAN/UTRAN->NG-RAN mobility, SNPN onboarding, disaster roaming, resume after unavailability)",
+      "operation": "Send REGISTRATION REQUEST, Start T3510, Stop T3502/T3511 (if running)",
+      "sub_conditions": [
+        {
+          "id": "a1",
+          "condition": "Wait for Network Response",
+          "operation": "Waiting",
+          "sub_conditions": [
+            {
+              "id": "a1a",
+              "condition": "REGISTRATION ACCEPT Received",
+              "operation": "Process REGISTRATION ACCEPT, Reset registration attempt counter, Enter 5GMM-REGISTERED, Set 5GS update status to 5U1 UPDATED, Store TAI list etc.",
+              "sub_conditions": [
+                {
+                  "id": "a1a1",
+                  "condition": "Check if REGISTRATION COMPLETE is Required (based on IEs in ACCEPT: e.g., 5G-GUTI, SOR, Operator-defined AC, NSSAI updates, CAG info, PEIPS, UE Radio Cap ID, Truncated 5G-S-TMSI, Service-level-AA pending)",
+                  "operation": "Decision Point",
+                  "sub_conditions": [
+                    {
+                      "id": "a1a1a",
+                      "condition": "REGISTRATION COMPLETE Required",
+                      "operation": "Send REGISTRATION COMPLETE",
+                      "sub_conditions": [
+                        {
+                          "id": "a1a1a1",
+                          "condition": "Network Receives REGISTRATION COMPLETE",
+                          "operation": "Network Stops T3550, Enters 5GMM-REGISTERED (Network Side)"
+                        },
+                        {
+                          "id": "a1a1a2",
+                          "condition": "Transmission Failure of REGISTRATION COMPLETE (No TAI Change)",
+                          "operation": "Re-run sending REGISTRATION COMPLETE (UE Implementation)"
+                        },
+                        {
+                          "id": "a1a1a3",
+                          "condition": "Transmission Failure of REGISTRATION COMPLETE (TAI Change, TAI not in list)",
+                          "operation": "Abort Initial Registration, Initiate Mobility Registration Update"
+                        },
+                         {
+                          "id": "a1a1a4",
+                          "condition": "Transmission Failure of REGISTRATION COMPLETE (TAI Change, TAI in list)",
+                          "operation": "Resend REGISTRATION COMPLETE"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "a1a1b",
+                      "condition": "REGISTRATION COMPLETE Not Required",
+                      "operation": "Complete Registration Procedure (UE Side)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "a1b",
+              "condition": "REGISTRATION REJECT Received",
+              "operation": "Process REGISTRATION REJECT",
+              "sub_conditions": [
+                {
+                  "id": "a1b1",
+                  "condition": "Analyze 5GMM Cause",
+                  "operation": "Decision based on Cause Value",
+                  "sub_conditions": [
+                    {
+                      "id": "a1b1a",
+                      "condition": "Cause #3, #6, #7 (Illegal UE/ME, 5GS not allowed)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Consider USIM invalid (start T3245), Enter 5GMM-DEREGISTERED.NO-SUPI"
+                    },
+                    {
+                      "id": "a1b1b",
+                      "condition": "Cause #11 (PLMN not allowed)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Add PLMN to Forbidden PLMN list (start T3245), Enter 5GMM-DEREGISTERED.PLMN-SEARCH"
+                    },
+                    {
+                      "id": "a1b1c",
+                      "condition": "Cause #12 (TA not allowed)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete TAI list, Add TAI to Forbidden TAI list (regional), Enter 5GMM-DEREGISTERED.LIMITED-SERVICE"
+                    },
+                    {
+                      "id": "a1b1d",
+                      "condition": "Cause #13 (Roaming not allowed in TA)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete TAI list, Add TAI to Forbidden TAI list (roaming), Enter 5GMM-DEREGISTERED.LIMITED-SERVICE or PLMN-SEARCH"
+                    },
+                    {
+                      "id": "a1b1e",
+                      "condition": "Cause #15 (No suitable cells in TA)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete TAI list, Add TAI to Forbidden TAI list (roaming), Enter 5GMM-DEREGISTERED.LIMITED-SERVICE, Search suitable cell in another TA. Handle potential Satellite/RAT restrictions."
+                    },
+                    {
+                      "id": "a1b1f",
+                      "condition": "Cause #22 (Congestion)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Start T3346, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+                    },
+                    {
+                      "id": "a1b1g",
+                      "condition": "Cause #27 (N1 mode not allowed)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Disable N1 mode capability, Enter 5GMM-DEREGISTERED.LIMITED-SERVICE"
+                    },
+                     {
+                      "id": "a1b1h",
+                      "condition": "Cause #31 (Redirection to EPC required)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Disable N1 (3GPP), Enable E-UTRA, Enter 5GMM-DEREGISTERED.NO-CELL-AVAILABLE"
+                    },
+                    {
+                      "id": "a1b1i",
+                      "condition": "Cause #62 (No network slices available)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Store rejected NSSAI, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH (based on remaining slice availability)"
+                    },
+                    {
+                      "id": "a1b1j",
+                      "condition": "Cause #72 (Non-3GPP access to 5GCN not allowed)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context (non-3GPP specific), Disable N1 (non-3GPP), Enter 5GMM-DEREGISTERED"
+                    },
+                    {
+                      "id": "a1b1k",
+                      "condition": "Cause #73 (Serving network not authorized)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Add PLMN to Forbidden PLMN list, Enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or LIMITED-SERVICE (non-3GPP)"
+                    },
+                    {
+                      "id": "a1b1l",
+                      "condition": "Cause #74 (Temporarily not authorized for this SNPN)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Add SNPN to Temporary Forbidden SNPN list, Enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or LIMITED-SERVICE (non-3GPP)"
+                    },
+                    {
+                      "id": "a1b1m",
+                      "condition": "Cause #75 (Permanently not authorized for this SNPN)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Add SNPN to Permanent Forbidden SNPN list, Enter 5GMM-DEREGISTERED.PLMN-SEARCH (3GPP) or LIMITED-SERVICE (non-3GPP)"
+                    },
+                    {
+                      "id": "a1b1n",
+                      "condition": "Cause #76 (Not authorized for this CAG or authorized for CAG cells only)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Update/Store CAG info, Enter 5GMM-DEREGISTERED.LIMITED-SERVICE or PLMN-SEARCH based on CAG rules"
+                    },
+                    {
+                      "id": "a1b1o",
+                      "condition": "Cause #78 (PLMN not allowed to operate at the present UE location)",
+                      "operation": "Set 5U3 ROAMING NOT ALLOWED, Delete context, Add PLMN+location to Forbidden list (start timer), Enter 5GMM-DEREGISTERED.PLMN-SEARCH"
+                    },
+                    {
+                      "id": "a1b1p",
+                      "condition": "Cause #79 (UAS services not allowed)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, Avoid sending UAS info on retry"
+                    },
+                    {
+                      "id": "a1b1q",
+                      "condition": "Cause #80 (Disaster roaming for the determined PLMN not allowed)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Delete context, Enter 5GMM-DEREGISTERED.PLMN-SEARCH, Block disaster roaming retry for a period"
+                    },
+                    {
+                      "id": "a1b1r",
+                      "condition": "Cause #81 (Selected N3IWF not compatible with allowed NSSAI)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, Optionally use provided N3IWF info for retry"
+                    },
+                    {
+                      "id": "a1b1s",
+                      "condition": "Cause #82 (Selected TNGF not compatible with allowed NSSAI)",
+                      "operation": "Abort procedure, Set 5U2 NOT UPDATED, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH, Optionally use provided TNAN info for retry"
+                    },
+                    {
+                      "id": "a1b1t",
+                      "condition": "Other Abnormal Cause (e.g., #95, #96, #97, #99, #111) or specific causes treated as abnormal",
+                      "operation": "Stop T3510, Increment/Check Attempt Counter"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "a1c",
+              "condition": "T3510 Expires (Timeout)",
+              "operation": "Abort Procedure, Stop T3510, Increment/Check Attempt Counter"
+            },
+            {
+              "id": "a1d",
+              "condition": "Lower Layer Failure or Release before ACCEPT/REJECT",
+              "operation": "Abort Procedure, Stop T3510, Increment/Check Attempt Counter"
+            },
+            {
+              "id": "a1e",
+              "condition": "Transmission Failure of REGISTRATION REQUEST",
+              "operation": "Abort and Re-initiate Initial Registration Procedure"
+            },
+            {
+              "id": "a1f",
+              "condition": "Change in Current TAI before procedure completion",
+              "operation": "Abort and Re-initiate Initial Registration Procedure"
+            },
+            {
+              "id": "a1g",
+              "condition": "UE initiated De-registration Required",
+              "operation": "Abort Initial Registration, Perform UE-initiated De-registration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b",
+      "condition": "Handle Attempt Counter after Failure/Timeout (Common Logic for a1b1t, a1c, a1d)",
+      "operation": "Decision based on Attempt Counter",
+      "sub_conditions": [
+        {
+          "id": "b1",
+          "condition": "Attempt Counter < 5",
+          "operation": "Start T3511, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+        },
+        {
+          "id": "b2",
+          "condition": "Attempt Counter = 5",
+          "operation": "Delete Context (TAI list, 5G-GUTI etc.), Start T3502 (if > 0), Set 5U2 NOT UPDATED, Enter 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or PLMN-SEARCH"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "a",
+      "to": "a1",
+      "condition": "REGISTRATION REQUEST sent"
+    },
+    {
+      "from": "a1",
+      "to": "a1a",
+      "condition": "REGISTRATION ACCEPT Received"
+    },
+    {
+      "from": "a1",
+      "to": "a1b",
+      "condition": "REGISTRATION REJECT Received"
+    },
+    {
+      "from": "a1",
+      "to": "a1c",
+      "condition": "T3510 Expires"
+    },
+    {
+      "from": "a1",
+      "to": "a1d",
+      "condition": "Lower Layer Failure/Release"
+    },
+    {
+      "from": "a1",
+      "to": "a1e",
+      "condition": "Transmission Failure of REGISTRATION REQUEST"
+    },
+     {
+      "from": "a1",
+      "to": "a1f",
+      "condition": "Change in Current TAI"
+    },
+    {
+      "from": "a1",
+      "to": "a1g",
+      "condition": "UE initiated De-registration Required"
+    },
+    {
+      "from": "a1a",
+      "to": "a1a1",
+      "condition": "Check if REGISTRATION COMPLETE needed"
+    },
+    {
+      "from": "a1a1",
+      "to": "a1a1a",
+      "condition": "REGISTRATION COMPLETE Required"
+    },
+    {
+      "from": "a1a1",
+      "to": "a1a1b",
+      "condition": "REGISTRATION COMPLETE Not Required"
+    },
+    {
+      "from": "a1a1a",
+      "to": "a1a1a1",
+      "condition": "Network receives COMPLETE"
+    },
+    {
+      "from": "a1a1a",
+      "to": "a1a1a2",
+      "condition": "Transmission Failure (No TAI Change)"
+    },
+    {
+      "from": "a1a1a",
+      "to": "a1a1a3",
+      "condition": "Transmission Failure (TAI Change, TAI not in list)"
+    },
+    {
+      "from": "a1a1a",
+      "to": "a1a1a4",
+      "condition": "Transmission Failure (TAI Change, TAI in list)"
+    },
+    {
+      "from": "a1b",
+      "to": "a1b1",
+      "condition": "Analyze 5GMM Cause"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1a",
+      "condition": "Cause #3, #6, #7"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1b",
+      "condition": "Cause #11"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1c",
+      "condition": "Cause #12"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1d",
+      "condition": "Cause #13"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1e",
+      "condition": "Cause #15"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1f",
+      "condition": "Cause #22"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1g",
+      "condition": "Cause #27"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1h",
+      "condition": "Cause #31"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1i",
+      "condition": "Cause #62"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1j",
+      "condition": "Cause #72"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1k",
+      "condition": "Cause #73"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1l",
+      "condition": "Cause #74"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1m",
+      "condition": "Cause #75"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1n",
+      "condition": "Cause #76"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1o",
+      "condition": "Cause #78"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1p",
+      "condition": "Cause #79"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1q",
+      "condition": "Cause #80"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1r",
+      "condition": "Cause #81"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1s",
+      "condition": "Cause #82"
+    },
+    {
+      "from": "a1b1",
+      "to": "a1b1t",
+      "condition": "Other Abnormal Cause"
+    },
+    {
+      "from": "a1b1t",
+      "to": "b",
+      "condition": "Proceed to attempt counter handling"
+    },
+    {
+      "from": "a1c",
+      "to": "b",
+      "condition": "Proceed to attempt counter handling"
+    },
+    {
+      "from": "a1d",
+      "to": "b",
+      "condition": "Proceed to attempt counter handling"
+    },
+    {
+      "from": "b",
+      "to": "b1",
+      "condition": "Attempt Counter < 5"
+    },
+    {
+      "from": "b",
+      "to": "b2",
+      "condition": "Attempt Counter = 5"
+    }
+  ]
+}
