@@ -69,6 +69,6 @@ function convertMermaidToJson(inputFile, outputFile) {
 }
 
 // Example usage
-const inputFile = "converted-mermaid.md";
-const outputFile = "reversed-json.json";
+const inputFile = "test-convertback.md";
+const outputFile = "editedmermaid-tojson.json";
 convertMermaidToJson(inputFile, outputFile);
