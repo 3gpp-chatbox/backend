@@ -1,0 +1,24 @@
+The provided list of UE states in the 3GPP initial registration procedure has several issues:
+
+**Missing States:**
+
+* **5GMM-REGISTERED-INITIATED:** The text explicitly mentions the AMF entering the state `5GMM-COMMON-PROCEDURE-INITIATED` under several conditions after sending a `REGISTRATION ACCEPT` message.  While not a UE state, this implies a corresponding, unlisted,  UE state reflecting the period between receiving the `REGISTRATION ACCEPT` and sending the `REGISTRATION COMPLETE` message.  This should be a state explicitly named in the UE's list.  The text also mentions the UE being in `5GMM-REGISTERED-INITIATED` state when a de-registration request is received.
+
+* **States reflecting registration failures:** The text describes numerous scenarios where the initial registration fails, resulting in different actions and states depending on the cause.  The list lacks states representing these failure scenarios before the UE transitions to `5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION` or other deregistered states.  For example, there's no state explicitly representing the UE's state *while* the timer T3510 is running, before a response is received.  The inferred states "Awaiting REGISTRATION ACCEPT/REJECT" partially addresses this, but doesn't capture the granularity of different failure responses.
+
+* **Intermediate states during timer operation:** Several timers (T3510, T3511, T3502, T3346, T3519, T3447, T3448, T3526) are mentioned. The list doesn't account for the UE's state while these timers are running, especially before a response from the network is received.  The inferred states only partially address this.
+
+**Inaccurate States:**
+
+* The inferred states are too generic.  The text details many specific conditions and actions that lead to different outcomes.  Simply stating "REGISTRATION REQUEST sent" or "REGISTRATION ACCEPT received" is insufficient to represent the UE's state accurately.  For example, the UE's state after sending a REGISTRATION REQUEST might differ depending on whether it has a valid 5G NAS security context.
+
+**States Not Grounded in the Original Text:**
+
+* **5GMM-DEREGISTERED.NO-SUPI:** While the text mentions the UE entering this state under specific conditions (e.g., receiving a REGISTRATION REJECT message with cause #3 or #7), it doesn't explicitly define this state as a distinct state.  The text describes the actions taken in this state, but not the state itself as a named entity.  Similar issues exist with other `.NO-CELL-AVAILABLE` and `.LIMITED-SERVICE` states.
+
+* **5GMM-DEREGISTERED.PLMN-SEARCH:** Similar to the above, the text describes actions taken when the UE performs a PLMN search after a registration failure, but doesn't explicitly name this as a distinct state.
+
+* **5GMM-DEREGISTERED.LIMITED-SERVICE:**  Similar to the above, the text describes actions taken when the UE is in a limited service state after a registration failure, but doesn't explicitly name this as a distinct state.
+
+
+In summary, the list needs significant expansion to accurately reflect the UE's state transitions throughout the entire initial registration procedure, including states representing various success and failure scenarios and the intermediate states during timer operations.  The inferred states should be replaced with more precise states derived directly from the text's detailed descriptions of the UE's behavior under different conditions.  The accuracy of some explicitly named states also needs validation against the explicit definitions within the text.

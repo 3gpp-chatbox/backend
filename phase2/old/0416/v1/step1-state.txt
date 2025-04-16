@@ -1,0 +1,24 @@
+Here's a list of states, explicitly named or inferred, from the provided text, related to the UE side of the initial registration procedure:
+
+Explicitly named states:
+
+* 5GMM-DEREGISTERED
+* 5GMM-REGISTERED
+* 5GMM-REGISTERED-INITIATED
+* 5GMM-REGISTERED.LIMITED-SERVICE
+* 5GMM-REGISTERED.PLMN-SEARCH
+* 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION
+* 5GMM-DEREGISTERED.NO-SUPI
+* 5GMM-DEREGISTERED.PLMN-SEARCH
+* 5GMM-DEREGISTERED.NO-CELL-AVAILABLE
+* 5GMM-DEREGISTERED.LIMITED-SERVICE
+
+
+Inferred states:
+
+* **REGISTRATION REQUEST sent:** Inferred from the action of the UE sending a REGISTRATION REQUEST message.
+* **Awaiting REGISTRATION ACCEPT/REJECT:** Inferred from the period between sending the REGISTRATION REQUEST and receiving the network's response.
+* **REGISTRATION ACCEPT received:** Inferred from the action of the UE receiving a REGISTRATION ACCEPT message.
+* **REGISTRATION COMPLETE sent:** Inferred from the action of the UE sending a REGISTRATION COMPLETE message.
+
+Please note that some states mentioned in the text (e.g., EMM-DEREGISTERED, EMM-REGISTERED) are related to the EMM procedure and not directly part of the 5GMM initial registration procedure itself, as requested.  Therefore, they are not included in the list.

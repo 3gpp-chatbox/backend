@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "from": "5GMM-DEREGISTERED",
+    "to": "REGISTRATION REQUEST sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+    },
+    "event": null,
+    "condition": null,
+    "action": "sends a REGISTRATION REQUEST message to the AMF"
+  },
+  {
+    "id": 2,
+    "from": "REGISTRATION REQUEST sent",
+    "to": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF, starting timer T3510."
+    },
+    "event": null,
+    "condition": null,
+    "action": "starts timer T3510"
+  },
+  {
+    "id": 3,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": null,
+    "action": "resets the registration attempt counter; sets the 5GS update status to 5U1 UPDATED"
+  },
+  {
+    "id": 4,
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the 5GS registration result value in the 5GS registration result IE indicates: a) \"3GPP access\", the UE: ... if in 5GMM-REGISTERED state over non-3GPP access and on the same PLMN or SNPN as 3GPP access, shall enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION over non-3GPP access and set the 5GS update status to 5U2 NOT UPDATED over non-3GPP access"
+    },
+    "event": null,
+    "condition": "5GS registration result value indicates \"3GPP access\"; UE is in 5GMM-REGISTERED state over non-3GPP access and on the same PLMN or SNPN as 3GPP access",
+    "action": "sets the 5GS update status to 5U2 NOT UPDATED over non-3GPP access"
+  },
+  {
+    "id": 5,
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the 5GS registration result value in the 5GS registration result IE indicates: b) \"Non-3GPP access\", the UE: ... if in the 5GMM-REGISTERED state over 3GPP access and is on the same PLMN or SNPN as non-3GPP access, shall enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION over 3GPP access and set the 5GS update status to 5U2 NOT UPDATED over 3GPP access"
+    },
+    "event": null,
+    "condition": "5GS registration result value indicates \"Non-3GPP access\"; UE is in 5GMM-REGISTERED state over 3GPP access and is on the same PLMN or SNPN as non-3GPP access",
+    "action": "sets the 5GS update status to 5U2 NOT UPDATED over 3GPP access"
+  },
+  {
+    "id": 6,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN, the UE shall operate as follows: a) if the UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", and: 1) the entry for the registered PLMN in the received \"CAG information list\" does not include an \"indication that the UE is only allowed to access 5GS via CAG cells\", then the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\""
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" includes registered PLMN; REGISTRATION ACCEPT via CAG cell; no authorized CAG-ID(s); no indication that 5GS access is only via CAG cells",
+    "action": "searches for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\""
+  },
+  {
+    "id": 7,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN, the UE shall operate as follows: a) if the UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", and: 2) the entry for the registered PLMN in the received \"CAG information list\" includes an \"indication that the UE is only allowed to access 5GS via CAG cells\" and: i) if one or more CAG-ID(s) are authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] with the updated \"CAG information list\""
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" includes registered PLMN; REGISTRATION ACCEPT via CAG cell; no authorized CAG-ID(s); indication that 5GS access is only via CAG cells; one or more authorized CAG-ID(s)",
+    "action": "searches for a suitable cell according to 3GPP TS 38.304 [28] with the updated \"CAG information list\""
+  },
+  {
+    "id": 8,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.PLMN-SEARCH",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN, the UE shall operate as follows: a) if the UE receives the REGISTRATION ACCEPT message via a CAG cell, none of the CAG-ID(s) supported by the current CAG cell is authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", and: 2) the entry for the registered PLMN in the received \"CAG information list\" includes an \"indication that the UE is only allowed to access 5GS via CAG cells\" and: ii) if no CAG-ID is authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", the UE has not set the 5GS registration type IE in the REGISTRATION REQUEST message to \"emergency registration\", and the initial registration was not initiated to perform handover of an existing emergency PDU session from the non-current access to the current access, then the UE shall enter the state 5GMM-REGISTERED.PLMN-SEARCH and shall apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\""
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" includes registered PLMN; REGISTRATION ACCEPT via CAG cell; no authorized CAG-ID(s); indication that 5GS access is only via CAG cells; no emergency registration; initial registration not for handover of emergency PDU session",
+    "action": "applies the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\""
+  },
+  {
+    "id": 9,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.PLMN-SEARCH",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN, the UE shall operate as follows: b) if the UE receives the REGISTRATION ACCEPT message via a non-CAG cell and the entry for the registered PLMN in the received \"CAG information list\" includes an \"indication that the UE is only allowed to access 5GS via CAG cells\" and: 2) if no CAG-ID is authorized based on the \"Allowed CAG list\" of the entry for the registered PLMN in the received \"CAG information list\", the UE has not set the 5GS registration type IE in the REGISTRATION REQUEST message to \"emergency registration\", and the initial registration was not initiated to perform handover of an existing emergency PDU session from the non-current access to the current access, then the UE shall enter the state 5GMM-REGISTERED.PLMN-SEARCH and shall apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\"."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" includes registered PLMN; REGISTRATION ACCEPT via non-CAG cell; indication that 5GS access is only via CAG cells; no authorized CAG-ID(s); no emergency registration; initial registration not for handover of emergency PDU session",
+    "action": "applies the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\""
+  },
+  {
+    "id": 10,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" includes an entry containing the identity of the registered PLMN, the UE shall operate as follows: b) if the UE receives the REGISTRATION ACCEPT message via a non-CAG cell and the entry for the registered PLMN in the received \"CAG information list\" includes an \"indication that the UE is only allowed to access 5GS via CAG cells\" and: 1) if one or more CAG-ID(s) are authorized based on the \"allowed CAG list\" for the registered PLMN in the received \"CAG information list\", the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] with the updated \"CAG information list\""
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" includes registered PLMN; REGISTRATION ACCEPT via non-CAG cell; indication that 5GS access is only via CAG cells; one or more authorized CAG-ID(s)",
+    "action": "searches for a suitable cell according to 3GPP TS 38.304 [28] with the updated \"CAG information list\""
+  },
+  {
+    "id": 11,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the received \"CAG information list\" does not include an entry containing the identity of the registered PLMN and the UE receives the REGISTRATION ACCEPT message via a CAG cell, the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\"."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "received \"CAG information list\" does not include registered PLMN; REGISTRATION ACCEPT via CAG cell",
+    "action": "searches for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\""
+  },
+  {
+    "id": 12,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "REGISTRATION COMPLETE sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the REGISTRATION ACCEPT message contains a) the Network slicing indication IE with the Network slicing subscription change indication set to \"Network slicing subscription changed\"; ... the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the successful update of the network slicing information."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "REGISTRATION ACCEPT message contains Network slicing indication IE with Network slicing subscription change indication set to \"Network slicing subscription changed\"",
+    "action": "returns a REGISTRATION COMPLETE message to the AMF"
+  },
+  {
+    "id": 13,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "REGISTRATION COMPLETE sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the UE has set the RCMAN bit to \"Sending of REGISTRATION COMPLETE message for NSAG information supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the NSAG information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the NSAG information IE."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "RCMAN bit set to \"Sending of REGISTRATION COMPLETE message for NSAG information supported\"; REGISTRATION ACCEPT message contains NSAG information IE",
+    "action": "returns REGISTRATION COMPLETE message to the AMF"
+  },
+  {
+    "id": 14,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "REGISTRATION COMPLETE sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the REGISTRATION ACCEPT message contains the CAG information list IE or the Extended CAG information list IE and the UE had set the CAG bit to \"CAG supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the operator-defined access category definitions, the extended local emergency numbers list or the \"CAG information list\"."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "REGISTRATION ACCEPT message contains CAG information list IE or Extended CAG information list IE; CAG bit set to \"CAG supported\"",
+    "action": "returns a REGISTRATION COMPLETE message to the AMF"
+  },
+  {
+    "id": 15,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "REGISTRATION COMPLETE sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the UE has set the RCMAP bit to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\" in the 5GMM capability IE of the REGISTRATION REQUEST message and if REGISTRATION ACCEPT message contains the Negotiated PEIPS assistance information IE, the UE shall return REGISTRATION COMPLETE message to the AMF to acknowledge the reception of the Negotiated PEIPS assistance information IE."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "RCMAP bit set to \"Sending of REGISTRATION COMPLETE message for negotiated PEIPS parameters supported\"; REGISTRATION ACCEPT message contains Negotiated PEIPS assistance information IE",
+    "action": "returns REGISTRATION COMPLETE message to the AMF"
+  },
+  {
+    "id": 16,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "REGISTRATION COMPLETE sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "If the REGISTRATION ACCEPT message contains the UE radio capability ID IE or the UE radio capability ID deletion indication IE, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge reception of the UE radio capability ID IE or the UE radio capability ID deletion indication IE."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": "REGISTRATION ACCEPT message contains UE radio capability ID IE or UE radio capability ID deletion indication IE",
+    "action": "returns a REGISTRATION COMPLETE message to the AMF"
+  },
+  {
+    "id": 17,
+    "from": "REGISTRATION COMPLETE sent",
+    "to": "5GMM-REGISTERED",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "Upon receiving a REGISTRATION COMPLETE message, the AMF shall stop timer T3550 and change to state 5GMM-REGISTERED."
+    },
+    "event": "REGISTRATION COMPLETE message received",
+    "condition": null,
+    "action": "stops timer T3550"
+  },
+  {
+    "id": 18,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-DEREGISTERED.NO-SUPI",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "Upon receiving the REGISTRATION REJECT message including 5GMM cause #5 \"PEI not accepted\", the UE shall enter the state 5GMM-DEREGISTERED.NO-SUPI."
+    },
+    "event": "REGISTRATION REJECT message received",
+    "condition": "REGISTRATION REJECT message includes 5GMM cause #5 \"PEI not accepted\"",
+    "action": null
+  },
+  {
+    "id": 19,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED, reset the registration attempt counter and enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    "event": null,
+    "condition": null,
+    "action": "aborts the initial registration procedure; sets the 5GS update status to 5U2 NOT UPDATED; resets the registration attempt counter"
+  },
+  {
+    "id": 20,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+    "event": null,
+    "condition": null,
+    "action": "aborts the initial registration procedure; sets the 5GS update status to 5U2 NOT UPDATED"
+  },
+  {
+    "id": 21,
+    "from": "Awaiting REGISTRATION ACCEPT/REJECT",
+    "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "The UE shall enable the E-UTRA capability if it was disabled, disable the N1 mode capability for 3GPP access (see subclause 4.9.2) and enter the 5GMM-DEREGISTERED.NO-CELL-AVAILABLE."
+    },
+    "event": null,
+    "condition": null,
+    "action": "enables the E-UTRA capability if it was disabled; disables the N1 mode capability for 3GPP access"
+  },
+  {
+    "id": 22,
+    "from": "5GMM-REGISTERED-INITIATED",
+    "to": "REGISTRATION REQUEST sent",
+    "metadata": {
+      "section_reference": "5.5.1.2.7",
+      "excerpt": "If the UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED the de-registration procedure shall be aborted and the initial registration procedure shall be progressed."
+    },
+    "event": "DEREGISTRATION REQUEST message received",
+    "condition": "UE is in state 5GMM-REGISTERED-INITIATED",
+    "action": "aborts the de-registration procedure; progresses the initial registration procedure"
+  },
+  {
+    "id": 23,
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "5GMM-REGISTERED",
+    "metadata": {
+      "section_reference": "5.5.1.2.4",
+      "excerpt": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+    },
+    "event": "REGISTRATION ACCEPT message received",
+    "condition": null,
+    "action": "resets the registration attempt counter; sets the 5GS update status to 5U1 UPDATED"
+  },
+  {
+    "id": 24,
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED, reset the registration attempt counter and enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
+    },
+    "event": null,
+    "condition": null,
+    "action": "aborts the initial registration procedure; sets the 5GS update status to 5U2 NOT UPDATED; resets the registration attempt counter"
+  },
+  {
+    "id": 25,
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "metadata": {
+      "section_reference": "5.5.1.2.5",
+      "excerpt": "The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED and enter state 5GMM-DEREGISTERED. ATTEMPTING-REGISTRATION or 5GMM-DEREGISTERED.PLMN-SEARCH."
+    },
+    "event": null,
+    "condition": null,
+    "action": "aborts the initial registration procedure; sets the 5GS update status to 5U2 NOT UPDATED"
+  }
+]

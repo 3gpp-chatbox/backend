@@ -1,0 +1,123 @@
+```json
+[
+  {
+    "id": 1,
+    "name": "5GMM-DEREGISTERED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF. This is the initial state for this procedure.",
+    "valid": true
+  },
+  {
+    "id": 2,
+    "name": "EMM-DEREGISTERED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "This state is relevant when the UE was previously registered in S1 mode before entering state EMM-DEREGISTERED and interworking without N26 is not supported.",
+    "valid": true
+  },
+  {
+    "id": 3,
+    "name": "EMM-REGISTERED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "If the UE is operating in the dual-registration mode and it is in EMM state EMM-REGISTERED, the UE shall include the UE status IE with the EMM registration status set to \"UE is in EMM-REGISTERED state\".",
+    "valid": true
+  },
+  {
+    "id": 4,
+    "name": "5GMM-REGISTERED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.",
+    "valid": true
+  },
+  {
+    "id": 5,
+    "name": "5GMM-COMMON-PROCEDURE-INITIATED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "If a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message, the AMF shall start timer T3550 and enter state 5GMM-COMMON-PROCEDURE-INITIATED as described in subclause 5.1.3.2.3.3.",
+    "valid": true
+  },
+  {
+    "id": 6,
+    "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "the UE shall enter the state 5GMM-REGISTERED.LIMITED-SERVICE and shall search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\";",
+    "valid": true
+  },
+  {
+    "id": 7,
+    "name": "5GMM-REGISTERED.PLMN-SEARCH",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "then the UE shall enter the state 5GMM-REGISTERED.PLMN-SEARCH and shall apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\";",
+    "valid": true
+  },
+  {
+    "id": 8,
+    "name": "5GMM-DEREGISTERED.NO-SUPI",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "the UE shall delete the list of equivalent PLMNs (if any) or the list of equivalent SNPNs (if any), and enter the state 5GMM-DEREGISTERED.NO-SUPI.",
+    "valid": true
+  },
+  {
+    "id": 9,
+    "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "For 3GPP access the UE shall enter state 5GMM-DEREGISTERED.PLMN-SEARCH and perform a PLMN selection according to 3GPP TS 23.122 [5], and for non-3GPP access the UE shall enter state 5GMM-DEREGISTERED.LIMITED-SERVICE and perform network selection as defined in 3GPP TS 24.502 [18].",
+    "valid": true
+  },
+  {
+    "id": 10,
+    "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "the UE shall store the current TAI in the list of \"5GS forbidden tracking areas for regional provision of service\" and enter the state 5GMM-DEREGISTERED.LIMITED-SERVICE.",
+    "valid": true
+  },
+  {
+    "id": 11,
+    "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "The UE shall abort the initial registration procedure, set the 5GS update status to 5U2 NOT UPDATED, reset the registration attempt counter and enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION.",
+    "valid": true
+  },
+  {
+    "id": 12,
+    "name": "EMM-DEREGISTERED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "If the message was received via 3GPP access and the UE is operating in single-registration mode, the UE shall in addition set the EPS update status to EU3 ROAMING NOT ALLOWED and shall delete any 4G-GUTI, last visited registered TAI, TAI list and eKSI. Additionally, the UE shall reset the attach attempt counter and enter the state EMM-DEREGISTERED.",
+    "valid": true
+  },
+  {
+    "id": 13,
+    "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "The UE shall enable the E-UTRA capability if it was disabled, disable the N1 mode capability for 3GPP access (see subclause 4.9.2) and enter the 5GMM-DEREGISTERED.NO-CELL-AVAILABLE.",
+    "valid": true
+  },
+  {
+    "id": 14,
+    "name": "5GMM-REGISTERED-INITIATED",
+    "exists": true,
+    "correct_reference": true,
+    "comment": "If the UE receives a DEREGISTRATION REQUEST message from the network in state 5GMM-REGISTERED-INITIATED the de-registration procedure shall be aborted and the initial registration procedure shall be progressed.",
+    "valid": true
+  },
+  {
+    "id": 15,
+    "name": "5GMM-NULL",
+    "exists": true,
+    "correct_reference": false,
+    "comment": "Implied initial state before registration. The UE is initially in a state where it is not registered to any network. This is implied by the description of the 5GMM-DEREGISTERED state and the overall registration process. See section 5.5.1.2.2"
+  }
+]
+```

@@ -1,0 +1,129 @@
+ Your Full Extraction Pipeline (Refined)
+🔹Step 1: Extract All States
+Goal: Extract all states (big or small) from the given procedure — strictly text-grounded.
+
+Prompt:
+
+Extract all the states involved in the [procedure name] on the UE side from the following section of the 3GPP specification.
+Include all types of states, no matter how small or transient.
+Your answer must be fully based on the provided text, with no assumptions or inferred states.
+Output a list of state names.
+
+🔹Step 1.a: Validate Extracted States
+Goal: Confirm the correctness and completeness of Step 1 results.
+
+Prompt:
+
+Here is a list of extracted states from the [procedure name] on the UE side. Validate whether any states are missing, inaccurate, or not grounded in the original text provided below.
+Identify each issue clearly.
+Only use information explicitly stated in the spec.
+
+🔹Step 1.b: Correct State List
+Goal: Use the validation result to revise the state list.
+
+Prompt:
+
+Based on the validation results and the original text, provide a corrected list of all the states for [procedure name] on the UE side.
+Only include states explicitly supported by the text.
+
+🔹Step 2: Extract All Transitions
+Goal: Identify transitions between the states extracted, including multiple transitions between same states if supported by distinct text.
+
+Prompt:
+
+Using the following list of states and the original 3GPP spec text, extract all state-to-state transitions that are explicitly described in the text.
+Each transition should include:
+
+id
+
+from (source state)
+
+to (target state)
+
+metadata, which includes:
+
+section_reference (e.g., "5.3.2.1.6.7")
+
+excerpt (the full sentence or paragraph describing the transition)
+
+Extract every transition, even if multiple go between the same pair of states.
+
+Format:
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "from": "State_A",
+    "to": "State_B",
+    "metadata": {
+      "section_reference": "5.3.2.1.6.7",
+      "excerpt": "UE moves from State A to State B upon receiving XYZ."
+    }
+  },
+  ...
+]
+🔹Step 2.a: Validate Section References
+Goal: Verify that each section reference and excerpt correctly supports its transition.
+
+Prompt:
+
+Given this list of transitions with section references and supporting excerpts, verify that each excerpt and section reference truly supports the stated transition.
+Identify any mismatch or missing references.
+Do not modify the transitions — just validate the references and excerpts.
+
+🔹Step 2.b: Validate Transitions (One by One)
+Goal: Confirm each transition is valid and grounded in the spec, step-by-step.
+
+Prompt (per transition):
+
+Here is a proposed transition:
+
+From: State_A
+
+To: State_B
+
+Section Reference: 5.3.2.1.6.7
+
+Excerpt: "UE moves from A to B upon receiving XYZ."
+
+Does this excerpt fully support this transition? If not, explain why. If yes, confirm its correctness.
+Only use the provided excerpt and state list to make your judgment.
+
+🔹Step 3: Enrich Each Transition
+Goal: Add semantic detail: event trigger, condition, actions.
+
+Prompt:
+
+For each transition below, extract the following metadata if available in the supporting excerpt or section:
+
+event (what triggers it)
+
+condition (any conditional logic)
+
+entry_action (action upon entering target state)
+
+exit_action (action upon exiting source state)
+
+Use only what’s clearly stated in the original excerpt. If a value is missing, leave it blank or null.
+
+Enriched Format Example:
+
+json
+Copy
+Edit
+{
+  "id": 1,
+  "from": "State_A",
+  "to": "State_B",
+  "metadata": {
+    "section_reference": "5.3.2.1.6.7",
+    "excerpt": "Upon receiving MSG_X, UE transitions from State_A to State_B and starts timer T3510."
+  },
+  "event": "MSG_X received",
+  "condition": null,
+  "entry_action": "Start timer T3510",
+  "exit_action": null
+}

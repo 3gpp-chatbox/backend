@@ -1,0 +1,146 @@
+```json
+{
+  "procedure": {
+    "name": "Registration procedure for initial registration",
+    "section_reference": "5.5.1.2",
+    "states_evaluation": [
+      {
+        "id": 1,
+        "name": "5GMM-DEREGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED is mentioned in section 5.5.1.2.2 as the initial state of the UE before initiating the registration procedure. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 2,
+        "name": "EMM-DEREGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state EMM-DEREGISTERED is mentioned in section 5.5.1.2.2 in the context of interworking with EPS. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 3,
+        "name": "EMM-REGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state EMM-REGISTERED is mentioned in section 5.5.1.2.2 when the UE is operating in dual-registration mode. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 4,
+        "name": "5GMM-REGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-REGISTERED is mentioned in section 5.5.1.2.4 as the state the UE enters upon receiving the REGISTRATION ACCEPT message. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 5,
+        "name": "5GMM-COMMON-PROCEDURE-INITIATED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-COMMON-PROCEDURE-INITIATED is mentioned in section 5.5.1.2.4 as the state the AMF enters when a 5G-GUTI or the SOR transparent container IE is included in the REGISTRATION ACCEPT message. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 6,
+        "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-REGISTERED.LIMITED-SERVICE is mentioned in section 5.5.1.2.4 in the context of CAG cell access. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 7,
+        "name": "5GMM-REGISTERED.PLMN-SEARCH",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-REGISTERED.PLMN-SEARCH is mentioned in section 5.5.1.2.4 in the context of CAG cell access and PLMN selection. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 8,
+        "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION is mentioned in section 5.5.1.2.4 and 5.5.1.2.5 in different scenarios. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 9,
+        "name": "5GMM-DEREGISTERED.NO-SUPI",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED.NO-SUPI is mentioned in section 5.5.1.2.5 and 5.5.1.2.6 upon receiving a REGISTRATION REJECT message with specific cause values. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 10,
+        "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED.LIMITED-SERVICE is mentioned in section 5.5.1.2.5 when a tracking area is not allowed. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 11,
+        "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED.PLMN-SEARCH is mentioned in section 5.5.1.2.5 when a PLMN is not allowed. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 12,
+        "name": "EMM-DEREGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state EMM-DEREGISTERED is mentioned in section 5.5.1.2.5 in the context of interworking with EPS when a PLMN is not allowed. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 13,
+        "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-DEREGISTERED.NO-CELL-AVAILABLE is mentioned in section 5.5.1.2.5 when redirection to EPC is required. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 14,
+        "name": "5GMM-REGISTERED-INITIATED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-REGISTERED-INITIATED is mentioned in section 5.5.1.2.7 in the context of de-registration procedure collision. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 15,
+        "name": "EMM-DEREGISTERED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state EMM-DEREGISTERED is mentioned in section 5.5.1.2.7 in the context of interworking with EPS when a REGISTRATION REJECT is received. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 16,
+        "name": "5GMM-IDLE",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-IDLE is mentioned in section 5.5.1.2.4 in NOTE 21, related to onboarding services. The reference is correct.",
+        "valid": true
+      },
+      {
+        "id": 17,
+        "name": "5GMM-CONNECTED",
+        "exists": true,
+        "correct_reference": true,
+        "comment": "The state 5GMM-CONNECTED is mentioned in section 5.5.1.2.4 in NOTE 21, related to onboarding services. The reference is correct.",
+        "valid": true
+      }
+    ]
+  }
+}
+```

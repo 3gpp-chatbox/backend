@@ -2,95 +2,61 @@
   "entity": "UE",
   "nodes": [
     {
-      "type": "state",
+
       "id": "state1",
       "name": "5GMM-DEREGISTERED",
       "properties": {
-        "timers": [],
-        "variables": [
-          "registration_attempt_counter",
-          "stored_SUCI",
-          "stored_5G_GUTI",
-          "last_registered_PLMN",
-          "forbidden_PLMN_list",
-          "forbidden_TAI_list"
-        ]
+        "timers": []
+  
       },
       "description": "UE is not registered to the network. No NAS signaling connection exists."
     },
     {
-      "type": "state",
+    
       "id": "state2",
       "name": "5GMM-REGISTER-INITIATED",
       "properties": {
-        "timers": ["T3510"],
-        "variables": [
-          "registration_request_message",
-          "selected_PLMN",
-          "selected_SNPN",
-          "initial_registration_attempted"
-        ]
+        "timers": ["T3510"]
+     
       },
       "description": "UE has sent REGISTRATION REQUEST and is waiting for response. Timer T3510 is running."
     },
     {
-      "type": "state",
+     
       "id": "state3",
       "name": "5GMM-REGISTERED",
       "properties": {
-        "timers": ["T3512", "T3346", "T3396"],
-        "variables": [
-          "current_5G_GUTI",
-          "last_visited_TAI",
-          "TAI_list",
-          "NSSAI",
-          "allowed_PLMN_list",
-          "equivalent_PLMN_list",
-          "DRX_parameters",
-          "UE_radio_capability_id"
-        ]
+        "timers": ["T3512", "T3346", "T3396"]
+       
       },
       "description": "UE is successfully registered to the network. Periodic update timer T3512 is running."
     },
     {
-      "type": "state",
+  
       "id": "state4",
       "name": "5GMM-AUTHENTICATION",
       "properties": {
-        "timers": [],
-        "variables": [
-          "authentication_vector",
-          "KSI",
-          "ngKSI",
-          "authentication_response"
-        ]
+        "timers": []
+     
       },
       "description": "UE is performing authentication procedure with the network."
     },
     {
-      "type": "state",
+     
       "id": "state5",
       "name": "5GMM-SECURITY-MODE",
       "properties": {
-        "timers": [],
-        "variables": [
-          "selected_security_algorithms",
-          "security_context",
-          "NAS_count"
-        ]
+        "timers": []
+  
       },
       "description": "UE is establishing security context with the network."
     },
     {
-      "type": "state",
+    
       "id": "state6",
       "name": "5GMM-IDENTITY",
       "properties": {
-        "timers": ["T3570"],
-        "variables": [
-          "requested_identity_type",
-          "identity_response"
-        ]
+        "timers": ["T3570"]
       },
       "description": "UE is processing identity request from network. Timer T3570 is running."
     }
