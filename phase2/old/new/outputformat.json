@@ -1,0 +1,416 @@
+{
+  "entity": "UE",
+  "nodes": [
+    {
+      "type": "state",
+      "id": "state1",
+      "name": "5GMM-DEREGISTERED",
+      "properties": {
+        "timers": [],
+        "variables": [
+          "registration_attempt_counter",
+          "stored_SUCI",
+          "stored_5G_GUTI",
+          "last_registered_PLMN",
+          "forbidden_PLMN_list",
+          "forbidden_TAI_list"
+        ]
+      },
+      "description": "UE is not registered to the network. No NAS signaling connection exists."
+    },
+    {
+      "type": "state",
+      "id": "state2",
+      "name": "5GMM-REGISTER-INITIATED",
+      "properties": {
+        "timers": ["T3510"],
+        "variables": [
+          "registration_request_message",
+          "selected_PLMN",
+          "selected_SNPN",
+          "initial_registration_attempted"
+        ]
+      },
+      "description": "UE has sent REGISTRATION REQUEST and is waiting for response. Timer T3510 is running."
+    },
+    {
+      "type": "state",
+      "id": "state3",
+      "name": "5GMM-REGISTERED",
+      "properties": {
+        "timers": ["T3512", "T3346", "T3396"],
+        "variables": [
+          "current_5G_GUTI",
+          "last_visited_TAI",
+          "TAI_list",
+          "NSSAI",
+          "allowed_PLMN_list",
+          "equivalent_PLMN_list",
+          "DRX_parameters",
+          "UE_radio_capability_id"
+        ]
+      },
+      "description": "UE is successfully registered to the network. Periodic update timer T3512 is running."
+    },
+    {
+      "type": "state",
+      "id": "state4",
+      "name": "5GMM-AUTHENTICATION",
+      "properties": {
+        "timers": [],
+        "variables": [
+          "authentication_vector",
+          "KSI",
+          "ngKSI",
+          "authentication_response"
+        ]
+      },
+      "description": "UE is performing authentication procedure with the network."
+    },
+    {
+      "type": "state",
+      "id": "state5",
+      "name": "5GMM-SECURITY-MODE",
+      "properties": {
+        "timers": [],
+        "variables": [
+          "selected_security_algorithms",
+          "security_context",
+          "NAS_count"
+        ]
+      },
+      "description": "UE is establishing security context with the network."
+    },
+    {
+      "type": "state",
+      "id": "state6",
+      "name": "5GMM-IDENTITY",
+      "properties": {
+        "timers": ["T3570"],
+        "variables": [
+          "requested_identity_type",
+          "identity_response"
+        ]
+      },
+      "description": "UE is processing identity request from network. Timer T3570 is running."
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "state1",
+      "to": "state2",
+      "trigger": {
+        "event": "INITIAL_REGISTRATION_REQUESTED",
+        "conditions": [
+          "Registration_type == initial_registration",
+          "No_pending_emergency_session",
+          "Valid_PLMN_selected",
+          "No_ongoing_5GMM_procedure",
+          "UE_has_valid_SUPI_or_SUCI",
+          "Registration_attempt_counter < max_attempts"
+        ]
+      },
+      "actions": [
+        "Increment_registration_attempt_counter",
+        "Select_AMF_based_on_stored_info_or_default",
+        "Set_5GS_registration_type_to_initial_registration",
+        "Include_requested_NSSAI_if_available",
+        "Include_UE_radio_capability_if_available",
+        "Include_UE_security_capability",
+        "Include_5GMM_capability",
+        "Compose_REGISTRATION_REQUEST",
+        "Send_REGISTRATION_REQUEST",
+        "Start_timer_T3510"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.2", "5.5.1.3"],
+        "excerpts": [
+          "The UE shall initiate the registration procedure for initial registration when it needs to register to the 5G network for the first time.",
+          "The UE shall set the 5GS registration type IE to 'initial registration' and include necessary capabilities and requested NSSAI."
+        ]
+      }
+    },
+    {
+      "id": "edge2",
+      "from": "state2",
+      "to": "state4",
+      "trigger": {
+        "event": "AUTHENTICATION_REQUEST_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified",
+          "No_protocol_errors",
+          "ngKSI_valid"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3510",
+        "Process_authentication_request",
+        "Generate_authentication_response",
+        "Store_authentication_parameters",
+        "Send_AUTHENTICATION_RESPONSE"
+      ],
+      "metadata": {
+        "section_reference": ["5.4.1", "5.5.1.2.4"],
+        "excerpts": [
+          "Upon receiving AUTHENTICATION REQUEST, UE shall process the authentication challenge and respond with AUTHENTICATION RESPONSE.",
+          "The UE shall store the ngKSI and authentication parameters for security context establishment."
+        ]
+      }
+    },
+    {
+      "id": "edge3",
+      "from": "state4",
+      "to": "state5",
+      "trigger": {
+        "event": "SECURITY_MODE_COMMAND_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified",
+          "Security_algorithms_supported",
+          "No_protocol_errors"
+        ]
+      },
+      "actions": [
+        "Verify_security_mode_command_parameters",
+        "Establish_NAS_security_context",
+        "Start_integrity_protection",
+        "Start_ciphering_if_required",
+        "Send_SECURITY_MODE_COMPLETE"
+      ],
+      "metadata": {
+        "section_reference": ["5.4.2", "5.5.1.2.4"],
+        "excerpts": [
+          "After successful authentication, UE shall process SECURITY MODE COMMAND to establish NAS security context.",
+          "UE shall verify that the selected security algorithms are supported and apply them for NAS message protection."
+        ]
+      }
+    },
+    {
+      "id": "edge4",
+      "from": "state5",
+      "to": "state6",
+      "trigger": {
+        "event": "IDENTITY_REQUEST_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified",
+          "Identity_type_supported",
+          "No_protocol_errors"
+        ]
+      },
+      "actions": [
+        "Determine_requested_identity_type",
+        "Prepare_identity_response",
+        "Start_timer_T3570",
+        "Send_IDENTITY_RESPONSE"
+      ],
+      "metadata": {
+        "section_reference": ["5.4.5", "5.5.1.2.4"],
+        "excerpts": [
+          "If network requests identity during registration, UE shall respond with IDENTITY RESPONSE containing the requested identity type.",
+          "UE shall start timer T3570 while waiting for network response after sending identity response."
+        ]
+      }
+    },
+    {
+      "id": "edge5",
+      "from": "state6",
+      "to": "state3",
+      "trigger": {
+        "event": "REGISTRATION_ACCEPT_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified",
+          "No_protocol_errors",
+          "Mandatory_IE_present"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3570",
+        "Process_registration_accept",
+        "Store_5G_GUTI_if_provided",
+        "Update_TAI_list",
+        "Update_NSSAI",
+        "Update_allowed_PLMN_list",
+        "Start_timer_T3512",
+        "Send_REGISTRATION_COMPLETE"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.4", "5.5.1.3"],
+        "excerpts": [
+          "Upon receiving REGISTRATION ACCEPT, UE shall process the registration parameters and move to 5GMM-REGISTERED state.",
+          "UE shall store the assigned 5G-GUTI, TAI list, and other registration parameters and start periodic registration timer T3512."
+        ]
+      }
+    },
+    {
+      "id": "edge6",
+      "from": "state2",
+      "to": "state3",
+      "trigger": {
+        "event": "REGISTRATION_ACCEPT_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified",
+          "No_protocol_errors",
+          "No_security_context_required",
+          "Mandatory_IE_present"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3510",
+        "Process_registration_accept",
+        "Store_5G_GUTI_if_provided",
+        "Update_TAI_list",
+        "Update_NSSAI",
+        "Start_timer_T3512",
+        "Send_REGISTRATION_COMPLETE"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.4"],
+        "excerpts": [
+          "If registration is accepted without authentication/security mode procedure, UE shall directly process REGISTRATION ACCEPT.",
+          "UE shall store the assigned parameters and move to registered state."
+        ]
+      }
+    },
+    {
+      "id": "edge7",
+      "from": "state2",
+      "to": "state1",
+      "trigger": {
+        "event": "REGISTRATION_REJECT_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified OR integrity_protection_not_required"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3510",
+        "Process_reject_cause",
+        "Update_forbidden_lists_based_on_cause",
+        "Reset_registration_attempt_counter_if_successful",
+        "Disable_N1_mode_if_required"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.5"],
+        "excerpts": [
+          "Upon receiving REGISTRATION REJECT, UE shall process the reject cause and take appropriate action.",
+          "For certain cause codes, UE shall update forbidden lists or disable N1 mode."
+        ]
+      }
+    },
+    {
+      "id": "edge8",
+      "from": "state2",
+      "to": "state1",
+      "trigger": {
+        "event": "T3510_EXPIRY",
+        "conditions": [
+          "Registration_attempt_counter < max_attempts"
+        ]
+      },
+      "actions": [
+        "Increment_registration_attempt_counter",
+        "Reselect_PLMN_if_required",
+        "Initiate_new_registration_attempt"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.6"],
+        "excerpts": [
+          "If timer T3510 expires, UE shall retry registration up to maximum attempts.",
+          "UE may need to reselect PLMN or change parameters before retry."
+        ]
+      }
+    },
+    {
+      "id": "edge9",
+      "from": "state4",
+      "to": "state1",
+      "trigger": {
+        "event": "AUTHENTICATION_FAILURE",
+        "conditions": [
+          "Authentication_failure_received OR local_authentication_failure"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3510",
+        "Process_authentication_failure",
+        "Update_security_context_status",
+        "Reset_authentication_parameters"
+      ],
+      "metadata": {
+        "section_reference": ["5.4.1.4"],
+        "excerpts": [
+          "If authentication fails, UE shall abort registration and return to DEREGISTERED state.",
+          "UE shall process the authentication failure cause and may update security parameters."
+        ]
+      }
+    },
+    {
+      "id": "edge10",
+      "from": "state5",
+      "to": "state1",
+      "trigger": {
+        "event": "SECURITY_MODE_REJECT_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified OR no_integrity_protection_required"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3510",
+        "Process_security_mode_reject",
+        "Reset_security_context",
+        "Disable_N1_mode_if_required"
+      ],
+      "metadata": {
+        "section_reference": ["5.4.2.4"],
+        "excerpts": [
+          "If security mode procedure fails, UE shall abort registration and return to DEREGISTERED state.",
+          "UE shall reset security context and may disable N1 mode based on reject cause."
+        ]
+      }
+    },
+    {
+      "id": "edge11",
+      "from": "state6",
+      "to": "state1",
+      "trigger": {
+        "event": "T3570_EXPIRY",
+        "conditions": []
+      },
+      "actions": [
+        "Abort_registration_procedure",
+        "Reset_identity_parameters",
+        "Perform_implicit_deregistration"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.6"],
+        "excerpts": [
+          "If timer T3570 expires during identity procedure, UE shall abort registration.",
+          "UE shall perform implicit deregistration and return to DEREGISTERED state."
+        ]
+      }
+    },
+    {
+      "id": "edge12",
+      "from": "state6",
+      "to": "state1",
+      "trigger": {
+        "event": "REGISTRATION_REJECT_RECEIVED",
+        "conditions": [
+          "Message_integrity_verified OR integrity_protection_not_required"
+        ]
+      },
+      "actions": [
+        "Stop_timer_T3570",
+        "Process_reject_cause",
+        "Update_forbidden_lists_based_on_cause",
+        "Reset_identity_parameters"
+      ],
+      "metadata": {
+        "section_reference": ["5.5.1.2.5"],
+        "excerpts": [
+          "If REGISTRATION REJECT is received during identity procedure, UE shall process the reject.",
+          "UE shall update forbidden lists based on reject cause code."
+        ]
+      }
+    }
+  ]
+}

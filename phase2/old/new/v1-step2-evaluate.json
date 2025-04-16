@@ -1,0 +1,72 @@
+Okay, I will analyze the provided flow property graph against the 3GPP specification text for the "Registration procedure for initial registration" and list any discrepancies or errors I find.
+
+Here's my analysis:
+
+**General Comments:**
+
+*   The graph generally follows the procedure described in the specification.
+*   The level of detail in the graph is good, but some areas could benefit from more granularity (e.g., specific cause codes in reject scenarios).
+
+**Specific Issues:**
+
+1.  **State1: 5GMM-DEREGISTERED - Missing Variable: "SUPI"**
+
+    *   **Issue:** The state `5GMM-DEREGISTERED` lists variables, but it's missing `SUPI`. The UE always has a SUPI, even if it's not stored.
+    *   **Justification:** The UE always has a SUPI, even if it's not stored.
+    *   **Recommendation:** Add `SUPI` to the variables list in the `5GMM-DEREGISTERED` state.
+
+2.  **Edge1: INITIAL\_REGISTRATION\_REQUESTED - Missing Action: "Store SUCI"**
+
+    *   **Issue:** When the UE initiates the registration procedure, it needs to store the SUCI.
+    *   **Justification:** Section 5.5.1.2.2 states "If the SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running, the UE shall start timer T3519 and store the value of the SUCI sent in the REGISTRATION REQUEST message."
+    *   **Recommendation:** Add "Store SUCI" to the actions list in the `INITIAL_REGISTRATION_REQUESTED` edge.
+
+3.  **Edge1: INITIAL\_REGISTRATION\_REQUESTED - Missing Action: "Start timer T3519"**
+
+    *   **Issue:** When the UE initiates the registration procedure, it needs to start timer T3519 if SUCI is included.
+    *   **Justification:** Section 5.5.1.2.2 states "If the SUCI is included in the 5GS mobile identity IE and the timer T3519 is not running, the UE shall start timer T3519 and store the value of the SUCI sent in the REGISTRATION REQUEST message."
+    *   **Recommendation:** Add "Start timer T3519" to the actions list in the `INITIAL_REGISTRATION_REQUESTED` edge.
+
+4.  **Edge1: INITIAL\_REGISTRATION\_REQUESTED - Condition: "UE\_has\_valid\_SUPI\_or\_SUCI" is incomplete**
+
+    *   **Issue:** The condition `UE_has_valid_SUPI_or_SUCI` is incomplete. The UE can also initiate the registration procedure with PEI for emergency services.
+    *   **Justification:** Section 5.5.1.2.2 states "f) if the UE does not hold a valid 5G-GUTI or SUCI other than an onboarding SUCI, and is initiating the initial registration for emergency services, the PEI shall be included in the 5GS mobile identity IE".
+    *   **Recommendation:** Change the condition to `UE_has_valid_SUPI_or_SUCI_or_PEI_for_emergency`.
+
+5.  **Edge5: REGISTRATION\_ACCEPT\_RECEIVED - Missing Action: "Reset PLMN-specific attempt counter"**
+
+    *   **Issue:** Upon receiving REGISTRATION ACCEPT, the UE needs to reset the PLMN-specific attempt counter.
+    *   **Justification:** Section 5.5.1.2.4 states "If the UE receives the REGISTRATION ACCEPT message from a PLMN, then the UE shall reset the PLMN-specific attempt counter for that PLMN for the specific access type for which the message was received."
+    *   **Recommendation:** Add "Reset PLMN-specific attempt counter" to the actions list in the `REGISTRATION_ACCEPT_RECEIVED` edge.
+
+6.  **Edge5: REGISTRATION\_ACCEPT\_RECEIVED - Missing Action: "Reset SNPN-specific attempt counter"**
+
+    *   **Issue:** Upon receiving REGISTRATION ACCEPT, the UE needs to reset the SNPN-specific attempt counter.
+    *   **Justification:** Section 5.5.1.2.4 states "If the UE receives the REGISTRATION ACCEPT message from an SNPN, then the UE shall reset the SNPN-specific attempt counter for the current SNPN for the specific access type for which the message was received."
+    *   **Recommendation:** Add "Reset SNPN-specific attempt counter" to the actions list in the `REGISTRATION_ACCEPT_RECEIVED` edge.
+
+7.  **Edge5: REGISTRATION\_ACCEPT\_RECEIVED - Missing Action: "Reset counter for invalid SIM/USIM"**
+
+    *   **Issue:** Upon receiving REGISTRATION ACCEPT, the UE needs to reset the counter for invalid SIM/USIM.
+    *   **Justification:** Section 5.5.1.2.4 states "If the message was received via 3GPP access, the UE shall reset the counter for "SIM/USIM considered invalid for GPRS services" events and the counter for "SIM/USIM considered invalid for non-GPRS services" events, if any. If the message was received via non-3GPP access, the UE shall reset the counter for "USIM considered invalid for 5GS services over non-3GPP" events."
+    *   **Recommendation:** Add "Reset counter for invalid SIM/USIM" to the actions list in the `REGISTRATION_ACCEPT_RECEIVED` edge.
+
+8.  **Edge7: REGISTRATION\_REJECT\_RECEIVED - Action: "Reset\_registration\_attempt\_counter\_if\_successful" is incorrect**
+
+    *   **Issue:** The action `Reset_registration_attempt_counter_if_successful` is incorrect. The registration attempt counter should not be reset in the REGISTRATION REJECT case.
+    *   **Justification:** The registration attempt counter is only reset upon successful registration (REGISTRATION ACCEPT).
+    *   **Recommendation:** Remove the action `Reset_registration_attempt_counter_if_successful` from the actions list in the `REGISTRATION_REJECT_RECEIVED` edge.
+
+9.  **Edge8: T3510\_EXPIRY - Action: "Initiate\_new\_registration\_attempt" is incomplete**
+
+    *   **Issue:** The action `Initiate_new_registration_attempt` is incomplete. The UE needs to enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION.
+    *   **Justification:** Section 5.5.1.2.7 states "When timer T3511 expires the registration procedure for initial registration shall be restarted, if still required."
+    *   **Recommendation:** Add "Enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION" to the actions list in the `T3510_EXPIRY` edge.
+
+10. **Missing Edges:**
+
+    *   **Issue:** There are no edges for handling the scenario where the UE receives a REGISTRATION REJECT message from states 4, 5.
+    *   **Justification:** The UE can receive a REGISTRATION REJECT message from the network in states 4, 5.
+    *   **Recommendation:** Add edges from states 4, 5 to state 1 with the trigger `REGISTRATION_REJECT_RECEIVED`.
+
+These are the issues I've identified based on the provided graph and specification text. Let me know if you'd like me to elaborate on any of these points.
