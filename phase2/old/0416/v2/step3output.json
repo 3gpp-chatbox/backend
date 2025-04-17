@@ -1,0 +1,68 @@
+
+{
+    "node_type":
+    {
+        "explicitly-main-state(no matter sub or main)"
+        "event"
+        "condition"
+
+    }
+    edge:
+    trigger by event 
+    trigger by condition(yes? no? reject? success?)
+    trigger by action? (or would it be better set action as node?)
+}
+
+{
+    
+    "id": node1,
+    "type": "state",(node1 and the final node must be explicitly main state, because this prompt is to extract all happening between two explictly main states)
+    "type": "5GMM-DEREGISTERED",
+   
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+    },
+    } {
+
+{ 
+    "id": edge1
+from :node1
+to:condition1
+   
+    label:event
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+    },
+    
+{ 
+    "id": edge2
+from :condition1 (if ...)
+to:action1
+  
+    label:specific condition (yes)
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+    },
+    { 
+    "id": edge3
+from :condition1 (if ...)
+to:action2
+  
+    label:specific condition (no)
+    "metadata": {
+      "section_reference": "5.5.1.2.2",
+      "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+    },
+    { 
+        "id": edgen(last one)
+    from :action n
+    to:state(destination of flow must be state)
+        label:what lable should put here?(or maybe set action as edge label only ,not node?)
+        "metadata": {
+          "section_reference": "5.5.1.2.2",
+          "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+        },
+

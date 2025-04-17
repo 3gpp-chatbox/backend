@@ -1,0 +1,174 @@
+```json
+[
+  {
+    "START": "5GMM-DEREGISTERED",
+    "END": "5GMM-REGISTERED",
+    "edges": [
+      {
+        "id": "edge1",
+        "from": "5GMM-DEREGISTERED",
+        "to": "REGISTRATION REQUEST message sent to AMF",
+        "label": "UE initiates registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.2",
+          "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+        }
+      },
+      {
+        "id": "edge2",
+        "from": "REGISTRATION REQUEST message sent to AMF",
+        "to": "REGISTRATION ACCEPT message received by UE",
+        "label": "Network accepts registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.4",
+          "excerpt": "If the initial registration request is accepted by the network, the AMF shall send a REGISTRATION ACCEPT message to the UE."
+        }
+      },
+      {
+        "id": "edge3",
+        "from": "REGISTRATION ACCEPT message received by UE",
+        "to": "5GMM-REGISTERED",
+        "label": "UE enters registered state",
+        "metadata": {
+          "section_reference": "5.5.1.2.4",
+          "excerpt": "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+        }
+      }
+    ]
+  },
+  {
+    "START": "5GMM-DEREGISTERED",
+    "END": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "edges": [
+      {
+        "id": "edge4",
+        "from": "5GMM-DEREGISTERED",
+        "to": "REGISTRATION REQUEST message sent to AMF",
+        "label": "UE initiates registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.2",
+          "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+        }
+      },
+      {
+        "id": "edge5",
+        "from": "REGISTRATION REQUEST message sent to AMF",
+        "to": "REGISTRATION REJECT message received by UE (various causes)",
+        "label": "Network rejects registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value."
+        }
+      },
+      {
+        "id": "edge6",
+        "from": "REGISTRATION REJECT message received by UE (various causes)",
+        "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+        "label": "UE handles rejection (various actions)",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "Furthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message."
+        }
+      }
+    ]
+  },
+    {
+    "START": "5GMM-DEREGISTERED",
+    "END": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "edges": [
+      {
+        "id": "edge7",
+        "from": "5GMM-DEREGISTERED",
+        "to": "REGISTRATION REQUEST message sent to AMF",
+        "label": "UE initiates registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.2",
+          "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+        }
+      },
+      {
+        "id": "edge8",
+        "from": "REGISTRATION REQUEST message sent to AMF",
+        "to": "REGISTRATION REJECT message received by UE (various causes)",
+        "label": "Network rejects registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value."
+        }
+      },
+      {
+        "id": "edge9",
+        "from": "REGISTRATION REJECT message received by UE (various causes)",
+        "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+        "label": "UE handles rejection (various actions)",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "Furthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message."
+        }
+      }
+    ]
+  },
+  {
+    "START": "5GMM-DEREGISTERED",
+    "END": "5GMM-DEREGISTERED.NO-SUPI",
+    "edges": [
+      {
+        "id": "edge10",
+        "from": "5GMM-DEREGISTERED",
+        "to": "REGISTRATION REQUEST message sent to AMF (emergency)",
+        "label": "UE initiates emergency registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.6",
+          "excerpt": "Upon receiving the REGISTRATION REJECT message including 5GMM cause #5 \"PEI not accepted\", the UE shall enter the state 5GMM-DEREGISTERED.NO-SUPI."
+        }
+      },
+      {
+        "id": "edge11",
+        "from": "REGISTRATION REQUEST message sent to AMF (emergency)",
+        "to": "REGISTRATION REJECT message received by UE (cause #5)",
+        "label": "Network rejects emergency registration (cause #5)",
+        "metadata": {
+          "section_reference": "5.5.1.2.6",
+          "excerpt": "Upon receiving the REGISTRATION REJECT message including 5GMM cause #5 \"PEI not accepted\", the UE shall enter the state 5GMM-DEREGISTERED.NO-SUPI."
+        }
+      }
+    ]
+  },
+  {
+    "START": "5GMM-DEREGISTERED",
+    "END": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+    "edges": [
+      {
+        "id": "edge12",
+        "from": "5GMM-DEREGISTERED",
+        "to": "REGISTRATION REQUEST message sent to AMF",
+        "label": "UE initiates registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.2",
+          "excerpt": "The UE in state 5GMM-DEREGISTERED shall initiate the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF"
+        }
+      },
+      {
+        "id": "edge13",
+        "from": "REGISTRATION REQUEST message sent to AMF",
+        "to": "REGISTRATION REJECT message received by UE (various causes)",
+        "label": "Network rejects registration",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "If the initial registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value."
+        }
+      },
+      {
+        "id": "edge14",
+        "from": "REGISTRATION REJECT message received by UE (various causes)",
+        "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+        "label": "UE handles rejection (various actions)",
+        "metadata": {
+          "section_reference": "5.5.1.2.5",
+          "excerpt": "Furthermore, the UE shall take the following actions depending on the 5GMM cause value received in the REGISTRATION REJECT message."
+        }
+      }
+    ]
+  }
+]
+```
