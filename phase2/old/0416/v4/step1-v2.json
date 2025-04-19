@@ -1,0 +1,1570 @@
+{
+  "nodes": [
+    {
+      "id": "state_deregistered",
+      "name": "5GMM-DEREGISTERED",
+      "type": "state",
+      "properties": {
+        "description": "Initial state before registration."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_initiate_registration",
+      "name": "Initiate Initial Registration",
+      "type": "event",
+      "properties": {
+        "description": "Triggered by various conditions like initial access, emergency, SMS over NAS, mobility from GERAN/UTRAN, onboarding, disaster roaming, resuming service after unavailability."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_receive_accept",
+      "name": "Receive_REGISTRATION_ACCEPT",
+      "type": "event",
+      "properties": {
+        "description": "Reception of REGISTRATION ACCEPT message from AMF."
+      },
+      "parameters": [
+        "5G-GUTI",
+        "TAI list",
+        "Allowed NSSAI",
+        "Mapped S-NSSAI(s)",
+        "Rejected NSSAI",
+        "Extended rejected NSSAI",
+        "Partially rejected NSSAI",
+        "Partially allowed NSSAI",
+        "Pending NSSAI",
+        "Configured NSSAI",
+        "NSSRG information",
+        "Alternative NSSAI",
+        "S-NSSAI location validity information",
+        "S-NSSAI time validity information",
+        "On-demand NSSAI",
+        "5GS registration result",
+        "Service area list",
+        "Equivalent PLMNs",
+        "Equivalent SNPNs",
+        "LADN information",
+        "Extended LADN information",
+        "MICO indication",
+        "T3324 value",
+        "Requested T3512 value",
+        "T3512 value",
+        "Non-3GPP de-registration timer value",
+        "5GS network feature support",
+        "T3447 value",
+        "T3448 value",
+        "Truncated 5G-S-TMSI configuration",
+        "Service-level-AA container",
+        "List of PLMNs to be used in disaster condition",
+        "Disaster roaming wait range",
+        "Disaster return wait range",
+        "Forbidden TAI(s) for roaming",
+        "Forbidden TAI(s) for regional provision",
+        "RAN timing synchronization",
+        "Feature authorization indication",
+        "Negotiated DRX parameters",
+        "Negotiated NB-N1 mode DRX parameters",
+        "Negotiated extended DRX parameters",
+        "SOR transparent container",
+        "NSSAI inclusion mode",
+        "Operator-defined access category definitions",
+        "Extended emergency number list",
+        "CAG information list",
+        "Extended CAG information list",
+        "UE radio capability ID",
+        "UE radio capability ID deletion indication",
+        "Ciphering key data",
+        "Negotiated WUS assistance information",
+        "Negotiated PEIPS assistance information",
+        "Unavailability configuration",
+        "Discontinuous coverage maximum time offset",
+        "NSAG information",
+        "RAT utilization control"
+      ]
+    },
+    {
+      "id": "state_registered",
+      "name": "5GMM-REGISTERED",
+      "type": "state",
+      "properties": {
+        "description": "UE is successfully registered with the network."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_receive_reject",
+      "name": "Receive_REGISTRATION_REJECT",
+      "type": "event",
+      "properties": {
+        "description": "Reception of REGISTRATION REJECT message from AMF."
+      },
+      "parameters": [
+        "5GMM cause",
+        "T3346 value",
+        "Rejected NSSAI",
+        "Extended rejected NSSAI",
+        "CAG information list",
+        "Extended CAG information list",
+        "Forbidden TAI(s) for roaming",
+        "Forbidden TAI(s) for regional provision",
+        "N3IWF identifier",
+        "TNAN information",
+        "Extended 5GMM cause",
+        "RAT utilization control"
+      ]
+    },
+    {
+      "id": "event_t3510_expiry",
+      "name": "T3510_Expiry",
+      "type": "event",
+      "properties": {
+        "description": "Timer T3510 expires while waiting for REGISTRATION ACCEPT/REJECT.",
+        "timer_name": "T3510"
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_attempting_registration",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "type": "state",
+      "properties": {
+        "description": "UE is attempting registration after a failure or rejection."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_t3511_expiry",
+      "name": "T3511_Expiry",
+      "type": "event",
+      "properties": {
+        "description": "Timer T3511 expires, triggering a registration retry.",
+        "timer_name": "T3511"
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_t3502_expiry",
+      "name": "T3502_Expiry",
+      "type": "event",
+      "properties": {
+        "description": "Timer T3502 expires after maximum registration attempts.",
+        "timer_name": "T3502"
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_plmn_search",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "type": "state",
+      "properties": {
+        "description": "UE is searching for a suitable PLMN/SNPN after certain rejection causes."
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_limited_service",
+      "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "type": "state",
+      "properties": {
+        "description": "UE is registered but only limited service is possible (e.g., due to TAI/CAG restrictions)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_registered_plmn_search",
+      "name": "5GMM-REGISTERED.PLMN-SEARCH",
+      "type": "state",
+      "properties": {
+        "description": "UE is registered but needs to perform PLMN selection (e.g., due to CAG restrictions)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_no_supi",
+      "name": "5GMM-DEREGISTERED.NO-SUPI",
+      "type": "state",
+      "properties": {
+        "description": "UE is deregistered and considered invalid (e.g., illegal UE/ME)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "state_no_cell_available",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "type": "state",
+      "properties": {
+        "description": "UE is deregistered and needs to search for E-UTRA cell after redirection."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_lower_layer_failure",
+      "name": "Lower_Layer_Failure_Before_Response",
+      "type": "event",
+      "properties": {
+        "description": "Lower layer failure or release of NAS signalling connection before receiving response."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_tai_change_before_response",
+      "name": "TAI_Change_Before_Response",
+      "type": "event",
+      "properties": {
+        "description": "Current TAI changes before registration procedure completes."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_reg_complete_required",
+      "name": "REGISTRATION_COMPLETE_Required",
+      "type": "event",
+      "properties": {
+        "description": "Triggered if REGISTRATION ACCEPT contains specific IEs requiring acknowledgement."
+      },
+      "parameters": [
+        "5G-GUTI",
+        "SOR transparent container",
+        "Operator-defined access category definitions",
+        "Extended emergency number list",
+        "CAG information list",
+        "Extended CAG information list",
+        "Negotiated PEIPS assistance information",
+        "UE radio capability ID",
+        "UE radio capability ID deletion indication",
+        "Network slicing subscription change indication",
+        "Configured NSSAI",
+        "NSSRG information",
+        "Alternative NSSAI",
+        "S-NSSAI location validity information",
+        "S-NSSAI time validity information",
+        "On-demand NSSAI",
+        "NSAG information",
+        "Truncated 5G-S-TMSI configuration",
+        "Service-level-AA pending indication"
+      ]
+    },
+    {
+      "id": "event_tai_change_after_accept_before_complete",
+      "name": "TAI_Change_After_Accept_Before_Complete",
+      "type": "event",
+      "properties": {
+        "description": "Tracking area border crossed after receiving ACCEPT but before sending COMPLETE."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_reg_complete_tx_failure_tai_change",
+      "name": "REG_COMPLETE_Tx_Failure_TAI_Change",
+      "type": "event",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION COMPLETE with TAI change."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_reg_complete_tx_failure_no_tai_change",
+      "name": "REG_COMPLETE_Tx_Failure_No_TAI_Change",
+      "type": "event",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION COMPLETE without TAI change."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_reg_request_tx_failure",
+      "name": "REG_REQUEST_Transmission_Failure",
+      "type": "event",
+      "properties": {
+        "description": "Transmission failure of REGISTRATION REQUEST message indication from lower layers."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_t3346_expiry",
+      "name": "T3346_Expiry",
+      "type": "event",
+      "properties": {
+        "description": "Congestion back-off timer T3346 expires.",
+        "timer_name": "T3346"
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_t3526_expiry",
+      "name": "T3526_Expiry",
+      "type": "event",
+      "properties": {
+        "description": "Back-off timer for S-NSSAI rejected due to max UEs expires.",
+        "timer_name": "T3526"
+      },
+      "parameters": ["S-NSSAI"]
+    },
+    {
+      "id": "event_access_barred",
+      "name": "Access_Barred_Indication",
+      "type": "event",
+      "properties": {
+        "description": "Lower layers indicate access attempt is barred."
+      },
+      "parameters": []
+    },
+    {
+        "id": "event_access_barred_after_request",
+        "name": "Access_Barred_Indication_After_Request",
+        "type": "event",
+        "properties": {
+          "description": "Lower layers indicate access attempt is barred after REGISTRATION REQUEST sent."
+        },
+        "parameters": []
+      },
+    {
+      "id": "event_dereg_request_collision",
+      "name": "Receive_DEREGISTRATION_REQUEST_Collision",
+      "type": "event",
+      "properties": {
+        "description": "DEREGISTRATION REQUEST received while initial registration is ongoing."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_ue_initiated_dereg_required",
+      "name": "UE_Initiated_De-registration_Required",
+      "type": "event",
+      "properties": {
+        "description": "UE needs to perform de-registration (e.g., USIM removal)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_t3447_running",
+      "name": "T3447_Running_Check",
+      "type": "event",
+      "properties": {
+        "description": "Check if service gap timer T3447 is running before initiating registration with follow-on request."
+      },
+      "parameters": []
+    },
+    {
+      "id": "event_access_localized_services_not_allowed",
+      "name": "Access_for_localized_services_no_longer_allowed",
+      "type": "event",
+      "properties": {
+        "description": "Access for localized services in current SNPN is no longer allowed during registration."
+      },
+      "parameters": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "state_deregistered",
+      "to": "event_initiate_registration",
+      "action": "UE_Decides_Initial_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "Triggered by conditions in 5.5.1.2.2 a) to g) (e.g., initial access, emergency, SMS over NAS, mobility, onboarding, disaster roaming, resume service). T3346 not running (or exception applies). T3447 not running (if follow-on requested, unless exception applies). Access not barred.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.2, 5.5.1.2.7.a, 5.5.1.2.7.b, 5.5.1.2.7.l"
+      }
+    },
+    {
+      "id": "edge2",
+      "from": "event_initiate_registration",
+      "to": "state_deregistered",
+      "action": "Send_REGISTRATION_REQUEST",
+      "properties": {
+        "parameters": [
+          "5GS registration type (initial registration / emergency registration / SNPN onboarding registration / disaster roaming initial registration)",
+          "5GS mobile identity (5G-GUTI / SUCI / PEI)",
+          "UE status",
+          "Last visited registered TAI",
+          "5GS update type (SMS requested)",
+          "5GMM capability",
+          "S1 UE network capability",
+          "UE security capability",
+          "Requested NSSAI",
+          "Mapped S-NSSAI(s)",
+          "Network slicing indication",
+          "MICO indication",
+          "T3324 value",
+          "Requested T3512 value",
+          "Requested DRX parameters",
+          "Requested NB-N1 mode DRX parameters",
+          "Requested extended DRX parameters",
+          "LADN indication",
+          "Follow-on request indicator",
+          "Mobile station classmark 2",
+          "Supported codecs",
+          "UE radio capability ID",
+          "Payload container (UE policy container)",
+          "Additional information requested (CipherKey)",
+          "Requested WUS assistance information",
+          "Requested PEIPS assistance information",
+          "N5GC indication",
+          "AUN3 indication",
+          "Service-level-AA container",
+          "Additional GUTI",
+          "UE determined PLMN with disaster condition",
+          "NAS message container (if security context valid and non-cleartext IEs needed)"
+        ],
+        "condition": "Decision to initiate initial registration.",
+        "metadata": {
+          "message_type": "REGISTRATION REQUEST",
+          "timer_started": "T3510",
+          "timer_stopped": ["T3502", "T3511"]
+        },
+        "section_reference": "5.5.1.2.2"
+      }
+    },
+    {
+      "id": "edge3",
+      "from": "state_deregistered",
+      "to": "event_receive_accept",
+      "action": "Receive_REGISTRATION_ACCEPT",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running).",
+        "metadata": {
+          "message_type": "REGISTRATION ACCEPT"
+        },
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge4",
+      "from": "event_receive_accept",
+      "to": "state_registered",
+      "action": "Process_REGISTRATION_ACCEPT",
+      "properties": {
+        "parameters": [
+          "5G-GUTI", "TAI list", "Allowed NSSAI", "Mapped S-NSSAI(s)", "Rejected NSSAI", "Extended rejected NSSAI", "Partially rejected NSSAI", "Partially allowed NSSAI", "Pending NSSAI", "Configured NSSAI", "NSSRG information", "Alternative NSSAI", "S-NSSAI location validity information", "S-NSSAI time validity information", "On-demand NSSAI", "5GS registration result", "Service area list", "Equivalent PLMNs", "Equivalent SNPNs", "LADN information", "Extended LADN information", "MICO indication", "T3324 value", "T3512 value", "Non-3GPP de-registration timer value", "5GS network feature support", "T3447 value", "T3448 value", "Truncated 5G-S-TMSI configuration", "Service-level-AA container", "List of PLMNs to be used in disaster condition", "Disaster roaming wait range", "Disaster return wait range", "Forbidden TAI(s)", "RAN timing synchronization", "Feature authorization indication", "Negotiated DRX parameters", "Negotiated NB-N1 mode DRX parameters", "Negotiated extended DRX parameters", "SOR transparent container", "NSSAI inclusion mode", "Operator-defined access category definitions", "Extended emergency number list", "CAG information list", "Extended CAG information list", "UE radio capability ID", "UE radio capability ID deletion indication", "Ciphering key data", "Negotiated WUS assistance information", "Negotiated PEIPS assistance information", "Unavailability configuration", "Discontinuous coverage maximum time offset", "NSAG information", "RAT utilization control"
+        ],
+        "condition": "REGISTRATION ACCEPT received.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": ["T3447 (if value received)", "T3448 (if value received and > 0)", "T3512 (if value received)", "T3324 (if value received)", "Non-3GPP de-registration timer (if value received)"]
+        },
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+     {
+      "id": "edge4a",
+      "from": "state_registered",
+      "to": "event_reg_complete_required",
+      "action": "Check_If_REGISTRATION_COMPLETE_Required",
+      "properties": {
+        "parameters": [],
+        "condition": "REGISTRATION ACCEPT processed and contains IEs requiring acknowledgement (e.g., 5G-GUTI, SOR, Op-def AC defs, CAG info, NSSAI updates, PEIPS, UE radio cap ID, Truncated 5G-S-TMSI, Service-level-AA pending).",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge5",
+      "from": "event_reg_complete_required",
+      "to": "state_registered",
+      "action": "Send_REGISTRATION_COMPLETE",
+      "properties": {
+        "parameters": ["SOR transparent container (acknowledgement)"],
+        "condition": "Acknowledgement required based on received REGISTRATION ACCEPT.",
+        "metadata": {
+          "message_type": "REGISTRATION COMPLETE"
+        },
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge6",
+      "from": "state_deregistered",
+      "to": "event_receive_reject",
+      "action": "Receive_REGISTRATION_REJECT",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running).",
+        "metadata": {
+          "message_type": "REGISTRATION REJECT"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge7",
+      "from": "event_receive_reject",
+      "to": "state_no_supi",
+      "action": "Process_REJECT_Cause_3_6_7",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #3 (Illegal UE), #6 (Illegal ME), or #7 (5GS services not allowed).",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3245 (if configured)"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge8",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_11",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #11 (PLMN not allowed). Not applicable if SNPN.",
+        "metadata": {
+          "timer_stopped": "T3510",
+           "timer_started": "T3245 (if configured)"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge9",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_12",
+      "properties": {
+        "parameters": ["5GMM cause", "Forbidden TAI(s) for regional provision"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #12 (Tracking area not allowed).",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge10",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_13_LimitedService",
+      "properties": {
+        "parameters": ["5GMM cause", "Forbidden TAI(s) for roaming"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #13 (Roaming not allowed in this tracking area) and UE chooses to enter LIMITED-SERVICE.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge11",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_13_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "Forbidden TAI(s) for roaming"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #13 (Roaming not allowed in this tracking area) and UE chooses to enter PLMN-SEARCH.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge12",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_15",
+      "properties": {
+        "parameters": ["5GMM cause", "Forbidden TAI(s) for roaming", "Extended 5GMM cause", "RAT utilization control"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #15 (No suitable cells in tracking area). Not applicable if non-3GPP.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge13",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Cause_22",
+      "properties": {
+        "parameters": ["5GMM cause", "T3346 value"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #22 (Congestion) and T3346 value is valid.",
+        "metadata": {
+          "timer_stopped": ["T3510", "T3346 (if running)"],
+          "timer_started": "T3346"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge14",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_27",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #27 (N1 mode not allowed).",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge15",
+      "from": "event_receive_reject",
+      "to": "state_no_cell_available",
+      "action": "Process_REJECT_Cause_31",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #31 (Redirection to EPC required). UE supports CIoT optimizations and S1 mode. Not applicable if non-3GPP or SNPN.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge16",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_36",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #36 (IAB-node operation not authorized). UE is IAB-node. Not applicable if non-3GPP.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3245 (if configured, PLMN case)"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge17",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Cause_62_Retry",
+      "properties": {
+        "parameters": ["5GMM cause", "Rejected NSSAI", "Extended rejected NSSAI"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #62 (No network slices available). UE decides to retry with remaining/default S-NSSAIs or after T3526 expiry.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3526 (if rejected S-NSSAI has cause 'max UEs reached')"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge18",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_62_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "Rejected NSSAI", "Extended rejected NSSAI"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #62 (No network slices available). All available/configured/default S-NSSAIs rejected (not due to 'in registration area'). UE decides to perform PLMN/SNPN search.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3526 (if rejected S-NSSAI has cause 'max UEs reached')"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge19",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_62_LimitedService",
+      "properties": {
+        "parameters": ["5GMM cause", "Rejected NSSAI", "Extended rejected NSSAI", "Forbidden TAI(s) for roaming"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #62 (No network slices available). All available/configured/default S-NSSAIs rejected, at least one due to 'S-NSSAI not available in the current registration area'. Message integrity protected.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3526 (if rejected S-NSSAI has cause 'max UEs reached')"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge20",
+      "from": "event_receive_reject",
+      "to": "state_deregistered",
+      "action": "Process_REJECT_Cause_72",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #72 (Non-3GPP access to 5GCN not allowed) over non-3GPP access.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge21",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_73",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #73 (Serving network not authorized). Not applicable if SNPN.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge22",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_74",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #74 (Temporarily not authorized for this SNPN). Applicable only if SNPN.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge23",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_75",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #75 (Permanently not authorized for this SNPN). Applicable only if SNPN with globally-unique ID.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge24",
+      "from": "event_receive_reject",
+      "to": "state_limited_service",
+      "action": "Process_REJECT_Cause_76_LimitedService",
+      "properties": {
+        "parameters": ["5GMM cause", "CAG information list", "Extended CAG information list"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #76 (Not authorized for this CAG or authorized for CAG cells only). UE decides/needs to enter LIMITED-SERVICE.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge25",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_76_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "CAG information list", "Extended CAG information list"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #76 (Not authorized for this CAG or authorized for CAG cells only). UE needs to perform PLMN search (e.g., only allowed CAG access, no authorized CAGs available).",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge26",
+      "from": "event_receive_reject",
+      "to": "state_deregistered",
+      "action": "Process_REJECT_Cause_77",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #77 (Wireline access area not allowed) over wireline access (5G-RG or W-AGF for FN-CRG).",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge27",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_78",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #78 (PLMN not allowed to operate at the present UE location) over satellite NG-RAN.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge28",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Cause_79_Retry",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #79 (UAS services not allowed). UE decides to retry registration without requesting UAS services.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge29",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_79_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #79 (UAS services not allowed). UE decides to perform PLMN search.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge30",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_80",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #80 (Disaster roaming for the determined PLMN with disaster condition not allowed). UE indicated disaster roaming.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge31",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Cause_81_Retry",
+      "properties": {
+        "parameters": ["5GMM cause", "N3IWF identifier"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #81 (Selected N3IWF is not compatible with the allowed NSSAI) over non-3GPP N3IWF. UE supports slice-based N3IWF selection. UE decides to retry.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge32",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_81_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "N3IWF identifier"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #81 (Selected N3IWF is not compatible with the allowed NSSAI) over non-3GPP N3IWF. UE supports slice-based N3IWF selection. UE decides to perform PLMN search.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge33",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Cause_82_Retry",
+      "properties": {
+        "parameters": ["5GMM cause", "TNAN information"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #82 (Selected TNGF is not compatible with the allowed NSSAI) over non-3GPP TNGF. UE supports slice-based TNGF selection. UE decides to retry.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge34",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Cause_82_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "TNAN information"],
+        "condition": "Received REGISTRATION REJECT with 5GMM cause #82 (Selected TNGF is not compatible with the allowed NSSAI) over non-3GPP TNGF. UE supports slice-based TNGF selection. UE decides to perform PLMN search.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge35",
+      "from": "event_receive_reject",
+      "to": "state_no_supi",
+      "action": "Process_REJECT_Cause_5_Emergency",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT for emergency registration with 5GMM cause #5 (PEI not accepted).",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.6"
+      }
+    },
+    {
+      "id": "edge36",
+      "from": "event_receive_reject",
+      "to": "state_deregistered",
+      "action": "Process_REJECT_Other_Emergency",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT for emergency registration with 5GMM cause other than #5. UE follows cause-specific actions from 5.5.1.2.5 and informs upper layers.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.6, 5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge37",
+      "from": "state_deregistered",
+      "to": "event_t3510_expiry",
+      "action": "Timer_T3510_Expires",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST and T3510 expires.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge38",
+      "from": "event_t3510_expiry",
+      "to": "state_attempting_registration",
+      "action": "Handle_T3510_Expiry_Retry",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "T3510 expired. registration_attempt_counter < 5. Not emergency registration.",
+        "metadata": {
+          "timer_started": "T3511"
+        },
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge39",
+      "from": "event_t3510_expiry",
+      "to": "state_attempting_registration",
+      "action": "Handle_T3510_Expiry_MaxAttempts_Attempting",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "T3510 expired. registration_attempt_counter = 5. Not emergency registration. UE chooses ATTEMPTING-REGISTRATION.",
+        "metadata": {
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge40",
+      "from": "event_t3510_expiry",
+      "to": "state_plmn_search",
+      "action": "Handle_T3510_Expiry_MaxAttempts_PLMNSearch",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "T3510 expired. registration_attempt_counter = 5. Not emergency registration. UE chooses PLMN-SEARCH.",
+        "metadata": {
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge41",
+      "from": "state_attempting_registration",
+      "to": "event_t3511_expiry",
+      "action": "Timer_T3511_Expires",
+      "properties": {
+        "parameters": [],
+        "condition": "T3511 running and expires.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge42",
+      "from": "event_t3511_expiry",
+      "to": "state_deregistered",
+      "action": "Restart_Initial_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "T3511 expired.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge43",
+      "from": "state_attempting_registration",
+      "to": "event_t3502_expiry",
+      "action": "Timer_T3502_Expires",
+      "properties": {
+        "parameters": [],
+        "condition": "T3502 running and expires.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge44",
+      "from": "event_t3502_expiry",
+      "to": "state_attempting_registration",
+      "action": "Handle_T3502_Expiry_Attempting",
+      "properties": {
+        "parameters": [],
+        "condition": "T3502 expired. UE chooses ATTEMPTING-REGISTRATION.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge45",
+      "from": "event_t3502_expiry",
+      "to": "state_plmn_search",
+      "action": "Handle_T3502_Expiry_PLMNSearch",
+      "properties": {
+        "parameters": [],
+        "condition": "T3502 expired. UE chooses PLMN-SEARCH.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.c"
+      }
+    },
+    {
+      "id": "edge46",
+      "from": "state_deregistered",
+      "to": "event_lower_layer_failure",
+      "action": "Lower_Layer_Failure_Occurs",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running) and lower layer failure occurs.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge47",
+      "from": "event_lower_layer_failure",
+      "to": "state_attempting_registration",
+      "action": "Handle_LowerLayerFailure_Retry",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Lower layer failure occurred. registration_attempt_counter < 5. Not emergency registration.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3511"
+        },
+        "section_reference": "5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge48",
+      "from": "event_lower_layer_failure",
+      "to": "state_attempting_registration",
+      "action": "Handle_LowerLayerFailure_MaxAttempts_Attempting",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Lower layer failure occurred. registration_attempt_counter = 5. Not emergency registration. UE chooses ATTEMPTING-REGISTRATION.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge49",
+      "from": "event_lower_layer_failure",
+      "to": "state_plmn_search",
+      "action": "Handle_LowerLayerFailure_MaxAttempts_PLMNSearch",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Lower layer failure occurred. registration_attempt_counter = 5. Not emergency registration. UE chooses PLMN-SEARCH.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge50",
+      "from": "state_deregistered",
+      "to": "event_tai_change_before_response",
+      "action": "TAI_Changes",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running) and current TAI changes.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.h"
+      }
+    },
+    {
+      "id": "edge51",
+      "from": "event_tai_change_before_response",
+      "to": "state_deregistered",
+      "action": "Abort_And_Reinitiate_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "TAI changed before registration completed.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.7.h"
+      }
+    },
+    {
+      "id": "edge52",
+      "from": "state_registered",
+      "to": "event_tai_change_after_accept_before_complete",
+      "action": "TAI_Changes",
+      "properties": {
+        "parameters": ["TAI list"],
+        "condition": "REGISTRATION ACCEPT received, REGISTRATION COMPLETE required but not sent, and TAI changes.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.h"
+      }
+    },
+    {
+      "id": "edge53",
+      "from": "event_tai_change_after_accept_before_complete",
+      "to": "state_registered",
+      "action": "Send_REGISTRATION_COMPLETE",
+      "properties": {
+        "parameters": [],
+        "condition": "TAI changed but is still within the received TAI list.",
+        "metadata": {
+          "message_type": "REGISTRATION COMPLETE"
+        },
+        "section_reference": "5.5.1.2.7.h"
+      }
+    },
+    {
+      "id": "edge54",
+      "from": "event_tai_change_after_accept_before_complete",
+      "to": "state_deregistered",
+      "action": "Abort_Initial_Registration_Initiate_Mobility_Update",
+      "properties": {
+        "parameters": [],
+        "condition": "TAI changed and is outside the received TAI list.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.h"
+      }
+    },
+    {
+      "id": "edge55",
+      "from": "state_registered",
+      "to": "event_reg_complete_tx_failure_tai_change",
+      "action": "REG_COMPLETE_Tx_Failure_Occurs",
+      "properties": {
+        "parameters": ["TAI list"],
+        "condition": "Transmission failure of REGISTRATION COMPLETE indicated by lower layers, and TAI has changed.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.i"
+      }
+    },
+    {
+      "id": "edge56",
+      "from": "event_reg_complete_tx_failure_tai_change",
+      "to": "state_registered",
+      "action": "Resend_REGISTRATION_COMPLETE",
+      "properties": {
+        "parameters": [],
+        "condition": "REG COMPLETE Tx failure, TAI changed but is still within the TAI list.",
+        "metadata": {
+          "message_type": "REGISTRATION COMPLETE"
+        },
+        "section_reference": "5.5.1.2.7.i"
+      }
+    },
+    {
+      "id": "edge57",
+      "from": "event_reg_complete_tx_failure_tai_change",
+      "to": "state_deregistered",
+      "action": "Abort_Initial_Registration_Initiate_Mobility_Update",
+      "properties": {
+        "parameters": [],
+        "condition": "REG COMPLETE Tx failure, TAI changed and is outside the TAI list.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.i"
+      }
+    },
+    {
+      "id": "edge58",
+      "from": "state_registered",
+      "to": "event_reg_complete_tx_failure_no_tai_change",
+      "action": "REG_COMPLETE_Tx_Failure_Occurs",
+      "properties": {
+        "parameters": [],
+        "condition": "Transmission failure of REGISTRATION COMPLETE indicated by lower layers, TAI has not changed.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.j"
+      }
+    },
+    {
+      "id": "edge59",
+      "from": "event_reg_complete_tx_failure_no_tai_change",
+      "to": "state_registered",
+      "action": "Rerun_REGISTRATION_COMPLETE_Transmission (Implementation Specific)",
+      "properties": {
+        "parameters": [],
+        "condition": "REG COMPLETE Tx failure without TAI change.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.j"
+      }
+    },
+    {
+      "id": "edge60",
+      "from": "state_deregistered",
+      "to": "event_reg_request_tx_failure",
+      "action": "REG_REQUEST_Tx_Failure_Occurs",
+      "properties": {
+        "parameters": [],
+        "condition": "Transmission failure of REGISTRATION REQUEST indicated by lower layers.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.k"
+      }
+    },
+    {
+      "id": "edge61",
+      "from": "event_reg_request_tx_failure",
+      "to": "state_deregistered",
+      "action": "Abort_And_Reinitiate_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "REGISTRATION REQUEST transmission failure.",
+        "metadata": {
+           "timer_stopped": "T3510 (if started)"
+        },
+        "section_reference": "5.5.1.2.7.k"
+      }
+    },
+    {
+      "id": "edge62",
+      "from": "state_attempting_registration",
+      "to": "event_t3346_expiry",
+      "action": "Timer_T3346_Expires",
+      "properties": {
+        "parameters": [],
+        "condition": "T3346 running and expires.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.a"
+      }
+    },
+    {
+      "id": "edge63",
+      "from": "event_t3346_expiry",
+      "to": "state_deregistered",
+      "action": "Allow_Initial_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "T3346 expired.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.a"
+      }
+    },
+    {
+      "id": "edge64",
+      "from": "state_deregistered",
+      "to": "event_access_barred",
+      "action": "Access_Barred_Indication_Received",
+      "properties": {
+        "parameters": [],
+        "condition": "Lower layers indicate access barring before sending REGISTRATION REQUEST.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.b"
+      }
+    },
+    {
+      "id": "edge65",
+      "from": "event_access_barred",
+      "to": "state_deregistered",
+      "action": "Do_Not_Start_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "Access barred indication received.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.b"
+      }
+    },
+     {
+      "id": "edge66",
+      "from": "state_deregistered",
+      "to": "event_access_barred_after_request",
+      "action": "Access_Barred_Indication_Received",
+      "properties": {
+        "parameters": [],
+        "condition": "Lower layers indicate access barring after sending REGISTRATION REQUEST.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.ba"
+      }
+    },
+    {
+      "id": "edge67",
+      "from": "event_access_barred_after_request",
+      "to": "state_attempting_registration",
+      "action": "Handle_AccessBarredAfterRequest_Retry",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Access barred after request. registration_attempt_counter < 5. Not emergency registration.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3511"
+        },
+        "section_reference": "5.5.1.2.7.ba, 5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge68",
+      "from": "event_access_barred_after_request",
+      "to": "state_attempting_registration",
+      "action": "Handle_AccessBarredAfterRequest_MaxAttempts_Attempting",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Access barred after request. registration_attempt_counter = 5. Not emergency registration. UE chooses ATTEMPTING-REGISTRATION.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.ba, 5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge69",
+      "from": "event_access_barred_after_request",
+      "to": "state_plmn_search",
+      "action": "Handle_AccessBarredAfterRequest_MaxAttempts_PLMNSearch",
+      "properties": {
+        "parameters": ["registration_attempt_counter"],
+        "condition": "Access barred after request. registration_attempt_counter = 5. Not emergency registration. UE chooses PLMN-SEARCH.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.ba, 5.5.1.2.7.e"
+      }
+    },
+    {
+      "id": "edge70",
+      "from": "state_deregistered",
+      "to": "event_dereg_request_collision",
+      "action": "Receive_DEREGISTRATION_REQUEST",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running) and DEREGISTRATION REQUEST received.",
+        "metadata": {
+          "message_type": "DEREGISTRATION REQUEST"
+        },
+        "section_reference": "5.5.1.2.7.g"
+      }
+    },
+    {
+      "id": "edge71",
+      "from": "event_dereg_request_collision",
+      "to": "state_deregistered",
+      "action": "Abort_Deregistration_Continue_Registration",
+      "properties": {
+        "parameters": [],
+        "condition": "DEREGISTRATION REQUEST received during initial registration.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.g"
+      }
+    },
+    {
+      "id": "edge72",
+      "from": "state_deregistered",
+      "to": "event_ue_initiated_dereg_required",
+      "action": "UE_Needs_Deregistration",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running) and UE needs to deregister (e.g., USIM removal).",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.f"
+      }
+    },
+    {
+      "id": "edge73",
+      "from": "event_ue_initiated_dereg_required",
+      "to": "state_deregistered",
+      "action": "Abort_Registration_Perform_Deregistration",
+      "properties": {
+        "parameters": [],
+        "condition": "UE initiated de-registration required during initial registration.",
+        "metadata": {
+           "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.7.f"
+      }
+    },
+    {
+      "id": "edge74",
+      "from": "state_deregistered",
+      "to": "event_t3447_running",
+      "action": "Check_T3447_Status",
+      "properties": {
+        "parameters": [],
+        "condition": "Before initiating registration with Follow-on request indicator set.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.l"
+      }
+    },
+    {
+      "id": "edge75",
+      "from": "event_t3447_running",
+      "to": "state_deregistered",
+      "action": "Do_Not_Start_Registration_With_FollowOn",
+      "properties": {
+        "parameters": [],
+        "condition": "T3447 is running and UE is not high priority / not emergency registration.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.l"
+      }
+    },
+    {
+      "id": "edge76",
+      "from": "state_deregistered",
+      "to": "event_access_localized_services_not_allowed",
+      "action": "Check_Localized_Service_Allowance",
+      "properties": {
+        "parameters": [],
+        "condition": "Waiting for response after sending REGISTRATION REQUEST (T3510 running) for SNPN selected for localized services, and access is disabled or validity not met.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.7.n"
+      }
+    },
+    {
+      "id": "edge77",
+      "from": "event_access_localized_services_not_allowed",
+      "to": "state_limited_service",
+      "action": "Abort_Registration_Enter_LimitedService",
+      "properties": {
+        "parameters": [],
+        "condition": "Access for localized services no longer allowed. UE chooses LIMITED-SERVICE.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.7.n"
+      }
+    },
+    {
+      "id": "edge78",
+      "from": "event_access_localized_services_not_allowed",
+      "to": "state_plmn_search",
+      "action": "Abort_Registration_Enter_PLMNSearch",
+      "properties": {
+        "parameters": [],
+        "condition": "Access for localized services no longer allowed. UE chooses PLMN-SEARCH.",
+        "metadata": {
+          "timer_stopped": "T3510"
+        },
+        "section_reference": "5.5.1.2.7.n"
+      }
+    },
+    {
+      "id": "edge79",
+      "from": "event_receive_accept",
+      "to": "state_limited_service",
+      "action": "Process_ACCEPT_CAG_Restriction_LimitedService",
+      "properties": {
+        "parameters": ["CAG information list", "Extended CAG information list"],
+        "condition": "REGISTRATION ACCEPT received with updated CAG info resulting in current cell/PLMN being restricted, leading to LIMITED-SERVICE state.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge80",
+      "from": "event_receive_accept",
+      "to": "state_registered_plmn_search",
+      "action": "Process_ACCEPT_CAG_Restriction_PLMNSearch",
+      "properties": {
+        "parameters": ["CAG information list", "Extended CAG information list"],
+        "condition": "REGISTRATION ACCEPT received with updated CAG info resulting in current cell/PLMN being restricted, leading to PLMN-SEARCH state (e.g., only CAG allowed, no authorized CAGs available).",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge81",
+      "from": "event_receive_accept",
+      "to": "state_deregistered",
+      "action": "Process_ACCEPT_Registration_Result_Dereg_Other_Access",
+      "properties": {
+        "parameters": ["5GS registration result"],
+        "condition": "REGISTRATION ACCEPT received with 5GS registration result indicating registration only for the current access, while UE was registered on the other access to the same PLMN/SNPN.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge82",
+      "from": "event_receive_accept",
+      "to": "state_registered",
+      "action": "Process_ACCEPT_SOR_Failure_Attempt_Other_PLMN",
+      "properties": {
+        "parameters": ["SOR transparent container"],
+        "condition": "REGISTRATION ACCEPT received, SOR integrity check fails or SOR container missing (when expected), UE attempts service on other PLMNs.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge83",
+      "from": "event_receive_accept",
+      "to": "state_registered",
+      "action": "Process_ACCEPT_SOR_Success_Attempt_Other_PLMN",
+      "properties": {
+        "parameters": ["SOR transparent container"],
+        "condition": "REGISTRATION ACCEPT received, SOR integrity check succeeds, UE attempts service on other PLMNs.",
+        "metadata": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge84",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Other_Abnormal",
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "condition": "Received REGISTRATION REJECT with other abnormal cause values (#95, #96, #97, #99, #111 or others treated as abnormal). registration_attempt_counter < 5.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3511"
+        },
+        "section_reference": "5.5.1.2.7.d"
+      }
+    },
+    {
+      "id": "edge85",
+      "from": "event_receive_reject",
+      "to": "state_attempting_registration",
+      "action": "Process_REJECT_Other_Abnormal_MaxAttempts_Attempting",
+      "properties": {
+        "parameters": ["5GMM cause", "registration_attempt_counter"],
+        "condition": "Received REGISTRATION REJECT with other abnormal cause values. registration_attempt_counter = 5. UE chooses ATTEMPTING-REGISTRATION.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.d"
+      }
+    },
+    {
+      "id": "edge86",
+      "from": "event_receive_reject",
+      "to": "state_plmn_search",
+      "action": "Process_REJECT_Other_Abnormal_MaxAttempts_PLMNSearch",
+      "properties": {
+        "parameters": ["5GMM cause", "registration_attempt_counter"],
+        "condition": "Received REGISTRATION REJECT with other abnormal cause values. registration_attempt_counter = 5. UE chooses PLMN-SEARCH.",
+        "metadata": {
+          "timer_stopped": "T3510",
+          "timer_started": "T3502 (if value > 0)"
+        },
+        "section_reference": "5.5.1.2.7.d"
+      }
+    }
+  ]
+}

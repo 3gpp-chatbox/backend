@@ -1,0 +1,49 @@
+Okay, here's a detailed analysis of the provided flow property graph against the 3GPP specification text for the "Registration procedure for initial registration" on the UE side.
+
+**Incorrect Edge(s):**
+
+1. **Edge from UE_5GMM_REGISTERED_INITIATED to Event_REGISTRATION_ACCEPT_Received**
+   - **Problem:** The edge is labeled as an event "Receive_REGISTRATION_ACCEPT", but the target node is also an event "Event_REGISTRATION_ACCEPT_Received".  The edge should lead to a state, not another event. The condition also states "Network sends REGISTRATION ACCEPT", which is an action, not a condition.
+   - **Suggested Correction:** Remove the "Event_REGISTRATION_ACCEPT_Received" node. Change the target of the edge to "UE_5GMM_REGISTERED" and add the action "Process_REGISTRATION_ACCEPT" to the edge. The condition should be changed to "Receive REGISTRATION ACCEPT".
+
+2. **Edge from UE_5GMM_REGISTERED_INITIATED to Event_REGISTRATION_REJECT_Received**
+   - **Problem:** Similar to the previous edge, this edge is labeled as an event "Receive_REGISTRATION_REJECT", but the target node is also an event "Event_REGISTRATION_REJECT_Received". The edge should lead to a state, not another event. The condition also states "Network sends REGISTRATION REJECT", which is an action, not a condition.
+   - **Suggested Correction:** Remove the "Event_REGISTRATION_REJECT_Received" node. The target of the edge should be a state depending on the 5GMM cause value. The condition should be changed to "Receive REGISTRATION REJECT".
+
+3. **Edge from UE_5GMM_REGISTERED to Event_TAI_Change**
+   - **Problem:** The condition "REG_COMPLETE Pending AND Current TAI changes" is not entirely accurate. The UE needs to check if the new TAI is in the TAI list.
+   - **Suggested Correction:** Split this edge into two edges. One edge goes to "UE_Needs_Mobility_Update" with the condition "REG_COMPLETE Pending AND Current TAI changes AND New TAI not in TAI list". The other edge goes to "UE_5GMM_REGISTERED" with the condition "REG_COMPLETE Pending AND Current TAI changes AND New TAI in TAI list".
+
+4. **Edge from Event_TAI_Change to UE_5GMM_REGISTERED**
+   - **Problem:** This edge is redundant and incorrect. The TAI_Change event should not directly lead back to the UE_5GMM_REGISTERED state. The correct behavior is to send a REGISTRATION COMPLETE message if the new TAI is in the TAI list.
+   - **Suggested Correction:** Remove this edge.
+
+5. **Edge from Event_TAI_Change to UE_Needs_Mobility_Update**
+   - **Problem:** This edge is redundant. The TAI_Change event should not directly lead to the UE_Needs_Mobility_Update state.
+   - **Suggested Correction:** Remove this edge.
+
+**Missing Elements/Completeness:**
+
+1. **Handling of different 5GMM cause values in REGISTRATION REJECT:** The graph has many edges originating from "Event_REGISTRATION_REJECT_Received", each handling a specific 5GMM cause. However, there might be other 5GMM cause values that are not explicitly handled in the graph. A default state or a more generic handling for unlisted causes should be considered.
+   - **Suggested Correction:** Add a generic state (e.g., "UE_5GMM_DEREGISTERED_GENERIC_REJECT") and an edge from "Event_REGISTRATION_REJECT_Received" to this state with the condition "Other 5GMM Cause" and appropriate actions (e.g., increment retry counter, start T3511, etc.).
+
+2. **Emergency Registration:** The graph doesn't explicitly highlight the differences in behavior when performing emergency registration. The specification mentions that certain checks are skipped during emergency registration.
+   - **Suggested Correction:** Add a property to the "Event_Trigger_Initial_Registration" event to indicate whether it's an emergency registration.  Conditions on edges should then check this property to determine if certain actions (like PLMN selection) should be skipped.
+
+3. **Handling of SOR transparent container failure:** The specification mentions that if the SOR transparent container fails the integrity check, the UE should locally release the established N1 NAS signalling connection after sending a REGISTRATION COMPLETE message. This is not reflected in the graph.
+   - **Suggested Correction:** Add a condition to the edge from "UE_5GMM_REGISTERED" to itself (the edge where REGISTRATION COMPLETE is sent) to check if the SOR transparent container failed the integrity check. If it did, add an action to release the NAS signalling connection.
+
+4. **Handling of "NSSAA to be performed" indicator:** The specification mentions that if the "NSSAA to be performed" indicator is set in the REGISTRATION ACCEPT message, the UE should delete the stored allowed NSSAI and not initiate 5GSM procedures except for emergency services. This is not reflected in the graph.
+   - **Suggested Correction:** Add a new state (e.g., "UE_5GMM_REGISTERED_NSSAA_PENDING") and an edge from "Event_REGISTRATION_ACCEPT_Received" to this state with the condition that the "NSSAA to be performed" indicator is set.  This new state should restrict the UE's actions as described in the specification.
+
+5. **Handling of "RAT utilization control" IE:** The specification mentions that if the REGISTRATION ACCEPT message received over 3GPP access contains the RAT utilization control IE, the UE shall store the received RAT utilization control information together with the PLMN identity of the current PLMN in the list of "PLMNs with associated RAT restrictions" and replace the previously stored one associated with the current PLMN, if any, with the newly received RAT utilization control information. Otherwise, if the REGISTRATION ACCEPT message does not contain the RAT utilization control IE, the UE shall delete the stored RAT utilization control information associated with the current PLMN if any.
+   - **Suggested Correction:** Add actions to the "Process_REGISTRATION_ACCEPT" action to handle the RAT utilization control IE.
+
+**Suggestions:**
+
+*   **Timer Management:** The graph mentions starting and stopping timers, but it doesn't always clearly indicate *when* a timer should be stopped conditionally.  For example, T3510 is started when sending REGISTRATION REQUEST, but it's not explicitly stopped in all error scenarios.  Make sure all possible exit paths from the "UE_5GMM_REGISTERED_INITIATED" state include stopping T3510.
+*   **State Granularity:** Consider whether some of the "DEREGISTERED" states could be merged or simplified. For example, "UE_5GMM_DEREGISTERED_LIMITED_SERVICE" and "UE_5GMM_DEREGISTERED_PLMN_SEARCH" might be handled with properties within a single "UE_5GMM_DEREGISTERED" state. This would reduce the number of states and edges.
+*   **Error Handling:** The graph focuses primarily on the happy path and specific error conditions.  Add a more general error handling mechanism to catch unexpected events or conditions. This could involve a "catch-all" state or a more robust error reporting mechanism.
+*   **SNPN Handling:** The specification has many specific conditions for SNPN. Ensure that all SNPN-specific conditions are correctly represented in the graph, especially in the PLMN selection and rejection handling sections.
+
+By addressing these points, the flow property graph can be made more accurate, complete, and easier to understand.

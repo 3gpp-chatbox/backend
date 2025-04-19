@@ -1,0 +1,23 @@
+The extracted flow property graph provides a largely accurate representation of the 3GPP registration procedure for initial registration from the UE perspective.  However, several aspects require further examination and potentially additions:
+
+**Strengths:**
+
+* **Comprehensive State Coverage:** The graph includes a good range of UE states, encompassing successful registration, various failure scenarios (e.g.,  `UE_5GMM_DEREGISTERED_NO_SUPI`, `UE_5GMM_DEREGISTERED_LIMITED_SERVICE`), and states related to timer expirations and retries.
+* **Detailed Event Handling:**  The graph captures key events like receiving REGISTRATION ACCEPT/REJECT messages, timer timeouts (T3510, T3511, T3502), lower layer failures, and TAI changes.
+* **Action and Parameter Specificity:**  Many edges clearly define actions (e.g., "Send_REGISTRATION_REQUEST_Start_Timers") and include parameters involved in messages, showing a good understanding of the message structure.
+* **Conditional Logic:** The graph effectively represents conditional logic based on various factors (e.g., timer status, 5GMM cause, registration attempt counter).
+
+
+**Areas for Improvement/Missing Information:**
+
+* **Missing Timer T3245:** The specification mentions timer T3245 in several rejection scenarios (e.g., 5GMM cause #11, #3, #6, #7).  This timer is not represented in the graph's nodes or edges.
+* **Incomplete 5GMM Cause Handling:** While many 5GMM cause values are addressed, the graph doesn't explicitly handle all possible causes mentioned in the specification.  The "Other values are considered as abnormal cases" is too broad and needs more granular detail.  Each 5GMM cause should have a corresponding path in the graph.
+* **Lack of Explicit Mobility Registration Update Procedure:** The graph includes the state `UE_Needs_Mobility_Update`, but the actual procedure for transitioning to and completing this procedure is missing.  This should be represented as a separate subgraph or set of edges.
+* **Unspecified Actions:** Some edges have empty properties or lack detailed descriptions of actions performed.  For example, "Process_REGISTRATION_REJECT_Other_Retry" needs more detail on how the retry is handled.
+* **Missing Section References:** Some edges are missing `section_reference` properties, making it harder to trace back to the specific section in the original specification.
+* **Simplification of Complex Logic:** The specification contains intricate logic around NSSAI handling, particularly concerning subsets, allowed/rejected/pending states, and NSSRG information. The graph might oversimplify this complexity.  A more detailed representation of NSSAI management would be beneficial.
+* **No Representation of 5GMM Common Procedures:** The specification mentions 5GMM common procedures (identification, authentication, security). These are not explicitly represented in the graph.
+* **Missing "REGISTRATION COMPLETE" Message Handling on Network Side:** The network's response to receiving the REGISTRATION COMPLETE message is not depicted.
+
+
+In summary, the extracted graph is a good starting point but needs refinement to fully capture the intricacies and all aspects of the 3GPP initial registration procedure as detailed in the provided specification.  The missing timers, incomplete 5GMM cause handling, and lack of detail in certain actions are the most significant omissions.  Adding these details would significantly improve the graph's accuracy and completeness.
