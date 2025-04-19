@@ -1,0 +1,245 @@
+
+[
+  {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to general NAS level mobility management congestion control,  5GMM cause #22 \"congestion\"."
+      },
+      {
+        "id": "transition2",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to operator determined barring in NB-N1 mode, 5GMM cause #22 \"congestion\"."
+      },
+      {
+        "id": "transition3",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to core network redirection for CIoT optimizations, 5GMM cause #31 \"Redirection to EPC required\"."
+      },
+      {
+        "id": "transition4",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected because all requested S-NSSAI(s) are rejected and conditions for 5GMM cause #62 are met."
+      },
+      {
+        "id": "transition5",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #62 \"No network slices available\"."
+      },
+      {
+        "id": "transition6",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #79 \"UAS services not allowed\"."
+      },
+      {
+        "id": "transition7",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #80 \"Disaster roaming for the determined PLMN with disaster condition not allowed\"."
+      },
+      {
+        "id": "transition8",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #81 \"Selected N3IWF is not compatible with the allowed NSSAI\"."
+      },
+      {
+        "id": "transition9",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #82 \"Selected TNGF is not compatible with the allowed NSSAI\"."
+      },
+      {
+        "id": "transition10",
+        "section_reference": "5.5.1.2.7",
+        "brief_description": "Abnormal case: Timer T3511 expires after multiple failed registration attempts."
+      },
+      {
+        "id": "transition11",
+        "section_reference": "5.5.1.2.2",
+        "brief_description": "UE initiates initial registration."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-REGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "Initial registration request accepted by the network."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "5GMM-DEREGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to various 5GMM causes (except #22 and #62)."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #62 \"No network slices available\"."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE receives REGISTRATION ACCEPT message with 5GS registration result value indicating \"3GPP access\" and is registered over non-3GPP access on the same PLMN or SNPN."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Various 5GMM causes lead to deregistration."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE receives REGISTRATION ACCEPT message via CAG cell, and none of the supported CAG-IDs are authorized, and conditions in 5.5.1.2.4 are met."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED.PLMN-SEARCH",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE receives REGISTRATION ACCEPT message via CAG cell, and none of the supported CAG-IDs are authorized, and conditions in 5.5.1.2.4 are met."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "to": "5GMM-REGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE finds a suitable cell after receiving REGISTRATION ACCEPT message in LIMITED-SERVICE state."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "to": "5GMM-REGISTERED.PLMN-SEARCH",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE finds no suitable cell after receiving REGISTRATION ACCEPT message in LIMITED-SERVICE state."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED.PLMN-SEARCH",
+    "to": "5GMM-REGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE completes PLMN selection process after being in PLMN-SEARCH state."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.4",
+        "brief_description": "UE receives REGISTRATION ACCEPT message with 5GS registration result value indicating \"3GPP access and non-3GPP access\"."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED.NO-SUPI",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #3 or #6."
+      },
+      {
+        "id": "transition2",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #7."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #3 or #6, and UE is performing initial registration for onboarding services in SNPN."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #27."
+      }
+    ]
+  },
+    {
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.5",
+        "brief_description": "Initial registration request rejected due to 5GMM cause #31."
+      }
+    ]
+  },
+  {
+    "from": "5GMM-DEREGISTERED.NO-SUPI",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "transitions": [
+      {
+        "id": "transition1",
+        "section_reference": "5.5.1.2.6",
+        "brief_description": "UE receives REGISTRATION REJECT message with 5GMM cause #5 \"PEI not accepted\"."
+      }
+    ]
+  }
+]

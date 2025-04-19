@@ -1,0 +1,394 @@
+
+{
+  "transitions": [
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to general NAS level mobility management congestion control"
+          ],
+          "actions": [
+            "Set 5GMM cause value to #22 \"congestion\"",
+            "Assign a value for back-off timer T3346"
+          ],
+          "section_reference": "5.5.1.2.5"
+        },
+        {
+          "id": "transition2",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "In NB-N1 mode",
+            "Due to operator determined barring"
+          ],
+          "actions": [
+            "Set 5GMM cause value to #22 \"congestion\"",
+            "Assign a value for back-off timer T3346"
+          ],
+          "section_reference": "5.5.1.2.5"
+        },
+        {
+          "id": "transition3",
+          "event(s)": [
+            "UE initiates initial registration"
+          ],
+          "conditions": [],
+          "actions": [
+            "Send REGISTRATION REQUEST message to the AMF",
+            "Start timer T3510",
+            "Stop timer T3502, if running",
+            "Stop timer T3511, if running"
+          ],
+          "section_reference": "5.5.1.2.2"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED",
+      "to_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message"
+          ],
+          "conditions": [
+            "5GS registration result value indicates \"3GPP access\"",
+            "UE is registered over non-3GPP access on the same PLMN or SNPN"
+          ],
+          "actions": [
+            "Set 5GS update status to 5U2 NOT UPDATED over non-3GPP access"
+          ],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to_state": "5GMM-DEREGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to various 5GMM causes (except #22 and #62)"
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED",
+      "to_state": "5GMM-DEREGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Various 5GMM causes"
+          ],
+          "conditions": [],
+          "actions": [
+            "Lead to deregistration"
+          ],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-REGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message"
+          ],
+          "conditions": [
+            "Initial registration request accepted by the network"
+          ],
+          "actions": [
+            "Reset the registration attempt counter",
+            "Set the 5GS update status to 5U1 UPDATED"
+          ],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #62 \"No network slices available\""
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED",
+      "to_state": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message via CAG cell"
+          ],
+          "conditions": [
+            "None of the supported CAG-IDs are authorized",
+            "Conditions in 5.5.1.2.4 are met"
+          ],
+          "actions": [
+            "Search for a suitable cell according to 3GPP TS 38.304 [28] or 3GPP TS 36.304 [25C] with the updated \"CAG information list\""
+          ],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "to_state": "5GMM-REGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE finds a suitable cell"
+          ],
+          "conditions": [
+            "After receiving REGISTRATION ACCEPT message in LIMITED-SERVICE state"
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED.PLMN-SEARCH",
+      "to_state": "5GMM-REGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE completes PLMN selection process"
+          ],
+          "conditions": [
+            "After being in PLMN-SEARCH state"
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED",
+      "to_state": "5GMM-REGISTERED",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message"
+          ],
+          "conditions": [
+            "5GS registration result value indicates \"3GPP access and non-3GPP access\""
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-DEREGISTERED.NO-SUPI",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #3 or #6"
+          ],
+          "actions": [
+            "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+            "Delete any 5G-GUTI, last visited registered TAI, TAI list and ngKSI",
+            "Consider the USIM as invalid for 5GS services until switching off, the UICC containing the USIM is removed or the timer T3245 expires",
+            "Delete the list of equivalent PLMNs (if any) or the list of equivalent SNPNs (if any)",
+            "Set the counter for \"SIM/USIM considered invalid for GPRS services\" events and the counter for \"USIM considered invalid for 5GS services over non-3GPP access\" events in case of PLMN if the UE maintains these counters to a UE implementation-specific maximum value"
+          ],
+          "section_reference": "5.5.1.2.5"
+        },
+        {
+          "id": "transition2",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #7"
+          ],
+          "actions": [
+            "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+            "Delete any 5G-GUTI, last visited registered TAI, TAI list and ngKSI",
+            "Consider the USIM as invalid for 5GS services until switching off, the UICC containing the USIM is removed or the timer T3245 expires",
+            "Enter the state 5GMM-DEREGISTERED.NO-SUPI",
+            "Set the counter for \"SIM/USIM considered invalid for GPRS services\" events and the counter for \"USIM considered invalid for 5GS services over non-3GPP access\" events in case of PLMN if the UE maintains these counters to a UE implementation-specific maximum value"
+          ],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #3 or #6",
+            "UE is performing initial registration for onboarding services in SNPN"
+          ],
+          "actions": [
+            "Reset the registration attempt counter",
+            "Store the SNPN identity in the \"permanently forbidden SNPNs for onboarding services in SNPN\" list",
+            "Perform an SNPN selection or an SNPN selection for onboarding services according to 3GPP TS 23.122 [5]",
+            "Set the SNPN-specific attempt counter for the current SNPN to the UE implementation-specific maximum value"
+          ],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #27"
+          ],
+          "actions": [
+            "Set the 5GS update status to 5U3 ROAMING NOT ALLOWED",
+            "Delete any 5G-GUTI, last visited registered TAI, TAI list and ngKSI",
+            "Reset the registration attempt counter",
+            "Set the PLMN-specific N1 mode attempt counter for 3GPP access and the PLMN-specific N1 mode attempt counter for non-3GPP access for that PLMN in case of PLMN or the SNPN-specific attempt counter for 3GPP access for the current SNPN in case of SNPN and the SNPN-specific attempt counter for non-3GPP access for the current SNPN to the UE implementation-specific maximum value",
+            "Disable the N1 mode capability for the specific access type for which the message was received",
+            "Disable the N1 mode capability also for the other access type"
+          ],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED",
+      "to_state": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "Initial registration request rejected"
+          ],
+          "conditions": [
+            "Due to 5GMM cause #31"
+          ],
+          "actions": [
+            "Set the 5GS update status to 5U3 ROAMING NOT ALLOWED",
+            "Delete any 5G-GUTI, last visited registered TAI, TAI list and ngKSI",
+            "Reset the registration attempt counter",
+            "Enable the E-UTRA capability if it was disabled",
+            "Disable the N1 mode capability for 3GPP access"
+          ],
+          "section_reference": "5.5.1.2.5"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-DEREGISTERED.NO-SUPI",
+      "to_state": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION REJECT message"
+          ],
+          "conditions": [
+            "With 5GMM cause #5 \"PEI not accepted\""
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.6"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED",
+      "to_state": "5GMM-REGISTERED.PLMN-SEARCH",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message via CAG cell"
+          ],
+          "conditions": [
+            "None of the supported CAG-IDs are authorized",
+            "Conditions in 5.5.1.2.4 are met"
+          ],
+          "actions": [
+            "Apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\""
+          ],
+          "section_reference": "5.5.1.2.4"
+        },
+        {
+          "id": "transition2",
+          "event(s)": [
+            "UE receives REGISTRATION ACCEPT message via non-CAG cell"
+          ],
+          "conditions": [
+            "The entry for the registered PLMN in the received \"CAG information list\" includes an \"indication that the UE is only allowed to access 5GS via CAG cells\"",
+            "Conditions in 5.5.1.2.4 are met"
+          ],
+          "actions": [
+            "Apply the PLMN selection process defined in 3GPP TS 23.122 [5] with the updated \"CAG information list\""
+          ],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    },
+    {
+      "from_state": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "to_state": "5GMM-REGISTERED.PLMN-SEARCH",
+      "transitions": [
+        {
+          "id": "transition1",
+          "event(s)": [
+            "UE finds no suitable cell"
+          ],
+          "conditions": [
+            "After receiving REGISTRATION ACCEPT message in LIMITED-SERVICE state"
+          ],
+          "actions": [],
+          "section_reference": "5.5.1.2.4"
+        }
+      ]
+    }
+  ]
+}
