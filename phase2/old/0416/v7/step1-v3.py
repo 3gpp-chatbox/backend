@@ -28,7 +28,7 @@ def extract_procedural_info_from_text(section_name, text):
 
 You will be provided with original content from 3GPP specification sections describing the procedure: "{section_name}".
 
-Your task is to extract the **Flow Property Graph (FPG)** for this procedure **on the UE side only**, and represent it as a structured JSON object following the format defined below.
+Your task is to extract the **Flow Property Graph (FPG)** for this procedure  "{section_name}"**on the UE side only**, and represent it as a structured JSON object following the format defined below.
 
 **Do not infer or assume any information beyond what is explicitly stated in the provided text.** Focus only on the information that is directly described and avoid including anything implied.
 
@@ -39,7 +39,6 @@ Your task is to extract the **Flow Property Graph (FPG)** for this procedure **o
 Build a flow property graph where:
 - **Nodes** are UE states or events (e.g., timer expiry, message reception).
 - **Edges** represent transitions triggered by events, showing **explicit** actions the UE performs.
-- The graph must include metadata, conditions, parameters, and context **only if they are explicitly stated**.
 
 ---
 
@@ -47,14 +46,13 @@ Build a flow property graph where:
 
 States: Only include explicitly named UE states from the specification (e.g., "5GMM-DEREGISTERED", "5GMM-REGISTERED"). These represent distinct states of the UE during the procedure.
 
-Events: UE-visible triggers that cause a transition in the flow. events are always things that happen to the UE, not things the UE does. They often start with words like "Receive", "Timer expires", etc.If "Reject" refers to something the UE receives, treat it as an event.
--------
-Actions: describe what the UE does in response to an event or condition, like sending a message, storing context, or attempting a registration.If the UE initiates the rejection or sends a failure message, it's an action (usually phrased as "Send X FAILURE").Only include UE-side actions that are **explicitly described** in the text.
+Events: UE-visible triggers that cause a transition in the flow, such as received messages or timer expiries. Events should describe things that happen to the UE. These are typically messages the UE receives or external triggers (e.g., "Receive DEREGISTRATION REQUEST", "T3510 expires", etc.).
 
-Conditions: These are explicit evaluations or checks that must be true or false to trigger a transition. They act as gating conditions for the flow. Conditions describe whether certain criteria (such as counter values or state validity) are met. (For example:"Registration counter < 5" "UE context is valid")
+Conditions: These are checks or criteria that must be true to trigger a transition. For example: "Registration counter < 5". Conditions describe whether something is true or not but are not nodes.
+
+Actions: These are the things the UE does in response to an event or condition. For example: "Send REGISTRATION REJECT". Do not include actions as event nodes; they should only appear in the edge labels representing transitions.
 
 Label: A short description (10-20 words) summarizing the transition, Focus on the Primary Trigger,Include Only Gating Conditions That Matter,Describe Only the Primary UE Action,Use Simple,Specific Language(e.g.,"REGISTRATION REJECT received, context invalid, retry allowed — send new REGISTRATION REQUEST")
-
 
 Key Notes:
 Flow Property Graph Structure: You may internally identify actions and conditions to help with the flow structure, but do not include them in the final JSON output. Only include the nodes (states and events) and edges (which are transitions between nodes).

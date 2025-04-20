@@ -1,0 +1,374 @@
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "name": "5GMM-DEREGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node2",
+      "name": "REGISTRATION REQUEST Sent",
+      "type": "event"
+    },
+    {
+      "id": "node3",
+      "name": "5GMM-REGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node4",
+      "name": "5GMM-DEREGISTERED.NO-SUPI",
+      "type": "state"
+    },
+    {
+      "id": "node5",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "type": "state"
+    },
+    {
+      "id": "node6",
+      "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "type": "state"
+    },
+    {
+      "id": "node7",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "type": "state"
+    },
+    {
+      "id": "node8",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "type": "state"
+    },
+    {
+      "id": "node9",
+      "name": "T3511 Timeout",
+      "type": "event"
+    },
+    {
+      "id": "node10",
+      "name": "T3502 Timeout",
+      "type": "event"
+    },
+    {
+      "id": "node11",
+      "name": "(De-registration Procedure)",
+      "type": "event"
+    },
+    {
+      "id": "node12",
+      "name": "(Mobility Update Procedure)",
+      "type": "event"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "5GMM-DEREGISTERED",
+      "to": "REGISTRATION REQUEST Sent",
+      "label": "UE initiates initial registration, sends REGISTRATION REQUEST, starts T3510",
+      "section_reference": "5.5.1.2.2"
+    },
+    {
+      "id": "edge2",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-REGISTERED",
+      "label": "REGISTRATION ACCEPT received, reset counter, enter 5GMM-REGISTERED, store context, stop T3510 (send COMPLETE if needed)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge3",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "REGISTRATION REJECT (#3/#6/#7) received, stop T3510, set status ROAMING NOT ALLOWED, delete context, consider USIM/SNPN invalid",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge4",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "REGISTRATION REJECT (#5) received (Emergency), stop T3510",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge5",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#11) received, stop T3510, set status ROAMING NOT ALLOWED, delete context, add PLMN to forbidden list, start T3245",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge6",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "REGISTRATION REJECT (#12) received, stop T3510, set status ROAMING NOT ALLOWED, delete TAI list, store TAI in forbidden regional list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge7",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "REGISTRATION REJECT (#13) received, stop T3510, set status ROAMING NOT ALLOWED, delete TAI list, store TAI in forbidden roaming list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge8",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "REGISTRATION REJECT (#15) received, stop T3510, set status ROAMING NOT ALLOWED, delete TAI list, store TAI in forbidden roaming list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge9",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (#22) received, stop T3510, abort procedure, set status NOT UPDATED, reset counter, start T3346",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge10",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "REGISTRATION REJECT (#27) received, stop T3510, set status ROAMING NOT ALLOWED, delete context, disable N1 mode, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge11",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "label": "REGISTRATION REJECT (#31) received, stop T3510, set status ROAMING NOT ALLOWED, delete context, disable N1 for 3GPP, enable E-UTRA, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge12",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (#62) received, stop T3510, abort procedure, set status NOT UPDATED, reset counter, store rejected NSSAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge13",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED",
+      "label": "REGISTRATION REJECT (#72) received (non-3GPP), stop T3510, set status ROAMING NOT ALLOWED, delete context (non-3GPP), disable N1 for non-3GPP, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge14",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#73) received, stop T3510, set status ROAMING NOT ALLOWED, delete context, add PLMN to forbidden list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge15",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#74) received (SNPN), stop T3510, set status ROAMING NOT ALLOWED, delete context, add SNPN to temporary forbidden list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge16",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#75) received (SNPN), stop T3510, set status ROAMING NOT ALLOWED, delete context, add SNPN to permanent forbidden list, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge17",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "REGISTRATION REJECT (#76) received (CAG), stop T3510, set status ROAMING NOT ALLOWED, update/store CAG info, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge18",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#78) received (Satellite), stop T3510, set status ROAMING NOT ALLOWED, delete context, add PLMN to 'not allowed at location' list, start timer, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge19",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (#79) received (UAS), stop T3510, abort procedure, set status NOT UPDATED, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge20",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (#80) received (Disaster Roaming), stop T3510, abort procedure, set status NOT UPDATED, delete context, reset counter, do not retry DR on this PLMN for period",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge21",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (#81) received (N3IWF), stop T3510, abort procedure, set status NOT UPDATED, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge22",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (#82) received (TNGF), stop T3510, abort procedure, set status NOT UPDATED, reset counter",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge23",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (Other Abnormal) received, stop T3510, counter < 5, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge24",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "REGISTRATION REJECT (Other Abnormal) received, stop T3510, counter = 5, delete context, start T3502, set status NOT UPDATED",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge25",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "REGISTRATION REJECT (Other Abnormal) received, stop T3510, counter = 5, delete context, start T3502, set status NOT UPDATED (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge26",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 expires, counter < 5, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge27",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 expires, counter = 5, delete context, start T3502, set status NOT UPDATED",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge28",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "T3510 expires, counter = 5, delete context, start T3502, set status NOT UPDATED (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge29",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower layer failure before response, stop T3510, counter < 5, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge30",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower layer failure before response, stop T3510, counter = 5, delete context, start T3502, set status NOT UPDATED",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge31",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Lower layer failure before response, stop T3510, counter = 5, delete context, start T3502, set status NOT UPDATED (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge32",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3511 Timeout",
+      "label": "T3511 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge33",
+      "from": "T3511 Timeout",
+      "to": "REGISTRATION REQUEST Sent",
+      "label": "Restart initial registration: Send REGISTRATION REQUEST, start T3510",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge34",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3502 Timeout",
+      "label": "T3502 expires (after counter=5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge35",
+      "from": "T3502 Timeout",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Perform actions defined for T3502 expiry (e.g., PLMN selection)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge36",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "REGISTRATION REQUEST Sent",
+      "label": "TAI changes before procedure completion, abort and re-initiate",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge37",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "REGISTRATION REQUEST Sent",
+      "label": "Lower layers indicate REGISTRATION REQUEST transmission failure, abort and re-initiate immediately",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge38",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "(De-registration Procedure)",
+      "label": "UE needs to de-register, abort registration, perform de-registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge39",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "REGISTRATION REQUEST Sent",
+      "label": "DEREGISTRATION REQUEST received from network, abort de-registration, continue initial registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge40",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Access for localized services no longer allowed, abort, reset counter, stop T3510, release connection",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge41",
+      "from": "REGISTRATION REQUEST Sent",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Access for localized services no longer allowed, abort, reset counter, stop T3510, release connection",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge42",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED",
+      "label": "REG COMPLETE Tx fails, TAI changes but is still in TAI list, resend REGISTRATION COMPLETE",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge43",
+      "from": "5GMM-REGISTERED",
+      "to": "(Mobility Update Procedure)",
+      "label": "REG COMPLETE Tx fails, TAI changes and is not in TAI list, abort initial registration, initiate mobility registration update",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge44",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED",
+      "label": "REG COMPLETE Tx fails, no TAI change, UE implementation specific re-run",
+      "section_reference": "5.5.1.2.7"
+    }
+  ]
+}

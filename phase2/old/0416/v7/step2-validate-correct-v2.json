@@ -1,0 +1,455 @@
+```json
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "name": "5GMM-DEREGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node2",
+      "name": "5GMM-REGISTERED-INITIATED",
+      "type": "state"
+    },
+    {
+      "id": "node3",
+      "name": "5GMM-REGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node4",
+      "name": "5GMM-DEREGISTERED.NO-SUPI",
+      "type": "state"
+    },
+    {
+      "id": "node5",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "type": "state"
+    },
+    {
+      "id": "node6",
+      "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "type": "state"
+    },
+    {
+      "id": "node7",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "type": "state"
+    },
+    {
+      "id": "node8",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "type": "state"
+    },
+    {
+      "id": "node9",
+      "name": "T3511 Timeout",
+      "type": "event"
+    },
+    {
+      "id": "node10",
+      "name": "T3502 Timeout",
+      "type": "event"
+    },
+    {
+      "id": "node11",
+      "name": "Receive REGISTRATION ACCEPT",
+      "type": "event"
+    },
+    {
+      "id": "node12",
+      "name": "Receive REGISTRATION REJECT",
+      "type": "event"
+    },
+    {
+      "id": "node13",
+      "name": "T3510 expires",
+      "type": "event"
+    },
+    {
+      "id": "node14",
+      "name": "Lower layer failure",
+      "type": "event"
+    },
+    {
+      "id": "node15",
+      "name": "TAI change",
+      "type": "event"
+    },
+    {
+      "id": "node16",
+      "name": "Transmission failure (REG REQ)",
+      "type": "event"
+    },
+    {
+      "id": "node17",
+      "name": "Receive DEREGISTRATION REQUEST",
+      "type": "event"
+    },
+    {
+      "id": "node18",
+      "name": "Access for localized services no longer allowed",
+      "type": "event"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "UE initiates initial registration",
+      "section_reference": "5.5.1.2.2"
+    },
+    {
+      "id": "edge2",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive REGISTRATION ACCEPT",
+      "label": "REGISTRATION ACCEPT received",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge3",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED",
+      "label": "Enter 5GMM-REGISTERED state",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge4",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive REGISTRATION REJECT",
+      "label": "REGISTRATION REJECT received",
+      "section_reference": "5.5.1.2.5, 5.5.1.2.6, 5.5.1.2.7"
+    },
+    {
+      "id": "edge5",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Cause #3/#6/#7",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge6",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Cause #5 (Emergency)",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge7",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #11",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge8",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Cause #12",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge9",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Cause #13",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge10",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Cause #15",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge11",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Cause #22",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge12",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Cause #27",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge13",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "label": "Cause #31",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge14",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Cause #62",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge15",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Cause #72",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge16",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #73",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge17",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #74",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge18",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #75",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge19",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Cause #76 (CAG cases 1.i, 1.iii)",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge20",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #76 (CAG cases 1.ii, 2.ii)",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge21",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #78",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge22",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Cause #79",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge23",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Cause #80",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge24",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Cause #81",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge25",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Cause #82",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge26",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Other abnormal, counter < 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge27",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Other abnormal, counter = 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge28",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Other abnormal, counter = 5 (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge29",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "T3510 expires",
+      "label": "T3510 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge30",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Counter < 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge31",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Counter = 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge32",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Counter = 5 (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge33",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Lower layer failure",
+      "label": "Lower layer failure occurs",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge34",
+      "from": "Lower layer failure",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Counter < 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge35",
+      "from": "Lower layer failure",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Counter = 5",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge36",
+      "from": "Lower layer failure",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Counter = 5 (optional PLMN search)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge37",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3511 Timeout",
+      "label": "T3511 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge38",
+      "from": "T3511 Timeout",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Restart initial registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge39",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3502 Timeout",
+      "label": "T3502 expires (after counter=5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge40",
+      "from": "T3502 Timeout",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Perform actions for T3502 expiry",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge41",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "TAI change",
+      "label": "TAI changes",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge42",
+      "from": "TAI change",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Abort and re-initiate registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge43",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Transmission failure (REG REQ)",
+      "label": "REG REQ transmission fails",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge44",
+      "from": "Transmission failure (REG REQ)",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Abort and re-initiate registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge45",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive DEREGISTRATION REQUEST",
+      "label": "DEREGISTRATION REQUEST received",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge46",
+      "from": "Receive DEREGISTRATION REQUEST",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Continue initial registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge47",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Access for localized services no longer allowed",
+      "label": "Access for localized services no longer allowed",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge48",
+      "from": "Access for localized services no longer allowed",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Abort registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge49",
+      "from": "Access for localized services no longer allowed",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Abort registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge50",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "label": "CAG info causes LIMITED-SERVICE",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge51",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED.PLMN-SEARCH",
+      "label": "CAG info causes PLMN-SEARCH",
+      "section_reference": "5.5.1.2.4"
+    }
+  ]
+}
+```

@@ -1,0 +1,607 @@
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "name": "5GMM-DEREGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node2",
+      "name": "5GMM-REGISTERED-INITIATED",
+      "type": "state"
+    },
+    {
+      "id": "node3",
+      "name": "Receive REGISTRATION ACCEPT",
+      "type": "event"
+    },
+    {
+      "id": "node4",
+      "name": "Send REGISTRATION COMPLETE",
+      "type": "event"
+    },
+    {
+      "id": "node5",
+      "name": "5GMM-REGISTERED",
+      "type": "state"
+    },
+    {
+      "id": "node6",
+      "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "type": "state"
+    },
+    {
+      "id": "node7",
+      "name": "5GMM-REGISTERED.PLMN-SEARCH",
+      "type": "state"
+    },
+    {
+      "id": "node8",
+      "name": "Locally Release NAS Connection (SOR Issue)",
+      "type": "event"
+    },
+    {
+      "id": "node9",
+      "name": "Initiate Mobility Registration Update (RACS Deletion)",
+      "type": "event"
+    },
+    {
+      "id": "node10",
+      "name": "Receive REGISTRATION REJECT",
+      "type": "event"
+    },
+    {
+      "id": "node11",
+      "name": "5GMM-DEREGISTERED.NO-SUPI",
+      "type": "state"
+    },
+    {
+      "id": "node12",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "type": "state"
+    },
+    {
+      "id": "node13",
+      "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "type": "state"
+    },
+    {
+      "id": "node14",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "type": "state"
+    },
+    {
+      "id": "node15",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "type": "state"
+    },
+    {
+      "id": "node16",
+      "name": "Inform Upper Layers (Emergency Reject)",
+      "type": "event"
+    },
+    {
+      "id": "node17",
+      "name": "Perform PLMN/SNPN Selection (Emergency Reject Shared Network)",
+      "type": "event"
+    },
+    {
+      "id": "node18",
+      "name": "Inform Upper Layers (Emergency PDU Reject)",
+      "type": "event"
+    },
+    {
+      "id": "node19",
+      "name": "Attempt Emergency Registration",
+      "type": "event"
+    },
+    {
+      "id": "node20",
+      "name": "T3510 expires",
+      "type": "event"
+    },
+    {
+      "id": "node21",
+      "name": "Lower Layer Failure / NAS Release",
+      "type": "event"
+    },
+    {
+      "id": "node22",
+      "name": "Initiate De-registration",
+      "type": "event"
+    },
+    {
+      "id": "node23",
+      "name": "Receive DEREGISTRATION REQUEST",
+      "type": "event"
+    },
+    {
+      "id": "node24",
+      "name": "TAI Change",
+      "type": "event"
+    },
+    {
+      "id": "node25",
+      "name": "Initiate Mobility Registration Update (TAI Change)",
+      "type": "event"
+    },
+    {
+      "id": "node26",
+      "name": "REG COMPLETE Tx Fail + TAI Change",
+      "type": "event"
+    },
+    {
+      "id": "node27",
+      "name": "REG REQUEST Tx Fail",
+      "type": "event"
+    },
+    {
+      "id": "node28",
+      "name": "Localized SNPN Access No Longer Allowed",
+      "type": "event"
+    },
+    {
+      "id": "node29",
+      "name": "T3511 expires",
+      "type": "event"
+    },
+    {
+      "id": "node30",
+      "name": "T3502 expires",
+      "type": "event"
+    },
+    {
+      "id": "node31",
+      "name": "T3346 expires",
+      "type": "event"
+    },
+    {
+      "id": "node32",
+      "name": "T3447 expires",
+      "type": "event"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Initiate Initial Registration",
+      "section_reference": "5.5.1.2.2"
+    },
+    {
+      "id": "edge2",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive REGISTRATION ACCEPT",
+      "label": "Receive REGISTRATION ACCEPT",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge3",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED",
+      "label": "Registration Accepted",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge4",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "Send REGISTRATION COMPLETE",
+      "label": "Send REG COMPLETE (Ack Required)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge5",
+      "from": "Send REGISTRATION COMPLETE",
+      "to": "5GMM-REGISTERED",
+      "label": "Registration Complete Sent",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge6",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "label": "Reg Accept (CAG -> Limited Service)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge7",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "5GMM-REGISTERED.PLMN-SEARCH",
+      "label": "Reg Accept (CAG -> PLMN Search)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge8",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "Locally Release NAS Connection (SOR Issue)",
+      "label": "Reg Accept (SOR Fail/Missing, Roam)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge9",
+      "from": "Send REGISTRATION COMPLETE",
+      "to": "Locally Release NAS Connection (SOR Issue)",
+      "label": "Reg Complete Sent (SOR OK, Roam)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge10",
+      "from": "Locally Release NAS Connection (SOR Issue)",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Connection Released Locally",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge11",
+      "from": "Receive REGISTRATION ACCEPT",
+      "to": "Initiate Mobility Registration Update (RACS Deletion)",
+      "label": "Reg Accept (RACS Deletion)",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge12",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive REGISTRATION REJECT",
+      "label": "Receive REGISTRATION REJECT",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge13",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Reject (#3/#6/#7) -> No SUPI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge14",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Reject (#10 Wireline) -> Deregistered",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge15",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Reject (#11/#36/#73/#74/#75/#78/#80) -> PLMN Search",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge16",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Reject (#11/#12/#13/#15/#27/#72/#73/#74/#75) -> Limited Service",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge17",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Reject (#22/#62/#79/#81/#82) -> Attempting Reg",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge18",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "label": "Reject (#31) -> No Cell Available",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge19",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Reject (#76 CAG) -> PLMN Search",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge20",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Reject (#76 CAG) -> Limited Service",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge21",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Reject (#77 Wireline) -> Deregistered",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge22",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Reject (#62 Slices) -> PLMN Search",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge23",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Reject (#62 Slices) -> Limited Service",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge24",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Reject (#3/#6/#7 Onboarding) -> PLMN Search",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge25",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Emergency Reject (#5) -> No SUPI",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge26",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "Inform Upper Layers (Emergency Reject)",
+      "label": "Emergency Reject (Other Cause)",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge27",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "Perform PLMN/SNPN Selection (Emergency Reject Shared Network)",
+      "label": "Emergency Reject (Shared Network Option)",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge28",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "Inform Upper Layers (Emergency PDU Reject)",
+      "label": "Emergency PDU Reject (Option 1)",
+      "section_reference": "5.5.1.2.6A"
+    },
+    {
+      "id": "edge29",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "Attempt Emergency Registration",
+      "label": "Emergency PDU Reject (Option 2 / Handover)",
+      "section_reference": "5.5.1.2.6A"
+    },
+    {
+      "id": "edge30",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "T3510 expires",
+      "label": "T3510 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge31",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 Expired (Attempts < 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge32",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 Expired (Attempts = 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge33",
+      "from": "T3510 expires",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "T3510 Expired (Attempts = 5, Optional)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge34",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Abnormal Reject (Attempts < 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge35",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Abnormal Reject (Attempts = 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge36",
+      "from": "Receive REGISTRATION REJECT",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Abnormal Reject (Attempts = 5, Optional)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge37",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Lower Layer Failure / NAS Release",
+      "label": "Lower Layer Failure / NAS Release",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge38",
+      "from": "Lower Layer Failure / NAS Release",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower Layer Failure (Attempts < 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge39",
+      "from": "Lower Layer Failure / NAS Release",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower Layer Failure (Attempts = 5)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge40",
+      "from": "Lower Layer Failure / NAS Release",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Lower Layer Failure (Attempts = 5, Optional)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge41",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Initiate De-registration",
+      "label": "De-registration Required",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge42",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Receive DEREGISTRATION REQUEST",
+      "label": "Receive DEREGISTRATION REQUEST",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge43",
+      "from": "Receive DEREGISTRATION REQUEST",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Dereg Request Received, Continue Reg",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge44",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "TAI Change",
+      "label": "TAI Change (Before Accept/Reject)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge45",
+      "from": "TAI Change",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Abort & Re-initiate Registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge46",
+      "from": "Send REGISTRATION COMPLETE",
+      "to": "TAI Change",
+      "label": "TAI Change (After Accept)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge47",
+      "from": "TAI Change",
+      "to": "Initiate Mobility Registration Update (TAI Change)",
+      "label": "Abort & Initiate Mobility Update",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge48",
+      "from": "Send REGISTRATION COMPLETE",
+      "to": "REG COMPLETE Tx Fail + TAI Change",
+      "label": "REG COMPLETE Tx Fail + TAI Change",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge49",
+      "from": "REG COMPLETE Tx Fail + TAI Change",
+      "to": "Send REGISTRATION COMPLETE",
+      "label": "Resend REG COMPLETE (TAI in list)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge50",
+      "from": "REG COMPLETE Tx Fail + TAI Change",
+      "to": "Initiate Mobility Registration Update (TAI Change)",
+      "label": "Abort & Initiate Mobility Update",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge51",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "REG REQUEST Tx Fail",
+      "label": "REG REQUEST Tx Fail",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge52",
+      "from": "REG REQUEST Tx Fail",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Abort & Re-initiate Registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge53",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Localized SNPN Access No Longer Allowed",
+      "label": "Localized SNPN Access No Longer Allowed",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge54",
+      "from": "Localized SNPN Access No Longer Allowed",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Abort Reg (Localized SNPN)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge55",
+      "from": "Localized SNPN Access No Longer Allowed",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Abort Reg (Localized SNPN, Optional)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge56",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3511 expires",
+      "label": "T3511 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge57",
+      "from": "T3511 expires",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Restart Initial Registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge58",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3502 expires",
+      "label": "T3502 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge59",
+      "from": "T3502 expires",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Perform PLMN Selection",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge60",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "T3346 expires",
+      "label": "T3346 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge61",
+      "from": "T3346 expires",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Initiate Initial Registration (if needed)",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge62",
+      "from": "5GMM-DEREGISTERED",
+      "to": "T3447 expires",
+      "label": "T3447 expires",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge63",
+      "from": "T3447 expires",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Initiate Initial Registration (if needed)",
+      "section_reference": "5.5.1.2.7"
+    }
+  ]
+}
