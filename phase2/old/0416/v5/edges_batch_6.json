@@ -1,0 +1,240 @@
+[
+  {
+    "id": "edge51",
+    "from": "5GMM-REGISTERED",
+    "to": "REGISTRATION_COMPLETE_Sent",
+    "action": [
+      "Send REGISTRATION COMPLETE message"
+    ],
+    "condition": [
+      "LowerLayer_TAI_Change (after ACCEPT, before COMPLETE)",
+      "New TAI is in the TAI list"
+    ],
+    "properties": {
+      "parameters": [
+        "Current TAI",
+        "TAI list"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION COMPLETE"
+      },
+      "section_reference": "5.5.1.2.7 (h)"
+    }
+  },
+  {
+    "id": "edge52",
+    "from": "5GMM-REGISTERED",
+    "to": "Abort_And_Start_Mobility_Update",
+    "action": [
+      "Abort initial registration procedure",
+      "Initiate mobility registration update procedure (using allocated 5G-GUTI if available)"
+    ],
+    "condition": [
+      "LowerLayer_TAI_Change (after ACCEPT, before COMPLETE)",
+      "New TAI is NOT in the TAI list"
+    ],
+    "properties": {
+      "parameters": [
+        "Current TAI",
+        "TAI list",
+        "5G-GUTI"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (h)"
+    }
+  },
+  {
+    "id": "edge53",
+    "from": "5GMM-REGISTERED",
+    "to": "REGISTRATION_COMPLETE_Sent",
+    "action": [
+      "Resend REGISTRATION COMPLETE message"
+    ],
+    "condition": [
+      "LowerLayer_TxFailure_REG_COMP",
+      "LowerLayer_TAI_Change",
+      "New TAI is in the TAI list"
+    ],
+    "properties": {
+      "parameters": [
+        "Current TAI",
+        "TAI list"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION COMPLETE"
+      },
+      "section_reference": "5.5.1.2.7 (i)"
+    }
+  },
+  {
+    "id": "edge54",
+    "from": "5GMM-REGISTERED",
+    "to": "Abort_And_Start_Mobility_Update",
+    "action": [
+      "Abort initial registration procedure",
+      "Initiate mobility registration update procedure"
+    ],
+    "condition": [
+      "LowerLayer_TxFailure_REG_COMP",
+      "LowerLayer_TAI_Change",
+      "New TAI is NOT in the TAI list"
+    ],
+    "properties": {
+      "parameters": [
+        "Current TAI",
+        "TAI list"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (i)"
+    }
+  },
+  {
+    "id": "edge55",
+    "from": "5GMM-REGISTERED",
+    "to": "Retry_REG_COMP_Transmission",
+    "action": [
+      "UE implementation specific re-run of sending REGISTRATION COMPLETE"
+    ],
+    "condition": [
+      "LowerLayer_TxFailure_REG_COMP",
+      "No TAI change"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (j)"
+    }
+  },
+  {
+    "id": "edge56",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Abort_And_Reinitiate",
+    "action": [
+      "Abort initial registration procedure",
+      "Re-initiate initial registration procedure immediately"
+    ],
+    "condition": [
+      "LowerLayer_TxFailure_REG_REQ"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (k)"
+    }
+  },
+  {
+    "id": "edge57",
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED",
+    "action": [
+      "Do not start initial registration procedure",
+      "Stay in current serving cell, apply normal cell reselection"
+    ],
+    "condition": [
+      "T3346_Running_Check",
+      "T3346 is running",
+      "Not high priority access",
+      "Not emergency registration",
+      "Not re-registration required",
+      "Not exception data reporting",
+      "Not emergency PDU session initiation"
+    ],
+    "properties": {
+      "parameters": [
+        "T3346"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (a)"
+    }
+  },
+  {
+    "id": "edge58",
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED",
+    "action": [
+      "Do not start initial registration procedure",
+      "Stay in current serving cell, apply normal cell reselection"
+    ],
+    "condition": [
+      "LowerLayer_AccessBarred (before sending request)"
+    ],
+    "properties": {
+      "parameters": [
+        "Access Category"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (b)"
+    }
+  },
+  {
+    "id": "edge59",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_General_Failure",
+    "action": [
+      "Abort registration procedure"
+    ],
+    "condition": [
+      "LowerLayer_AccessBarred (after sending request)"
+    ],
+    "properties": {
+      "parameters": [
+        "Access Category"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (ba)"
+    }
+  },
+  {
+    "id": "edge60",
+    "from": "5GMM-DEREGISTERED",
+    "to": "5GMM-DEREGISTERED",
+    "action": [
+      "Do not start initial registration procedure with Follow-on request indicator set",
+      "Stay in current serving cell, apply normal cell reselection"
+    ],
+    "condition": [
+      "T3447_Running_Check",
+      "T3447 is running",
+      "Not high priority access",
+      "Not emergency registration"
+    ],
+    "properties": {
+      "parameters": [
+        "T3447",
+        "Follow-on request indicator"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (l)"
+    }
+  }
+]

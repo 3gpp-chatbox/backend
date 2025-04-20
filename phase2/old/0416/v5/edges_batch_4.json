@@ -1,0 +1,253 @@
+[
+  {
+    "id": "edge31",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_General_Failure",
+    "action": [
+      "Stop timer T3510 (if running)",
+      "Abort registration procedure"
+    ],
+    "condition": [
+      "LowerLayer_Failure"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (e)"
+    }
+  },
+  {
+    "id": "edge32",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_General_Failure",
+    "action": [
+      "Stop timer T3510 (if running)",
+      "Abort registration procedure",
+      "If cause is #95, #96, #97, #99, #111 and not emergency/existing emergency PDU session: Set registration_attempt_counter to 5"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_REJECT",
+      "5GMM cause is an abnormal case (not handled in 5.5.1.2.5) or #10, #11, #15, #22, #31, #36, #72, #73, #74, #75, #76, #77, #78, #79, #80, #81, #82 treated as abnormal"
+    ],
+    "properties": {
+      "parameters": [
+        "5GMM cause",
+        "registration_attempt_counter"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION REJECT"
+      },
+      "section_reference": "5.5.1.2.7 (d)"
+    }
+  },
+  {
+    "id": "edge33",
+    "from": "Handle_General_Failure",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "action": [
+      "Increment registration_attempt_counter",
+      "Start timer T3511",
+      "Change state to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    ],
+    "condition": [
+      "registration_attempt_counter < 5",
+      "Initial registration was not for emergency services"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "T3511"
+      ],
+      "context": {},
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge34",
+    "from": "Handle_General_Failure",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "action": [
+      "Delete TAI list, last visited registered TAI",
+      "Set 5GS update status to 5U2 NOT UPDATED",
+      "If not registered on other access: Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list",
+      "Start timer T3502",
+      "Change state to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "If single-registration mode (3GPP access): Handle EMM parameters, attempt E-UTRAN selection, may disable N1 mode"
+    ],
+    "condition": [
+      "registration_attempt_counter = 5",
+      "T3502 value > 0"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "TAI list",
+        "5G-GUTI",
+        "ngKSI",
+        "Equivalent PLMN/SNPN list",
+        "5GS update status",
+        "T3502"
+      ],
+      "context": {},
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge35",
+    "from": "Handle_General_Failure",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "action": [
+      "Delete TAI list, last visited registered TAI",
+      "Set 5GS update status to 5U2 NOT UPDATED",
+      "If not registered on other access: Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list",
+      "Start timer T3502",
+      "Change state to 5GMM-DEREGISTERED.PLMN-SEARCH",
+      "Perform PLMN/SNPN selection",
+      "If single-registration mode (3GPP access): Handle EMM parameters, attempt E-UTRAN selection, may disable N1 mode"
+    ],
+    "condition": [
+      "registration_attempt_counter = 5",
+      "T3502 value > 0",
+      "UE chooses to perform PLMN/SNPN selection"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "TAI list",
+        "5G-GUTI",
+        "ngKSI",
+        "Equivalent PLMN/SNPN list",
+        "5GS update status",
+        "T3502"
+      ],
+      "context": {},
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge36",
+    "from": "Handle_General_Failure",
+    "to": "Perform_T3502_Expiry_Actions",
+    "action": [
+      "Delete TAI list, last visited registered TAI",
+      "Set 5GS update status to 5U2 NOT UPDATED",
+      "If not registered on other access: Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list",
+      "Perform actions defined for T3502 expiry",
+      "If single-registration mode (3GPP access): Handle EMM parameters, attempt E-UTRAN selection, may disable N1 mode"
+    ],
+    "condition": [
+      "registration_attempt_counter = 5",
+      "T3502 value = 0"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "TAI list",
+        "5G-GUTI",
+        "ngKSI",
+        "Equivalent PLMN/SNPN list",
+        "5GS update status",
+        "T3502"
+      ],
+      "context": {},
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge37",
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "Initial_Registration_Trigger",
+    "action": [
+      "Restart initial registration procedure (if still required)"
+    ],
+    "condition": [
+      "T3511_Expiry"
+    ],
+    "properties": {
+      "parameters": [
+        "T3511"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge38",
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "Initial_Registration_Trigger",
+    "action": [
+      "Start initial registration procedure (if still needed)"
+    ],
+    "condition": [
+      "T3346_Expiry"
+    ],
+    "properties": {
+      "parameters": [
+        "T3346"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.5 (Cause #22)"
+    }
+  },
+  {
+    "id": "edge39",
+    "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "to": "Perform_T3502_Expiry_Actions",
+    "action": [
+      "Perform actions defined for T3502 expiry"
+    ],
+    "condition": [
+      "T3502_Expiry"
+    ],
+    "properties": {
+      "parameters": [
+        "T3502"
+      ],
+      "context": {
+        "UE State": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7"
+    }
+  },
+  {
+    "id": "edge40",
+    "from": "5GMM-REGISTERED",
+    "to": "REGISTRATION_COMPLETE_Sent",
+    "action": [
+      "Send REGISTRATION COMPLETE message",
+      "Include SOR transparent container IE with acknowledgement if required by SOR container in REG ACCEPT"
+    ],
+    "condition": [
+      "Acknowledgement required for specific IEs received in REGISTRATION ACCEPT (GUTI, SOR, Op-def AC, Emerg#, CAG, PEIPS, RadioCapID, TruncatedTMSI, SvcLvlAA, NSSAI updates, NSAG, On-demand NSSAI, Alt NSSAI, NSSRG, S-NSSAI time/loc validity)"
+    ],
+    "properties": {
+      "parameters": [
+        "SOR transparent container"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION COMPLETE"
+      },
+      "section_reference": "5.5.1.2.4"
+    }
+  }
+]

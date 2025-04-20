@@ -1,0 +1,1414 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "5GMM-DEREGISTERED",
+      "type": "state",
+      "properties": {},
+      "parameters": ["registration_attempt_counter", "T3502", "T3511", "T3346", "T3447", "5GS update status", "5G-GUTI", "TAI list", "ngKSI", "equivalent PLMN/SNPN list", "NSSAI info", "CAG info"]
+    },
+    {
+      "id": "n2",
+      "name": "5GMM-REGISTERED-INITIATED",
+      "type": "state",
+      "properties": {
+        "description": "State after sending REGISTRATION REQUEST, waiting for response or T3510 expiry."
+      },
+      "parameters": ["T3510", "registration_attempt_counter"]
+    },
+    {
+      "id": "n3",
+      "name": "5GMM-REGISTERED",
+      "type": "state",
+      "properties": {},
+      "parameters": ["5GS update status", "TAI list", "5G-GUTI", "ngKSI", "equivalent PLMN/SNPN list", "SOR counter", "NSSAI info", "CAG info", "Timers (T3324, T3512, T3447, T3448, etc.)", "UE Radio Capability ID"]
+    },
+    {
+      "id": "n4",
+      "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "type": "state",
+      "properties": {
+        "description": "Registered but only limited service allowed (e.g., due to CAG restrictions)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "n5",
+      "name": "5GMM-REGISTERED.PLMN-SEARCH",
+      "type": "state",
+      "properties": {
+        "description": "Registered but required to perform PLMN selection (e.g., due to CAG restrictions)."
+      },
+      "parameters": []
+    },
+    {
+      "id": "n6",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "type": "state",
+      "properties": {
+        "description": "Deregistered, attempting registration after a failure or T3510 expiry (counter < 5), or waiting for T3502/T3346 expiry."
+      },
+      "parameters": ["registration_attempt_counter", "T3511", "T3502", "T3346", "5GS update status"]
+    },
+    {
+      "id": "n7",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "type": "state",
+      "properties": {
+        "description": "Deregistered, required to perform PLMN/SNPN selection due to specific rejection causes or counter expiry."
+      },
+      "parameters": ["registration_attempt_counter", "5GS update status"]
+    },
+    {
+      "id": "n8",
+      "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "type": "state",
+      "properties": {
+        "description": "Deregistered, only limited service possible due to specific rejection causes (e.g., TA not allowed)."
+      },
+      "parameters": ["5GS update status"]
+    },
+    {
+      "id": "n9",
+      "name": "5GMM-DEREGISTERED.NO-SUPI",
+      "type": "state",
+      "properties": {
+        "description": "Deregistered because UE or ME is considered illegal, or 5GS services not allowed, or PEI not accepted."
+      },
+      "parameters": ["5GS update status"]
+    },
+    {
+      "id": "n10",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "type": "state",
+      "properties": {
+        "description": "Deregistered and required to search for E-UTRAN cell due to redirection."
+      },
+      "parameters": ["5GS update status"]
+    },
+    {
+      "id": "n11",
+      "name": "Trigger Mobility Registration Update",
+      "type": "event",
+      "properties": {
+        "description": "Represents the event of triggering the Mobility Registration Update procedure, aborting the current one."
+      },
+      "parameters": []
+    },
+    {
+      "id": "n12",
+      "name": "Trigger UE Initiated De-registration",
+      "type": "event",
+      "properties": {
+        "description": "Represents the event of triggering the UE Initiated De-registration procedure, aborting the current one."
+      },
+      "parameters": []
+    },
+    {
+      "id": "e1",
+      "name": "Initiate Initial Registration",
+      "type": "event",
+      "properties": {
+        "description": "Triggered by conditions in 5.5.1.2.2 a-g, or after T3511/T3502/T3346 expiry."
+      },
+      "parameters": []
+    },
+    {
+      "id": "e2",
+      "name": "Receive REGISTRATION ACCEPT",
+      "type": "event",
+      "properties": {},
+      "parameters": ["5G-GUTI", "TAI list", "NSSAI info", "CAG info", "Timers", "SOR container", "5GS registration result", "UE radio capability ID", "Truncated 5G-S-TMSI configuration", "Service-level-AA container", "Operator-defined access category definitions", "etc."]
+    },
+    {
+      "id": "e3",
+      "name": "Receive REGISTRATION REJECT",
+      "type": "event",
+      "properties": {},
+      "parameters": ["5GMM cause", "T3346 value", "Rejected NSSAI", "CAG info", "Forbidden TAI(s)", "RAT utilization control IE"]
+    },
+    {
+      "id": "e4",
+      "name": "T3510 expires",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e5",
+      "name": "T3511 expires",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e6",
+      "name": "T3502 expires",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e7",
+      "name": "T3346 expires",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e8",
+      "name": "T3526 expires",
+      "type": "event",
+      "properties": {
+        "description": "Timer expiry for a specific S-NSSAI rejected due to max UEs."
+      },
+      "parameters": ["S-NSSAI"]
+    },
+    {
+      "id": "e9",
+      "name": "Lower Layer Failure / Release",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e10",
+      "name": "Access Attempt Barred",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e11",
+      "name": "Access Barring Alleviated",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e12",
+      "name": "UE Initiated De-registration Required",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e13",
+      "name": "Receive DEREGISTRATION REQUEST",
+      "type": "event",
+      "properties": {
+        "description": "Collision with ongoing initial registration."
+      },
+      "parameters": []
+    },
+    {
+      "id": "e14",
+      "name": "Change in Current TAI",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e15",
+      "name": "Transmission Failure (REG COMPLETE)",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e16",
+      "name": "Transmission Failure (REG REQUEST)",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e17",
+      "name": "Localized Service Access No Longer Allowed",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    },
+    {
+      "id": "e18",
+      "name": "T3447 expires",
+      "type": "event",
+      "properties": {},
+      "parameters": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Send REGISTRATION REQUEST message to the AMF (populate IEs based on context, capabilities, request type)",
+        "Start timer T3510",
+        "Stop timer T3502 (if running)",
+        "Stop timer T3511 (if running)",
+        "Start timer T3519 and store SUCI (if SUCI included and T3519 not running)"
+      ],
+      "condition": [
+        "Initiate Initial Registration event",
+        "Timer T3346 is not running (or exception applies: high priority, emergency, re-reg required, exception data, emergency PDU session)",
+        "Timer T3447 is not running (or exception applies: high priority, emergency)",
+        "Access attempt is not barred"
+      ],
+      "properties": {
+        "parameters": ["5GS registration type", "5GS mobile identity IE", "SUCI", "T3510", "T3502", "T3511", "T3519", "T3346", "T3447"],
+        "context": {
+          "security_context": "valid/invalid affects NAS container IE",
+          "UE capabilities": "Included in REG REQUEST",
+          "NSSAI info": "Included in REG REQUEST",
+          "Other IEs": "Included based on UE state/config/request"
+        },
+        "section_reference": "5.5.1.2.2, 5.5.1.2.7(a), 5.5.1.2.7(b), 5.5.1.2.7(l)"
+      }
+    },
+    {
+      "id": "edge2",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED",
+      "action": [
+        "Stop timer T3510",
+        "Reset registration attempt counter",
+        "Enter state 5GMM-REGISTERED",
+        "Set 5GS update status to 5U1 UPDATED",
+        "Store received TAI list (delete old)",
+        "Store other received parameters (e.g., 5G-GUTI, Equivalent PLMNs/SNPNs, NSSAI, LADN, MICO, Timers, DRX, WUS, PEIPS, SOR, CAG, Operator AC defs, UE Radio Cap ID, etc.)",
+        "Reset PLMN/SNPN-specific attempt counters",
+        "Reset SIM/USIM invalid counters",
+        "Handle 5GS registration result (check if deregistration on other access needed)",
+        "Handle NSSAI information (store allowed, configured, rejected, pending, etc.)",
+        "Handle SOR container (store counter, process list/packet, store SOR-CMCI)",
+        "Handle CAG information list (store/replace/remove entries)",
+        "Handle Operator-defined access category definitions (store/delete)",
+        "Handle Timers (T3324, T3512, T3447, T3448)",
+        "Handle UE Radio Capability ID (store)",
+        "Handle other received IEs (DRX, WUS, PEIPS, etc.)",
+        "Provide relevant info to upper/lower layers (IMS voice, LCS, NAPS, Paging indication, MBSR auth, etc.)"
+      ],
+      "condition": [
+        "Receive REGISTRATION ACCEPT event",
+        "REGISTRATION COMPLETE message is NOT required based on received IEs"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "5GS update status", "TAI list", "5G-GUTI", "NSSAI info", "SOR counter", "CAG info", "Timers"],
+        "context": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge3",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED",
+      "action": [
+        "Stop timer T3510",
+        "Reset registration attempt counter",
+        "Enter state 5GMM-REGISTERED",
+        "Set 5GS update status to 5U1 UPDATED",
+        "Store received TAI list (delete old)",
+        "Store other received parameters (as in edge2)",
+        "Reset PLMN/SNPN-specific attempt counters",
+        "Reset SIM/USIM invalid counters",
+        "Handle 5GS registration result",
+        "Handle NSSAI information",
+        "Handle SOR container (store counter, process list/packet, store SOR-CMCI)",
+        "Handle CAG information list",
+        "Handle Operator-defined access category definitions",
+        "Handle Timers",
+        "Handle UE Radio Capability ID (store)",
+        "Handle Truncated 5G-S-TMSI configuration (store)",
+        "Handle Service-level-AA pending indication",
+        "Handle other received IEs",
+        "Provide relevant info to upper/lower layers",
+        "Send REGISTRATION COMPLETE message"
+      ],
+      "condition": [
+        "Receive REGISTRATION ACCEPT event",
+        "REGISTRATION COMPLETE message IS required based on received IEs (e.g., 5G-GUTI, SOR, specific config updates like NSSAI/CAG/Op AC Defs/PEIPS/UE Radio Cap ID/Truncated TMSI/Service-level-AA pending)"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "5GS update status", "TAI list", "5G-GUTI", "NSSAI info", "SOR counter", "CAG info", "Timers"],
+        "context": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge4",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Release NAS signalling connection locally (if not emergency/emergency handover)",
+        "Increment registration attempt counter",
+        "Start timer T3511"
+      ],
+      "condition": [
+        "T3510 expires event",
+        "registration_attempt_counter < 5",
+        "Initial registration is not for emergency services"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3511"],
+        "context": {"registration_type": "not emergency"},
+        "section_reference": "5.5.1.2.7 (c)"
+      }
+    },
+    {
+      "id": "edge5",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Release NAS signalling connection locally (if not emergency/emergency handover)",
+        "Delete TAI list and last visited registered TAI",
+        "Start timer T3502 (if value > 0)",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list (if not registered on both accesses)",
+        "Perform actions for T3502 expiry (if T3502 value is zero)",
+        "Handle EMM parameters and attempt to select E-UTRAN (if via 3GPP and single-registration mode)",
+        "May disable N1 mode capability (if via 3GPP and single-registration mode)"
+      ],
+      "condition": [
+        "T3510 expires event",
+        "registration_attempt_counter = 5"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3502", "5GS update status", "TAI list", "5G-GUTI", "ngKSI"],
+        "context": {"single_registration_mode": "true/false"},
+        "section_reference": "5.5.1.2.7 (c)"
+      }
+    },
+    {
+      "id": "edge5b",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Perform PLMN selection, SNPN selection or SNPN selection for onboarding services"
+      ],
+      "condition": [
+        "UE chooses PLMN search option after T3510 expiry with counter=5"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (c)"
+      }
+    },
+    {
+      "id": "edge6",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Restart registration procedure for initial registration (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "T3511 expires event",
+        "Registration still required"
+      ],
+      "properties": {
+        "parameters": ["T3510"],
+        "context": {},
+        "section_reference": "5.5.1.2.7"
+      }
+    },
+    {
+      "id": "edge7",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Restart registration procedure for initial registration (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "T3502 expires event",
+        "Registration still required"
+      ],
+      "properties": {
+        "parameters": ["T3510"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (c)"
+      }
+    },
+    {
+      "id": "edge8",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Increment registration attempt counter (if < 5 and not emergency)",
+        "Start T3511 (if counter < 5 and not emergency)"
+      ],
+      "condition": [
+        "Lower Layer Failure / Release event",
+        "registration_attempt_counter < 5"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3511"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (e)"
+      }
+    },
+    {
+      "id": "edge8b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Delete TAI list and last visited registered TAI",
+        "Start timer T3502 (if value > 0)",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list (if not registered on both accesses)",
+        "Perform actions for T3502 expiry (if T3502 value is zero)",
+        "Handle EMM parameters and attempt to select E-UTRAN (if via 3GPP and single-registration mode)",
+        "May disable N1 mode capability (if via 3GPP and single-registration mode)"
+      ],
+      "condition": [
+        "Lower Layer Failure / Release event",
+        "registration_attempt_counter = 5"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3502"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (e)"
+      }
+    },
+    {
+      "id": "edge9",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Abort registration procedure",
+        "Re-initiate registration procedure immediately (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "Transmission Failure (REG REQUEST) event"
+      ],
+      "properties": {
+        "parameters": ["T3510"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (k)"
+      }
+    },
+    {
+      "id": "edge10",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Abort registration procedure",
+        "Re-initiate registration procedure immediately (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "Change in Current TAI event",
+        "Registration procedure not completed"
+      ],
+      "properties": {
+        "parameters": ["T3510"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (h)"
+      }
+    },
+    {
+      "id": "edge11",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Consider USIM/entry invalid (until T3245 expiry/switch off/removal)",
+        "Delete equivalent PLMN/SNPN list",
+        "Set invalid counters to max (if integrity checked)",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)",
+        "Handle 5GMM for other access (if integrity checked and supported)",
+        "Reset registration attempt counter (onboarding)",
+        "Store SNPN identity in 'permanently forbidden SNPNs for onboarding' list (onboarding)",
+        "Enter state 5GMM-DEREGISTERED.PLMN-SEARCH (onboarding)",
+        "Perform SNPN selection (onboarding)",
+        "Set SNPN-specific attempt counter to max (onboarding, if integrity checked)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #3 or #6"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "T3245"],
+        "context": {"integrity_checked": "true/false", "registration_type": "normal/onboarding"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge12",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Consider USIM/entry invalid for 5GS (until T3245 expiry/switch off/removal)",
+        "Set invalid counters to max (if integrity checked)",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)",
+        "Handle 5GMM for other access (if integrity checked and supported)",
+        "Reset registration attempt counter (onboarding)",
+        "Store SNPN identity in 'permanently forbidden SNPNs for onboarding' list (onboarding)",
+        "Enter state 5GMM-DEREGISTERED.PLMN-SEARCH (onboarding)",
+        "Perform SNPN selection (onboarding)",
+        "Set SNPN-specific attempt counter to max (onboarding, if integrity checked)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #7"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "T3245"],
+        "context": {"integrity_checked": "true/false", "registration_type": "normal/onboarding"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge13a",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Delete equivalent PLMN list",
+        "Reset registration attempt counter",
+        "Store PLMN identity in forbidden PLMN list",
+        "Start timer T3245 (if configured)",
+        "Perform PLMN selection",
+        "Set PLMN-specific attempt counters to max (if integrity checked)",
+        "Handle EMM parameters (if single-reg mode)",
+        "Handle 5GMM for other access (if integrity checked and supported)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #11",
+        "Received via 3GPP access"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "T3245", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false", "access_type": "3GPP"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge13b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Delete equivalent PLMN list",
+        "Reset registration attempt counter",
+        "Store PLMN identity in forbidden PLMN list",
+        "Start timer T3245 (if configured)",
+        "Perform network selection",
+        "Set PLMN-specific attempt counters to max (if integrity checked)",
+        "Handle 5GMM for other access (if integrity checked and supported)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #11",
+        "Received via non-3GPP access"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "T3245", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false", "access_type": "non-3GPP"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge14",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI (if not registered on both accesses)",
+        "Reset registration attempt counter",
+        "Store current TAI in 'forbidden TAs for regional provision' list (if Forbidden TAI IE not included or SNPN)",
+        "Memorize if reject was not integrity protected",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #12"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge15",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list (if not registered on both accesses)",
+        "Reset registration attempt counter",
+        "Store current TAI in 'forbidden TAs for roaming' list (if Forbidden TAI IE not included or SNPN)",
+        "Memorize if reject was not integrity protected",
+        "Perform PLMN/SNPN/Network selection",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #13",
+        "UE chooses LIMITED-SERVICE option"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge15b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list (if not registered on both accesses)",
+        "Reset registration attempt counter",
+        "Store current TAI in 'forbidden TAs for roaming' list (if Forbidden TAI IE not included or SNPN)",
+        "Memorize if reject was not integrity protected",
+        "Perform PLMN/SNPN/Network selection",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #13",
+        "UE chooses PLMN-SEARCH option"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge16",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI (if not registered on both accesses)",
+        "Reset registration attempt counter",
+        "Store current TAI in 'forbidden TAs for roaming' list (if Forbidden TAI IE not included or SNPN)",
+        "Memorize if reject was not integrity protected",
+        "Disable satellite NG-RAN capability (if Extended cause received, integrity checked, UE configured)",
+        "Store RAT utilization control info (if IE received, integrity checked)",
+        "Search for suitable cell in another TA",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #15"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter", "RAT utilization control IE"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge17",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510",
+        "Abort initial registration procedure",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Reset registration attempt counter",
+        "Stop timer T3346 (if running)",
+        "Start timer T3346 (with received value if integrity protected, else random default)",
+        "Stay in current cell, apply cell reselection",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #22",
+        "T3346 value IE present and timer value not zero/deactivated",
+        "Registration is not for onboarding services in SNPN (or UE chooses not to perform SNPN selection)"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "T3346 value", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false", "registration_type": "normal"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge17b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Stop timer T3510",
+        "Abort initial registration procedure",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Reset registration attempt counter",
+        "Stop timer T3346 (if running)",
+        "Start timer T3346 (with received value if integrity protected, else random default)",
+        "Perform SNPN selection or SNPN selection for onboarding services"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #22",
+        "T3346 value IE present and timer value not zero/deactivated",
+        "Registration is for onboarding services in SNPN",
+        "UE chooses to perform SNPN selection"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "T3346 value", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false", "registration_type": "onboarding"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge18",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Reset registration attempt counter",
+        "Set PLMN/SNPN-specific N1 mode attempt counters to max (if integrity checked)",
+        "Disable N1 mode capability for the specific access type",
+        "Disable N1 mode capability for the other access type (if integrity checked)",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #27"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge19",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete 5G-GUTI, last visited TAI, TAI list, ngKSI",
+        "Reset registration attempt counter",
+        "Enable E-UTRA capability (if disabled)",
+        "Disable N1 mode capability for 3GPP access",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #31",
+        "UE supports CIoT optimizations and S1 mode",
+        "Received via 3GPP access"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge20",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510",
+        "Abort initial registration procedure",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Reset registration attempt counter",
+        "Store rejected S-NSSAI(s) based on cause",
+        "Start timer T3526 (if cause is 'max UEs' and backoff timer provided)",
+        "Handle EMM parameters (if 3GPP access, single-reg mode)"
+       
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #62"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "Rejected NSSAI", "T3526 value", "5GS update status", "registration_attempt_counter"],
+        "context": {"NSSAI info": "allowed/configured/default", "integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge21",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Remove S-NSSAI from rejected NSSAI for maximum number of UEs reached"
+      ],
+      "condition": [
+        "T3526 expires event for a specific S-NSSAI"
+      ],
+      "properties": {
+        "parameters": ["S-NSSAI"],
+        "context": {},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge22",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI (if not registered on 3GPP)",
+        "Reset registration attempt counter",
+        "Set PLMN/SNPN-specific N1 mode attempt counter for non-3GPP to max (if integrity checked)",
+        "Disable N1 mode capability for non-3GPP access"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #72",
+        "Received via non-3GPP access",
+        "UE chooses not to perform PLMN selection"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge22b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Delete last visited TAI, TAI list",
+        "Delete 5G-GUTI, ngKSI (if not registered on 3GPP)",
+        "Reset registration attempt counter",
+        "Set PLMN/SNPN-specific N1 mode attempt counter for non-3GPP to max (if integrity checked)",
+        "Disable N1 mode capability for non-3GPP access",
+        "Perform PLMN selection"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #72",
+        "Received via non-3GPP access",
+        "UE chooses to perform PLMN selection"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "5GS update status", "registration_attempt_counter"],
+        "context": {"integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge23",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Reset registration attempt counter",
+        "Update/Store CAG information list (if received)",
+        "Delete CAG-ID from allowed list / Store 'only CAG' indication (if list not received)",
+        "Search for a suitable cell"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #76",
+        "Received via 3GPP access (PLMN)",
+        "Resulting CAG check leads to LIMITED-SERVICE state (see subclause 5.5.1.2.5 #76 logic)"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "CAG information list", "5GS update status", "registration_attempt_counter"],
+        "context": {"cell_type": "CAG/non-CAG"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge23b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Stop timer T3510",
+        "Set 5GS update status to 5U3 ROAMING NOT ALLOWED",
+        "Reset registration attempt counter",
+        "Update/Store CAG information list (if received)",
+        "Delete CAG-ID from allowed list / Store 'only CAG' indication (if list not received)",
+        "Apply PLMN selection process"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #76",
+        "Received via 3GPP access (PLMN)",
+        "Resulting CAG check leads to PLMN-SEARCH state (see subclause 5.5.1.2.5 #76 logic)"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "CAG information list", "5GS update status", "registration_attempt_counter"],
+        "context": {"cell_type": "CAG/non-CAG"},
+        "section_reference": "5.5.1.2.5"
+      }
+    },
+    {
+      "id": "edge24",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Set registration attempt counter to 5 (if cause #95, #96, #97, #99, #111 and not emergency)",
+        "Increment registration attempt counter (if < 5 and not emergency, unless already set to 5)",
+        "Start T3511 (if counter < 5 and not emergency)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause is not handled in specific cases of 5.5.1.2.5 OR is explicitly listed as abnormal in 5.5.1.2.5",
+        "registration_attempt_counter < 5"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "registration_attempt_counter", "T3511"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (d)"
+      }
+    },
+     {
+      "id": "edge24b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "action": [
+        "Stop timer T3510 (if running)",
+        "Abort registration procedure",
+        "Set registration attempt counter to 5 (if cause #95, #96, #97, #99, #111 and not emergency)",
+        "Delete TAI list and last visited registered TAI",
+        "Start timer T3502 (if value > 0)",
+        "Set 5GS update status to 5U2 NOT UPDATED",
+        "Delete 5G-GUTI, ngKSI, equivalent PLMN/SNPN list (if not registered on both accesses)",
+        "Perform actions for T3502 expiry (if T3502 value is zero)",
+        "Handle EMM parameters and attempt to select E-UTRAN (if via 3GPP and single-registration mode)",
+        "May disable N1 mode capability (if via 3GPP and single-registration mode)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause is not handled in specific cases of 5.5.1.2.5 OR is explicitly listed as abnormal in 5.5.1.2.5",
+        "registration_attempt_counter = 5"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause", "registration_attempt_counter", "T3502"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (d)"
+      }
+    },
+    {
+      "id": "edge25",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Do not start initial registration procedure",
+        "Stay in current serving cell",
+        "Apply normal cell reselection process"
+      ],
+      "condition": [
+        "Attempt to initiate initial registration",
+        "Timer T3346 is running",
+        "Exception conditions not met (high priority, emergency, re-reg required, exception data, emergency PDU session)"
+      ],
+      "properties": {
+        "parameters": ["T3346"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (a)"
+      }
+    },
+    {
+      "id": "edge26",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Start initial registration procedure (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "T3346 expires event",
+        "Registration still required"
+      ],
+      "properties": {
+        "parameters": ["T3346"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (a)"
+      }
+    },
+    {
+      "id": "edge27",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Do not start initial registration procedure",
+        "Stay in current serving cell",
+        "Apply normal cell reselection process"
+      ],
+      "condition": [
+        "Attempt to initiate initial registration",
+        "Access Attempt Barred event"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (b)"
+      }
+    },
+    {
+      "id": "edge28",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Start initial registration procedure (Send REGISTRATION REQUEST, Start T3510, etc.)"
+      ],
+      "condition": [
+        "Access Barring Alleviated event",
+        "Registration still required"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (b)"
+      }
+    },
+    {
+      "id": "edge29",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Trigger UE Initiated De-registration",
+      "action": [
+        "Abort registration procedure for initial registration"
+       
+      ],
+      "condition": [
+        "UE Initiated De-registration Required event"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (f)"
+      }
+    },
+    {
+      "id": "edge30",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Abort received de-registration procedure",
+        "Progress initial registration procedure"
+      ],
+      "condition": [
+        "Receive DEREGISTRATION REQUEST event"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (g)"
+      }
+    },
+    {
+      "id": "edge31",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED",
+      "action": [
+        "Resend REGISTRATION COMPLETE message"
+      ],
+      "condition": [
+        "Transmission Failure (REG COMPLETE) event",
+        "Current TAI is still part of the TAI list"
+      ],
+      "properties": {
+        "parameters": ["TAI list"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (i)"
+      }
+    },
+    {
+      "id": "edge32",
+      "from": "5GMM-REGISTERED",
+      "to": "Trigger Mobility Registration Update",
+      "action": [
+        "Abort initial registration procedure"
+       
+      ],
+      "condition": [
+        "Transmission Failure (REG COMPLETE) event",
+        "Change in Current TAI event",
+        "Current TAI is NOT part of the TAI list"
+      ],
+      "properties": {
+        "parameters": ["TAI list"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (i)"
+      }
+    },
+    {
+      "id": "edge33",
+      "from": "5GMM-REGISTERED",
+      "to": "Trigger Mobility Registration Update",
+      "action": [
+        "Abort initial registration procedure"
+       
+      ],
+      "condition": [
+        "Change in Current TAI event",
+        "REGISTRATION COMPLETE message needs to be sent",
+        "Current TAI is NOT part of the TAI list"
+      ],
+      "properties": {
+        "parameters": ["TAI list"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (h)"
+      }
+    },
+    {
+      "id": "edge34",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED",
+      "action": [
+        "Send REGISTRATION COMPLETE message"
+      ],
+      "condition": [
+        "Change in Current TAI event",
+        "REGISTRATION COMPLETE message needs to be sent",
+        "Current TAI IS part of the TAI list"
+      ],
+      "properties": {
+        "parameters": ["TAI list"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (h)"
+      }
+    },
+    {
+      "id": "edge35",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Reset registration attempt counter",
+        "Stop T3510",
+        "Abort registration procedure",
+        "Locally release NAS signalling connection (if any)",
+        "Perform SNPN selection"
+      ],
+      "condition": [
+        "Localized Service Access No Longer Allowed event",
+        "Initial registration is not for emergency services",
+        "Selected SNPN is for localized services",
+        "Access disabled OR validity not met",
+        "UE chooses LIMITED-SERVICE option"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3510"],
+        "context": {"registration_type": "not emergency"},
+        "section_reference": "5.5.1.2.7 (n)"
+      }
+    },
+    {
+      "id": "edge35b",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "action": [
+        "Reset registration attempt counter",
+        "Stop T3510",
+        "Abort registration procedure",
+        "Locally release NAS signalling connection (if any)",
+        "Perform SNPN selection"
+      ],
+      "condition": [
+        "Localized Service Access No Longer Allowed event",
+        "Initial registration is not for emergency services",
+        "Selected SNPN is for localized services",
+        "Access disabled OR validity not met",
+        "UE chooses PLMN-SEARCH option"
+      ],
+      "properties": {
+        "parameters": ["registration_attempt_counter", "T3510"],
+        "context": {"registration_type": "not emergency"},
+        "section_reference": "5.5.1.2.7 (n)"
+      }
+    },
+    {
+      "id": "edge36",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "action": [
+        "Search for suitable cell"
+      ],
+      "condition": [
+        "REGISTRATION ACCEPT contained CAG information list",
+        "Resulting CAG check leads to LIMITED-SERVICE state (see subclause 5.5.1.2.4 CAG logic)"
+      ],
+      "properties": {
+        "parameters": ["CAG information list"],
+        "context": {"cell_type": "CAG/non-CAG"},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge37",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-REGISTERED.PLMN-SEARCH",
+      "action": [
+        "Apply PLMN selection process"
+      ],
+      "condition": [
+        "REGISTRATION ACCEPT contained CAG information list",
+        "Resulting CAG check leads to PLMN-SEARCH state (see subclause 5.5.1.2.4 CAG logic)"
+      ],
+      "properties": {
+        "parameters": ["CAG information list"],
+        "context": {"cell_type": "CAG/non-CAG", "registration_type": "not emergency/handover"},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge38",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Locally release established N1 NAS signalling connection"
+      ],
+      "condition": [
+        "SOR failure conditions met (integrity fail or missing SOR container) AND UE attempts service on another PLMN/SNPN"
+      ],
+      "properties": {
+        "parameters": ["SOR container"],
+        "context": {"SOR configuration": "USIM/ME", "mode": "PLMN/SNPN"},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge39",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Locally release established N1 NAS signalling connection"
+      ],
+      "condition": [
+        "REG ACCEPT contained SOR container",
+        "Integrity check passed",
+        "Registration over 3GPP",
+        "UE attempts obtaining service on another PLMN/SNPN",
+        "UE chooses to locally release connection"
+      ],
+      "properties": {
+        "parameters": ["SOR container"],
+        "context": {"access_type": "3GPP"},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge40",
+      "from": "5GMM-REGISTERED",
+      "to": "Trigger Mobility Registration Update",
+      "action": [
+        "Delete network-assigned UE radio capability IDs"
+       
+      ],
+      "condition": [
+        "REGISTRATION ACCEPT includes UE radio capability ID deletion indication",
+        "UE is not in NB-N1 mode",
+        "UE set RACS bit in REG REQUEST"
+      ],
+      "properties": {
+        "parameters": [],
+        "context": {},
+        "section_reference": "5.5.1.2.4"
+      }
+    },
+    {
+      "id": "edge41",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "action": [
+        "Stop timer T3510",
+        "Handle 5GMM parameters/state for other access (if received over 3GPP OR (non-3GPP AND integrity protected) AND UE supports other access)"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause == #5 (PEI not accepted)",
+        "Initial registration is for emergency services"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "context": {"registration_type": "emergency", "integrity_checked": "true/false"},
+        "section_reference": "5.5.1.2.6"
+      }
+    },
+    {
+      "id": "edge42",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "Handle Reject Cause",
+      "action": [
+        "Perform actions as described in 5.5.1.2.5 for the received cause",
+        "Inform upper layers of failure"
+      ],
+      "condition": [
+        "Receive REGISTRATION REJECT event",
+        "5GMM cause != #5",
+        "Initial registration is for emergency services"
+      ],
+      "properties": {
+        "parameters": ["5GMM cause"],
+        "context": {"registration_type": "emergency"},
+        "section_reference": "5.5.1.2.6"
+      }
+    },
+    {
+      "id": "edge43",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-DEREGISTERED",
+      "action": [
+        "Do not start initial registration procedure with Follow-on request indicator set to 'Follow-on request pending'",
+        "Stay in current serving cell",
+        "Apply normal cell reselection process"
+      ],
+      "condition": [
+        "Attempt to initiate initial registration with Follow-on request pending",
+        "Timer T3447 is running",
+        "Exception conditions not met (high priority, emergency)"
+      ],
+      "properties": {
+        "parameters": ["T3447"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (l)"
+      }
+    },
+    {
+      "id": "edge44",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "action": [
+        "Start initial registration procedure (Send REGISTRATION REQUEST with Follow-on request pending, Start T3510, etc.)"
+      ],
+      "condition": [
+        "T3447 expires event",
+        "Registration still required",
+        "Follow-on request is pending"
+      ],
+      "properties": {
+        "parameters": ["T3447"],
+        "context": {},
+        "section_reference": "5.5.1.2.7 (l)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+[
+  {
+    "id": "edge61",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+    "action": [
+      "Reset registration_attempt_counter",
+      "Stop T3510",
+      "Abort registration procedure",
+      "Locally release NAS signalling connection (if any)",
+      "Enter state 5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "Perform SNPN selection"
+    ],
+    "condition": [
+      "Localized_Service_Access_Lost",
+      "Not emergency registration",
+      "Not establishing emergency PDU session",
+      "Selected SNPN is for localized services",
+      "Access disabled OR validity info not met",
+      "UE chooses LIMITED-SERVICE state"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "T3510"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "SNPN Mode": "Yes (Localized Services)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (n)"
+    }
+  },
+  {
+    "id": "edge62",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+    "action": [
+      "Reset registration_attempt_counter",
+      "Stop T3510",
+      "Abort registration procedure",
+      "Locally release NAS signalling connection (if any)",
+      "Enter state 5GMM-DEREGISTERED.PLMN-SEARCH",
+      "Perform SNPN selection"
+    ],
+    "condition": [
+      "Localized_Service_Access_Lost",
+      "Not emergency registration",
+      "Not establishing emergency PDU session",
+      "Selected SNPN is for localized services",
+      "Access disabled OR validity info not met",
+      "UE chooses PLMN-SEARCH state"
+    ],
+    "properties": {
+      "parameters": [
+        "registration_attempt_counter",
+        "T3510"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "SNPN Mode": "Yes (Localized Services)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (n)"
+    }
+  },
+  {
+    "id": "edge63",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED",
+    "action": [
+      "Consider registered only on the access where REGISTRATION ACCEPT was received"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_ACCEPT",
+      "5GS registration result value indicates '3GPP access and non-3GPP access'",
+      "UE is not registered to the access other than the one where REG ACCEPT was received"
+    ],
+    "properties": {
+      "parameters": [
+        "5GS registration result"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED (on one access)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (m)"
+    }
+  },
+  {
+    "id": "edge64",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_Emergency_Reject",
+    "action": [
+      "Perform actions based on 5GMM cause as specified in 5.5.1.2.5",
+      "Inform upper layers of failure",
+      "If shared network: May attempt PLMN/SNPN selection and retry emergency registration on different PLMN/SNPN"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_REJECT",
+      "Registration was for emergency services",
+      "5GMM cause is not #5"
+    ],
+    "properties": {
+      "parameters": [
+        "5GMM cause"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "Registration Type": "Emergency",
+        "Network Type": "Shared/Non-Shared"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION REJECT"
+      },
+      "section_reference": "5.5.1.2.6"
+    }
+  },
+  {
+    "id": "edge65",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_Emergency_PDU_Reject",
+    "action": [
+      "Perform actions based on 5GMM cause as specified in 5.5.1.2.5",
+      "If in same PLMN/SNPN: Inform upper layers OR attempt initial registration for emergency services",
+      "If handover case and in same/equivalent PLMN/SNPN: Attempt initial registration for emergency services"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_REJECT",
+      "Registration was initial registration for initiating an emergency PDU session"
+    ],
+    "properties": {
+      "parameters": [
+        "5GMM cause"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "Registration Type": "Initial Registration (for Emergency PDU Session)",
+        "Handover": "Yes/No"
+      },
+      "metadata": {
+        "message_type": "REGISTRATION REJECT"
+      },
+      "section_reference": "5.5.1.2.6A"
+    }
+  },
+  {
+    "id": "edge66",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_Emergency_Abnormal_Case",
+    "action": [
+      "Perform actions for abnormal case (e.g., T3510 expiry, lower layer failure)",
+      "Inform upper layers of failure",
+      "If shared network: May attempt PLMN/SNPN selection and retry emergency registration on different PLMN/SNPN"
+    ],
+    "condition": [
+      "Abnormal case occurs (T3510 expiry, lower layer failure, etc.)",
+      "Registration was for emergency services"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "Registration Type": "Emergency",
+        "Network Type": "Shared/Non-Shared"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.6"
+    }
+  },
+  {
+    "id": "edge67",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Handle_Emergency_PDU_Abnormal_Case",
+    "action": [
+      "Perform actions for abnormal case (e.g., T3510 expiry, lower layer failure)",
+      "If abnormal case b): Inform upper layers of failure",
+      "If abnormal case c), d), e): If in same PLMN/SNPN (and not handover): Inform upper layers OR attempt initial registration for emergency services. If handover case and in same/equivalent PLMN/SNPN: Attempt initial registration for emergency services."
+    ],
+    "condition": [
+      "Abnormal case occurs (T3510 expiry, lower layer failure, etc.)",
+      "Registration was initial registration for initiating an emergency PDU session"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)",
+        "Registration Type": "Initial Registration (for Emergency PDU Session)",
+        "Handover": "Yes/No"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.6A"
+    }
+  }
+]

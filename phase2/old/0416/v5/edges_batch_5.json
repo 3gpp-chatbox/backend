@@ -1,0 +1,243 @@
+[
+  {
+    "id": "edge41",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+    "action": [
+      "Enter state 5GMM-REGISTERED.LIMITED-SERVICE",
+      "Search for a suitable cell according to 3GPP TS 38.304 / 36.304 with updated CAG information list"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_ACCEPT with CAG information list",
+      "UE received REG ACCEPT via CAG cell and current cell not authorized AND (no 'CAG only' indication OR ('CAG only' indication AND other CAGs are authorized))",
+      "OR",
+      "UE received REG ACCEPT via non-CAG cell and 'CAG only' indication received AND authorized CAGs exist",
+      "OR",
+      "UE received REG ACCEPT via CAG cell and no entry for registered PLMN in CAG list"
+    ],
+    "properties": {
+      "parameters": [
+        "CAG information list"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED",
+        "Cell Type": "CAG / Non-CAG"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge42",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED.PLMN-SEARCH",
+    "action": [
+      "Enter state 5GMM-REGISTERED.PLMN-SEARCH",
+      "Apply PLMN selection process defined in 3GPP TS 23.122 with updated CAG information list"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_ACCEPT with CAG information list",
+      "UE received REG ACCEPT via CAG cell and current cell not authorized AND 'CAG only' indication received AND no other CAGs authorized AND not emergency registration",
+      "OR",
+      "UE received REG ACCEPT via non-CAG cell and 'CAG only' indication received AND no authorized CAGs exist AND not emergency registration"
+    ],
+    "properties": {
+      "parameters": [
+        "CAG information list"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED",
+        "Cell Type": "CAG / Non-CAG",
+        "Registration Type": "Not Emergency"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge43",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "action": [
+      "Enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION over non-3GPP access",
+      "Set 5GS update status to 5U2 NOT UPDATED over non-3GPP access"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_ACCEPT",
+      "5GS registration result value indicates '3GPP access'",
+      "UE was in 5GMM-REGISTERED state over non-3GPP access on the same PLMN/SNPN"
+    ],
+    "properties": {
+      "parameters": [
+        "5GS registration result",
+        "5GS update status"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED (over 3GPP and non-3GPP)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge44",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+    "action": [
+      "Enter state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION over 3GPP access",
+      "Set 5GS update status to 5U2 NOT UPDATED over 3GPP access"
+    ],
+    "condition": [
+      "Receive_REGISTRATION_ACCEPT",
+      "5GS registration result value indicates 'Non-3GPP access'",
+      "UE was in 5GMM-REGISTERED state over 3GPP access on the same PLMN/SNPN"
+    ],
+    "properties": {
+      "parameters": [
+        "5GS registration result",
+        "5GS update status"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED (over 3GPP and non-3GPP)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge45",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED",
+    "action": [
+      "Locally release established N1 NAS signalling connection"
+    ],
+    "condition": [
+      "REGISTRATION COMPLETE sent",
+      "SOR transparent container received in REG ACCEPT failed integrity check OR was expected but not received",
+      "UE attempts obtaining service on another PLMN/SNPN as specified in 3GPP TS 23.122 Annex C"
+    ],
+    "properties": {
+      "parameters": [
+        "SOR transparent container"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED",
+        "USIM/ME Config": "Expect SOR container"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge46",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED",
+    "action": [
+      "May locally release established N1 NAS signalling connection"
+    ],
+    "condition": [
+      "REGISTRATION COMPLETE sent",
+      "SOR transparent container received in REG ACCEPT passed integrity check",
+      "Registration procedure is performed over 3GPP access",
+      "UE attempts obtaining service on another PLMN/SNPN as specified in 3GPP TS 23.122 Annex C"
+    ],
+    "properties": {
+      "parameters": [
+        "SOR transparent container"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED",
+        "Access Type": "3GPP"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.4"
+    }
+  },
+  {
+    "id": "edge47",
+    "from": "5GMM-REGISTERED",
+    "to": "5GMM-REGISTERED",
+    "action": [
+      "Remove S-NSSAI from the rejected NSSAI for the maximum number of UEs reached"
+    ],
+    "condition": [
+      "T3526_Expiry for a specific S-NSSAI"
+    ],
+    "properties": {
+      "parameters": [
+        "T3526",
+        "S-NSSAI",
+        "Rejected NSSAI"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.5 (Cause #62)"
+    }
+  },
+  {
+    "id": "edge48",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Abort_Procedure",
+    "action": [
+      "Abort initial registration procedure",
+      "Perform UE-initiated de-registration procedure (using same mobile identity)",
+      "May perform local de-registration if USIM removal and T3519 not running"
+    ],
+    "condition": [
+      "UE_Initiated_Dereg_Required"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (f)"
+    }
+  },
+  {
+    "id": "edge49",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "REGISTRATION_REQUEST_Sent",
+    "action": [
+      "Continue initial registration procedure"
+    ],
+    "condition": [
+      "Receive_DEREGISTRATION_REQUEST"
+    ],
+    "properties": {
+      "parameters": [],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {
+        "message_type": "DEREGISTRATION REQUEST"
+      },
+      "section_reference": "5.5.1.2.7 (g)"
+    }
+  },
+  {
+    "id": "edge50",
+    "from": "REGISTRATION_REQUEST_Sent",
+    "to": "Abort_And_Reinitiate",
+    "action": [
+      "Abort initial registration procedure",
+      "Re-initiate initial registration procedure immediately"
+    ],
+    "condition": [
+      "LowerLayer_TAI_Change (before completion)"
+    ],
+    "properties": {
+      "parameters": [
+        "Current TAI"
+      ],
+      "context": {
+        "UE State": "5GMM-REGISTERED-INITIATED (Implicit)"
+      },
+      "metadata": {},
+      "section_reference": "5.5.1.2.7 (h)"
+    }
+  }
+]

@@ -1,0 +1,59 @@
+```json
+{
+  "incorrect_edges": [
+    {
+      "edge_id": "edge5",
+      "issues": [
+        "Issue 1: The action 'Memorize if TAI added due to non-integrity protected reject' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec.",
+        "Issue 2: The condition '5GMM cause is #12 (Tracking area not allowed)' is not precise enough. The spec text does not explicitly state that this cause leads to the DEREGISTERED.LIMITED-SERVICE state during initial registration. Further context is needed from the spec to confirm this transition."
+      ],
+      "suggested_correction": "Action: Verify the action 'Memorize if TAI added due to non-integrity protected reject' against other sections of the spec. Condition: Add more context from the spec to justify the transition to DEREGISTERED.LIMITED-SERVICE with cause #12 during initial registration."
+    },
+    {
+      "edge_id": "edge6",
+      "issues": [
+        "Issue 1: The action 'Memorize if TAI added due to non-integrity protected reject' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec.",
+        "Issue 2: The condition 'UE chooses to enter LIMITED-SERVICE state' is not explicitly mentioned in the spec text. The spec text does not explicitly state that the UE chooses to enter LIMITED-SERVICE state. Further context is needed from the spec to confirm this transition."
+      ],
+      "suggested_correction": "Action: Verify the action 'Memorize if TAI added due to non-integrity protected reject' against other sections of the spec. Condition: Add more context from the spec to justify the transition to DEREGISTERED.LIMITED-SERVICE with cause #13 during initial registration."
+    },
+    {
+      "edge_id": "edge7",
+      "issues": [
+        "Issue 1: The action 'Memorize if TAI added due to non-integrity protected reject' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec.",
+        "Issue 2: The condition 'UE chooses to enter PLMN-SEARCH state' is not explicitly mentioned in the spec text. The spec text does not explicitly state that the UE chooses to enter PLMN-SEARCH state. Further context is needed from the spec to confirm this transition.",
+        "Issue 3: The target state is incorrect. The action 'Perform PLMN/SNPN selection' is associated with the PLMN-SEARCH state, but the edge goes to 5GMM-DEREGISTERED.PLMN-SEARCH. The edge should go to 5GMM-DEREGISTERED.LIMITED-SERVICE."
+      ],
+      "suggested_correction": "Action: Verify the action 'Memorize if TAI added due to non-integrity protected reject' against other sections of the spec. Condition: Add more context from the spec to justify the transition to DEREGISTERED.PLMN-SEARCH with cause #13 during initial registration. Target state: Change the target state to 5GMM-DEREGISTERED.LIMITED-SERVICE."
+    },
+    {
+      "edge_id": "edge8",
+      "issues": [
+        "Issue 1: The action 'Memorize if TAI added due to non-integrity protected reject' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec.",
+        "Issue 2: The action 'Search for a suitable cell in another tracking area' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec."
+      ],
+      "suggested_correction": "Action: Verify the action 'Memorize if TAI added due to non-integrity protected reject' against other sections of the spec. Action: Verify the action 'Search for a suitable cell in another tracking area' against other sections of the spec."
+    },
+    {
+      "edge_id": "edge9",
+      "issues": [
+        "Issue 1: The action 'Stay in current serving cell, apply normal cell reselection' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec."
+      ],
+      "suggested_correction": "Action: Verify the action 'Stay in current serving cell, apply normal cell reselection' against other sections of the spec."
+    },
+    {
+      "edge_id": "edge10",
+      "issues": [
+        "Issue 1: The action 'Perform SNPN selection or SNPN selection for onboarding services' is not explicitly mentioned in the spec text, although it is implied. It should be verified against other sections of the spec."
+      ],
+      "suggested_correction": "Action: Verify the action 'Perform SNPN selection or SNPN selection for onboarding services' against other sections of the spec."
+    }
+  ],
+  "correct_edges": [
+    "edge1",
+    "edge2",
+    "edge3",
+    "edge4"
+  ]
+}
+```

@@ -1,5 +1,5 @@
 ```mermaid
-graph TD
+graph LR
     state_deregistered
     event_initiate_registration
     event_receive_accept
