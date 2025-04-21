@@ -58,6 +58,6 @@ function convertJsonToMermaid(inputFile, outputFile) {
 }
 
 // Example usage
-const inputFile = "step1.json";
-const outputFile = "step1-converted-mermaid.md";
+const inputFile = "step2.json";
+const outputFile = "step2-converted-mermaid.md";
 convertJsonToMermaid(inputFile, outputFile);
