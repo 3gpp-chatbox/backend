@@ -42,7 +42,7 @@ function convertJsonToMermaid(inputFile, outputFile) {
     }
 
     // Add the edge with proper quoting
-    mermaidCode += `    ${fromNode} -->|"${label}"| ${toNode}\n`;
+    mermaidCode += `    ${fromNode} --> ${toNode}\n`;
   });
 
   // Add title if procedure_name exists
@@ -59,5 +59,5 @@ function convertJsonToMermaid(inputFile, outputFile) {
 
 // Example usage
 const inputFile = "step2.json";
-const outputFile = "step2-converted-mermaid.md";
+const outputFile = "step2-converted-mermaid-nolabel.md";
 convertJsonToMermaid(inputFile, outputFile);
