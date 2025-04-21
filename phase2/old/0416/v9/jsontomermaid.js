@@ -7,42 +7,57 @@ function convertJsonToMermaid(inputFile, outputFile) {
   }
 
   const rawData = fs.readFileSync(inputFile, "utf-8");
-  const graphData = JSON.parse(rawData);
+  const procedureData = JSON.parse(rawData);
+  const graphData = procedureData.graph; // Access the graph object from your new structure
 
-  let mermaidCode = "graph TD\n";  // Initialize Mermaid code for flowchart
+  let mermaidCode = "graph LR\n";  // Left-to-right flow for better readability
+  mermaidCode += "    classDef state fill:#e6f3ff,stroke:#333,stroke-width:2px,color:#000;\n";
+  mermaidCode += "    classDef event fill:#ffebee,stroke:#333,stroke-width:1px,color:#000;\n\n";
 
-  // Process nodes (both states and events)
+  // Process nodes
   graphData.nodes.forEach(node => {
-    let nodeName = node.name;
-    let description = node.properties.description || '';
-
-    // Add nodes to the Mermaid diagram
-    if (node.type === 'state' || node.type === 'event') {
-      mermaidCode += `    ${nodeName}\n`;
-
-    }
+    const nodeId = node.id;
+    const nodeName = node.name;
+    const nodeType = node.type || 'state'; // Default to state if type not specified
+    
+    // Add nodes with styling based on type
+    mermaidCode += `    ${nodeId}["${nodeName}"]\n`;
+    mermaidCode += `    class ${nodeId} ${nodeType}\n`;
   });
 
-// Process edges
-graphData.edges.forEach(edge => {
-  let from = edge.from;
-  let to = edge.to;
-  let label = edge.label;
+  // Process edges with better label formatting
+  graphData.edges.forEach(edge => {
+    const fromNode = graphData.nodes.find(n => n.id === edge.from)?.name || edge.from;
+    const toNode = graphData.nodes.find(n => n.id === edge.to)?.name || edge.to;
+    let label = edge.label || '';
+    
+    // Clean up label formatting
+    if (label.startsWith("Condition: ")) {
+      label = label.substring("Condition: ".length);
+    }
+    
+    // Add section reference if available
+    if (edge.section_reference) {
+      label += ` (${edge.section_reference})`;
+    }
 
-  // Add the edge (transition) between nodes to the Mermaid diagram
-  mermaidCode += `    ${from} --> | ${label}|${to}\n`;
-});
+    // Add the edge with proper quoting
+    mermaidCode += `    ${fromNode} -->|"${label}"| ${toNode}\n`;
+  });
 
-  // Wrap the Mermaid code in markdown syntax for Mermaid rendering
-  mermaidCode = "```mermaid\n" + mermaidCode + "```";
+  // Add title if procedure_name exists
+  let outputContent = "";
+  if (procedureData.procedure_name) {
+    outputContent += `# ${procedureData.procedure_name}\n\n`;
+  }
+  outputContent += "```mermaid\n" + mermaidCode + "```";
 
-  // Write the Mermaid code to the output file
-  fs.writeFileSync(outputFile, mermaidCode, "utf-8");
+  // Write the output file
+  fs.writeFileSync(outputFile, outputContent, "utf-8");
   console.log(`Mermaid diagram saved to ${outputFile}`);
 }
 
 // Example usage
-const inputFile = "step1.json"; // Absolute path
-const outputFile = "step1-converted-mermaid.md";  // Output file path
+const inputFile = "step1.json";
+const outputFile = "step1-converted-mermaid.md";
 convertJsonToMermaid(inputFile, outputFile);
-

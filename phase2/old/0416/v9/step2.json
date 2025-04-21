@@ -1,0 +1,551 @@
+
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      {
+        "id": "node1",
+        "name": "5GMM-DEREGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "node2",
+        "name": "Event_InitialRegistration_Trigger",
+        "type": "event"
+      },
+      {
+        "id": "node3",
+        "name": "5GMM-REGISTERED-INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "node4",
+        "name": "Receive_REGISTRATION_ACCEPT",
+        "type": "event"
+      },
+      {
+        "id": "node5",
+        "name": "5GMM-REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "node6",
+        "name": "5GMM-REGISTERED.LIMITED-SERVICE",
+        "type": "state"
+      },
+      {
+        "id": "node7",
+        "name": "5GMM-REGISTERED.PLMN-SEARCH",
+        "type": "state"
+      },
+      {
+        "id": "node8",
+        "name": "Receive_REGISTRATION_REJECT",
+        "type": "event"
+      },
+      {
+        "id": "node9",
+        "name": "5GMM-DEREGISTERED.NO-SUPI",
+        "type": "state"
+      },
+      {
+        "id": "node10",
+        "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+        "type": "state"
+      },
+      {
+        "id": "node11",
+        "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+        "type": "state"
+      },
+      {
+        "id": "node12",
+        "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+        "type": "state"
+      },
+      {
+        "id": "node13",
+        "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+        "type": "state"
+      },
+      {
+        "id": "node14",
+        "name": "Event_T3510_Expiry",
+        "type": "event"
+      },
+      {
+        "id": "node15",
+        "name": "Event_LowerLayer_Failure",
+        "type": "event"
+      },
+      {
+        "id": "node16",
+        "name": "Event_UE_Deregistration_Required",
+        "type": "event"
+      },
+      {
+        "id": "node17",
+        "name": "Receive_DEREGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "node18",
+        "name": "Event_TAI_Change",
+        "type": "event"
+      },
+      {
+        "id": "node19",
+        "name": "Event_Localized_Service_Access_Disallowed",
+        "type": "event"
+      },
+      {
+        "id": "node20",
+        "name": "Event_T3511_Expiry",
+        "type": "event"
+      },
+      {
+        "id": "node21",
+        "name": "Event_T3346_Expiry",
+        "type": "event"
+      },
+      {
+        "id": "node22",
+        "name": "Event_REG_COMPLETE_Tx_Failure",
+        "type": "event"
+      },
+      {
+        "id": "node23",
+        "name": "Event_TAI_Change_After_Accept",
+        "type": "event"
+      },
+      {
+        "id": "node24",
+        "name": "Event_Access_Barred",
+        "type": "event"
+      },
+      {
+        "id": "node25",
+        "name": "Event_REG_REQUEST_Tx_Failure",
+        "type": "event"
+      },
+      {
+        "id": "node26",
+        "name": "Event_SOR_Requires_Release",
+        "type": "event"
+      },
+      {
+        "id": "node28",
+        "name": "Event_REG_COMPLETE_Tx_Failure_TAI_Change",
+        "type": "event"
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge1",
+        "from": "node1",
+        "to": "node2",
+        "label": "Condition: Initial registration trigger met",
+        "section_reference": "5.5.1.2.2"
+      },
+      {
+        "id": "edge2",
+        "from": "node2",
+        "to": "node3",
+        "label": "Action: Send REGISTRATION REQUEST, Start T3510, Stop T3502/T3511",
+        "section_reference": "5.5.1.2.2"
+      },
+      {
+        "id": "edge3",
+        "from": "node3",
+        "to": "node4",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge4",
+        "from": "node4",
+        "to": "node5",
+        "label": "Action: Reset counters, Store context, Send REG COMPLETE if needed, Enter 5GMM-REGISTERED",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge5",
+        "from": "node4",
+        "to": "node6",
+        "label": "Condition: CAG update restricts access; Action: Enter LIMITED-SERVICE, Search cell",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge6",
+        "from": "node4",
+        "to": "node7",
+        "label": "Condition: CAG update restricts to CAG-only; Action: Enter PLMN-SEARCH",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge7",
+        "from": "node3",
+        "to": "node8",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge8",
+        "from": "node8",
+        "to": "node9",
+        "label": "Condition: Cause #3/#6/#7/#5(Emer); Action: Set status 5U3, Delete context, Enter NO-SUPI",
+        "section_reference": "5.5.1.2.5, 5.5.1.2.6"
+      },
+      {
+        "id": "edge9",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Cause #11(3GPP)/#73(3GPP)/#36/#78/#80; Action: Set status 5U3, Delete context, Add forbidden",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge10",
+        "from": "node8",
+        "to": "node11",
+        "label": "Condition: Cause #12/#13(Option)/#15/#27; Action: Set status 5U3, Delete TAI list, Add forbidden TAI",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge11",
+        "from": "node8",
+        "to": "node12",
+        "label": "Condition: Cause #22; Action: Set status 5U2, Start T3346",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge12",
+        "from": "node8",
+        "to": "node13",
+        "label": "Condition: Cause #31; Action: Set status 5U3, Delete context, Disable N1(3GPP)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge13",
+        "from": "node8",
+        "to": "node12",
+        "label": "Condition: Cause #62(Option)/#79(Option)/#81(Option)/#82(Option); Action: Set status 5U2, Store rejected NSSAI (if #62)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge14",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Cause #62(Option)/#79(Option)/#81(Option)/#82(Option); Action: Set status 5U2, Store rejected NSSAI (if #62)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge15",
+        "from": "node8",
+        "to": "node1",
+        "label": "Condition: Cause #72(non-3GPP)/#77(Wireline); Action: Set status 5U3, Delete context",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge16",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Cause #74(3GPP)/#75(3GPP) (SNPN); Action: Set status 5U3, Delete context, Add forbidden SNPN",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge17",
+        "from": "node8",
+        "to": "node11",
+        "label": "Condition: Cause #74(non-3GPP)/#75(non-3GPP) (SNPN); Action: Set status 5U3, Delete context, Add forbidden SNPN",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge18",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Cause #76 (CAG - PLMN Search Option); Action: Set status 5U3, Update CAG list",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge19",
+        "from": "node8",
+        "to": "node11",
+        "label": "Condition: Cause #76 (CAG - Limited Service Option); Action: Set status 5U3, Update CAG list",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge20",
+        "from": "node8",
+        "to": "node12",
+        "label": "Condition: Abnormal Cause & Counter < 5; Action: Abort, Incr counter, Start T3511",
+        "section_reference": "5.5.1.2.7 d"
+      },
+      {
+        "id": "edge21",
+        "from": "node8",
+        "to": "node12",
+        "label": "Condition: Abnormal Cause & Counter = 5 (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7 d"
+      },
+      {
+        "id": "edge22",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Abnormal Cause & Counter = 5 (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7 d"
+      },
+      {
+        "id": "edge23",
+        "from": "node3",
+        "to": "node14",
+        "label": "Condition: Not Emergency",
+        "section_reference": "5.5.1.2.7 c"
+      },
+      {
+        "id": "edge24",
+        "from": "node14",
+        "to": "node12",
+        "label": "Condition: Counter < 5; Action: Abort, Incr counter, Start T3511",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge25",
+        "from": "node14",
+        "to": "node12",
+        "label": "Condition: Counter = 5 (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge26",
+        "from": "node14",
+        "to": "node10",
+        "label": "Condition: Counter = 5 (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge27",
+        "from": "node3",
+        "to": "node15",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7 e"
+      },
+      {
+        "id": "edge28",
+        "from": "node15",
+        "to": "node12",
+        "label": "Condition: Counter < 5 & Not Emergency; Action: Abort, Incr counter, Start T3511",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge29",
+        "from": "node15",
+        "to": "node12",
+        "label": "Condition: Counter = 5 & Not Emergency (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge30",
+        "from": "node15",
+        "to": "node10",
+        "label": "Condition: Counter = 5 & Not Emergency (Option); Action: Abort, Delete context, Start T3502, Set status 5U2",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge31",
+        "from": "node3",
+        "to": "node16",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7 f"
+      },
+      {
+        "id": "edge32",
+        "from": "node16",
+        "to": "node1",
+        "label": "Action: Abort procedure, Perform UE de-registration",
+        "section_reference": "5.5.1.2.7 f"
+      },
+      {
+        "id": "edge33",
+        "from": "node3",
+        "to": "node17",
+        "label": "Condition: Collision",
+        "section_reference": "5.5.1.2.7 g"
+      },
+      {
+        "id": "edge34",
+        "from": "node17",
+        "to": "node3",
+        "label": "Action: Abort de-registration, Continue registration",
+        "section_reference": "5.5.1.2.7 g"
+      },
+      {
+        "id": "edge35",
+        "from": "node3",
+        "to": "node18",
+        "label": "Condition: Before REG ACCEPT/REJECT",
+        "section_reference": "5.5.1.2.7 h"
+      },
+      {
+        "id": "edge36",
+        "from": "node18",
+        "to": "node1",
+        "label": "Action: Abort procedure, Re-initiate",
+        "section_reference": "5.5.1.2.7 h"
+      },
+      {
+        "id": "edge37",
+        "from": "node3",
+        "to": "node19",
+        "label": "Condition: Not Emergency, SNPN localized service access lost",
+        "section_reference": "5.5.1.2.7 n"
+      },
+      {
+        "id": "edge38",
+        "from": "node19",
+        "to": "node11",
+        "label": "Action: Abort procedure, Release NAS, Enter LIMITED-SERVICE/PLMN-SEARCH",
+        "section_reference": "5.5.1.2.7 n"
+      },
+      {
+        "id": "edge39",
+        "from": "node19",
+        "to": "node10",
+        "label": "Action: Abort procedure, Release NAS, Enter LIMITED-SERVICE/PLMN-SEARCH",
+        "section_reference": "5.5.1.2.7 n"
+      },
+      {
+        "id": "edge40",
+        "from": "node12",
+        "to": "node20",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge41",
+        "from": "node20",
+        "to": "node1",
+        "label": "Action: Restart initial registration",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "edge42",
+        "from": "node12",
+        "to": "node21",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7 a"
+      },
+      {
+        "id": "edge43",
+        "from": "node21",
+        "to": "node1",
+        "label": "Action: Restart initial registration if needed",
+        "section_reference": "5.5.1.2.7 a"
+      },
+      {
+        "id": "edge44",
+        "from": "node5",
+        "to": "node22",
+        "label": "Condition: No TAI change",
+        "section_reference": "5.5.1.2.7 j"
+      },
+      {
+        "id": "edge45",
+        "from": "node22",
+        "to": "node5",
+        "label": "Action: Re-run procedure (implementation specific)",
+        "section_reference": "5.5.1.2.7 j"
+      },
+      {
+        "id": "edge46",
+        "from": "node5",
+        "to": "node23",
+        "label": "Condition: After REG ACCEPT, before REG COMPLETE sent",
+        "section_reference": "5.5.1.2.7 h"
+      },
+      {
+        "id": "edge47",
+        "from": "node23",
+        "to": "node5",
+        "label": "Condition: New TAI in list; Action: Send REG COMPLETE",
+        "section_reference": "5.5.1.2.7 h"
+      },
+      {
+        "id": "edge49",
+        "from": "node1",
+        "to": "node24",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7 b"
+      },
+      {
+        "id": "edge50",
+        "from": "node24",
+        "to": "node1",
+        "label": "Action: Do not start procedure",
+        "section_reference": "5.5.1.2.7 b"
+      },
+      {
+        "id": "edge51",
+        "from": "node3",
+        "to": "node25",
+        "label": "No Condition",
+        "section_reference": "5.5.1.2.7 k"
+      },
+      {
+        "id": "edge52",
+        "from": "node25",
+        "to": "node1",
+        "label": "Action: Abort procedure, Re-initiate",
+        "section_reference": "5.5.1.2.7 k"
+      },
+      {
+        "id": "edge53",
+        "from": "node5",
+        "to": "node26",
+        "label": "Condition: SOR received & PLMN change attempt",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge54",
+        "from": "node26",
+        "to": "node1",
+        "label": "Action: Locally release NAS connection",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "edge57",
+        "from": "node8",
+        "to": "node11",
+        "label": "Condition: Cause #11 (non-3GPP); Action: Set status 5U3, Delete context, Add forbidden",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge58",
+        "from": "node8",
+        "to": "node10",
+        "label": "Condition: Cause #13 (Option); Action: Set status 5U3, Delete TAI list, Add forbidden TAI",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge59",
+        "from": "node8",
+        "to": "node11",
+        "label": "Condition: Cause #73 (non-3GPP); Action: Set status 5U3, Delete context, Add forbidden",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "edge60",
+        "from": "node5",
+        "to": "node28",
+        "label": "Condition: After REG ACCEPT, TAI changed",
+        "section_reference": "5.5.1.2.7 i"
+      },
+      {
+        "id": "edge61",
+        "from": "node28",
+        "to": "node5",
+        "label": "Condition: New TAI in list; Action: Resend REG COMPLETE",
+        "section_reference": "5.5.1.2.7 i"
+      }
+    ]
+  }
+}
