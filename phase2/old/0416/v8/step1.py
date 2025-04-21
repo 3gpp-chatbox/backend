@@ -34,32 +34,46 @@ Your task is to extract the **Flow Property Graph (FPG)** for this procedure  "{
 
 ---
 
-## Objectives
+## Objective
 
-Build a flow property graph where:
-- **Nodes** are UE states or events (e.g., timer expiry, message reception).
-- **Edges** represent transitions triggered by events, showing **explicit** actions the UE performs.
+Build a Flow Property Graph where:
+- **Nodes** are **UE states only** (e.g., "5GMM-DEREGISTERED", "5GMM-REGISTERED").
+- **Edges** are **transitions** between states, triggered by an event and followed by an action.
+- Each edge must include a **label** and the **3GPP section number** from which it was derived.
+
+
+
+## Core Components to identify (UE Side Only)
+
+### States:
+- Only include explicitly named UE states (e.g., "5GMM-REGISTERED", "DEREGISTERED.INITIAL").
+-  Do not invent or infer state names.
+
+### Events (used in edge labels only):
+- These are **UE-visible triggers** like messages received or timers expiring (e.g., `"Receive DEREGISTRATION REQUEST"`, `"T3510 expires"`).
+- Events describe things that happen **to** the UE.
+
+### Conditions (used in edge labels only):
+- Logical checks or criteria that must be met for the transition (e.g., `"registration attempt counter < 5"`).
+- Include only if **explicitly described** in the spec.
+
+### Actions (used in edge labels only):
+- Actions the UE performs in response to the event and/or condition (e.g., `"Send REGISTRATION REQUEST"`).
+- Must be explicitly stated — no inferences allowed.
 
 ---
 
-## Core Components to Extract/identify (UE Side Only)
+### Edge Label:
+Each edge must contain a short, specific label (10-20 words) that:
+-  Highlights the triggering event.
+-  Includes any gating condition (if present).
+-  Summarizes the main UE action.
+-  Uses simple and specific language.
+Use structured phrasing: "[Event], [Condition] — [Action]"
+Keep labels concise — no more than 20 words or 100 characters per label.
 
-States: Only include explicitly named UE states from the specification (e.g., "5GMM-DEREGISTERED", "5GMM-REGISTERED"). These represent distinct states of the UE during the procedure.
-
-Events: UE-visible triggers that cause a transition in the flow, such as received messages or timer expiries. Events should describe things that happen to the UE. These are typically messages the UE receives or external triggers (e.g., "Receive DEREGISTRATION REQUEST", "T3510 expires", etc.).
-
-Conditions: These are checks or criteria that must be true to trigger a transition. For example: "Registration counter < 5". Conditions describe whether something is true or not but are not nodes.
-
-Actions: These are the things the UE does in response to an event or condition. For example: "Send REGISTRATION REJECT". Do not include actions as event nodes; they should only appear in the edge labels representing transitions.
-
-Label: A short description (10-20 words) summarizing the transition, Focus on the Primary Trigger,Include Only Gating Conditions That Matter,Describe Only the Primary UE Action,Use Simple,Specific Language(e.g.,"REGISTRATION REJECT received, context invalid, retry allowed — send new REGISTRATION REQUEST")
-
-Key Notes:
-Flow Property Graph Structure: You may internally identify actions and conditions to help with the flow structure, but do not include them in the final JSON output. Only include the nodes (states and events) and edges (which are transitions between nodes).
-
-No Inferences: Ensure that no inferred information or logic is included. Only explicit states, events, actions, and conditions as described in the specification should be used.
-
-- **Section Reference**: Every edge must include the 3GPP section number from which it is derived.
+**Example**:  
+`"Receive REGISTRATION REJECT, context valid — UE sends new REGISTRATION REQUEST"`
 
 ---
 
@@ -72,39 +86,33 @@ Only return valid JSON object, **do not include any comments or additional expla
   "nodes": [
     {{
       "id": "node1", // unique node ID, after would be node2, node3, node4,...
-      "name": "StateOrEventName",
-      "type": "state" or "event"
+      "name": "StateName",
     }}
     ...
   ],
   "edges": [
-    {{
+    {{ 
       "id": "edge1", // unique edge ID, after would be edge2, edge3,...
       "from": "source_node_name",
       "to": "target_node_name",
-    "label":A short description (10-20 words) summarizing the transition.(e.g.,"REGISTRATION REJECT received, context invalid, retry allowed — send new REGISTRATION REQUEST")
+    "label":"A short description (10–20 words) summarizing the transition (e.g., 'REGISTRATION REJECT received, context invalid, retry allowed — send new REGISTRATION REQUEST')"
       "section_reference": "e.g. 5.5.1.3.2"
     }}
     ...
   ]
 }}
 
-Constraints & Guidance
-UE Side Only: Do not include network-side states or actions unless they directly trigger UE behavior.
-No Inference: This task focuses on extracting only what is explicitly stated. Do not include implied or inferred logic.
-Clean Separation: Avoid mixing inferred logic with extracted facts. This allows engineers to verify core logic before expanding with implied details in a future phase.
-Consistent Structure: Use fields like context, parameters, and section_reference consistently across all entries.
-Explicit States Only: Do not invent or infer states — only use states explicitly defined in the text (e.g., “5GMM-REGISTERED”).
-Multiple Paths: Include all explicitly described variants (e.g., emergency mode, valid/invalid security context).
-Condition vs. Action: Keep conditions (triggers) separate from actions (UE responses).
-Timer Events: Model timer expiries as their own event nodes, not embedded within edge conditions.
-Contextual Inputs: If the UE uses flags, counters, or remembered values (and they are mentioned), extract them as context.
-Fallbacks: Capture all valid fallback/error/rejection flows if explicitly described.
+Constraints
+UE-Side Only: Do not include network-side states or actions unless they directly trigger UE transitions.
+No Inference: Use only information that is explicitly stated in the input content.
+State-Only Nodes: Do not model events, conditions, or actions as nodes — only use them to define transitions.
+Multiple Paths: If the spec describes alternate paths (e.g., emergency mode, failure recovery), include them all.
+Fallbacks and Edge Cases: Capture fallback or error handling flows if explicitly described.
+Support for Self-loops: If a procedure describes retry or failure recovery that leads the UE back to the same state, include a transition from that state to itself. This is valid as long as the loop is explicitly described in the text.
 
-Only Use Provided Text: Do not reference or rely on external knowledge. Work solely from the provided content.
 
-Input Below
-This is the original content. Only analyze based on this input. Do not make assumptions:
+Input Text:
+Analyze only the content below. Do not reference external knowledge:
 {text} 
 """
 
@@ -172,11 +180,11 @@ section_name = "Registration procedure for initial registration"  # Name of the 
 procedural_info = process_text_file(input_file_path, section_name)
 
 if procedural_info:
-    save_procedural_info_to_json(procedural_info, "step1-v2.json")
+    save_procedural_info_to_json(procedural_info, "step1.json")
 else:
     print("Failed to extract procedural information")
 
 if save_procedural_info_to_json:
-   clean_json("step1-v2.json")
+   clean_json("step1.json")
 else:
     print("Failed to clean json file")
