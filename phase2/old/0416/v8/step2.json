@@ -1,0 +1,423 @@
+```json
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "name": "5GMM-DEREGISTERED"
+    },
+    {
+      "id": "node2",
+      "name": "5GMM-REGISTERED-INITIATED"
+    },
+    {
+      "id": "node3",
+      "name": "5GMM-REGISTERED"
+    },
+    {
+      "id": "node4",
+      "name": "5GMM-REGISTERED.LIMITED-SERVICE"
+    },
+    {
+      "id": "node5",
+      "name": "5GMM-REGISTERED.PLMN-SEARCH"
+    },
+    {
+      "id": "node6",
+      "name": "5GMM-DEREGISTERED.NO-SUPI"
+    },
+    {
+      "id": "node7",
+      "name": "5GMM-DEREGISTERED.PLMN-SEARCH"
+    },
+    {
+      "id": "node8",
+      "name": "5GMM-DEREGISTERED.LIMITED-SERVICE"
+    },
+    {
+      "id": "node9",
+      "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION"
+    },
+    {
+      "id": "node10",
+      "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE"
+    },
+    {
+      "id": "node11",
+      "name": "5GMM-DEREGISTERED"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "5GMM-DEREGISTERED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Initiate initial registration — Send REGISTRATION REQUEST, start T3510",
+      "section_reference": "5.5.1.2.2"
+    },
+    {
+      "id": "edge2",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED",
+      "label": "Receive REGISTRATION ACCEPT — Reset counters, enter 5GMM-REGISTERED",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge4",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG ACCEPT (CAG cell, ID not allowed, only CAG=false) — Enter LIMITED-SERVICE, search cell",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge5",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED.PLMN-SEARCH",
+      "label": "Receive REG ACCEPT (CAG cell, ID not allowed, only CAG=true, no other IDs) — Enter PLMN-SEARCH",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge6",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG ACCEPT (non-CAG cell, only CAG=true, IDs allowed) — Enter LIMITED-SERVICE, search cell",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge7",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED.PLMN-SEARCH",
+      "label": "Receive REG ACCEPT (non-CAG cell, only CAG=true, no IDs allowed) — Enter PLMN-SEARCH",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge8",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG ACCEPT (CAG cell, PLMN not in CAG list) — Enter LIMITED-SERVICE, search cell",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge9",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Receive REG REJECT #3/#6/#7 — Enter NO-SUPI, delete context, consider USIM invalid",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge10",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #11/#73 — Enter PLMN-SEARCH, add forbidden PLMN, start T3245",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge11",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG REJECT #12 — Enter LIMITED-SERVICE, delete TAI list, add forbidden TAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge12",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG REJECT #13/#15 — Enter LIMITED-SERVICE, delete TAI list, add forbidden TAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge13",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #13 (optional) — Enter PLMN-SEARCH, delete TAI list, add forbidden TAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge14",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT #22 — Enter ATTEMPTING-REGISTRATION, start T3346",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge15",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG REJECT #27 — Enter LIMITED-SERVICE, delete context, disable N1 mode",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge16",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+      "label": "Receive REG REJECT #31 — Enter NO-CELL-AVAILABLE, delete context, disable N1",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge17",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #36 (IAB) — Enter PLMN-SEARCH, add forbidden PLMN/SNPN",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge18",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT #62 — Enter ATTEMPTING-REGISTRATION, store rejected NSSAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge19",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #62 (optional) — Enter PLMN-SEARCH, store rejected NSSAI",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge20",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Receive REG REJECT #72 (non-3GPP) — Enter DEREGISTERED, disable N1 for non-3GPP",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge21",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #74 (SNPN temp) — Enter PLMN-SEARCH, add temp forbidden SNPN",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge22",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #75 (SNPN perm) — Enter PLMN-SEARCH, add perm forbidden SNPN",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge23",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Receive REG REJECT #76 (CAG) — Enter LIMITED-SERVICE, update CAG list, search cell",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge24",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #76 (CAG, optional) — Enter PLMN-SEARCH, update CAG list",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge25",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Receive REG REJECT #77 (Wireline) — Enter DEREGISTERED, delete context",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge26",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #78 (Satellite) — Enter PLMN-SEARCH, add forbidden PLMN@location",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge27",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT #79 (UAS) — Enter ATTEMPTING-REGISTRATION, retry without UAS ID",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge28",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #79 (UAS, optional) — Enter PLMN-SEARCH, retry without UAS ID",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge29",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #80 (Disaster) — Enter PLMN-SEARCH, wait before retry",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge30",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT #81 (N3IWF) — Enter ATTEMPTING-REGISTRATION, use suggested N3IWF",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge31",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #81 (N3IWF, optional) — Enter PLMN-SEARCH, use suggested N3IWF",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge32",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT #82 (TNGF) — Enter ATTEMPTING-REGISTRATION, use suggested TNAN",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge33",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT #82 (TNGF, optional) — Enter PLMN-SEARCH, use suggested TNAN",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge34",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.NO-SUPI",
+      "label": "Receive REG REJECT #5 (Emergency) — Enter NO-SUPI",
+      "section_reference": "5.5.1.2.6"
+    },
+    {
+      "id": "edge35",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 expires, counter < 5 — Abort, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge36",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "T3510 expires, counter = 5 — Abort, delete context, start T3502",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge37",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "T3510 expires, counter = 5 (optional) — Abort, delete context, start T3502, perform PLMN search",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge38",
+      "from": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "T3511 expires — Restart initial registration procedure",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge39",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower layer failure, counter < 5 — Abort, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge40",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Lower layer failure, counter = 5 — Abort, delete context, start T3502",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge41",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Lower layer failure, counter = 5 (optional) — Abort, delete context, start T3502, perform PLMN search",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge42",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "Current TAI changes before complete — Abort and re-initiate registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge44",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-REGISTERED-INITIATED",
+      "label": "REG REQUEST transmission failure — Abort and re-initiate registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge45",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+      "label": "Localized service access lost — Abort, release NAS connection, perform SNPN selection",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge46",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Localized service access lost (optional) — Abort, release NAS connection, perform SNPN selection",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge47",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT (other cause), counter < 5 — Abort, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge48",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Receive REG REJECT (other cause), counter = 5 — Abort, delete context, start T3502",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge49",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Receive REG REJECT (other cause), counter = 5 (optional) — Abort, delete context, start T3502, perform PLMN search",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge50",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED",
+      "label": "De-registration required (e.g., USIM removal) — Abort registration, perform de-registration",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge51",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED",
+      "label": "Receive REG REJECT #10 (Wireline AUN3) — Abort, delete context, enter DEREGISTERED",
+      "section_reference": "5.5.1.2.5"
+    },
+    {
+      "id": "edge52",
+      "from": "5GMM-REGISTERED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "SOR failure/missing, attempt other PLMNs — Release NAS connection, perform PLMN search",
+      "section_reference": "5.5.1.2.4"
+    },
+    {
+      "id": "edge53",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Access barred after REG REQ sent, counter < 5 — Abort, increment counter, start T3511",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge54",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+      "label": "Access barred after REG REQ sent, counter = 5 — Abort, delete context, start T3502",
+      "section_reference": "5.5.1.2.7"
+    },
+    {
+      "id": "edge55",
+      "from": "5GMM-REGISTERED-INITIATED",
+      "to": "5GMM-DEREGISTERED.PLMN-SEARCH",
+      "label": "Access barred after REG REQ sent, counter = 5 (optional) — Abort, delete context, start T3502, perform PLMN search",
+      "section_reference": "5.5.1.2.7"
+    }
+  ]
+}
+```
