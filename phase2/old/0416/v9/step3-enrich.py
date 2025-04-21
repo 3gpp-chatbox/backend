@@ -111,7 +111,7 @@ You must **only add new information** to enrich the graph using the original spe
 
 #### For all `state` nodes:
 Add a `properties` field with any **explicit** attributes found in the spec:
-- `"description"`: Optional, brief summary
+- `"description"`: brief summary
 - `"cause_value"`: Only if stated
 - `"timer_active"`: If a timer runs in this state
 - Any mentioned parameters: e.g., `"T3510"`, `"registration_attempt_counter"`
@@ -141,7 +141,7 @@ Add the following **only if explicitly found in the original spec**:
   - `"section_reference"`: Reference where this transition is defined
 
  Hint: Use the `from`/`to` direction and node `type` (state/event) to determine whether to enrich an edge with a condition or an action.
- For Event → State edges, add action for UE behaviors and condition only if the spec specifies a gating check (e.g., 'if message is valid, UE enters STATE')."
+"For Event → State edges, include action for UE behaviors and condition only if the transition is explicitly gated (e.g., 'if X, UE enters STATE'). For State → Event edges, focus on conditions triggering the event."
 Pay special attention to error handling clauses (e.g., 'if...else...') and ensure they are captured as conditions or actions.
 ---
 
@@ -170,62 +170,69 @@ Message Parameters: For events like "Receive X", include parameters only if the 
 
 ```json
 {{
-  "nodes": [
-    {{
-      "id": "node2",
-      "name": "Event_Receive_Registration_Reject",
-      "type": "event",
-      "description": "UE receives a Registration Reject message",
-      "parameters": ["T3510"],
-      "properties": {{
-        "message_type": "REGISTRATION REJECT",
-        "section_reference": "5.5.1.2.2"
-      }}
-    }},
-    {{
-      "id": "node3",
-      "name": "5GMM-DEREGISTERED",
-      "type": "state",
-      "properties": {{
+  "procedure_name": "{{section_name}}",
+  "graph": {{
+    "nodes": [
+      {{
+        "id": "node1",
+        "name": "5GMM-DEREGISTERED",
+        "type": "state",
         "description": "UE is not registered with the network",
-        "timer_active": "T3502",
-        "cause_value": "9"
+        "properties": {{
+          "timer_active": "T3502",
+          "parameters": ["T3502"]
+        }}
+      }},
+      {{
+        "id": "node2",
+        "name": "Event_InitialRegistration_Trigger",
+        "type": "event",
+        "description": "Initial registration trigger occurs at UE",
+        "parameters": ["registration_attempt_counter"],
+        "properties": {{
+          "timer_trigger": false,
+          "message_type": "N/A",
+          "section_reference": ["5.5.1.2.2"]
+        }}
       }}
-    }}
-  ],
-  "edges": [
-    {{
-      "id": "edge1",
-      "from": "5GMM-REGISTERED",
-      "to": "Event_Receive_Registration_Reject",
-      "condition": [
-        "T3510 expired",
-        "emergency_service_flag = false"
-      ],
-      "properties": {{
-        "parameters": ["T3510", "emergency_service_flag"],
-        "section_reference": "5.5.1.2.2"
+    ],
+    "edges": [
+      {{
+        "id": "edge1",
+        "from": "node1",
+        "to": "node2",
+        "condition": [
+          "Initial registration conditions met"
+        ],
+        "properties": {{
+          "parameters": ["registration_attempt_counter"],
+          "context": {{
+            "emergency_service_flag": "false"
+          }},
+          "section_reference": ["5.5.1.2.2"]
+        }}
+      }},
+      {{
+        "id": "edge2",
+        "from": "node2",
+        "to": "node3",
+        "condition": [
+          "Initial registration conditions met"
+        ],
+        "action": [
+          "Send REGISTRATION REQUEST",
+          "Start T3510",
+          "Stop T3502",
+          "Stop T3511"
+        ],
+        "properties": {{
+          "parameters": ["T3510", "T3502", "T3511"],
+          "section_reference": ["5.5.1.2.2"]
+        }}
       }}
-    }},
-    {{
-      "id": "edge2",
-      "from": "Event_Receive_Registration_Reject",
-      "to": "5GMM-DEREGISTERED",
-      "action": [
-        "Start T3502",
-        "Stop T3510"
-      ],
-      "properties": {{
-        "parameters": ["T3502", "T3510"],
-        "context": {{
-          "security_context": "invalid"
-        }},
-        "section_reference": "5.5.1.2.3"
-      }}
-    }}
-  ]
+    ]
+  }}
 }}
-
 
 First Part:
 flow property graph the procedure "{section_name}" (Extracted previously):
@@ -267,7 +274,7 @@ def save_to_json(data, file_path):
 def process_procedure(section_name):
     """Processes the procedure using step1.json and step2.json as input."""
     
-    extracted_data = read_json_file("v1-step3-correct.json")
+    extracted_data = read_json_file("step2.json")
     original_content = read_text_file("5.5.1.2.txt")
 
     if extracted_data is None or original_content is None:
@@ -283,6 +290,6 @@ section_name = "Registration procedure for initial registration"
 procedural_info = process_procedure(section_name)
 
 if procedural_info:
-    save_to_json(procedural_info, "v1-step4-enrich.json")
+    save_to_json(procedural_info, "step3-enrich.json")
 else:
     print("Failed to extract")
