@@ -1,0 +1,180 @@
+```json
+{
+  "summary": {
+    "valid": false,
+    "missing_nodes": [
+      {
+        "id": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+        "reason": "The text describes the AMF receiving a DEREGISTRATION REQUEST message while timer T3550 is running (subclause 5.5.1.2.8 h), which aborts the initial registration. This trigger event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550', 'type': 'event'}"
+      },
+      {
+        "id": "Event_AMF_Protocol_Error",
+        "reason": "The text describes the AMF receiving a REGISTRATION REQUEST with a protocol error, leading to a REGISTRATION REJECT (subclause 5.5.1.2.8 b). This trigger event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_AMF_Protocol_Error', 'type': 'event'}"
+      },
+      {
+        "id": "Event_AMF_Invalid_Security_Capabilities",
+        "reason": "The text describes the AMF receiving a REGISTRATION REQUEST with invalid or unacceptable UE security capabilities, leading to a REGISTRATION REJECT (subclause 5.5.1.2.8 i). This trigger event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_AMF_Invalid_Security_Capabilities', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_Initiate_DeRegistration",
+        "reason": "The text describes the case where UE initiated de-registration is required while in the REGISTERED-INITIATED state, aborting the initial registration (subclause 5.5.1.2.7 f). This trigger event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_Initiate_DeRegistration', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+        "reason": "The text describes the case where the UE receives a DEREGISTRATION REQUEST message while in the REGISTERED-INITIATED state (subclause 5.5.1.2.7 g). This trigger event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_Receive_DEREGISTRATION_REQUEST', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_SOR_Failure_After_Accept",
+        "reason": "The text describes the UE locally releasing the NAS connection if the SOR transparent container in the REGISTRATION ACCEPT fails integrity check or is missing when expected (subclause 5.5.1.2.4). This event, triggered after receiving ACCEPT (i.e. from REGISTERED state), is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_SOR_Failure_After_Accept', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_Barred",
+        "reason": "The text describes the case where lower layers indicate access barring, preventing the start or affecting the ongoing procedure (subclause 5.5.1.2.7 b, ba). This event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_Barred', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_T3346_Running",
+        "reason": "The text describes the condition where timer T3346 is running, preventing the start of the initial registration procedure under most circumstances (subclause 5.5.1.2.7 a). This condition/event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_T3346_Running', 'type': 'event'}"
+      },
+      {
+        "id": "Event_UE_T3447_Running",
+        "reason": "The text describes the condition where timer T3447 is running, preventing the start of the initial registration procedure with Follow-on request pending under most circumstances (subclause 5.5.1.2.7 l). This condition/event is missing.",
+        "suggested_correction": "Add node: {'id': 'Event_UE_T3447_Running', 'type': 'event'}"
+      }
+    ],
+    "invalid_nodes": [],
+    "extra_nodes": [],
+    "missing_edges": [
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+        "type": "trigger",
+        "reason": "Missing trigger edge for AMF receiving DEREGISTRATION REQUEST during T3550 (subclause 5.5.1.2.8 h).",
+        "suggested_correction": "Add edge: {'from': 'AMF_5GMM_COMMON_PROCEDURE_INITIATED', 'to': 'Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+        "to": "AMF_IDLE_FOR_UE",
+        "type": "condition",
+        "reason": "Missing condition edge for AMF aborting registration and processing de-registration upon receiving DEREGISTRATION REQUEST during T3550 (subclause 5.5.1.2.8 h). Assumes de-registration leads back to IDLE.",
+        "suggested_correction": "Add edge: {'from': 'Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550', 'to': 'AMF_IDLE_FOR_UE', 'type': 'condition'}"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Protocol_Error",
+        "type": "trigger",
+        "reason": "Missing trigger edge for AMF detecting protocol error in REGISTRATION REQUEST (subclause 5.5.1.2.8 b).",
+        "suggested_correction": "Add edge: {'from': 'AMF_REGISTRATION_PENDING', 'to': 'Event_AMF_Protocol_Error', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_AMF_Protocol_Error",
+        "to": "AMF_IDLE_FOR_UE",
+        "type": "condition",
+        "reason": "Missing condition edge for AMF sending REGISTRATION REJECT due to protocol error (subclause 5.5.1.2.8 b).",
+        "suggested_correction": "Add edge: {'from': 'Event_AMF_Protocol_Error', 'to': 'AMF_IDLE_FOR_UE', 'type': 'condition'}"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Invalid_Security_Capabilities",
+        "type": "trigger",
+        "reason": "Missing trigger edge for AMF detecting invalid security capabilities in REGISTRATION REQUEST (subclause 5.5.1.2.8 i).",
+        "suggested_correction": "Add edge: {'from': 'AMF_REGISTRATION_PENDING', 'to': 'Event_AMF_Invalid_Security_Capabilities', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_AMF_Invalid_Security_Capabilities",
+        "to": "AMF_IDLE_FOR_UE",
+        "type": "condition",
+        "reason": "Missing condition edge for AMF sending REGISTRATION REJECT due to invalid security capabilities (subclause 5.5.1.2.8 i).",
+        "suggested_correction": "Add edge: {'from': 'Event_AMF_Invalid_Security_Capabilities', 'to': 'AMF_IDLE_FOR_UE', 'type': 'condition'}"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Initiate_DeRegistration",
+        "type": "trigger",
+        "reason": "Missing trigger edge for UE initiating de-registration while in REGISTERED-INITIATED state (subclause 5.5.1.2.7 f).",
+        "suggested_correction": "Add edge: {'from': 'UE_5GMM_REGISTERED_INITIATED', 'to': 'Event_UE_Initiate_DeRegistration', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_UE_Initiate_DeRegistration",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition",
+        "reason": "Missing condition edge for UE aborting initial registration and performing de-registration (subclause 5.5.1.2.7 f). Assumes de-registration leads back to DEREGISTERED.",
+        "suggested_correction": "Add edge: {'from': 'Event_UE_Initiate_DeRegistration', 'to': 'UE_5GMM_DEREGISTERED', 'type': 'condition'}"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+        "type": "trigger",
+        "reason": "Missing trigger edge for UE receiving DEREGISTRATION REQUEST while in REGISTERED-INITIATED state (subclause 5.5.1.2.7 g).",
+        "suggested_correction": "Add edge: {'from': 'UE_5GMM_REGISTERED_INITIATED', 'to': 'Event_UE_Receive_DEREGISTRATION_REQUEST', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition",
+        "reason": "Missing condition edge for UE aborting de-registration and continuing initial registration upon receiving DEREGISTRATION REQUEST in REGISTERED-INITIATED state (subclause 5.5.1.2.7 g).",
+        "suggested_correction": "Add edge: {'from': 'Event_UE_Receive_DEREGISTRATION_REQUEST', 'to': 'UE_5GMM_REGISTERED_INITIATED', 'type': 'condition'}"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_SOR_Failure_After_Accept",
+        "type": "trigger",
+        "reason": "Missing trigger edge for SOR failure handling after receiving REGISTRATION ACCEPT (subclause 5.5.1.2.4).",
+        "suggested_correction": "Add edge: {'from': 'UE_5GMM_REGISTERED', 'to': 'Event_UE_SOR_Failure_After_Accept', 'type': 'trigger'}"
+      },
+      {
+        "from": "Event_UE_SOR_Failure_After_Accept",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition",
+        "reason": "Missing condition edge for UE locally releasing NAS connection due to SOR failure after receiving REGISTRATION ACCEPT (subclause 5.5.1.2.4). Assumes release leads to DEREGISTERED.",
+        "suggested_correction": "Add edge: {'from': 'Event_UE_SOR_Failure_After_Accept', 'to': 'UE_5GMM_DEREGISTERED', 'type': 'condition'}"
+      }
+    ],
+    "invalid_edges": [
+      {
+        "from": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition",
+        "reason": "Invalid target state. Text (subclause 5.5.1.2.7 h.2) states the UE shall abort the initial registration procedure and initiate the registration procedure for mobility registration update, not re-initiate initial registration.",
+        "suggested_correction": "Target node should represent initiation of Mobility Registration Update procedure."
+      },
+      {
+        "from": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition",
+        "reason": "Invalid target state. Text (subclause 5.5.1.2.7 i.2) states the UE shall abort the initial registration procedure and initiate the registration procedure for mobility registration update, not re-initiate initial registration.",
+        "suggested_correction": "Target node should represent initiation of Mobility Registration Update procedure."
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+        "type": "trigger",
+        "reason": "Invalid source state for trigger. Text (subclause 5.5.1.2.4) describes SOR handling upon receipt of REGISTRATION ACCEPT, implying the UE is transitioning to or is in the REGISTERED state, not REGISTERED_INITIATED.",
+        "suggested_correction": "The trigger should originate from UE_5GMM_REGISTERED state, potentially via a different event node representing successful SOR handling leading to release."
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition",
+        "reason": "This edge depends on the invalid trigger edge above. The transition represents the outcome of SOR handling after receiving ACCEPT.",
+        "suggested_correction": "This edge should follow a trigger from UE_5GMM_REGISTERED state related to SOR handling."
+      }
+    ]
+  },
+  "comments": [
+    "The FPG provides a reasonable overview but misses several specific abnormal case triggers and transitions described in the text (e.g., AMF receiving DEREG REQ during T3550, protocol errors, UE initiating de-reg).",
+    "The FPG incorrectly models the UE behavior following TAI change after ACCEPT (TAI not OK) and REG COMPLETE failure with TAI change (TAI not OK). The UE should initiate Mobility Registration Update, not re-initiate Initial Registration.",
+    "The handling of SOR leading to connection release is triggered from the wrong state (INITIATED instead of REGISTERED).",
+    "The FPG simplifies UE actions described as 'abort and re-initiate immediately' or 'restart' (e.g., TAI change before outcome, REG REQ failure, T3511 expiry) by transitioning to DEREGISTERED. This is a plausible interpretation but loses the immediacy specified in the text.",
+    "The FPG does not model dual-access scenarios described in the text (e.g., registration result causing de-registration on the other access). It appears focused on a single access registration.",
+    "Node naming for states and events generally follows the text, although some event names combining multiple causes are long but acceptable for explicitness."
+  ]
+}
+```

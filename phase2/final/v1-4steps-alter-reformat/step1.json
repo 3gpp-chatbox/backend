@@ -1,0 +1,963 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      {
+        "id": "UE_5GMM_DEREGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Needs_Initial_Registration",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_NO_SUPI",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+        "type": "event"
+      },
+      {
+        "id": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+        "type": "state"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_T3510_Expires_Counter_Low",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_T3510_Expires_Counter_Max",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_LowerLayer_Failure_Counter_Low",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_LowerLayer_Failure_Counter_Max",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_TAI_Change_Before_Outcome",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_REG_REQUEST_Fail",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_Localized_Service_Not_Allowed",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_T3511_Expires",
+        "type": "event"
+      },
+      {
+        "id": "Event_UE_T3502_Expires",
+        "type": "event"
+      },
+      {
+        "id": "AMF_IDLE_FOR_UE",
+        "type": "state"
+      },
+      {
+        "id": "Event_AMF_Receive_REGISTRATION_REQUEST",
+        "type": "event"
+      },
+      {
+        "id": "AMF_REGISTRATION_PENDING",
+        "type": "state"
+      },
+      {
+        "id": "Event_AMF_Accepts_Registration_Expect_Complete",
+        "type": "event"
+      },
+      {
+        "id": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "Event_AMF_Accepts_Registration_No_Complete",
+        "type": "event"
+      },
+      {
+        "id": "AMF_REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Rejects_Registration",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_LowerLayer_Failure_During_T3550",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_T3550_Expires_Retry",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_T3550_Expires_Abort",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_New_REG_REQUEST_Same",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+        "type": "event"
+      },
+      {
+        "id": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+        "type": "event"
+      }
+    ],
+    "edges": [
+      {
+        "from": "UE_5GMM_DEREGISTERED",
+        "to": "Event_UE_Needs_Initial_Registration",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Needs_Initial_Registration",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+        "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+        "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+        "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+        "to": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+        "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_T3510_Expires_Counter_Low",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_T3510_Expires_Counter_Low",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_T3510_Expires_Counter_Max",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_T3510_Expires_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_T3510_Expires_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_LowerLayer_Failure_Counter_Low",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_LowerLayer_Failure_Counter_Low",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_LowerLayer_Failure_Counter_Max",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_LowerLayer_Failure_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_LowerLayer_Failure_Counter_Max",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_TAI_Change_Before_Outcome",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_TAI_Change_Before_Outcome",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+        "to": "UE_5GMM_REGISTERED_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED",
+        "to": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+        "to": "UE_5GMM_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_REG_REQUEST_Fail",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_REG_REQUEST_Fail",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_REGISTERED_INITIATED",
+        "to": "Event_UE_Localized_Service_Not_Allowed",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_Localized_Service_Not_Allowed",
+        "to": "UE_5GMM_DEREGISTERED_LIMITED_SERVICE",
+        "type": "condition"
+      },
+      {
+        "from": "Event_UE_Localized_Service_Not_Allowed",
+        "to": "UE_5GMM_DEREGISTERED_PLMN_SEARCH",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "to": "Event_UE_T3511_Expires",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_T3511_Expires",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+        "to": "Event_UE_T3502_Expires",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_UE_T3502_Expires",
+        "to": "UE_5GMM_DEREGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_IDLE_FOR_UE",
+        "to": "Event_AMF_Receive_REGISTRATION_REQUEST",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_REGISTRATION_REQUEST",
+        "to": "AMF_REGISTRATION_PENDING",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Accepts_Registration_Expect_Complete",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Accepts_Registration_Expect_Complete",
+        "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Accepts_Registration_No_Complete",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Accepts_Registration_No_Complete",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Rejects_Registration",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Rejects_Registration",
+        "to": "AMF_IDLE_FOR_UE",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_LowerLayer_Failure_During_T3550",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_LowerLayer_Failure_During_T3550",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_T3550_Expires_Retry",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_T3550_Expires_Retry",
+        "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_T3550_Expires_Abort",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_T3550_Expires_Abort",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+        "to": "AMF_REGISTRATION_PENDING",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_Receive_New_REG_REQUEST_Same",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_New_REG_REQUEST_Same",
+        "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+        "to": "AMF_REGISTRATION_PENDING",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTRATION_PENDING",
+        "to": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+        "to": "AMF_REGISTRATION_PENDING",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTERED",
+        "to": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+        "to": "AMF_REGISTRATION_PENDING",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_REGISTERED",
+        "to": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      },
+      {
+        "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+        "to": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+        "type": "trigger"
+      },
+      {
+        "from": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+        "to": "AMF_REGISTERED",
+        "type": "condition"
+      }
+    ]
+  }
+}

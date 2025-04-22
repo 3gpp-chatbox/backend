@@ -1,0 +1,1273 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+  "nodes": [
+    {
+      "id": "UE_5GMM_DEREGISTERED",
+      "type": "state",
+      "description": "UE is not registered with the network."
+    },
+    {
+      "id": "Event_UE_Needs_Initial_Registration",
+      "type": "event",
+      "description": "UE needs to perform initial registration (e.g., power on, emergency, mobility)."
+    },
+    {
+      "id": "UE_5GMM_REGISTERED_INITIATED",
+      "type": "state",
+      "description": "UE sent REGISTRATION REQUEST, T3510 running."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+      "type": "event",
+      "description": "UE receives REGISTRATION ACCEPT requiring REGISTRATION COMPLETE."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+      "type": "event",
+      "description": "UE receives REGISTRATION ACCEPT not requiring REGISTRATION COMPLETE."
+    },
+    {
+      "id": "UE_5GMM_REGISTERED",
+      "type": "state",
+      "description": "UE successfully registered with the network."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+      "type": "event",
+      "description": "UE receives REG ACCEPT via CAG cell, but cell not authorized in updated list."
+    },
+    {
+      "id": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "state",
+      "description": "UE registered but in limited service (e.g., CAG/TAI restricted)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+      "type": "event",
+      "description": "UE receives REG ACCEPT via non-CAG cell, but only CAG access allowed."
+    },
+    {
+      "id": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "state",
+      "description": "UE registered but needs to perform PLMN search (e.g., CAG restriction)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+      "type": "event",
+      "description": "UE receives REG ACCEPT with SOR, attempts service elsewhere, releases connection."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #3, #6, or #7."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "state",
+      "description": "UE deregistered, USIM/entry considered invalid."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #11 (PLMN not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #12 (TA not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #13 (Roaming not allowed in TA)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #15 (No suitable cells in TA)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #22 (Congestion)."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "state",
+      "description": "UE deregistered, attempting registration (e.g., after T3511 expiry or reject)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #27 (N1 mode not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #31 (Redirection to EPC required)."
+    },
+    {
+      "id": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+      "type": "state",
+      "description": "UE deregistered, N1 disabled for 3GPP, searching for E-UTRA cell."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #36 (IAB-node operation not authorized)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #62 (No network slices available)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #72 (Non-3GPP access to 5GCN not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #73 (Serving network not authorized)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #74 (Temporarily not authorized for this SNPN)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #75 (Permanently not authorized for this SNPN)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #76 (Not authorized for this CAG)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #77 (Wireline access area not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #78 (PLMN not allowed at location)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #79 (UAS services not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #80 (Disaster roaming not allowed)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #81 (N3IWF not compatible)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT with cause #82 (TNGF not compatible)."
+    },
+    {
+      "id": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT for emergency with cause #5 (PEI not accepted)."
+    },
+    {
+      "id": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT (abnormal cause) and attempt counter < 5."
+    },
+    {
+      "id": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+      "type": "event",
+      "description": "UE receives REGISTRATION REJECT (abnormal cause) and attempt counter = 5."
+    },
+    {
+      "id": "Event_UE_T3510_Expires_Counter_Low",
+      "type": "event",
+      "description": "Timer T3510 expires and attempt counter < 5."
+    },
+    {
+      "id": "Event_UE_T3510_Expires_Counter_Max",
+      "type": "event",
+      "description": "Timer T3510 expires and attempt counter = 5."
+    },
+    {
+      "id": "Event_UE_LowerLayer_Failure_Counter_Low",
+      "type": "event",
+      "description": "Lower layer failure occurs before response, attempt counter < 5."
+    },
+    {
+      "id": "Event_UE_LowerLayer_Failure_Counter_Max",
+      "type": "event",
+      "description": "Lower layer failure occurs before response, attempt counter = 5."
+    },
+    {
+      "id": "Event_UE_TAI_Change_Before_Outcome",
+      "type": "event",
+      "description": "Current TAI changes before registration procedure completes."
+    },
+    {
+      "id": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+      "type": "event",
+      "description": "TAI changes after ACCEPT but before COMPLETE, new TAI is in list."
+    },
+    {
+      "id": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+      "type": "event",
+      "description": "TAI changes after ACCEPT but before COMPLETE, new TAI not in list."
+    },
+    {
+      "id": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+      "type": "event",
+      "description": "REGISTRATION COMPLETE transmission fails, TAI changes, new TAI is in list."
+    },
+    {
+      "id": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+      "type": "event",
+      "description": "REGISTRATION COMPLETE transmission fails, TAI changes, new TAI not in list."
+    },
+    {
+      "id": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+      "type": "event",
+      "description": "REGISTRATION COMPLETE transmission fails, no TAI change."
+    },
+    {
+      "id": "Event_UE_REG_REQUEST_Fail",
+      "type": "event",
+      "description": "REGISTRATION REQUEST transmission fails."
+    },
+    {
+      "id": "Event_UE_Localized_Service_Not_Allowed",
+      "type": "event",
+      "description": "Access for localized services in SNPN is no longer allowed."
+    },
+    {
+      "id": "Event_UE_T3511_Expires",
+      "type": "event",
+      "description": "Timer T3511 expires (retry timer after reject/failure)."
+    },
+    {
+      "id": "Event_UE_T3502_Expires",
+      "type": "event",
+      "description": "Timer T3502 expires (retry timer after max attempts)."
+    },
+    {
+      "id": "AMF_IDLE_FOR_UE",
+      "type": "state",
+      "description": "AMF has no ongoing 5GMM procedure for the UE."
+    },
+    {
+      "id": "Event_AMF_Receive_REGISTRATION_REQUEST",
+      "type": "event",
+      "description": "AMF receives REGISTRATION REQUEST from UE."
+    },
+    {
+      "id": "AMF_REGISTRATION_PENDING",
+      "type": "state",
+      "description": "AMF is processing the REGISTRATION REQUEST."
+    },
+    {
+      "id": "Event_AMF_Accepts_Registration_Expect_Complete",
+      "type": "event",
+      "description": "AMF accepts registration and expects REGISTRATION COMPLETE."
+    },
+    {
+      "id": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "state",
+      "description": "AMF sent REG ACCEPT requiring COMPLETE, T3550 running."
+    },
+    {
+      "id": "Event_AMF_Accepts_Registration_No_Complete",
+      "type": "event",
+      "description": "AMF accepts registration and does not expect REGISTRATION COMPLETE."
+    },
+    {
+      "id": "AMF_REGISTERED",
+      "type": "state",
+      "description": "AMF considers the UE registered."
+    },
+    {
+      "id": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+      "type": "event",
+      "description": "AMF receives REGISTRATION COMPLETE from UE."
+    },
+    {
+      "id": "Event_AMF_Rejects_Registration",
+      "type": "event",
+      "description": "AMF rejects the registration request."
+    },
+    {
+      "id": "Event_AMF_LowerLayer_Failure_During_T3550",
+      "type": "event",
+      "description": "Lower layer failure occurs while AMF waits for REGISTRATION COMPLETE (T3550 running)."
+    },
+    {
+      "id": "Event_AMF_T3550_Expires_Retry",
+      "type": "event",
+      "description": "Timer T3550 expires (1st-4th time)."
+    },
+    {
+      "id": "Event_AMF_T3550_Expires_Abort",
+      "type": "event",
+      "description": "Timer T3550 expires (5th time)."
+    },
+    {
+      "id": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+      "type": "event",
+      "description": "AMF receives new REG REQUEST (different IEs) while waiting for COMPLETE."
+    },
+    {
+      "id": "Event_AMF_Receive_New_REG_REQUEST_Same",
+      "type": "event",
+      "description": "AMF receives new REG REQUEST (same IEs) while waiting for COMPLETE."
+    },
+    {
+      "id": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+      "type": "event",
+      "description": "AMF receives multiple REG REQUEST (different IEs) before sending response."
+    },
+    {
+      "id": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+      "type": "event",
+      "description": "AMF receives multiple REG REQUEST (same IEs) before sending response."
+    },
+    {
+      "id": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+      "type": "event",
+      "description": "AMF receives REG REQUEST in REGISTERED state from genuine UE."
+    },
+    {
+      "id": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+      "type": "event",
+      "description": "AMF receives REG REQUEST in REGISTERED state, considers UE not genuine."
+    },
+    {
+      "id": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+      "type": "event",
+      "description": "AMF receives Mobility/Periodic Update REQ while waiting for COMPLETE."
+    },
+    {
+      "id": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+      "type": "event",
+      "description": "AMF receives DEREGISTRATION REQUEST while waiting for COMPLETE."
+    },
+    {
+      "id": "Event_AMF_Protocol_Error",
+      "type": "event",
+      "description": "AMF receives REGISTRATION REQUEST with protocol error."
+    },
+    {
+      "id": "Event_AMF_Invalid_Security_Capabilities",
+      "type": "event",
+      "description": "AMF receives REGISTRATION REQUEST with invalid security capabilities."
+    },
+    {
+      "id": "Event_UE_Initiate_DeRegistration",
+      "type": "event",
+      "description": "UE initiates de-registration while registration is ongoing."
+    },
+    {
+      "id": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+      "type": "event",
+      "description": "UE receives DEREGISTRATION REQUEST while registration is ongoing."
+    },
+    {
+      "id": "Event_UE_SOR_Failure_After_Accept",
+      "type": "event",
+      "description": "UE receives REG ACCEPT with SOR, integrity check fails, UE attempts service elsewhere."
+    },
+    {
+      "id": "Event_UE_Barred",
+      "type": "event",
+      "description": "Lower layers indicate access attempt is barred."
+    },
+    {
+      "id": "Event_UE_T3346_Running",
+      "type": "event",
+      "description": "Timer T3346 (congestion backoff) is running."
+    },
+    {
+      "id": "Event_UE_T3447_Running",
+      "type": "event",
+      "description": "Timer T3447 (service gap) is running."
+    }
+  ],
+  "edges": [
+    {
+      "from": "UE_5GMM_DEREGISTERED",
+      "to": "Event_UE_Needs_Initial_Registration",
+      "type": "trigger",
+      "description": "Trigger: UE needs initial registration (e.g., power on, emergency); Condition: UE is 5GMM-DEREGISTERED"
+    },
+    {
+      "from": "Event_UE_Needs_Initial_Registration",
+      "to": "UE_5GMM_REGISTERED_INITIATED",
+      "type": "condition",
+      "description": "Condition: UE initiates procedure; Action: Send REGISTRATION REQUEST, start T3510"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+      "type": "trigger",
+      "description": "Trigger: Network sends REGISTRATION ACCEPT requiring COMPLETE; Condition: Registration accepted"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_ACCEPT_Req_Complete",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "condition",
+      "description": "Condition: REG ACCEPT requires COMPLETE; Action: Reset counter, enter REGISTERED, send REG COMPLETE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+      "type": "trigger",
+      "description": "Trigger: Network sends REGISTRATION ACCEPT not requiring COMPLETE; Condition: Registration accepted"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_ACCEPT_No_Complete",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "condition",
+      "description": "Condition: REG ACCEPT does not require COMPLETE; Action: Reset counter, enter REGISTERED"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+      "type": "trigger",
+      "description": "Trigger: REG ACCEPT via CAG cell, cell not authorized in new list; Condition: Registration accepted"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Limited",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: CAG cell not authorized, non-CAG allowed OR other CAGs exist; Action: Enter LIMITED-SERVICE, search cell"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+      "type": "trigger",
+      "description": "Trigger: REG ACCEPT via non-CAG cell, CAG-only indicated in new list; Condition: Registration accepted"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_ACCEPT_CAG_Search",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: CAG-only indicated, no authorized CAGs available; Action: Enter PLMN-SEARCH, select PLMN"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#3, #6, #7); Condition: Registration rejected"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_3_6_7",
+      "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "condition",
+      "description": "Condition: REG REJECT #3/#6/#7; Action: Set 5U3, delete context, consider USIM/entry invalid"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#11); Condition: Registration rejected"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #11 (3GPP); Action: Set 5U3, delete context, add forbidden PLMN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_11",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #11 (non-3GPP); Action: Set 5U3, delete context, add forbidden PLMN, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#12); Condition: Registration rejected"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_12",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #12; Action: Set 5U3, delete TAI list, add forbidden TAI, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#13); Condition: Registration rejected"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #13; Action: Set 5U3, delete TAI list, add forbidden TAI, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_13",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #13; Action: Set 5U3, delete TAI list, add forbidden TAI, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#15); Condition: Registration rejected"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_15",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #15; Action: Set 5U3, delete TAI list, add forbidden TAI, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#22); Condition: Congestion"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_22",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: REG REJECT #22 with T3346; Action: Abort, set 5U2, start T3346, enter ATTEMPTING-REG"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#27); Condition: N1 mode not allowed"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_27",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #27; Action: Set 5U3, delete context, disable N1, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#31); Condition: Redirection to EPC required"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_31",
+      "to": "UE_5GMM_DEREGISTERED_NO_CELL_AVAILABLE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #31; Action: Set 5U3, delete context, disable N1 (3GPP), enter NO-CELL-AVAILABLE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#36); Condition: IAB-node not authorized"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_36",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #36; Action: Set 5U3, delete context, add forbidden PLMN/SNPN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#62); Condition: No network slices available"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: REG REJECT #62, some allowed/configured S-NSSAIs OK; Action: Abort, set 5U2, retry with allowed S-NSSAIs"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #62, all S-NSSAIs rejected (not TA issue); Action: Abort, set 5U2, enter PLMN-SEARCH"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_62",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #62, all S-NSSAIs rejected (TA issue); Action: Abort, set 5U2, add forbidden TAI, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#72) (non-3GPP); Condition: Non-3GPP access not allowed"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: REG REJECT #72 (non-3GPP); Action: Set 5U3, delete context, disable N1 (non-3GPP), enter DEREGISTERED"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_72",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #72 (non-3GPP), UE chooses PLMN search; Action: Enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#73); Condition: Serving network not authorized"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #73 (3GPP); Action: Set 5U3, delete context, add forbidden PLMN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_73",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #73 (non-3GPP); Action: Set 5U3, delete context, add forbidden PLMN, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#74) (SNPN); Condition: Temp not authorized for SNPN"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #74 (3GPP); Action: Set 5U3, delete context, add temp forbidden SNPN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_74",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #74 (non-3GPP); Action: Set 5U3, delete context, add temp forbidden SNPN, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#75) (SNPN); Condition: Perm not authorized for SNPN"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #75 (3GPP); Action: Set 5U3, delete context, add perm forbidden SNPN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_75",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #75 (non-3GPP); Action: Set 5U3, delete context, add perm forbidden SNPN, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#76); Condition: Not authorized for CAG"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: REG REJECT #76 (CAG cell), non-CAG allowed OR other CAGs exist; Action: Set 5U3, update CAG, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_76",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #76, CAG-only & no authorized CAGs; Action: Set 5U3, update CAG, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#77) (Wireline); Condition: Wireline area not allowed"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_77",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: REG REJECT #77 (Wireline); Action: Set 5U3, delete context, enter DEREGISTERED"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#78) (Satellite); Condition: PLMN not allowed at location"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_78",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #78 (Satellite); Action: Set 5U3, add forbidden location PLMN, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#79); Condition: UAS services not allowed"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: REG REJECT #79, UE retries without UAS; Action: Abort, set 5U2, enter ATTEMPTING-REG"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_79",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #79, UE chooses PLMN search; Action: Abort, set 5U2, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#80) (Disaster); Condition: Disaster roaming not allowed"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_80",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #80 (Disaster); Action: Abort, set 5U2, enter PLMN-SEARCH, block disaster attempt"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#81) (N3IWF); Condition: N3IWF not compatible with NSSAI"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: REG REJECT #81, UE retries; Action: Abort, set 5U2, enter ATTEMPTING-REG"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_81",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #81, UE chooses PLMN search; Action: Abort, set 5U2, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#82) (TNGF); Condition: TNGF not compatible with NSSAI"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: REG REJECT #82, UE retries; Action: Abort, set 5U2, enter ATTEMPTING-REG"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Cause_82",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: REG REJECT #82, UE chooses PLMN search; Action: Abort, set 5U2, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (#5) (Emergency); Condition: PEI not accepted"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_REJECT_Emergency_Cause_5",
+      "to": "UE_5GMM_DEREGISTERED_NO_SUPI",
+      "type": "condition",
+      "description": "Condition: REG REJECT #5 (Emergency); Action: Enter DEREGISTERED.NO-SUPI"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (abnormal cause); Condition: Attempt counter < 5"
+    },
+    {
+      "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Low",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: Abnormal REG REJECT, counter < 5; Action: Stop T3510, increment counter, start T3511"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+      "type": "trigger",
+      "description": "Trigger: Network sends REG REJECT (abnormal cause); Condition: Attempt counter = 5"
+    },
+    {
+      "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: Abnormal REG REJECT, counter = 5; Action: Stop T3510, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "Event_UE_Receive_Abnormal_REGISTRATION_REJECT_Counter_Max",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: Abnormal REG REJECT, counter = 5; Action: Stop T3510, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_T3510_Expires_Counter_Low",
+      "type": "trigger",
+      "description": "Trigger: T3510 expires; Condition: Attempt counter < 5"
+    },
+    {
+      "from": "Event_UE_T3510_Expires_Counter_Low",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: T3510 expires, counter < 5; Action: Abort, increment counter, start T3511"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_T3510_Expires_Counter_Max",
+      "type": "trigger",
+      "description": "Trigger: T3510 expires; Condition: Attempt counter = 5"
+    },
+    {
+      "from": "Event_UE_T3510_Expires_Counter_Max",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: T3510 expires, counter = 5; Action: Abort, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "Event_UE_T3510_Expires_Counter_Max",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: T3510 expires, counter = 5; Action: Abort, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_LowerLayer_Failure_Counter_Low",
+      "type": "trigger",
+      "description": "Trigger: Lower layer failure/release before response; Condition: Attempt counter < 5"
+    },
+    {
+      "from": "Event_UE_LowerLayer_Failure_Counter_Low",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: Lower layer failure, counter < 5; Action: Abort, stop T3510, increment counter, start T3511"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_LowerLayer_Failure_Counter_Max",
+      "type": "trigger",
+      "description": "Trigger: Lower layer failure/release before response; Condition: Attempt counter = 5"
+    },
+    {
+      "from": "Event_UE_LowerLayer_Failure_Counter_Max",
+      "to": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "type": "condition",
+      "description": "Condition: Lower layer failure, counter = 5; Action: Abort, stop T3510, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "Event_UE_LowerLayer_Failure_Counter_Max",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: Lower layer failure, counter = 5; Action: Abort, stop T3510, delete context, start T3502, set 5U2"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_TAI_Change_Before_Outcome",
+      "type": "trigger",
+      "description": "Trigger: TAI changes before registration outcome; No condition"
+    },
+    {
+      "from": "Event_UE_TAI_Change_Before_Outcome",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: TAI changed before outcome; Action: Abort and re-initiate registration"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+      "type": "trigger",
+      "description": "Trigger: TAI changes after ACCEPT, before COMPLETE; Condition: New TAI is in TAI list"
+    },
+    {
+      "from": "Event_UE_TAI_Change_After_Accept_TAI_OK",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "condition",
+      "description": "Condition: New TAI is in list; Action: Send REGISTRATION COMPLETE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_TAI_Change_After_Accept_TAI_Not_OK",
+      "type": "trigger",
+      "description": "Trigger: TAI changes after ACCEPT, before COMPLETE; Condition: New TAI not in TAI list"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+      "type": "trigger",
+      "description": "Trigger: REG COMPLETE fails, TAI changes; Condition: New TAI is in TAI list"
+    },
+    {
+      "from": "Event_UE_REG_COMPLETE_Fail_TAI_Change_OK",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "condition",
+      "description": "Condition: New TAI is in list; Action: Resend REGISTRATION COMPLETE"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_REG_COMPLETE_Fail_TAI_Change_Not_OK",
+      "type": "trigger",
+      "description": "Trigger: REG COMPLETE fails, TAI changes; Condition: New TAI not in TAI list"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+      "type": "trigger",
+      "description": "Trigger: REG COMPLETE fails; Condition: No TAI change"
+    },
+    {
+      "from": "Event_UE_REG_COMPLETE_Fail_No_TAI_Change",
+      "to": "UE_5GMM_REGISTERED",
+      "type": "condition",
+      "description": "Condition: No TAI change; Action: Re-run procedure (e.g., resend REG COMPLETE)"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_REG_REQUEST_Fail",
+      "type": "trigger",
+      "description": "Trigger: REGISTRATION REQUEST transmission fails; No condition"
+    },
+    {
+      "from": "Event_UE_REG_REQUEST_Fail",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: REG REQUEST failed; Action: Abort and re-initiate registration"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Localized_Service_Not_Allowed",
+      "type": "trigger",
+      "description": "Trigger: Localized service access disabled or validity expired; Condition: In SNPN for localized service"
+    },
+    {
+      "from": "Event_UE_Localized_Service_Not_Allowed",
+      "to": "UE_5GMM_REGISTERED_LIMITED_SERVICE",
+      "type": "condition",
+      "description": "Condition: Localized service not allowed; Action: Abort, release NAS conn, enter LIMITED-SERVICE"
+    },
+    {
+      "from": "Event_UE_Localized_Service_Not_Allowed",
+      "to": "UE_5GMM_REGISTERED_PLMN_SEARCH",
+      "type": "condition",
+      "description": "Condition: Localized service not allowed; Action: Abort, release NAS conn, enter PLMN-SEARCH"
+    },
+    {
+      "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "to": "Event_UE_T3511_Expires",
+      "type": "trigger",
+      "description": "Trigger: T3511 expires; No condition"
+    },
+    {
+      "from": "Event_UE_T3511_Expires",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: T3511 expired; Action: Restart registration procedure if required"
+    },
+    {
+      "from": "UE_5GMM_DEREGISTERED_ATTEMPTING_REGISTRATION",
+      "to": "Event_UE_T3502_Expires",
+      "type": "trigger",
+      "description": "Trigger: T3502 expires; No condition"
+    },
+    {
+      "from": "Event_UE_T3502_Expires",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: T3502 expired; Action: Perform T3502 expiry actions (e.g., PLMN selection)"
+    },
+    {
+      "from": "AMF_IDLE_FOR_UE",
+      "to": "Event_AMF_Receive_REGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "Trigger: UE sends REGISTRATION REQUEST; Condition: AMF idle for UE"
+    },
+    {
+      "from": "Event_AMF_Receive_REGISTRATION_REQUEST",
+      "to": "AMF_REGISTRATION_PENDING",
+      "type": "condition",
+      "description": "Condition: REG REQUEST received; Action: Initiate common procedures if needed"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Accepts_Registration_Expect_Complete",
+      "type": "trigger",
+      "description": "Trigger: AMF accepts registration; Condition: REG COMPLETE required"
+    },
+    {
+      "from": "Event_AMF_Accepts_Registration_Expect_Complete",
+      "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "condition",
+      "description": "Condition: Registration accepted, COMPLETE required; Action: Send REG ACCEPT, start T3550"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Accepts_Registration_No_Complete",
+      "type": "trigger",
+      "description": "Trigger: AMF accepts registration; Condition: REG COMPLETE not required"
+    },
+    {
+      "from": "Event_AMF_Accepts_Registration_No_Complete",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: Registration accepted, no COMPLETE required; Action: Send REG ACCEPT, enter REGISTERED"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+      "type": "trigger",
+      "description": "Trigger: UE sends REGISTRATION COMPLETE; Condition: T3550 running"
+    },
+    {
+      "from": "Event_AMF_Receive_REGISTRATION_COMPLETE",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: REG COMPLETE received; Action: Stop T3550, enter REGISTERED"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Rejects_Registration",
+      "type": "trigger",
+      "description": "Trigger: AMF cannot accept registration; Condition: Various rejection reasons"
+    },
+    {
+      "from": "Event_AMF_Rejects_Registration",
+      "to": "AMF_IDLE_FOR_UE",
+      "type": "condition",
+      "description": "Condition: Registration rejected; Action: Send REGISTRATION REJECT"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_LowerLayer_Failure_During_T3550",
+      "type": "trigger",
+      "description": "Trigger: Lower layer failure; Condition: T3550 running"
+    },
+    {
+      "from": "Event_AMF_LowerLayer_Failure_During_T3550",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: Lower layer failure during T3550; Action: Abort, enter REGISTERED, keep GUTIs"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_T3550_Expires_Retry",
+      "type": "trigger",
+      "description": "Trigger: T3550 expires (1st-4th time); Condition: No REG COMPLETE received"
+    },
+    {
+      "from": "Event_AMF_T3550_Expires_Retry",
+      "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "condition",
+      "description": "Condition: T3550 expires (retry); Action: Retransmit REG ACCEPT, restart T3550"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_T3550_Expires_Abort",
+      "type": "trigger",
+      "description": "Trigger: T3550 expires (5th time); Condition: No REG COMPLETE received"
+    },
+    {
+      "from": "Event_AMF_T3550_Expires_Abort",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: T3550 expires (abort); Action: Abort, enter REGISTERED, keep GUTIs"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+      "type": "trigger",
+      "description": "Trigger: New REG REQUEST received; Condition: T3550 running, IEs differ"
+    },
+    {
+      "from": "Event_AMF_Receive_New_REG_REQUEST_Diff",
+      "to": "AMF_REGISTRATION_PENDING",
+      "type": "condition",
+      "description": "Condition: New REG REQ (diff IEs) during T3550; Action: Abort old, process new REQ"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_Receive_New_REG_REQUEST_Same",
+      "type": "trigger",
+      "description": "Trigger: New REG REQUEST received; Condition: T3550 running, IEs same"
+    },
+    {
+      "from": "Event_AMF_Receive_New_REG_REQUEST_Same",
+      "to": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "type": "condition",
+      "description": "Condition: New REG REQ (same IEs) during T3550; Action: Resend REG ACCEPT, restart T3550"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+      "type": "trigger",
+      "description": "Trigger: Multiple REG REQUEST received before response; Condition: IEs differ"
+    },
+    {
+      "from": "Event_AMF_Receive_Multiple_REG_REQUEST_Diff",
+      "to": "AMF_REGISTRATION_PENDING",
+      "type": "condition",
+      "description": "Condition: Multiple REG REQ (diff IEs) before response; Action: Abort old, process new REQ"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+      "type": "trigger",
+      "description": "Trigger: Multiple REG REQUEST received before response; Condition: IEs same"
+    },
+    {
+      "from": "Event_AMF_Receive_Multiple_REG_REQUEST_Same",
+      "to": "AMF_REGISTRATION_PENDING",
+      "type": "condition",
+      "description": "Condition: Multiple REG REQ (same IEs) before response; Action: Continue old, ignore new REQ"
+    },
+    {
+      "from": "AMF_REGISTERED",
+      "to": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+      "type": "trigger",
+      "description": "Trigger: REG REQUEST received; Condition: AMF in REGISTERED state, UE genuine"
+    },
+    {
+      "from": "Event_AMF_Receive_REG_REQUEST_In_Registered_Genuine",
+      "to": "AMF_REGISTRATION_PENDING",
+      "type": "condition",
+      "description": "Condition: REG REQ in REGISTERED state (genuine UE); Action: Delete old context, process new REQ"
+    },
+    {
+      "from": "AMF_REGISTERED",
+      "to": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+      "type": "trigger",
+      "description": "Trigger: REG REQUEST received; Condition: AMF in REGISTERED state, UE not genuine"
+    },
+    {
+      "from": "Event_AMF_Receive_REG_REQUEST_In_Registered_Not_Genuine",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: REG REQ in REGISTERED state (not genuine UE); Action: Maintain existing context"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+      "type": "trigger",
+      "description": "Trigger: Mobility/Periodic Update REQ received; Condition: T3550 running"
+    },
+    {
+      "from": "Event_AMF_Receive_Mobility_Periodic_Update_REQ",
+      "to": "AMF_REGISTERED",
+      "type": "condition",
+      "description": "Condition: Mobility/Periodic REQ during T3550; Action: Stop T3550, progress new procedure"
+    },
+    {
+      "from": "AMF_5GMM_COMMON_PROCEDURE_INITIATED",
+      "to": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+      "type": "trigger",
+      "description": "Trigger: DEREGISTRATION REQUEST received; Condition: T3550 running"
+    },
+    {
+      "from": "Event_AMF_Receive_DEREGISTRATION_REQUEST_During_T3550",
+      "to": "AMF_IDLE_FOR_UE",
+      "type": "condition",
+      "description": "Condition: DEREG REQ during T3550; Action: Abort registration, progress de-registration"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Protocol_Error",
+      "type": "trigger",
+      "description": "Trigger: REG REQUEST received with protocol error; Condition: e.g., Invalid IE"
+    },
+    {
+      "from": "Event_AMF_Protocol_Error",
+      "to": "AMF_IDLE_FOR_UE",
+      "type": "condition",
+      "description": "Condition: Protocol error in REG REQ; Action: Send REG REJECT (#96, #99, #100, #111)"
+    },
+    {
+      "from": "AMF_REGISTRATION_PENDING",
+      "to": "Event_AMF_Invalid_Security_Capabilities",
+      "type": "trigger",
+      "description": "Trigger: REG REQUEST received with invalid security caps; Condition: e.g., No 5GS algorithms"
+    },
+    {
+      "from": "Event_AMF_Invalid_Security_Capabilities",
+      "to": "AMF_IDLE_FOR_UE",
+      "type": "condition",
+      "description": "Condition: Invalid security caps in REG REQ; Action: Send REG REJECT"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Initiate_DeRegistration",
+      "type": "trigger",
+      "description": "Trigger: UE initiates de-registration; Condition: Registration ongoing"
+    },
+    {
+      "from": "Event_UE_Initiate_DeRegistration",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: UE initiates de-reg during registration; Action: Abort registration, perform de-reg"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED_INITIATED",
+      "to": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+      "type": "trigger",
+      "description": "Trigger: Network sends DEREGISTRATION REQUEST; Condition: Registration ongoing"
+    },
+    {
+      "from": "Event_UE_Receive_DEREGISTRATION_REQUEST",
+      "to": "UE_5GMM_REGISTERED_INITIATED",
+      "type": "condition",
+      "description": "Condition: DEREG REQ received during registration; Action: Abort de-reg, continue registration"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_SOR_Failure_After_Accept",
+      "type": "trigger",
+      "description": "Trigger: SOR integrity check fails after ACCEPT; Condition: UE attempts service elsewhere"
+    },
+    {
+      "from": "Event_UE_SOR_Failure_After_Accept",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: SOR integrity fail, attempting service elsewhere; Action: Locally release NAS connection"
+    },
+    {
+      "from": "UE_5GMM_REGISTERED",
+      "to": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+      "type": "trigger",
+      "description": "Trigger: SOR requires PLMN/SNPN change, UE attempts service elsewhere; Condition: After successful registration"
+    },
+    {
+      "from": "Event_UE_Receive_REGISTRATION_ACCEPT_SOR_Release",
+      "to": "UE_5GMM_DEREGISTERED",
+      "type": "condition",
+      "description": "Condition: Attempting service on other PLMN/SNPN due to SOR; Action: Locally release NAS connection"
+    }
+  ]
+}
+}
