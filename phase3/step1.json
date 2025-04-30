@@ -1,0 +1,540 @@
+{
+  "procedure_name": "Registration procedure for initial registration",
+  "graph": {
+    "nodes": [
+      {
+        "id": "n1",
+        "name": "5GMM-DEREGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "n2",
+        "name": "Stop T3502(if running), Stop T3511(if running), Send REGISTRATION REQUEST, Start T3510",
+        "type": "action"
+      },
+      {
+        "id": "n3",
+        "name": "5GMM-REGISTERED-INITIATED",
+        "type": "state"
+      },
+      {
+        "id": "n4",
+        "name": "Stop T3510, Reset counters, Store context, Set 5GS update status 5U1 UPDATED",
+        "type": "action"
+      },
+      {
+        "id": "n5",
+        "name": "Need to send REGISTRATION COMPLETE?",
+        "type": "condition"
+      },
+      {
+        "id": "n6",
+        "name": "Send REGISTRATION COMPLETE",
+        "type": "action"
+      },
+      {
+        "id": "n7",
+        "name": "5GMM-REGISTERED",
+        "type": "state"
+      },
+      {
+        "id": "n8",
+        "name": "Handle REGISTRATION REJECT based on Cause",
+        "type": "decision"
+      },
+      {
+        "id": "n9",
+        "name": "Action for REJECT Cause #3/#6/#7",
+        "type": "action"
+      },
+      {
+        "id": "n10",
+        "name": "5GMM-DEREGISTERED.NO-SUPI",
+        "type": "state"
+      },
+      {
+        "id": "n11",
+        "name": "Action for REJECT Cause #11/#73",
+        "type": "action"
+      },
+      {
+        "id": "n12",
+        "name": "5GMM-DEREGISTERED.PLMN-SEARCH",
+        "type": "state"
+      },
+      {
+        "id": "n13",
+        "name": "Action for REJECT Cause #12/#13/#15/#78",
+        "type": "action"
+      },
+      {
+        "id": "n14",
+        "name": "5GMM-DEREGISTERED.LIMITED-SERVICE",
+        "type": "state"
+      },
+      {
+        "id": "n15",
+        "name": "Action for REJECT Cause #22",
+        "type": "action"
+      },
+      {
+        "id": "n16",
+        "name": "5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION",
+        "type": "state"
+      },
+      {
+        "id": "n17",
+        "name": "Action for REJECT Cause #27/#72",
+        "type": "action"
+      },
+      {
+        "id": "n18",
+        "name": "Action for REJECT Cause #31",
+        "type": "action"
+      },
+      {
+        "id": "n19",
+        "name": "5GMM-DEREGISTERED.NO-CELL-AVAILABLE",
+        "type": "state"
+      },
+      {
+        "id": "n20",
+        "name": "Action for REJECT Cause #62/#79/#80/#81/#82",
+        "type": "action"
+      },
+      {
+        "id": "n21",
+        "name": "Action for REJECT Cause #74/#75",
+        "type": "action"
+      },
+      {
+        "id": "n22",
+        "name": "Action for REJECT Cause #76",
+        "type": "action"
+      },
+      {
+        "id": "n23",
+        "name": "Handle Abnormal Case (T3510 expiry / Lower Layer Failure / Abnormal Reject)",
+        "type": "action"
+      },
+      {
+        "id": "n24",
+        "name": "Not Emergency Registration AND Not Emergency PDU Session Handoff",
+        "type": "condition"
+      },
+      {
+        "id": "n25",
+        "name": "Increment registration attempt counter (unless = 5)",
+        "type": "action"
+      },
+      {
+        "id": "n26",
+        "name": "registration attempt counter < 5",
+        "type": "condition"
+      },
+      {
+        "id": "n27",
+        "name": "Start T3511",
+        "type": "action"
+      },
+      {
+        "id": "n28",
+        "name": "registration attempt counter = 5",
+        "type": "condition"
+      },
+      {
+        "id": "n29",
+        "name": "Delete context, Set 5GS update status 5U2 NOT UPDATED, Start T3502 (if value > 0)",
+        "type": "action"
+      },
+      {
+        "id": "n30",
+        "name": "Abort procedure, Re-initiate procedure",
+        "type": "action"
+      },
+      {
+        "id": "n31",
+        "name": "New TAI in TAI List?",
+        "type": "condition"
+      },
+      {
+        "id": "n32",
+        "name": "Abort procedure, Initiate Mobility Registration Update",
+        "type": "action"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": "n1",
+        "to": "n2",
+        "label": "Trigger: Need for Initial Registration",
+        "section_reference": "5.5.1.2.2"
+      },
+      {
+        "id": "e2",
+        "from": "n2",
+        "to": "n3",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.2"
+      },
+      {
+        "id": "e3",
+        "from": "n3",
+        "to": "n4",
+        "label": "Receive REGISTRATION ACCEPT",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "e4",
+        "from": "n4",
+        "to": "n5",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "e5",
+        "from": "n5",
+        "to": "n6",
+        "label": "Yes",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "e6",
+        "from": "n5",
+        "to": "n7",
+        "label": "No",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "e7",
+        "from": "n6",
+        "to": "n7",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.4"
+      },
+      {
+        "id": "e8",
+        "from": "n3",
+        "to": "n8",
+        "label": "Receive REGISTRATION REJECT",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e9",
+        "from": "n8",
+        "to": "n9",
+        "label": "Cause #3/#6/#7",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e10",
+        "from": "n9",
+        "to": "n10",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e11",
+        "from": "n8",
+        "to": "n11",
+        "label": "Cause #11/#73",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e12",
+        "from": "n11",
+        "to": "n12",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e13",
+        "from": "n8",
+        "to": "n13",
+        "label": "Cause #12/#13/#15/#78",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e14",
+        "from": "n13",
+        "to": "n14",
+        "label": "Action Complete (Enter LIMITED-SERVICE)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e15",
+        "from": "n13",
+        "to": "n12",
+        "label": "Action Complete (Enter PLMN-SEARCH)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e16",
+        "from": "n8",
+        "to": "n15",
+        "label": "Cause #22",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e17",
+        "from": "n15",
+        "to": "n16",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e18",
+        "from": "n8",
+        "to": "n17",
+        "label": "Cause #27/#72",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e19",
+        "from": "n17",
+        "to": "n14",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e20",
+        "from": "n8",
+        "to": "n18",
+        "label": "Cause #31",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e21",
+        "from": "n18",
+        "to": "n19",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e22",
+        "from": "n8",
+        "to": "n20",
+        "label": "Cause #62/#79/#80/#81/#82",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e23",
+        "from": "n20",
+        "to": "n16",
+        "label": "Action Complete (Enter ATTEMPTING-REGISTRATION)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e24",
+        "from": "n20",
+        "to": "n12",
+        "label": "Action Complete (Enter PLMN-SEARCH)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e25",
+        "from": "n8",
+        "to": "n21",
+        "label": "Cause #74/#75",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e26",
+        "from": "n21",
+        "to": "n12",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e27",
+        "from": "n8",
+        "to": "n22",
+        "label": "Cause #76",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e28",
+        "from": "n22",
+        "to": "n14",
+        "label": "Action Complete (Enter LIMITED-SERVICE)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e29",
+        "from": "n22",
+        "to": "n12",
+        "label": "Action Complete (Enter PLMN-SEARCH)",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e30",
+        "from": "n3",
+        "to": "n23",
+        "label": "T3510 expires",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e31",
+        "from": "n3",
+        "to": "n23",
+        "label": "Lower layer failure/release",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e32",
+        "from": "n3",
+        "to": "n23",
+        "label": "Receive REGISTRATION REJECT (Abnormal Case)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e33",
+        "from": "n23",
+        "to": "n24",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e34",
+        "from": "n24",
+        "to": "n25",
+        "label": "Condition met",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e35",
+        "from": "n25",
+        "to": "n26",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e36",
+        "from": "n26",
+        "to": "n27",
+        "label": "Condition met",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e37",
+        "from": "n27",
+        "to": "n16",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e38",
+        "from": "n25",
+        "to": "n28",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e39",
+        "from": "n28",
+        "to": "n29",
+        "label": "Condition met",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e40",
+        "from": "n29",
+        "to": "n16",
+        "label": "Action Complete (Enter ATTEMPTING-REGISTRATION)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e41",
+        "from": "n29",
+        "to": "n12",
+        "label": "Action Complete (Enter PLMN-SEARCH)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e42",
+        "from": "n16",
+        "to": "n1",
+        "label": "T3511 expires",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e43",
+        "from": "n16",
+        "to": "n1",
+        "label": "T3346 expires",
+        "section_reference": "5.5.1.2.5"
+      },
+      {
+        "id": "e44",
+        "from": "n16",
+        "to": "n1",
+        "label": "T3502 expires (value was > 0)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e45",
+        "from": "n3",
+        "to": "n30",
+        "label": "TAI Change before REG ACCEPT/REJECT",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e46",
+        "from": "n30",
+        "to": "n1",
+        "label": "Action Complete",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e47",
+        "from": "n6",
+        "to": "n31",
+        "label": "TAI Change after ACCEPT, before COMPLETE sent",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e48",
+        "from": "n31",
+        "to": "n6",
+        "label": "Yes (Continue sending COMPLETE)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e49",
+        "from": "n31",
+        "to": "n32",
+        "label": "No",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e50",
+        "from": "n32",
+        "to": "n1",
+        "label": "Action Complete (Leads to Mobility Update)",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e51",
+        "from": "n3",
+        "to": "n1",
+        "label": "REGISTRATION REQUEST transmission failure",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e52",
+        "from": "n3",
+        "to": "n1",
+        "label": "UE initiated de-registration required",
+        "section_reference": "5.5.1.2.7"
+      },
+      {
+        "id": "e53",
+        "from": "n3",
+        "to": "n3",
+        "label": "Receive DEREGISTRATION REQUEST (Ignore De-reg, Continue Reg)",
+        "section_reference": "5.5.1.2.7"
+      }
+    ]
+  }
+}
